@@ -1,3 +1,3 @@
 # Under construction
 
-[API Documentation](Documentation/api/System.Numerics.Rational.Rational.html)
+[API Documentation](docs/api/System.Numerics.Rational.html)
