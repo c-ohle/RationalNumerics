@@ -1,3 +1,3 @@
 # Under construction
 
-[API Documentation](docs/api/System.Numerics.Rational.html)
+[API Documentation](https://c-ohle.github.io/RationalNumerics/api/System.Numerics.Rational.Rational.html)
