@@ -15,18 +15,29 @@
     <Copyright>© Christian Ohle</Copyright>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId>RationalNumerics</PackageId>
-    <Authors>ChristianOhle</Authors>
-    <Description>.NET library, rational arithmetic base on a virtual stack machine.</Description>
+    <Authors>Christian Ohle</Authors>
+    <Description>.NET library for rational arithmetic based on a stack machine.</Description>
+    <PackageProjectUrl>https://c-ohle.github.io/RationalNumerics/</PackageProjectUrl>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/c-ohle/RationalNumerics</RepositoryUrl>
+    <PackageTags>C#;Rational</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Deterministic>False</Deterministic>
+    <Deterministic>True</Deterministic>
     <NoWarn>IDE1006</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <Deterministic>False</Deterministic>
+    <Deterministic>True</Deterministic>
     <NoWarn>IDE1006</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

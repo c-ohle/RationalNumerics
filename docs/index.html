@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Extension for .NET 6.0 - System.Numerics.Rational </title>
+    <title>System.Numerics.Rational - Extension for .NET 6.0 </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Extension for .NET 6.0 - System.Numerics.Rational ">
+    <meta name="title" content="System.Numerics.Rational - Extension for .NET 6.0 ">
     <meta name="generator" content="docfx 2.59.1.0">
     
     <link rel="shortcut icon" href="favicon.ico">
@@ -65,34 +65,103 @@
         <div class="article row grid">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-<h1 id="extension-for-net-60---systemnumericsrational">Extension for .NET 6.0 - System.Numerics.Rational</h1>
+<h2 id="systemnumericsrational---extension-for-net-60">System.Numerics.Rational - Extension for .NET 6.0</h2>
 
-<h4 id="api-documentation"><a href="api/System.Numerics.Rational.Rational.html">API Documentation</a></h4>
+<h3 id="introduction">Introduction</h3>
+<p>This library introduces a new kind of a Rational Number class.</p>
+<p>There are already many implementations of Rational number classes.<br>
+For C# the useful ones are based on a combination of System.Numerics.BigInteger for numerator and denominator,<br>
+which in fact has the benefit of a really simple implementation.<br>
+It works fine but in praxis it has several disadvantages:</p>
+<ul>
+<li>Performance is limited by System.Numerics.BigInteger which is not primarily designed for rational arithmetic.</li>
+<li>Using BigInteger leads to lot of unnecessary memory allocations for all the intermediate results at runtime, which means, extra work for the GC.</li>
+<li>Based on BigInteger the struct size of a Rational class is unnecessary big and unhandy as fields in Vector or Matrix classes.</li>
+<li>The layout requires lot of internal memory copys, bad for the overall performace.</li>
+<li>There is no way to benefit from the performance improvements in .NET Core, like using Span's, Buffers and Intrinsics.</li>
+</ul>
+<p>The new Rational Number class has a completely different design and works internally in a completely different way, optimized for the purposes of rational arithmetic.<br>
+The interface itself is of course the same as for all other numeric types, supporting the basic arithmetic operations via operators, conversions to and from numeric system types, string formatting and parsing, binary serialization, etc.<br>
+As an immutable, readonly struct with only one array field, the layout is small as possible and similar to a System.String.<br>
+Internal the class has its own biginteger calculation core, highly optimized for the purposes of rational arithmetics, encapsulated in a stack machine.<br>
+The stack machine is public and offers a second interface layer with a machine language like instruction set.<br>
+Using this interface allows a further optimization on function level with performance improvements by factor 4 to 10.</p>
+<p><em>Example: Classic cross product for a Vector3 type, this one with:</em> <code>Rational X, Y, Z;</code></p>
+<pre><code>public static Vector3R Cross(Vector3R a, Vector3R b)
+{ 
+  Rational x = a.Y * b.Z - a.Z * b.Y; 
+  Rational y = a.Z * b.X - a.X * b.Z;
+  Rational z = a.X * b.Y - a.Y * b.X;
+  return new Vector3R(x, y, z);
+}
+</code></pre>
+<p><em>The same function can be optimized using the stack machine (cpu):</em></p>
+<pre><code>public static Vector3R Cross(Vector3R a, Vector3R b)
+{
+  var cpu = Rational.task_cpu;
+  cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub();
+  cpu.mul(a.Z, b.X); cpu.mul(a.X, b.Z); cpu.sub();
+  cpu.mul(a.Y, b.Z); cpu.mul(a.Z, b.Y); cpu.sub();
+  return new Vector3R(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
+}
+</code></pre>
+<p><em>The optimized version performs 5 x faster, only 3 final normalizations and memory allocs are necessary (instead of 9 in the first version).</em></p>
+<p>As the examples shows, using the stack machine directly is not much more difficult or less readable.<br>
+Furthermore, this design separates the Rational Number struct from the calculation core, the final Rational Number object is always normalized state what makes the handling, compasions etc. much more easy but it does not impact the calculations performance.</p>
+<h3 id="data-layout">Data Layout</h3>
+<p>All data, numerator and denumerator, are in one uint array of variable length.<br>
+This gives the Number struct itself a machine word size and can therefore internal passed around fast as possible.</p>
+<pre><code>public readonly struct Rational
+{
+  private readonly uint[] p; // the one and only field
+</code></pre>
+<p>The array starts with a uint header containing a sign-bit and the number of following uint digits for the numerator.<br>
+Diectly followed by the same structure for the denominator. The order is little-endian.</p>
+<p><img src="images/rat_p_struct.png" alt="Rat P Struct"></p>
+<p>This simple structure has several advatages:</p>
+<ul>
+<li>Exchange, transfer, serialization and marshalling is easy, for example via COM.</li>
+<li>The calculation core can directly access the integer parts without conversions.</li>
+<li>As Span in a array it is very efficient to build vectors or multidimensional matrices.</li>
+<li>The content is easy to debug.</li>
+</ul>
+<p>A disadvantage is that a small number that would fit in a machine word also requires an array.<br>
+However, the very common number 0 (zero) has no array.
+The default value of the struct, with null array, is defined as the number 0 (zero).<br>
+In calculations, expressions like <code>x != 0</code> or <code>x &lt; 1000</code> use the appropriate operators.<br>
+When using the stack machine in calculations, the problem doesn't matter anyway.</p>
+<h2 id="stack-machine">Stack machine</h2>
+<p>The stack machine ...</p>
+<h2 id="performance-comparsions">Performance comparsions</h2>
+<p>A test app is currently under development that will generate detailed benchmark reports comparing usual implementations with the new system.<br>
+In general, the performance increases by at least a factor of 2, by using the stack machine up to a factor of 10 and more.<br>
+This applies to geometric algorithms where precision is important and not so much calculating with gigantic numbers.<br>
+For really huge numbers, with kBytes of digit data, the bottleneck is the integer multiplication as O(n^2) operation (with simple algorithm).<br>
+Then, the performance of both systems equalizes again.</p>
+<p>Using the new Rational class for integer values only is not faster than using BigInteger.<br>
+But by using the stack machine in functions, iterations etc., the perfomance can be increased.</p>
 <hr>
-<p>This page is currently under construction</p>
 <p><img src="images/underconst.png" alt="T1"></p>
-<!-- [!include[](../RationalNumerics/readme.md)] -->
-<!--
+<!-- 
+* A null array as struct default is interpreted as number 0 (zero).
+* A denominator value of 0 (zero) as NaN.
+
+### [API Documentation](api/System.Numerics.Rational.Rational.yml)
+
+Using the stack engine solves the problem of unnecessary memory allocations for intermediate results, allows the computation core to access the buffers directly with as less as possible memory copies and saves normalizations of the interimes.
+All of this together leads to a drastic increase in performance that is not possible with a BigInteger approach.
+
+![\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}](https://latex.codecogs.com/svg.latex?x%3D%5Cfrac%7B-b%5Cpm%5Csqrt%7Bb%5E2-4ac%7D%7D%7B2a%7D)
+
+![](https://latex.codecogs.com/svg.image?\frac{1}{3}&space;\sqrt{2})
+
+---
+This page is currently under construction
+
+
+[!include[](../RationalNumerics/readme.md)] 
+
 # Rational1
-
-This implementation of an rational **number** class is very *different* from other implementations.  
-The most common rational number classes are based on a BigInteger for the numerator and denominator.  
-This makes it very easy to design such class but has a lot of disadvantages.
-
-> what about me?  
-> I love it.  
->> And somthing else
-
-- there is in fact a great impact of memory
-- and so on
-
-adsad
-
-1. there is in fact a great impact of memory
-1. and so on
-
-
-The class [Rational](api/System.Numerics.Rational.Rational.yml) is nice. :point_left:
 
 This is a code example:
 ``` 
@@ -104,8 +173,6 @@ public void rnd(int c)
   else { pow(10, c); swp(); mul(0, 1); mod(0x01); swp(); pop(); swp(); div(); }
 }
 ```
-
-and so on...
 -->
 </article>
           </div>

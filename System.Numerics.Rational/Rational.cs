@@ -13,7 +13,7 @@ namespace System.Numerics.Rational
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly partial struct Rational : IComparable<Rational>, IEquatable<Rational>, IFormattable, ISpanFormattable
   {
-    readonly uint[] p;
+    private readonly uint[] p;
     /// <summary>
     /// Converts the numeric value of the current <see cref="Rational"/> instance to its equivalent string representation.
     /// </summary>
