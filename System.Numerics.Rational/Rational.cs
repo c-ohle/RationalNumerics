@@ -26,7 +26,7 @@ namespace System.Numerics.Rational
     /// </remarks>
     /// <returns>The string representation of the current <see cref="Rational"/> value.</returns>
     public override readonly string ToString()
-    {
+    {      
       Span<char> sp = stackalloc char[64];
       TryFormat(sp, out var ns); return sp.Slice(0, ns).ToString();
     }
@@ -2422,7 +2422,7 @@ namespace System.Numerics.Rational
     }
 
     #region private 
-    [ThreadStatic] static CPU? _cpu;
+    [ThreadStatic] private static CPU? _cpu;
     Rational(uint[] p) { this.p = p; }
     struct F { internal const uint Mask = 0x0fffffff, Sign = 0x80000000, Norm = 0x40000000; }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

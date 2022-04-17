@@ -856,6 +856,17 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "images/debug_pi2.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/debug_pi2.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "images/rat_p_struct.png",
       "output": {
         "resource": {
@@ -882,7 +893,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "AbOWUMl9lffbvkM2Su5PwWnrrxHdh/2U6w9NxhcoWUc="
+          "hash": "qlBgNHgU+hTwbep0GDetz8tpQ/7FgNTgD9gzkSR6r3Y="
         }
       },
       "is_incremental": false,
