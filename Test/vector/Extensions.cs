@@ -1,4 +1,4 @@
-﻿using rat = System.Numerics.Rational.Rational;
+﻿using rat = System.Numerics.Rational.NewRational;
 
 namespace System.Numerics.Rational
 {

@@ -11,11 +11,11 @@ namespace System.Numerics.Rational
   /// Represents an arbitrarily large rational number.
   /// </summary>
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public unsafe readonly partial struct Rational : IComparable<Rational>, IEquatable<Rational>, IFormattable, ISpanFormattable
+  public unsafe readonly partial struct NewRational : IComparable<NewRational>, IEquatable<NewRational>, IFormattable, ISpanFormattable
   {
     private readonly uint[] p;
     /// <summary>
-    /// Converts the numeric value of the current <see cref="Rational"/> instance to its equivalent string representation.
+    /// Converts the numeric value of the current <see cref="NewRational"/> instance to its equivalent string representation.
     /// </summary>
     /// <remarks>
     /// Behavior like <see cref="double.ToString()"/> 
@@ -24,14 +24,14 @@ namespace System.Numerics.Rational
     /// Special: Repetions marked with apostrophe (') like 1/3 as "0.'3" instead of "0.333333…"<br/>
     /// Special: Overflow marked with trailing dots (…) like: "1.234567…"<br/>
     /// </remarks>
-    /// <returns>The string representation of the current <see cref="Rational"/> value.</returns>
+    /// <returns>The string representation of the current <see cref="NewRational"/> value.</returns>
     public override readonly string ToString()
     {      
       Span<char> sp = stackalloc char[64];
       TryFormat(sp, out var ns); return sp.Slice(0, ns).ToString();
     }
     /// <summary>
-    /// Formats this <see cref="Rational"/> instance to
+    /// Formats this <see cref="NewRational"/> instance to
     /// its string representation by using the specified format and culture-specific
     /// format information.
     /// </summary>
@@ -45,7 +45,7 @@ namespace System.Numerics.Rational
     /// </remarks>
     /// <param name="format">A standard or custom numeric format string.</param>
     /// <param name="provider">An object that supplies culture-specific formatting information.</param>
-    /// <returns>The string representation of the current <see cref="Rational"/> value as
+    /// <returns>The string representation of the current <see cref="NewRational"/> value as
     /// specified by the format and provider parameters.</returns>
     public readonly string ToString(string? format, IFormatProvider? provider = default)
     {
@@ -59,10 +59,10 @@ namespace System.Numerics.Rational
       }
     }
     /// <summary>
-    /// Formats this <see cref="Rational"/> instance into a span of characters.
+    /// Formats this <see cref="NewRational"/> instance into a span of characters.
     /// </summary>
     /// <remarks>
-    /// Supported formats see: <see cref="Rational.ToString(string?, IFormatProvider?)"/>.
+    /// Supported formats see: <see cref="NewRational.ToString(string?, IFormatProvider?)"/>.
     /// </remarks>
     /// <param name="destination">The span of characters into which this instance will be written.</param>
     /// <param name="charsWritten">When the method returns, contains the length of the span in number of characters.</param>
@@ -78,7 +78,7 @@ namespace System.Numerics.Rational
         if (char.IsLetter(format[0]) && (format.Length == 1 || (char.IsNumber(format[1]) && int.TryParse(format.Slice(1), out round))))
           switch (fc = char.ToUpper(format[0]))
           {
-            case 'Q': fc = 'R'; digs = 0; round = -1; goto def; // fractions 1/3
+            case 'Q': fc = 'R'; digs = 0; round = -1; goto def; // fractions "1/3"
             case 'R': if (round != -1) digs = round; round = -1; goto def;
             case 'F':
             case 'L': // like F without trailing zeros
@@ -93,8 +93,7 @@ namespace System.Numerics.Rational
           }
         var e = ILog10(this);
         if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
-        else if (e <= 308) return ((double)this).TryFormat(destination, out charsWritten, format, provider);
-        else { }
+        if (e <= 308) return ((double)this).TryFormat(destination, out charsWritten, format, provider);
       }
     def:
       var pb = digs <= 0x8000 ? null : ArrayPool<char>.Shared.Rent(digs);
@@ -171,7 +170,7 @@ namespace System.Numerics.Rational
         if (n <= 0) return; if (n > ws.Length) { ws = default; return; }
         ws.Slice(0, n).Fill(c); ws = ws.Slice(n);
       }
-      static void fra(ref Span<char> ws, Rational.CPU cpu)
+      static void fra(ref Span<char> ws, NewRational.CPU cpu)
       {
         var s = cpu.sign(); int x = 0; cpu.mod(8);
         for (int i = 2; ;)
@@ -187,19 +186,19 @@ namespace System.Numerics.Rational
     }
     /// <summary>
     /// Converts the representation of a number, contained in the specified read-only 
-    /// span of characters to its <see cref="Rational"/> equivalent.
+    /// span of characters to its <see cref="NewRational"/> equivalent.
     /// </summary>
     /// <remarks>
     /// Like <see cref="double.Parse(string)"/> but with unlimited number of digits.<br/>
     /// Additional: Converts Fraction notation like "1/3" or "-123/456"<br/> 
-    /// Additional: Converts Repetions like "0.'3", see: <see cref="Rational.ToString(string?, IFormatProvider?)"/>.<br/>
+    /// Additional: Converts Repetions like "0.'3", see: <see cref="NewRational.ToString(string?, IFormatProvider?)"/>.<br/>
     /// Additional: Accepts prefix "0x" for hexadecimal- and "0b" for binary number representations. 
     /// Ignores spaces, underscores (_) leading dots (…)
     /// </remarks>
     /// <param name="value">A read-only span of characters that contains the number to convert.</param>
     /// <param name="provider">An object that provides culture-specific formatting information about value.</param>
     /// <returns>A value that is equivalent to the number specified in the value parameter.</returns>
-    public static Rational Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
+    public static NewRational Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
     {
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
       int a = 0, ba = 10; for (; a < value.Length - 1;)
@@ -251,7 +250,7 @@ namespace System.Numerics.Rational
       return cpu.pop_rat();
     }
     /// <summary>
-    /// Copies the value of this <see cref="Rational"/> as little-endian twos-complement bytes.<br/>
+    /// Copies the value of this <see cref="NewRational"/> as little-endian twos-complement bytes.<br/>
     /// If the value is zero, outputs one uint whose element is 0x00000000.
     /// </summary>
     /// <remarks>
@@ -275,16 +274,16 @@ namespace System.Numerics.Rational
       }
     }
     /// <summary>
-    /// Initializes a new instance of the <see cref="Rational"/> structure using
+    /// Initializes a new instance of the <see cref="NewRational"/> structure using
     /// the values in a read-only span of bytes.
     /// </summary>
     /// <remarks>
-    /// Reverse function of <see cref="Rational.WriteToBytes"/> 
+    /// Reverse function of <see cref="NewRational.WriteToBytes"/> 
     /// </remarks>
-    /// <param name="value">A read-only span of bytes representing the <see cref="Rational"/> number.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    /// <param name="value">A read-only span of bytes representing the <see cref="NewRational"/> number.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     /// <exception cref="FormatException">Signals an invalid format.</exception>
-    public static Rational ReadFromBytes(ref ReadOnlySpan<byte> value)
+    public static NewRational ReadFromBytes(ref ReadOnlySpan<byte> value)
     {
       if (value.Length < 4) throw new FormatException();
       fixed (byte* s = &value.GetPinnableReference())
@@ -293,17 +292,17 @@ namespace System.Numerics.Rational
         if (value.Length < 16) throw new FormatException();
         var n = len((uint*)s); var p = new uint[n];
         fixed (uint* d = p) copy(d, (uint*)s, n);
-        value = value.Slice((int)n << 2); return new Rational(p);
+        value = value.Slice((int)n << 2); return new NewRational(p);
       }
     }
     /// <summary>
-    /// Returns the hash code for the current <see cref="Rational"/> number.
+    /// Returns the hash code for the current <see cref="NewRational"/> number.
     /// </summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
     public override readonly int GetHashCode()
     {
       if (this.p == null) return 0x00280081;
-      uint h = 0; Debug.Assert((p[0] & F.Norm) != 0);
+      uint h = 0; Debug.Assert((p[0] & F.Norm) == 0);
       fixed (uint* p = this.p)
         for (uint i = 0, n = len(p); i < n; i++)
           h = ((h << 7) | (h >> 25)) ^ p[i]; //todo: check BitOperations.RotateLeft faster than shifts?
@@ -314,25 +313,25 @@ namespace System.Numerics.Rational
     /// </summary>
     /// <param name="obj">The object to compare.</param>
     /// <returns>
-    /// true if the obj argument is a <see cref="Rational"/> number, 
-    /// and its value is equal to the value of the current <see cref="Rational"/> instance; 
+    /// true if the obj argument is a <see cref="NewRational"/> number, 
+    /// and its value is equal to the value of the current <see cref="NewRational"/> instance; 
     /// otherwise, false.
     /// </returns>
     public override readonly bool Equals([NotNullWhen(true)] object? obj)
     {
-      return obj is Rational r && Equals(r);
+      return obj is NewRational r && Equals(r);
     }
     /// <summary>
-    /// Returns a value that indicates whether the current instance and a specified <see cref="Rational"/> number have the same value.
+    /// Returns a value that indicates whether the current instance and a specified <see cref="NewRational"/> number have the same value.
     /// </summary>
     /// <param name="b">The object to compare.</param>
-    /// <returns>true if this <see cref="Rational"/> number and other have the same value; otherwise, false.</returns>
-    public readonly bool Equals(Rational b)
+    /// <returns>true if this <see cref="NewRational"/> number and other have the same value; otherwise, false.</returns>
+    public readonly bool Equals(NewRational b)
     {
       return task_cpu.equ(this, b);
     }
     /// <summary>
-    /// Compares this instance to a second <see cref="Rational"/> and returns an
+    /// Compares this instance to a second <see cref="NewRational"/> and returns an
     /// integer that indicates whether the value of this instance is less than, equal
     /// to, or greater than the value of the specified object.
     /// </summary>
@@ -345,7 +344,7 @@ namespace System.Numerics.Rational
     /// Zero – The current instance equals other.<br/>
     /// Greater than zero – The current instance is greater than other.<br/>
     /// </returns>
-    public readonly int CompareTo(Rational b)
+    public readonly int CompareTo(NewRational b)
     {
       return task_cpu.cmp(this, b);
     }
@@ -374,162 +373,162 @@ namespace System.Numerics.Rational
     }
 
     /// <summary>
-    /// Defines an explicit bit-exact conversion of a <see cref="float"/> value to a <see cref="Rational"/> value.
+    /// Defines an explicit bit-exact conversion of a <see cref="float"/> value to a <see cref="NewRational"/> value.
     /// </summary>
     /// <remarks>
     /// This as alternative to the explicit <see cref="float"/> conversion.<br/>
-    /// <c>var x = new <see cref="Rational"/>(0.1f);</c><br/>
+    /// <c>var x = new <see cref="NewRational"/>(0.1f);</c><br/>
     /// results in <c>0.100000001490116119384765625</c> as bit-exact interpretation.<br/>
     /// where the more common explicit conversion:<br/>
-    /// <c>var x = (<see cref="Rational"/>)0.1f;</c><br/>
+    /// <c>var x = (<see cref="NewRational"/>)0.1f;</c><br/>
     /// results in <c>0.1</c> as this function implicitly rounds to the precision of significant bits of <see cref="float"/>.
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public Rational(float value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public NewRational(float value)
     {
       var cpu = task_cpu; cpu.push(value, true); p = cpu.pop_rat().p;
     }
     /// <summary>
-    /// Defines an explicit bit-exact conversion of a <see cref="double"/> value to a <see cref="Rational"/> value.
+    /// Defines an explicit bit-exact conversion of a <see cref="double"/> value to a <see cref="NewRational"/> value.
     /// </summary>
     /// <remarks>
     /// This as alternative to the explicit <see cref="double"/> conversion.<br/>
-    /// <c>var x = new <see cref="Rational"/>(0.1);</c><br/>
+    /// <c>var x = new <see cref="NewRational"/>(0.1);</c><br/>
     /// results in <c>0.10000000000000000555111512312578…</c> as bit-exact interpretation.<br/>
     /// where the more common explicit conversion:<br/>
-    /// <c>var x = (<see cref="Rational"/>)0.1;</c><br/>
+    /// <c>var x = (<see cref="NewRational"/>)0.1;</c><br/>
     /// results in <c>0.1</c> as this function implicitly rounds to the precision of significant bits of <see cref="double"/>.
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public Rational(double v)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public NewRational(double v)
     {
       var cpu = task_cpu; cpu.push(v, true); p = cpu.pop_rat().p;
     }
 
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="int"/> object to a <see cref="Rational"/> value.
+    /// Defines an implicit conversion of a <see cref="int"/> object to a <see cref="NewRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator Rational(int value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator NewRational(int value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="uint"/> object to a <see cref="Rational"/> value.
+    /// Defines an implicit conversion of a <see cref="uint"/> object to a <see cref="NewRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator Rational(uint value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator NewRational(uint value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="long"/> object to a <see cref="Rational"/> value.
+    /// Defines an implicit conversion of a <see cref="long"/> object to a <see cref="NewRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator Rational(long value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator NewRational(long value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="ulong"/> object to a <see cref="Rational"/> value.
+    /// Defines an implicit conversion of a <see cref="ulong"/> object to a <see cref="NewRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator Rational(ulong value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator NewRational(ulong value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="float"/> object to a <see cref="Rational"/> value.
+    /// Defines an implicit conversion of a <see cref="float"/> object to a <see cref="NewRational"/> value.
     /// </summary>
     /// <remarks>
     /// This function implicitly rounds to the precision of significant bits of <see cref="float"/>.<br/>
     /// This rounding is identical to the <see cref="decimal"/> rounding of <see cref="float"/> values during conversion.
-    /// For a bit-exact conversion see: <see cref="Rational(float)"/>
+    /// For a bit-exact conversion see: <see cref="NewRational(float)"/>
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is rounded to the number specified in the value parameter.</returns>
-    public static implicit operator Rational(System.Single value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is rounded to the number specified in the value parameter.</returns>
+    public static implicit operator NewRational(System.Single value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="double"/> object to a <see cref="Rational"/> value.
+    /// Defines an implicit conversion of a <see cref="double"/> object to a <see cref="NewRational"/> value.
     /// </summary>
     /// <remarks>
     /// This function implicitly rounds to the precision of significant bits of <see cref="double"/>.<br/>
     /// This rounding is identical to the <see cref="decimal"/> rounding of <see cref="double"/> values during conversion.
-    /// For a bit-exact conversion see: <see cref="Rational(System.Double)"/>
+    /// For a bit-exact conversion see: <see cref="NewRational(System.Double)"/>
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is rounded to the number specified in the value parameter.</returns>
-    public static implicit operator Rational(double value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is rounded to the number specified in the value parameter.</returns>
+    public static implicit operator NewRational(double value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="decimal"/> object to a <see cref="Rational"/> value.
+    /// Defines an implicit conversion of a <see cref="decimal"/> object to a <see cref="NewRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator Rational(decimal value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator NewRational(decimal value)
     {
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="BigInteger"/> object to a <see cref="Rational"/> value.
+    /// Defines an implicit conversion of a <see cref="BigInteger"/> object to a <see cref="NewRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="Rational"/>.</param>
-    /// <returns>A <see cref="Rational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator Rational(BigInteger value)
+    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
+    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator NewRational(BigInteger value)
     {
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
 
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="Rational"/> number to a <see cref="int"/> value.
+    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="int"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="int"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="int"/>.</returns>
-    public static explicit operator int(Rational value)
+    public static explicit operator int(NewRational value)
     {
       return (int)(double)value;
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="Rational"/> number to a <see cref="long"/> value.
+    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="long"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="long"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="long"/>.</returns>
-    public static explicit operator long(Rational value)
+    public static explicit operator long(NewRational value)
     {
       return (long)(decimal)value;
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="Rational"/> number to a <see cref="float"/> value.
+    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="float"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="float"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="float"/>.</returns>
-    public static explicit operator float(Rational value)
+    public static explicit operator float(NewRational value)
     {
       return (float)(double)value; //todo: fast float convert
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="Rational"/> number to a <see cref="double"/> value.
+    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="double"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="double"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="double"/>.</returns>
-    public static explicit operator double(Rational value)
+    public static explicit operator double(NewRational value)
     {
       if (value.p == null) return 0;
       fixed (uint* a = value.p)
@@ -547,11 +546,11 @@ namespace System.Numerics.Rational
       }
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="Rational"/> number to a <see cref="decimal"/> value.
+    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="decimal"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="decimal"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="decimal"/>.</returns>
-    public static explicit operator decimal(Rational value)
+    public static explicit operator decimal(NewRational value)
     {
       if (value.p == null) return default;
       fixed (uint* p = value.p)
@@ -569,15 +568,15 @@ namespace System.Numerics.Rational
       }
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="Rational"/> number to a <see cref="BigInteger"/> value.
+    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="BigInteger"/> value.
     /// </summary>
     /// <remarks>
     /// The result is truncated to integer by default.<br/>
-    /// Consider rounding the value before using one of the <see cref="Rational.Round"/> methods.
+    /// Consider rounding the value before using one of the <see cref="NewRational.Round"/> methods.
     /// </remarks>
     /// <param name="value">The value to convert to a <see cref="BigInteger"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="BigInteger"/>.</returns>
-    public static explicit operator BigInteger(Rational value)
+    public static explicit operator BigInteger(NewRational value)
     {
       if (value.p == null) return default;
       fixed (uint* p = value.p)
@@ -590,66 +589,66 @@ namespace System.Numerics.Rational
     }
 
     /// <summary>
-    /// Returns the value of the <see cref="Rational"/> operand. (The sign of the operand is unchanged.)
+    /// Returns the value of the <see cref="NewRational"/> operand. (The sign of the operand is unchanged.)
     /// </summary>
-    /// <param name="a">An <see cref="Rational"/> value.</param>
+    /// <param name="a">An <see cref="NewRational"/> value.</param>
     /// <returns>The value of the value operand.</returns>
-    public static Rational operator +(Rational a)
+    public static NewRational operator +(NewRational a)
     {
       return a;
     }
     /// <summary>
-    /// Negates a specified <see cref="Rational"/> value.
+    /// Negates a specified <see cref="NewRational"/> value.
     /// </summary>
     /// <param name="a">The value to negate.</param>
     /// <returns>The result of the value parameter multiplied by negative one (-1).</returns>
-    public static Rational operator -(Rational a)
+    public static NewRational operator -(NewRational a)
     {
       var cpu = task_cpu; cpu.push(a); cpu.neg(); return cpu.pop_rat();
     }
     /// <summary>
-    /// Adds the values of two specified <see cref="Rational"/> numbers.
+    /// Adds the values of two specified <see cref="NewRational"/> numbers.
     /// </summary>
     /// <param name="a">The first value to add.</param>
     /// <param name="b">The second value to add.</param>
     /// <returns>The sum of a and b.</returns>
-    public static Rational operator +(Rational a, Rational b)
+    public static NewRational operator +(NewRational a, NewRational b)
     {
       var cpu = task_cpu; cpu.add(a, b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Subtracts a <see cref="Rational"/> value from another <see cref="Rational"/> value.
+    /// Subtracts a <see cref="NewRational"/> value from another <see cref="NewRational"/> value.
     /// </summary>
     /// <param name="a">The value to subtract from (the minuend).</param>
     /// <param name="b">The value to subtract (the subtrahend).</param>
     /// <returns>The result of subtracting b from a.</returns>
-    public static Rational operator -(Rational a, Rational b)
+    public static NewRational operator -(NewRational a, NewRational b)
     {
       var cpu = task_cpu; cpu.sub(a, b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Multiplies two specified <see cref="Rational"/> values.
+    /// Multiplies two specified <see cref="NewRational"/> values.
     /// </summary>
     /// <param name="a">The first value to multiply.</param>
     /// <param name="b">The second value to multiply.</param>
     /// <returns>The product of left and right.</returns>
-    public static Rational operator *(Rational a, Rational b)
+    public static NewRational operator *(NewRational a, NewRational b)
     {
       var cpu = task_cpu; cpu.mul(a, b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Divides a specified <see cref="Rational"/> value by another specified <see cref="Rational"/> value.
+    /// Divides a specified <see cref="NewRational"/> value by another specified <see cref="NewRational"/> value.
     /// </summary>
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
     /// <returns>The result of the division.</returns>
     /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
-    public static Rational operator /(Rational a, Rational b)
+    public static NewRational operator /(NewRational a, NewRational b)
     {
       var cpu = task_cpu; cpu.div(a, b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Returns the remainder that results from division with two specified <see cref="Rational"/> values.
+    /// Returns the remainder that results from division with two specified <see cref="NewRational"/> values.
     /// </summary>
     /// <remarks>
     /// For fractions, the same rules apply to modulus as to floating point types such as <see cref="double"/><br/>
@@ -658,7 +657,7 @@ namespace System.Numerics.Rational
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (divisor)</param>
     /// <returns>The remainder that results from the division.</returns>
-    public static Rational operator %(Rational a, Rational b)
+    public static NewRational operator %(NewRational a, NewRational b)
     {
       //return a - Truncate(a / b) * b;
       var cpu = task_cpu; //todo: opt for int
@@ -668,72 +667,72 @@ namespace System.Numerics.Rational
     }
 
     /// <summary>
-    /// Returns a value that indicates whether the values of two <see cref="Rational"/> numbers are equal.
+    /// Returns a value that indicates whether the values of two <see cref="NewRational"/> numbers are equal.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if the left and right parameters have the same value; otherwise, false.</returns>
-    public static bool operator ==(Rational a, Rational b)
+    public static bool operator ==(NewRational a, NewRational b)
     {
       return a.Equals(b);
     }
     /// <summary>
-    /// Returns a value that indicates whether two <see cref="Rational"/> numbers have different values.
+    /// Returns a value that indicates whether two <see cref="NewRational"/> numbers have different values.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left and right are not equal; otherwise, false.</returns>
-    public static bool operator !=(Rational a, Rational b)
+    public static bool operator !=(NewRational a, NewRational b)
     {
       return !a.Equals(b);
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value is
-    /// less than or equal to another <see cref="Rational"/> value.
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
+    /// less than or equal to another <see cref="NewRational"/> value.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than or equal to right; otherwise, false.</returns>
-    public static bool operator <=(Rational a, Rational b)
+    public static bool operator <=(NewRational a, NewRational b)
     {
       return a.CompareTo(b) <= 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value is
-    /// greater than or equal to another <see cref="Rational"/> value.
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
+    /// greater than or equal to another <see cref="NewRational"/> value.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than or equal to right; otherwise, false.</returns>
-    public static bool operator >=(Rational a, Rational b)
+    public static bool operator >=(NewRational a, NewRational b)
     {
       return a.CompareTo(b) >= 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value is
-    /// less than another <see cref="Rational"/> value.
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
+    /// less than another <see cref="NewRational"/> value.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than right; otherwise, false.</returns>
-    public static bool operator <(Rational a, Rational b)
+    public static bool operator <(NewRational a, NewRational b)
     {
       return a.CompareTo(b) < 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value is
-    /// greater than another <see cref="Rational"/> value.
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
+    /// greater than another <see cref="NewRational"/> value.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than right; otherwise, false.</returns>
-    public static bool operator >(Rational a, Rational b)
+    public static bool operator >(NewRational a, NewRational b)
     {
       return a.CompareTo(b) > 0;
     }
 
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value and
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value and
     /// an <see cref="int"/> value are equal.
     /// </summary>
     /// <remarks>
@@ -742,12 +741,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if the left and right parameters have the same value; otherwise, false.</returns>
-    public static bool operator ==(Rational a, int b)
+    public static bool operator ==(NewRational a, int b)
     {
       return a.CompareTo(b) == 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value and
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value and
     /// an <see cref="int"/> value are not equal.
     /// </summary>
     /// <remarks>
@@ -756,12 +755,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left and right are not equal; otherwise, false.</returns>
-    public static bool operator !=(Rational a, int b)
+    public static bool operator !=(NewRational a, int b)
     {
       return a.CompareTo(b) != 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value is
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
     /// less than or equal to an <see cref="int"/> value.
     /// </summary>
     /// <remarks>
@@ -770,12 +769,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than or equal to right; otherwise, false.</returns>
-    public static bool operator <=(Rational a, int b)
+    public static bool operator <=(NewRational a, int b)
     {
       return a.CompareTo(b) <= 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value is
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
     /// greater than or equal to an <see cref="int"/> value.
     /// </summary>
     /// <remarks>
@@ -784,12 +783,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than or equal to right; otherwise, false.</returns>
-    public static bool operator >=(Rational a, int b)
+    public static bool operator >=(NewRational a, int b)
     {
       return a.CompareTo(b) >= 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value is
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
     /// less than an <see cref="int"/> value.
     /// </summary>
     /// <remarks>
@@ -798,12 +797,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than right; otherwise, false.</returns>
-    public static bool operator <(Rational a, int b)
+    public static bool operator <(NewRational a, int b)
     {
       return a.CompareTo(b) < 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="Rational"/> value is
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
     /// greater than an <see cref="int"/> value.
     /// </summary>
     /// <remarks>
@@ -812,25 +811,25 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than right; otherwise, false.</returns>
-    public static bool operator >(Rational a, int b)
+    public static bool operator >(NewRational a, int b)
     {
       return a.CompareTo(b) > 0;
     }
 
     /// <summary>
     /// Gets a <see cref="int"/> number that indicates the sign 
-    /// (negative, positive, or zero) of a <see cref="Rational"/> number.
+    /// (negative, positive, or zero) of a <see cref="NewRational"/> number.
     /// </summary>
-    /// <param name="a">A <see cref="Rational"/> number.</param>
+    /// <param name="a">A <see cref="NewRational"/> number.</param>
     /// <returns>
-    /// A <see cref="int"/> that indicates the sign of the <see cref="Rational"/> number, as
+    /// A <see cref="int"/> that indicates the sign of the <see cref="NewRational"/> number, as
     /// shown in the following table.<br/>
     /// Number – Description<br/>
     /// -1 – The value of the object is negative.<br/>
     ///  0 – The value of the object is 0 (zero).<br/>
     /// +1 – The value of the object is positive.<br/>
     /// </returns>
-    public static int Sign(Rational a)
+    public static int Sign(NewRational a)
     {
       //if (p.p == null) return 0;
       //fixed (uint* u = p.p) return cpu.sig(u);
@@ -839,98 +838,98 @@ namespace System.Numerics.Rational
         (a.p[0] & F.Mask) == 1 && a.p[1] == 0 ? 0 : +1;
     }
     /// <summary>
-    /// Gets the integer base 10 logarithm of a <see cref="Rational"/> number.
+    /// Gets the integer base 10 logarithm of a <see cref="NewRational"/> number.
     /// </summary>
     /// <remarks>
     /// The integer base 10 logarithm is identical with the exponent in the scientific notation of the number.<br/> 
     /// eg. <b>3</b> for 1000 (1E+<b>03</b>) or <b>-3</b> for 0.00123 (1.23E-<b>03</b>)
     /// </remarks>
-    /// <param name="a">A <see cref="Rational"/> number as value.</param>
-    /// <returns>The integer base 10 logarithm of the <see cref="Rational"/> number.</returns>
-    public static int ILog10(Rational a)
+    /// <param name="a">A <see cref="NewRational"/> number as value.</param>
+    /// <returns>The integer base 10 logarithm of the <see cref="NewRational"/> number.</returns>
+    public static int ILog10(NewRational a)
     {
       var cpu = task_cpu; cpu.push(a);
       cpu.tos(default, out _, out var e, out _, false); return e;
     }
     /// <summary>
-    /// Gets the absolute value of a <see cref="Rational"/> number.
+    /// Gets the absolute value of a <see cref="NewRational"/> number.
     /// </summary>
-    /// <param name="a">A <see cref="Rational"/> number as value.</param>
-    /// <returns>The absolute value of the <see cref="Rational"/> number.</returns>
-    public static Rational Abs(Rational a)
+    /// <param name="a">A <see cref="NewRational"/> number as value.</param>
+    /// <returns>The absolute value of the <see cref="NewRational"/> number.</returns>
+    public static NewRational Abs(NewRational a)
     {
       return Sign(a) >= 0 ? a : -a;
     }
     /// <summary>
-    /// Returns the larger of two <see cref="Rational"/> numbers.
+    /// Returns the larger of two <see cref="NewRational"/> numbers.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>The a or b parameter, whichever is larger.</returns>
-    public static Rational Min(Rational a, Rational b)
+    public static NewRational Min(NewRational a, NewRational b)
     {
       return a.CompareTo(b) <= 0 ? a : b;
     }
     /// <summary>
-    /// Returns the smaller of two <see cref="Rational"/> numbers.
+    /// Returns the smaller of two <see cref="NewRational"/> numbers.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>The a or b parameter, whichever is smaller.</returns>
-    public static Rational Max(Rational a, Rational b)
+    public static NewRational Max(NewRational a, NewRational b)
     {
       return a.CompareTo(b) >= 0 ? a : b;
     }
     /// <summary>
-    /// Calculates the integral part of the <see cref="Rational"/> number.
+    /// Calculates the integral part of the <see cref="NewRational"/> number.
     /// </summary>
-    /// <param name="a">A <see cref="Rational"/> number as value to truncate.</param>
+    /// <param name="a">A <see cref="NewRational"/> number as value to truncate.</param>
     /// <returns>
-    /// The integral part of the <see cref="Rational"/> number.<br/> 
+    /// The integral part of the <see cref="NewRational"/> number.<br/> 
     /// This is the number that remains after any fractional digits have been discarded.
     /// </returns>
-    public static Rational Trunc(Rational a)
+    public static NewRational Trunc(NewRational a)
     {
       var cpu = task_cpu;
       cpu.push(a); cpu.mod(); cpu.swp(); cpu.pop();
       return cpu.pop_rat();
     }
     /// <summary>
-    /// Rounds a <see cref="Rational"/> number to the nearest integral value
+    /// Rounds a <see cref="NewRational"/> number to the nearest integral value
     /// and rounds midpoint values to the nearest even number.
     /// </summary>
-    /// <param name="a">A <see cref="Rational"/> number to be rounded.</param>
+    /// <param name="a">A <see cref="NewRational"/> number to be rounded.</param>
     /// <returns></returns>
-    public static Rational Round(Rational a)
+    public static NewRational Round(NewRational a)
     {
       var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0); return cpu.pop_rat();
     }
     /// <summary>
-    /// Rounds a <see cref="Rational"/> number to a specified number of fractional
+    /// Rounds a <see cref="NewRational"/> number to a specified number of fractional
     /// digits, and rounds midpoint values to the nearest even number. 
     /// </summary>
-    /// <param name="a">A <see cref="Rational"/> number to be rounded.</param>
+    /// <param name="a">A <see cref="NewRational"/> number to be rounded.</param>
     /// <param name="digits">The number of fractional digits in the return value.</param>
-    /// <returns>The <see cref="Rational"/> number nearest to value that contains a number of fractional digits equal to digits.</returns>
-    public static Rational Round(Rational a, int digits)
+    /// <returns>The <see cref="NewRational"/> number nearest to value that contains a number of fractional digits equal to digits.</returns>
+    public static NewRational Round(NewRational a, int digits)
     {
       //var e = Pow10(digits); return Round(a * e) / e;
       var cpu = task_cpu; cpu.push(a);
       cpu.rnd(digits); return cpu.pop_rat();
     }
     /// <summary>
-    /// Rounds a <see cref="Rational"/> number to a specified number of fractional digits 
+    /// Rounds a <see cref="NewRational"/> number to a specified number of fractional digits 
     /// using the specified rounding convention.
     /// </summary>
-    /// <param name="a">A <see cref="Rational"/> number to be rounded.</param>
+    /// <param name="a">A <see cref="NewRational"/> number to be rounded.</param>
     /// <param name="digits">The number of decimal places in the return value.</param>
     /// <param name="mode">One of the enumeration values that specifies which rounding strategy to use.</param>
     /// <returns>
-    /// The <see cref="Rational"/> number with decimals fractional digits that the value is rounded to.<br/> 
+    /// The <see cref="NewRational"/> number with decimals fractional digits that the value is rounded to.<br/> 
     /// If the number has fewer fractional digits than decimals, the number is returned unchanged.
     /// </returns>
-    public static Rational Round(Rational a, int digits, MidpointRounding mode)
+    public static NewRational Round(NewRational a, int digits, MidpointRounding mode)
     {
       return Round(a, digits); //todo: MidpointRounding 
     }
@@ -939,18 +938,18 @@ namespace System.Numerics.Rational
     /// </summary>
     /// <param name="a">A <see cref="int"/> number to be raised to a power.</param>
     /// <param name="b">A <see cref="int"/> number that specifies a power.</param>
-    /// <returns>The <see cref="Rational"/> number a raised to the power b.</returns>
-    public static Rational Pow(int a, int b)
+    /// <returns>The <see cref="NewRational"/> number a raised to the power b.</returns>
+    public static NewRational Pow(int a, int b)
     {
       var cpu = task_cpu; cpu.pow(a, b); return cpu.pop_rat();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.
     /// </summary>
-    /// <param name="a">A <see cref="Rational "/> number to be raised to a power.</param>
+    /// <param name="a">A <see cref="NewRational "/> number to be raised to a power.</param>
     /// <param name="b">A <see cref="int"/> number that specifies a power.</param>
-    /// <returns>The <see cref="Rational"/> number a raised to the power b.</returns>
-    public static Rational Pow(Rational a, int b)
+    /// <returns>The <see cref="NewRational"/> number a raised to the power b.</returns>
+    public static NewRational Pow(NewRational a, int b)
     {
       var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.pop_rat();
     }
@@ -1000,10 +999,10 @@ namespace System.Numerics.Rational
         fixed (uint* p = rent(4)) setz(p);
       }
       /// <summary>
-      /// Pushes the supplied <see cref="Rational"/> value onto the stack.
+      /// Pushes the supplied <see cref="NewRational"/> value onto the stack.
       /// </summary>
       /// <param name="v">The value to push.</param>
-      public void push(Rational v)
+      public void push(NewRational v)
       {
         if (v.p == null) { push(); return; }
         fixed (uint* a = v.p)
@@ -1020,7 +1019,7 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = rent(4))
         {
-          p[0] = (v < 0 ? F.Sign : 0) | (F.Norm | 1);
+          p[0] = (v < 0 ? F.Sign : 0) | 1;
           p[1] = unchecked((uint)(v < 0 ? -v : v)); *(ulong*)(p + 2) = 0x100000001;
         }
       }
@@ -1041,8 +1040,8 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = rent(4))
         {
-          p[0] = F.Norm | 1;
-          p[1] = v; *(ulong*)(p + 2) = 0x100000001;
+          p[0] = 1; p[1] = v; 
+          *(ulong*)(p + 2) = 0x100000001;
         }
       }
       /// <summary>
@@ -1054,7 +1053,7 @@ namespace System.Numerics.Rational
         var u = unchecked((int)v); if (u == v) { push(u); return; }
         fixed (uint* p = rent(5))
         {
-          p[0] = (v < 0 ? F.Sign : 0) | F.Norm | 2;
+          p[0] = (v < 0 ? F.Sign : 0) | 2;
           *(ulong*)(p + 1) = unchecked((ulong)(v < 0 ? -v : v));
           *(ulong*)(p + 3) = 0x100000001;
         }
@@ -1068,7 +1067,7 @@ namespace System.Numerics.Rational
         var u = unchecked((uint)v); if (u == v) { push(u); return; }
         fixed (uint* p = rent(5))
         {
-          p[0] = F.Norm | 2;
+          p[0] = 2;
           *(ulong*)(p + 1) = v;
           *(ulong*)(p + 3) = 0x100000001;
         }
@@ -1079,7 +1078,7 @@ namespace System.Numerics.Rational
       /// <remarks>
       /// Rounds the value implicit to 7 digits as the <see cref="float"/> format has
       /// only 7 digits of precision.<br/> 
-      /// see: <see cref="Rational(float)"/>
+      /// see: <see cref="NewRational(float)"/>
       /// </remarks>
       /// <param name="v">The value to push.</param>
       public void push(float v)
@@ -1090,7 +1089,7 @@ namespace System.Numerics.Rational
         var d = MathF.Abs(v) * Math.Pow(10, p); //-32..44
         if (d < 1e6) { d *= 10; p++; }
         var m = (uint)Math.Round(d);
-        push(m); pow(10, p); div(); if (v < 0) neg(); //norm();
+        push(m); pow(10, p); div(); if (v < 0) neg(); 
       }
       /// <summary>
       /// Pushes the supplied <see cref="double"/> value onto the stack.
@@ -1098,7 +1097,7 @@ namespace System.Numerics.Rational
       /// <remarks>
       /// Rounds the value implicit to 15 digits as the <see cref="double"/> format has
       /// only 15 digits of precision.<br/> 
-      /// see: <see cref="Rational.Rational(double)"/>
+      /// see: <see cref="NewRational.NewRational(double)"/>
       /// </remarks>
       /// <param name="v">The value to push.</param>
       public void push(double v)
@@ -1116,7 +1115,7 @@ namespace System.Numerics.Rational
       /// using a bit-exact conversion without rounding.
       /// </summary>                                    
       /// <remarks>
-      /// see: <see cref="Rational.Rational(double)"/>
+      /// see: <see cref="NewRational.NewRational(double)"/>
       /// </remarks>
       /// <param name="v">The value to push.</param>
       /// <param name="exact">Should be true.</param>
@@ -1132,7 +1131,7 @@ namespace System.Numerics.Rational
           if (e == -1075) { if ((p[2] &= 0xfffff) == 0) if (p[p[0] = 1] == 0) { setz(p); return; } e++; } // denormalized
           if (e > 0) shl(p, e); var q = p + (p[0] + 1);
           *(ulong*)q = 0x100000001; if (e < 0) shl(q, -e);
-          p[0] |= unchecked((uint)h) & F.Sign;
+          p[0] |= (unchecked((uint)h) & F.Sign) | F.Norm;
         }
       }
       /// <summary>
@@ -1146,13 +1145,13 @@ namespace System.Numerics.Rational
         {
           *(ulong*)&p[1] = *(ulong*)&b[2]; p[3] = b[1]; p[0] = p[3] != 0 ? 3u : p[2] != 0 ? 2u : 1;
           var s = p + (p[0] + 1);
-          if (e == 0) { *(ulong*)s = 0x100000001; p[0] |= F.Norm; }
+          if (e == 0) { *(ulong*)s = 0x100000001; }
           else
           {
             var t = (ulong*)(s + 1); var h = e < 19 ? e : 19;
             t[0] = (ulong)Math.Pow(10, h);
             t[1] = h == e ? 0 : Math.BigMul(t[0], (ulong)Math.Pow(10, e - h), out t[0]);
-            s[0] = s[3] != 0 ? 3u : s[2] != 0 ? 2u : 1;
+            s[0] = s[3] != 0 ? 3u : s[2] != 0 ? 2u : 1; p[0] |= F.Norm;
           }
           p[0] |= f & F.Sign;
         }
@@ -1168,14 +1167,14 @@ namespace System.Numerics.Rational
         fixed (uint* p = rent(unchecked((uint)(c + 3))))
         {
           p[c] = 0; v.TryWriteBytes(new Span<byte>(p + 1, n), out _, true); Debug.Assert(p[c] != 0);
-          p[0] = unchecked((uint)c) | (si < 0 ? F.Sign : 0) | F.Norm;
+          p[0] = unchecked((uint)c) | (si < 0 ? F.Sign : 0);
           *(ulong*)(p + c + 1) = 0x100000001;
         }
       }
 
       /// <summary>
       /// Converts the value at absolute position i on stack to a 
-      /// always normalized <see cref="Rational"/> number and returns it.
+      /// always normalized <see cref="NewRational"/> number and returns it.
       /// </summary>
       /// <remarks>
       /// This function is helpful to read out vectors and matrices efficently.<br/>
@@ -1183,15 +1182,15 @@ namespace System.Numerics.Rational
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
       /// <param name="v">Returns the value.</param>
-      public void get(uint i, out Rational v)
+      public void get(uint i, out NewRational v)
       {
         fixed (uint* p = this.p[i])
         {
           if (isz(p)) { v = default; return; }
-          if ((p[0] & F.Norm) == 0) norm(p);
+          if ((p[0] & F.Norm) != 0) norm(p);
           var n = len(p); var a = new uint[n];
           fixed (uint* s = a) copy(s, p, n);
-          v = new Rational(a);
+          v = new NewRational(a);
         }
       }
       /// <summary>
@@ -1206,7 +1205,7 @@ namespace System.Numerics.Rational
       /// <param name="v">Returns the value.</param>
       public void get(uint i, out double v)
       {
-        v = (double)new Rational(p[i]);
+        v = (double)new NewRational(p[i]);
       }
       /// <summary>
       /// Converts the value at absolute position i on stack to a 
@@ -1220,17 +1219,17 @@ namespace System.Numerics.Rational
       /// <param name="v">Returns the value.</param>
       public void get(uint i, out float v)
       {
-        v = (float)new Rational(p[i]);
+        v = (float)new NewRational(p[i]);
       }
 
       /// <summary>
       /// Removes the value currently on top of the stack, 
-      /// convert and returns it as always normalized <see cref="Rational"/> number.<br/>
+      /// convert and returns it as always normalized <see cref="NewRational"/> number.<br/>
       /// </summary>
-      /// <returns>A always normalized <see cref="Rational"/> number.</returns>
-      public Rational pop_rat()
+      /// <returns>A always normalized <see cref="NewRational"/> number.</returns>
+      public NewRational pop_rat()
       {
-        get(unchecked((uint)(i - 1)), out Rational t); pop(); return t;
+        get(unchecked((uint)(i - 1)), out NewRational t); pop(); return t;
       }
       /// <summary>
       /// Removes the value currently on top of the stack, 
@@ -1437,8 +1436,8 @@ namespace System.Numerics.Rational
       /// Adds value a and the value on top of the stack.<br/>
       /// Replaces the value on top of the stack with the result.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> value.</param>
-      public void add(Rational a)
+      /// <param name="a">A <see cref="NewRational"/> value.</param>
+      public void add(NewRational a)
       {
         if (a.p == null) return;
         fixed (uint* u = p[i - 1], v = a.p) add(u, v, false);
@@ -1447,9 +1446,9 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Adds the values a and b and pushes the result on the stack.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> as first value.</param>
-      /// <param name="b">A <see cref="Rational"/> as second value.</param>
-      public void add(Rational a, Rational b)
+      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
+      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
+      public void add(NewRational a, NewRational b)
       {
         if (a.p == null) { push(b); return; }
         if (b.p == null) { push(a); return; }
@@ -1495,9 +1494,9 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Subtracts the values a and b and pushes the result on the stack.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> as first value.</param>
-      /// <param name="b">A <see cref="Rational"/> as second value.</param>
-      public void sub(Rational a, Rational b)
+      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
+      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
+      public void sub(NewRational a, NewRational b)
       {
         if (a.p == null) { push(b); neg(); return; }
         if (b.p == null) { push(a); return; }
@@ -1541,8 +1540,8 @@ namespace System.Numerics.Rational
       /// Multiplies value a and the value on top of the stack.<br/>
       /// Replaces the value on top of the stack with the result.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> value.</param>
-      public void mul(Rational a)
+      /// <param name="a">A <see cref="NewRational"/> value.</param>
+      public void mul(NewRational a)
       {
         if (a.p == null) return;
         fixed (uint* u = p[i - 1], v = a.p) mul(u, v, false);
@@ -1555,9 +1554,9 @@ namespace System.Numerics.Rational
       /// <remarks>
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
-      /// <param name="a">A <see cref="Rational"/> as first value.</param>
+      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
       /// <param name="b">Absolute index of a stack entry as second value.</param>
-      public void mul(Rational a, uint b)
+      public void mul(NewRational a, uint b)
       {
         if (a.p == null) { push(); return; }
         fixed (uint* u = a.p, v = p[b]) mul(u, v, false);
@@ -1565,9 +1564,9 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Multiplies the values a and b and pushes the result on the stack.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> as first value.</param>
-      /// <param name="b">A <see cref="Rational"/> as second value.</param>
-      public void mul(Rational a, Rational b)
+      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
+      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
+      public void mul(NewRational a, NewRational b)
       {
         if (a.p == null) { push(); return; }
         if (b.p == null) { push(); return; }
@@ -1612,9 +1611,9 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Divides the values a and b and pushes the result on the stack.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> as first value.</param>
-      /// <param name="b">A <see cref="Rational"/> as second value.</param>
-      public void div(Rational a, Rational b)
+      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
+      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
+      public void div(NewRational a, NewRational b)
       {
         if (b.p == null) { throw new DivideByZeroException(); }
         if (a.p == null) { push(); return; }
@@ -1624,9 +1623,9 @@ namespace System.Numerics.Rational
       /// Divides the value a and the value at index b relative to the top of the stack.
       /// Pushes the result on top of the stack.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> as first value.</param>
+      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
       /// <param name="b">A relative index of a stack entry.</param>
-      public void div(Rational a, int i)
+      public void div(NewRational a, int i)
       {
         if (a.p == null) { push(); return; }
         fixed (uint* u = a.p, v = p[this.i - 1 - i]) mul(u, v, true);
@@ -1720,7 +1719,7 @@ namespace System.Numerics.Rational
           }
           if (*(ulong*)v == 1) h = 0;
           *(ulong*)(u + u[0] + 1) = *(ulong*)(v + v[0] + 1) = 0x100000001;
-          v[0] |= (h & F.Sign) | F.Norm; u[0] |= F.Norm;
+          v[0] |= (h & F.Sign);
         }
       }
       /// <summary>
@@ -1866,16 +1865,16 @@ namespace System.Numerics.Rational
         return cmp((uint)(this.i - 1), b);
       }
       /// <summary>
-      /// Compares the <see cref="Rational"/> value a with the <see cref="Rational"/> value b.
+      /// Compares the <see cref="NewRational"/> value a with the <see cref="NewRational"/> value b.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> as first value.</param>
-      /// <param name="b">A <see cref="Rational"/> as second value.</param>
+      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
+      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
       /// <returns>
       /// -1 – a is less than b.<br/>
       /// 0 – a is equal b.<br/>
       /// 1 – a is greater than b.<br/>
       /// </returns>
-      public int cmp(Rational a, Rational b)
+      public int cmp(NewRational a, NewRational b)
       {
         if (a.p == b.p) return 0; //sort's
         fixed (uint* u = a.p, v = b.p)
@@ -1886,33 +1885,33 @@ namespace System.Numerics.Rational
         }
       }
       /// <summary>
-      /// Compares the value on top of the stack a with the <see cref="Rational"/> value b.
+      /// Compares the value on top of the stack a with the <see cref="NewRational"/> value b.
       /// </summary>
-      /// <param name="b">A <see cref="Rational"/> as second value.</param>
+      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
       /// <returns>
       /// -1 – the value on top of the stack is less than b.<br/>
       /// 0 – the value on top of the stack is equal b.<br/>
       /// 1 – the value on top of the stack is greater than b.<br/>
       /// </returns>
-      public int cmp(Rational b)
+      public int cmp(NewRational b)
       {
         if (b.p == null) return sign();
         fixed (uint* u = p[this.i - 1], v = b.p) return cmp(u, v);
       }
       /// <summary>
-      /// Compares the <see cref="Rational"/> value a with the <see cref="Rational"/> value b for equality.
+      /// Compares the <see cref="NewRational"/> value a with the <see cref="NewRational"/> value b for equality.
       /// </summary>
-      /// <param name="a">A <see cref="Rational"/> value as first value.</param>
-      /// <param name="b">A <see cref="Rational"/> value as second value.</param>
+      /// <param name="a">A <see cref="NewRational"/> value as first value.</param>
+      /// <param name="b">A <see cref="NewRational"/> value as second value.</param>
       /// <returns>true if the values are equal, otherwise false.</returns>
-      public bool equ(Rational a, Rational b)
+      public bool equ(NewRational a, NewRational b)
       {
-        if (a.p == b.p) return true; //if (a.p == null || b.p == null) return Sign(a) == Sign(b); // false;
+        if (a.p == b.p) return true; 
         fixed (uint* u = a.p, v = b.p)
         {
           if (u == null) return isz(v);
           if (v == null) return isz(u);
-          if ((u[0] & v[0] & F.Norm) != 0)
+          if (((u[0] | v[0]) & F.Norm) == 0)
           {
             var n = len(u); // for (uint i = 0; i < n; i++) if (u[i] != v[i]) return false;
             for (uint i = 0, c = n >> 1; i < c; i++)
@@ -1935,27 +1934,27 @@ namespace System.Numerics.Rational
       /// <returns>true if the values are equal, otherwise false.</returns>
       public bool equ(uint a, uint b)
       {
-        return equ(new Rational(p[a]), new Rational(p[b]));
+        return equ(new NewRational(p[a]), new NewRational(p[b]));
       }
       /// <summary>
-      /// Compares the value at index a as absolute index in the stack with the <see cref="Rational"/> value b for equality.
+      /// Compares the value at index a as absolute index in the stack with the <see cref="NewRational"/> value b for equality.
       /// </summary>
       /// <remarks>
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
       /// <param name="a">Absolute index of a stack entry.</param>
-      /// <param name="b">A <see cref="Rational"/> value as second value.</param>
+      /// <param name="b">A <see cref="NewRational"/> value as second value.</param>
       /// <returns>true if the values are equal, otherwise false.</returns>
-      public bool equ(uint a, Rational b)
+      public bool equ(uint a, NewRational b)
       {
-        return equ(new Rational(p[a]), b);
+        return equ(new NewRational(p[a]), b);
       }
       /// <summary>
       /// Normalize the value at the specified index relative to the top of the stack.
       /// </summary>
       /// <remarks>
       /// Normalization works automatically, 
-      /// on demand or for the final results returning as <see cref="Rational"/>.<br/>
+      /// on demand or for the final results returning as <see cref="NewRational"/>.<br/>
       /// In the case of complex calculations on stack, 
       /// it makes sense to normalize intermediate results manually,
       /// as this can speed up further calculations.<br/>
@@ -1966,23 +1965,23 @@ namespace System.Numerics.Rational
       public void norm(int i = 0)
       {
         fixed (uint* u = p[this.i - 1 - i])
-          if ((u[0] & F.Norm) == 0) norm(u);
+          if ((u[0] & F.Norm) != 0) norm(u);
       }
       /// <summary>
       /// Calculates a hash value for the value at b as absolute index in the stack.
       /// </summary>
       /// <remarks>
-      /// The function is helpful for comparsions and to build dictionarys without creaton of <see cref="Rational"/> objects.<br/>
+      /// The function is helpful for comparsions and to build dictionarys without creaton of <see cref="NewRational"/> objects.<br/>
       /// To get meaningful hash values the function forces normalizations what can be time critical.<br/>
-      /// The hash value returned is identical with the hash value returned from <see cref="Rational.GetHashCode"/> for same values.<br/>
+      /// The hash value returned is identical with the hash value returned from <see cref="NewRational.GetHashCode"/> for same values.<br/>
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
       /// <param name="b">Absolute index of a stack entry.</param>
       /// <returns>A <see cref="uint"/> value as hash value.</returns>
       public uint hash(uint i)
       {
-        var p = this.p[i]; if ((p[0] & F.Norm) == 0) fixed (uint* u = p) norm(u);
-        return unchecked((uint)new Rational(p).GetHashCode());
+        var p = this.p[i]; if ((p[0] & F.Norm) != 0) fixed (uint* u = p) norm(u);
+        return unchecked((uint)new NewRational(p).GetHashCode());
       }
       /// <summary>
       /// Returns the MSB (most significant bit) of the numerator of the value on top of the stack.
@@ -2113,12 +2112,11 @@ namespace System.Numerics.Rational
             sub(s, t, w);
           }
           if (*(ulong*)w == 1) { setz(w); return; }
-          mul(ud, vd, w + (w[0] + 1)); w[0] |= sa;
+          mul(ud, vd, w + (w[0] + 1)); w[0] |= sa | F.Norm;
         }
       }
       void mul(uint* u, uint* v, bool inv)
       {
-        //Debug.Assert(!(inv && isz(v))); //todo: remove
         var l = len(u) + len(v);
         fixed (uint* w = rent(l))
         {
@@ -2126,7 +2124,7 @@ namespace System.Numerics.Rational
           var t = (u[0] & F.Mask) + 1;
           mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1) { setz(w); return; }
           mul(u + t, inv ? v : v + s, w + (w[0] + 1));
-          w[0] |= (u[0] ^ v[0]) & F.Sign;
+          w[0] |= ((u[0] ^ v[0]) & F.Sign) | F.Norm;
         }
       }
       int cmp(uint* a, uint* b)
@@ -2144,19 +2142,19 @@ namespace System.Numerics.Rational
       }
       void norm(uint* p)
       {
-        Debug.Assert((p[0] & F.Norm) == 0);
+        Debug.Assert((p[0] & F.Norm) != 0);
         var d = p + ((p[0] & F.Mask) + 1);
-        if (*(ulong*)d == 0x100000001) { p[0] |= F.Norm; return; }
+        if (*(ulong*)d == 0x100000001) { p[0] &= ~F.Norm; return; }
         var l = len(p);
         fixed (uint* s = rent(l << 1))
         {
           copy(s, p, l); s[0] &= F.Mask;
           var e = gcd(s, s + (s[0] + 1));
-          if (*(ulong*)e == 0x100000001) { p[0] |= F.Norm; pop(); return; }
+          if (*(ulong*)e == 0x100000001) { p[0] &= ~F.Norm; pop(); return; }
           var t = s + l; var h = p[0];
           copy(t, p, l); t[0] &= F.Mask;
           d = t + (t[0] + 1); div(t, e, p); div(d, e, p + (p[0] + 1));
-          p[0] |= (h & F.Sign) | F.Norm; pop();
+          p[0] |= (h & F.Sign); pop();
         }
       }
 
@@ -2392,13 +2390,13 @@ namespace System.Numerics.Rational
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static void setz(uint* p)
       {
-        *(ulong*)p = F.Norm | 1; *(ulong*)(p + 2) = 0x100000001;
+        *(ulong*)p = 1; *(ulong*)(p + 2) = 0x100000001;
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static bool isz(uint* p)
       {
-        Debug.Assert((*(ulong*)p & ~(ulong)(F.Norm | F.Sign)) != 1 || *(ulong*)p == (F.Norm | 1));
-        return *(ulong*)p == (F.Norm | 1);
+        Debug.Assert((*(ulong*)p & ~(ulong)(F.Norm | F.Sign)) != 1 || *(ulong*)p == 1);
+        return *(ulong*)p == 1;
         //return (*(ulong*)p & ~(ulong)F.Norm) == 1;
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -2423,7 +2421,7 @@ namespace System.Numerics.Rational
 
     #region private 
     [ThreadStatic] private static CPU? _cpu;
-    Rational(uint[] p) { this.p = p; }
+    NewRational(uint[] p) { this.p = p; }
     struct F { internal const uint Mask = 0x0fffffff, Sign = 0x80000000, Norm = 0x40000000; }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static uint len(uint* p)
@@ -2445,13 +2443,13 @@ namespace System.Numerics.Rational
       {
         CPU p; public DebugView(CPU p) { this.p = p; }
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-        public Rational[] Items
+        public NewRational[] Items
         {
           get
           {
-            var a = new Rational[p.i];
+            var a = new NewRational[p.i];
             for (int i = 0; i < p.i; i++)
-              a[i] = new Rational(p.p[p.i - 1 - i]);
+              a[i] = new NewRational(p.p[p.i - 1 - i]);
             return a;
           }
         }

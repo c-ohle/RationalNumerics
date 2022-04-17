@@ -7,1275 +7,1275 @@ references:
   commentId: N:System.Numerics.Rational
   fullName: System.Numerics.Rational
   nameWithType: System.Numerics.Rational
-- uid: System.Numerics.Rational.Rational
-  name: Rational
-  href: api/System.Numerics.Rational.Rational.html
-  commentId: T:System.Numerics.Rational.Rational
-  fullName: System.Numerics.Rational.Rational
-  nameWithType: Rational
-- uid: System.Numerics.Rational.Rational.#ctor(System.Double)
-  name: Rational(Double)
-  href: api/System.Numerics.Rational.Rational.-ctor.html#System_Numerics_Rational_Rational__ctor_System_Double_
-  commentId: M:System.Numerics.Rational.Rational.#ctor(System.Double)
-  fullName: System.Numerics.Rational.Rational.Rational(System.Double)
-  nameWithType: Rational.Rational(Double)
-- uid: System.Numerics.Rational.Rational.#ctor(System.Single)
-  name: Rational(Single)
-  href: api/System.Numerics.Rational.Rational.-ctor.html#System_Numerics_Rational_Rational__ctor_System_Single_
-  commentId: M:System.Numerics.Rational.Rational.#ctor(System.Single)
-  fullName: System.Numerics.Rational.Rational.Rational(System.Single)
-  nameWithType: Rational.Rational(Single)
-- uid: System.Numerics.Rational.Rational.#ctor*
-  name: Rational
-  href: api/System.Numerics.Rational.Rational.-ctor.html
-  commentId: Overload:System.Numerics.Rational.Rational.#ctor
-  fullName: System.Numerics.Rational.Rational.Rational
-  nameWithType: Rational.Rational
-- uid: System.Numerics.Rational.Rational.Abs(System.Numerics.Rational.Rational)
-  name: Abs(Rational)
-  href: api/System.Numerics.Rational.Rational.Abs.html#System_Numerics_Rational_Rational_Abs_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.Abs(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Abs(System.Numerics.Rational.Rational)
-  nameWithType: Rational.Abs(Rational)
-- uid: System.Numerics.Rational.Rational.Abs*
+- uid: System.Numerics.Rational.NewRational
+  name: NewRational
+  href: api/System.Numerics.Rational.NewRational.html
+  commentId: T:System.Numerics.Rational.NewRational
+  fullName: System.Numerics.Rational.NewRational
+  nameWithType: NewRational
+- uid: System.Numerics.Rational.NewRational.#ctor(System.Double)
+  name: NewRational(Double)
+  href: api/System.Numerics.Rational.NewRational.-ctor.html#System_Numerics_Rational_NewRational__ctor_System_Double_
+  commentId: M:System.Numerics.Rational.NewRational.#ctor(System.Double)
+  fullName: System.Numerics.Rational.NewRational.NewRational(System.Double)
+  nameWithType: NewRational.NewRational(Double)
+- uid: System.Numerics.Rational.NewRational.#ctor(System.Single)
+  name: NewRational(Single)
+  href: api/System.Numerics.Rational.NewRational.-ctor.html#System_Numerics_Rational_NewRational__ctor_System_Single_
+  commentId: M:System.Numerics.Rational.NewRational.#ctor(System.Single)
+  fullName: System.Numerics.Rational.NewRational.NewRational(System.Single)
+  nameWithType: NewRational.NewRational(Single)
+- uid: System.Numerics.Rational.NewRational.#ctor*
+  name: NewRational
+  href: api/System.Numerics.Rational.NewRational.-ctor.html
+  commentId: Overload:System.Numerics.Rational.NewRational.#ctor
+  fullName: System.Numerics.Rational.NewRational.NewRational
+  nameWithType: NewRational.NewRational
+- uid: System.Numerics.Rational.NewRational.Abs(System.Numerics.Rational.NewRational)
+  name: Abs(NewRational)
+  href: api/System.Numerics.Rational.NewRational.Abs.html#System_Numerics_Rational_NewRational_Abs_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Abs(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Abs(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Abs(NewRational)
+- uid: System.Numerics.Rational.NewRational.Abs*
   name: Abs
-  href: api/System.Numerics.Rational.Rational.Abs.html
-  commentId: Overload:System.Numerics.Rational.Rational.Abs
-  fullName: System.Numerics.Rational.Rational.Abs
-  nameWithType: Rational.Abs
-- uid: System.Numerics.Rational.Rational.CompareTo(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.Abs.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Abs
+  fullName: System.Numerics.Rational.NewRational.Abs
+  nameWithType: NewRational.Abs
+- uid: System.Numerics.Rational.NewRational.CompareTo(System.Int32)
   name: CompareTo(Int32)
-  href: api/System.Numerics.Rational.Rational.CompareTo.html#System_Numerics_Rational_Rational_CompareTo_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CompareTo(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CompareTo(System.Int32)
-  nameWithType: Rational.CompareTo(Int32)
-- uid: System.Numerics.Rational.Rational.CompareTo(System.Numerics.Rational.Rational)
-  name: CompareTo(Rational)
-  href: api/System.Numerics.Rational.Rational.CompareTo.html#System_Numerics_Rational_Rational_CompareTo_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CompareTo(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CompareTo(System.Numerics.Rational.Rational)
-  nameWithType: Rational.CompareTo(Rational)
-- uid: System.Numerics.Rational.Rational.CompareTo*
+  href: api/System.Numerics.Rational.NewRational.CompareTo.html#System_Numerics_Rational_NewRational_CompareTo_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CompareTo(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CompareTo(System.Int32)
+  nameWithType: NewRational.CompareTo(Int32)
+- uid: System.Numerics.Rational.NewRational.CompareTo(System.Numerics.Rational.NewRational)
+  name: CompareTo(NewRational)
+  href: api/System.Numerics.Rational.NewRational.CompareTo.html#System_Numerics_Rational_NewRational_CompareTo_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CompareTo(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CompareTo(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CompareTo(NewRational)
+- uid: System.Numerics.Rational.NewRational.CompareTo*
   name: CompareTo
-  href: api/System.Numerics.Rational.Rational.CompareTo.html
-  commentId: Overload:System.Numerics.Rational.Rational.CompareTo
-  fullName: System.Numerics.Rational.Rational.CompareTo
-  nameWithType: Rational.CompareTo
-- uid: System.Numerics.Rational.Rational.CPU
-  name: Rational.CPU
-  href: api/System.Numerics.Rational.Rational.CPU.html
-  commentId: T:System.Numerics.Rational.Rational.CPU
-  fullName: System.Numerics.Rational.Rational.CPU
-  nameWithType: Rational.CPU
-- uid: System.Numerics.Rational.Rational.CPU.#ctor(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CompareTo.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CompareTo
+  fullName: System.Numerics.Rational.NewRational.CompareTo
+  nameWithType: NewRational.CompareTo
+- uid: System.Numerics.Rational.NewRational.CPU
+  name: NewRational.CPU
+  href: api/System.Numerics.Rational.NewRational.CPU.html
+  commentId: T:System.Numerics.Rational.NewRational.CPU
+  fullName: System.Numerics.Rational.NewRational.CPU
+  nameWithType: NewRational.CPU
+- uid: System.Numerics.Rational.NewRational.CPU.#ctor(System.UInt32)
   name: CPU(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.-ctor.html#System_Numerics_Rational_Rational_CPU__ctor_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.#ctor(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.CPU(System.UInt32)
-  nameWithType: Rational.CPU.CPU(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.#ctor*
+  href: api/System.Numerics.Rational.NewRational.CPU.-ctor.html#System_Numerics_Rational_NewRational_CPU__ctor_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.#ctor(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.CPU(System.UInt32)
+  nameWithType: NewRational.CPU.CPU(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.#ctor*
   name: CPU
-  href: api/System.Numerics.Rational.Rational.CPU.-ctor.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.#ctor
-  fullName: System.Numerics.Rational.Rational.CPU.CPU
-  nameWithType: Rational.CPU.CPU
-- uid: System.Numerics.Rational.Rational.CPU.abs(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.-ctor.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.#ctor
+  fullName: System.Numerics.Rational.NewRational.CPU.CPU
+  nameWithType: NewRational.CPU.CPU
+- uid: System.Numerics.Rational.NewRational.CPU.abs(System.Int32)
   name: abs(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.abs.html#System_Numerics_Rational_Rational_CPU_abs_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.abs(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.abs(System.Int32)
-  nameWithType: Rational.CPU.abs(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.abs*
+  href: api/System.Numerics.Rational.NewRational.CPU.abs.html#System_Numerics_Rational_NewRational_CPU_abs_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.abs(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.abs(System.Int32)
+  nameWithType: NewRational.CPU.abs(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.abs*
   name: abs
-  href: api/System.Numerics.Rational.Rational.CPU.abs.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.abs
-  fullName: System.Numerics.Rational.Rational.CPU.abs
-  nameWithType: Rational.CPU.abs
-- uid: System.Numerics.Rational.Rational.CPU.add
+  href: api/System.Numerics.Rational.NewRational.CPU.abs.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.abs
+  fullName: System.Numerics.Rational.NewRational.CPU.abs
+  nameWithType: NewRational.CPU.abs
+- uid: System.Numerics.Rational.NewRational.CPU.add
   name: add()
-  href: api/System.Numerics.Rational.Rational.CPU.add.html#System_Numerics_Rational_Rational_CPU_add
-  commentId: M:System.Numerics.Rational.Rational.CPU.add
-  fullName: System.Numerics.Rational.Rational.CPU.add()
-  nameWithType: Rational.CPU.add()
-- uid: System.Numerics.Rational.Rational.CPU.add(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.add.html#System_Numerics_Rational_NewRational_CPU_add
+  commentId: M:System.Numerics.Rational.NewRational.CPU.add
+  fullName: System.Numerics.Rational.NewRational.CPU.add()
+  nameWithType: NewRational.CPU.add()
+- uid: System.Numerics.Rational.NewRational.CPU.add(System.Int32,System.Int32)
   name: add(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.add.html#System_Numerics_Rational_Rational_CPU_add_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.add(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.add(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.add(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.add(System.Numerics.Rational.Rational)
-  name: add(Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.add.html#System_Numerics_Rational_Rational_CPU_add_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.add(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.add(System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.add(Rational)
-- uid: System.Numerics.Rational.Rational.CPU.add(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: add(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.add.html#System_Numerics_Rational_Rational_CPU_add_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.add(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.add(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.add(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.CPU.add(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.add.html#System_Numerics_Rational_NewRational_CPU_add_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.add(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.add(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.add(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.add(System.Numerics.Rational.NewRational)
+  name: add(NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.add.html#System_Numerics_Rational_NewRational_CPU_add_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.add(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.add(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.add(NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.add(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: add(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.add.html#System_Numerics_Rational_NewRational_CPU_add_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.add(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.add(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.add(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.add(System.UInt32)
   name: add(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.add.html#System_Numerics_Rational_Rational_CPU_add_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.add(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.add(System.UInt32)
-  nameWithType: Rational.CPU.add(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.add(System.UInt32,System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.add.html#System_Numerics_Rational_NewRational_CPU_add_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.add(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.add(System.UInt32)
+  nameWithType: NewRational.CPU.add(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.add(System.UInt32,System.UInt32)
   name: add(UInt32, UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.add.html#System_Numerics_Rational_Rational_CPU_add_System_UInt32_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.add(System.UInt32,System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.add(System.UInt32, System.UInt32)
-  nameWithType: Rational.CPU.add(UInt32, UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.add*
+  href: api/System.Numerics.Rational.NewRational.CPU.add.html#System_Numerics_Rational_NewRational_CPU_add_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.add(System.UInt32,System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.add(System.UInt32, System.UInt32)
+  nameWithType: NewRational.CPU.add(UInt32, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.add*
   name: add
-  href: api/System.Numerics.Rational.Rational.CPU.add.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.add
-  fullName: System.Numerics.Rational.Rational.CPU.add
-  nameWithType: Rational.CPU.add
-- uid: System.Numerics.Rational.Rational.CPU.cmp(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.add.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.add
+  fullName: System.Numerics.Rational.NewRational.CPU.add
+  nameWithType: NewRational.CPU.add
+- uid: System.Numerics.Rational.NewRational.CPU.cmp(System.Int32,System.Int32)
   name: cmp(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.cmp.html#System_Numerics_Rational_Rational_CPU_cmp_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.cmp(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.cmp(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.cmp(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.cmp(System.Numerics.Rational.Rational)
-  name: cmp(Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.cmp.html#System_Numerics_Rational_Rational_CPU_cmp_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.cmp(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.cmp(System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.cmp(Rational)
-- uid: System.Numerics.Rational.Rational.CPU.cmp(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: cmp(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.cmp.html#System_Numerics_Rational_Rational_CPU_cmp_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.cmp(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.cmp(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.cmp(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.CPU.cmp(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.cmp.html#System_Numerics_Rational_NewRational_CPU_cmp_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.cmp(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.cmp(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.cmp(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.cmp(System.Numerics.Rational.NewRational)
+  name: cmp(NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.cmp.html#System_Numerics_Rational_NewRational_CPU_cmp_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.cmp(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.cmp(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.cmp(NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.cmp(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: cmp(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.cmp.html#System_Numerics_Rational_NewRational_CPU_cmp_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.cmp(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.cmp(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.cmp(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.cmp(System.UInt32)
   name: cmp(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.cmp.html#System_Numerics_Rational_Rational_CPU_cmp_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.cmp(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.cmp(System.UInt32)
-  nameWithType: Rational.CPU.cmp(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.cmp(System.UInt32,System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.cmp.html#System_Numerics_Rational_NewRational_CPU_cmp_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.cmp(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.cmp(System.UInt32)
+  nameWithType: NewRational.CPU.cmp(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.cmp(System.UInt32,System.UInt32)
   name: cmp(UInt32, UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.cmp.html#System_Numerics_Rational_Rational_CPU_cmp_System_UInt32_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.cmp(System.UInt32,System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.cmp(System.UInt32, System.UInt32)
-  nameWithType: Rational.CPU.cmp(UInt32, UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.cmp*
+  href: api/System.Numerics.Rational.NewRational.CPU.cmp.html#System_Numerics_Rational_NewRational_CPU_cmp_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.cmp(System.UInt32,System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.cmp(System.UInt32, System.UInt32)
+  nameWithType: NewRational.CPU.cmp(UInt32, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.cmp*
   name: cmp
-  href: api/System.Numerics.Rational.Rational.CPU.cmp.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.cmp
-  fullName: System.Numerics.Rational.Rational.CPU.cmp
-  nameWithType: Rational.CPU.cmp
-- uid: System.Numerics.Rational.Rational.CPU.cmpa(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.cmp.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.cmp
+  fullName: System.Numerics.Rational.NewRational.CPU.cmp
+  nameWithType: NewRational.CPU.cmp
+- uid: System.Numerics.Rational.NewRational.CPU.cmpa(System.Int32,System.Int32)
   name: cmpa(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.cmpa.html#System_Numerics_Rational_Rational_CPU_cmpa_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.cmpa(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.cmpa(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.cmpa(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.cmpa*
+  href: api/System.Numerics.Rational.NewRational.CPU.cmpa.html#System_Numerics_Rational_NewRational_CPU_cmpa_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.cmpa(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.cmpa(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.cmpa(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.cmpa*
   name: cmpa
-  href: api/System.Numerics.Rational.Rational.CPU.cmpa.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.cmpa
-  fullName: System.Numerics.Rational.Rational.CPU.cmpa
-  nameWithType: Rational.CPU.cmpa
-- uid: System.Numerics.Rational.Rational.CPU.div
+  href: api/System.Numerics.Rational.NewRational.CPU.cmpa.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.cmpa
+  fullName: System.Numerics.Rational.NewRational.CPU.cmpa
+  nameWithType: NewRational.CPU.cmpa
+- uid: System.Numerics.Rational.NewRational.CPU.div
   name: div()
-  href: api/System.Numerics.Rational.Rational.CPU.div.html#System_Numerics_Rational_Rational_CPU_div
-  commentId: M:System.Numerics.Rational.Rational.CPU.div
-  fullName: System.Numerics.Rational.Rational.CPU.div()
-  nameWithType: Rational.CPU.div()
-- uid: System.Numerics.Rational.Rational.CPU.div(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.div.html#System_Numerics_Rational_NewRational_CPU_div
+  commentId: M:System.Numerics.Rational.NewRational.CPU.div
+  fullName: System.Numerics.Rational.NewRational.CPU.div()
+  nameWithType: NewRational.CPU.div()
+- uid: System.Numerics.Rational.NewRational.CPU.div(System.Int32,System.Int32)
   name: div(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.div.html#System_Numerics_Rational_Rational_CPU_div_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.div(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.div(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.div(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.div(System.Numerics.Rational.Rational,System.Int32)
-  name: div(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.div.html#System_Numerics_Rational_Rational_CPU_div_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.div(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.div(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.CPU.div(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.div(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: div(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.div.html#System_Numerics_Rational_Rational_CPU_div_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.div(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.div(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.div(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.CPU.div(System.UInt32,System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.div.html#System_Numerics_Rational_NewRational_CPU_div_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.div(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.div(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.div(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.div(System.Numerics.Rational.NewRational,System.Int32)
+  name: div(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.div.html#System_Numerics_Rational_NewRational_CPU_div_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.div(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.div(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.CPU.div(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.div(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: div(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.div.html#System_Numerics_Rational_NewRational_CPU_div_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.div(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.div(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.div(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.div(System.UInt32,System.UInt32)
   name: div(UInt32, UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.div.html#System_Numerics_Rational_Rational_CPU_div_System_UInt32_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.div(System.UInt32,System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.div(System.UInt32, System.UInt32)
-  nameWithType: Rational.CPU.div(UInt32, UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.div*
+  href: api/System.Numerics.Rational.NewRational.CPU.div.html#System_Numerics_Rational_NewRational_CPU_div_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.div(System.UInt32,System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.div(System.UInt32, System.UInt32)
+  nameWithType: NewRational.CPU.div(UInt32, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.div*
   name: div
-  href: api/System.Numerics.Rational.Rational.CPU.div.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.div
-  fullName: System.Numerics.Rational.Rational.CPU.div
-  nameWithType: Rational.CPU.div
-- uid: System.Numerics.Rational.Rational.CPU.dup(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.div.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.div
+  fullName: System.Numerics.Rational.NewRational.CPU.div
+  nameWithType: NewRational.CPU.div
+- uid: System.Numerics.Rational.NewRational.CPU.dup(System.Int32)
   name: dup(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.dup.html#System_Numerics_Rational_Rational_CPU_dup_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.dup(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.dup(System.Int32)
-  nameWithType: Rational.CPU.dup(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.dup(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.dup.html#System_Numerics_Rational_NewRational_CPU_dup_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.dup(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.dup(System.Int32)
+  nameWithType: NewRational.CPU.dup(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.dup(System.UInt32)
   name: dup(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.dup.html#System_Numerics_Rational_Rational_CPU_dup_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.dup(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.dup(System.UInt32)
-  nameWithType: Rational.CPU.dup(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.dup*
+  href: api/System.Numerics.Rational.NewRational.CPU.dup.html#System_Numerics_Rational_NewRational_CPU_dup_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.dup(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.dup(System.UInt32)
+  nameWithType: NewRational.CPU.dup(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.dup*
   name: dup
-  href: api/System.Numerics.Rational.Rational.CPU.dup.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.dup
-  fullName: System.Numerics.Rational.Rational.CPU.dup
-  nameWithType: Rational.CPU.dup
-- uid: System.Numerics.Rational.Rational.CPU.equ(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: equ(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.equ.html#System_Numerics_Rational_Rational_CPU_equ_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.equ(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.equ(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.equ(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.CPU.equ(System.UInt32,System.Numerics.Rational.Rational)
-  name: equ(UInt32, Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.equ.html#System_Numerics_Rational_Rational_CPU_equ_System_UInt32_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.equ(System.UInt32,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.equ(System.UInt32, System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.equ(UInt32, Rational)
-- uid: System.Numerics.Rational.Rational.CPU.equ(System.UInt32,System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.dup.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.dup
+  fullName: System.Numerics.Rational.NewRational.CPU.dup
+  nameWithType: NewRational.CPU.dup
+- uid: System.Numerics.Rational.NewRational.CPU.equ(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: equ(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.equ.html#System_Numerics_Rational_NewRational_CPU_equ_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.equ(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.equ(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.equ(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.equ(System.UInt32,System.Numerics.Rational.NewRational)
+  name: equ(UInt32, NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.equ.html#System_Numerics_Rational_NewRational_CPU_equ_System_UInt32_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.equ(System.UInt32,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.equ(System.UInt32, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.equ(UInt32, NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.equ(System.UInt32,System.UInt32)
   name: equ(UInt32, UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.equ.html#System_Numerics_Rational_Rational_CPU_equ_System_UInt32_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.equ(System.UInt32,System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.equ(System.UInt32, System.UInt32)
-  nameWithType: Rational.CPU.equ(UInt32, UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.equ*
+  href: api/System.Numerics.Rational.NewRational.CPU.equ.html#System_Numerics_Rational_NewRational_CPU_equ_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.equ(System.UInt32,System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.equ(System.UInt32, System.UInt32)
+  nameWithType: NewRational.CPU.equ(UInt32, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.equ*
   name: equ
-  href: api/System.Numerics.Rational.Rational.CPU.equ.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.equ
-  fullName: System.Numerics.Rational.Rational.CPU.equ
-  nameWithType: Rational.CPU.equ
-- uid: System.Numerics.Rational.Rational.CPU.fac(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.equ.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.equ
+  fullName: System.Numerics.Rational.NewRational.CPU.equ
+  nameWithType: NewRational.CPU.equ
+- uid: System.Numerics.Rational.NewRational.CPU.fac(System.UInt32)
   name: fac(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.fac.html#System_Numerics_Rational_Rational_CPU_fac_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.fac(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.fac(System.UInt32)
-  nameWithType: Rational.CPU.fac(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.fac*
+  href: api/System.Numerics.Rational.NewRational.CPU.fac.html#System_Numerics_Rational_NewRational_CPU_fac_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.fac(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.fac(System.UInt32)
+  nameWithType: NewRational.CPU.fac(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.fac*
   name: fac
-  href: api/System.Numerics.Rational.Rational.CPU.fac.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.fac
-  fullName: System.Numerics.Rational.Rational.CPU.fac
-  nameWithType: Rational.CPU.fac
-- uid: System.Numerics.Rational.Rational.CPU.get(System.UInt32,System.Double@)
+  href: api/System.Numerics.Rational.NewRational.CPU.fac.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.fac
+  fullName: System.Numerics.Rational.NewRational.CPU.fac
+  nameWithType: NewRational.CPU.fac
+- uid: System.Numerics.Rational.NewRational.CPU.get(System.UInt32,System.Double@)
   name: get(UInt32, out Double)
-  href: api/System.Numerics.Rational.Rational.CPU.get.html#System_Numerics_Rational_Rational_CPU_get_System_UInt32_System_Double__
-  commentId: M:System.Numerics.Rational.Rational.CPU.get(System.UInt32,System.Double@)
+  href: api/System.Numerics.Rational.NewRational.CPU.get.html#System_Numerics_Rational_NewRational_CPU_get_System_UInt32_System_Double__
+  commentId: M:System.Numerics.Rational.NewRational.CPU.get(System.UInt32,System.Double@)
   name.vb: get(UInt32, ByRef Double)
-  fullName: System.Numerics.Rational.Rational.CPU.get(System.UInt32, out System.Double)
-  fullName.vb: System.Numerics.Rational.Rational.CPU.get(System.UInt32, ByRef System.Double)
-  nameWithType: Rational.CPU.get(UInt32, out Double)
-  nameWithType.vb: Rational.CPU.get(UInt32, ByRef Double)
-- uid: System.Numerics.Rational.Rational.CPU.get(System.UInt32,System.Numerics.Rational.Rational@)
-  name: get(UInt32, out Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.get.html#System_Numerics_Rational_Rational_CPU_get_System_UInt32_System_Numerics_Rational_Rational__
-  commentId: M:System.Numerics.Rational.Rational.CPU.get(System.UInt32,System.Numerics.Rational.Rational@)
-  name.vb: get(UInt32, ByRef Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.get(System.UInt32, out System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.CPU.get(System.UInt32, ByRef System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.get(UInt32, out Rational)
-  nameWithType.vb: Rational.CPU.get(UInt32, ByRef Rational)
-- uid: System.Numerics.Rational.Rational.CPU.get(System.UInt32,System.Single@)
+  fullName: System.Numerics.Rational.NewRational.CPU.get(System.UInt32, out System.Double)
+  fullName.vb: System.Numerics.Rational.NewRational.CPU.get(System.UInt32, ByRef System.Double)
+  nameWithType: NewRational.CPU.get(UInt32, out Double)
+  nameWithType.vb: NewRational.CPU.get(UInt32, ByRef Double)
+- uid: System.Numerics.Rational.NewRational.CPU.get(System.UInt32,System.Numerics.Rational.NewRational@)
+  name: get(UInt32, out NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.get.html#System_Numerics_Rational_NewRational_CPU_get_System_UInt32_System_Numerics_Rational_NewRational__
+  commentId: M:System.Numerics.Rational.NewRational.CPU.get(System.UInt32,System.Numerics.Rational.NewRational@)
+  name.vb: get(UInt32, ByRef NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.get(System.UInt32, out System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.CPU.get(System.UInt32, ByRef System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.get(UInt32, out NewRational)
+  nameWithType.vb: NewRational.CPU.get(UInt32, ByRef NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.get(System.UInt32,System.Single@)
   name: get(UInt32, out Single)
-  href: api/System.Numerics.Rational.Rational.CPU.get.html#System_Numerics_Rational_Rational_CPU_get_System_UInt32_System_Single__
-  commentId: M:System.Numerics.Rational.Rational.CPU.get(System.UInt32,System.Single@)
+  href: api/System.Numerics.Rational.NewRational.CPU.get.html#System_Numerics_Rational_NewRational_CPU_get_System_UInt32_System_Single__
+  commentId: M:System.Numerics.Rational.NewRational.CPU.get(System.UInt32,System.Single@)
   name.vb: get(UInt32, ByRef Single)
-  fullName: System.Numerics.Rational.Rational.CPU.get(System.UInt32, out System.Single)
-  fullName.vb: System.Numerics.Rational.Rational.CPU.get(System.UInt32, ByRef System.Single)
-  nameWithType: Rational.CPU.get(UInt32, out Single)
-  nameWithType.vb: Rational.CPU.get(UInt32, ByRef Single)
-- uid: System.Numerics.Rational.Rational.CPU.get*
+  fullName: System.Numerics.Rational.NewRational.CPU.get(System.UInt32, out System.Single)
+  fullName.vb: System.Numerics.Rational.NewRational.CPU.get(System.UInt32, ByRef System.Single)
+  nameWithType: NewRational.CPU.get(UInt32, out Single)
+  nameWithType.vb: NewRational.CPU.get(UInt32, ByRef Single)
+- uid: System.Numerics.Rational.NewRational.CPU.get*
   name: get
-  href: api/System.Numerics.Rational.Rational.CPU.get.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.get
-  fullName: System.Numerics.Rational.Rational.CPU.get
-  nameWithType: Rational.CPU.get
-- uid: System.Numerics.Rational.Rational.CPU.hash(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.get.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.get
+  fullName: System.Numerics.Rational.NewRational.CPU.get
+  nameWithType: NewRational.CPU.get
+- uid: System.Numerics.Rational.NewRational.CPU.hash(System.UInt32)
   name: hash(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.hash.html#System_Numerics_Rational_Rational_CPU_hash_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.hash(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.hash(System.UInt32)
-  nameWithType: Rational.CPU.hash(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.hash*
+  href: api/System.Numerics.Rational.NewRational.CPU.hash.html#System_Numerics_Rational_NewRational_CPU_hash_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.hash(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.hash(System.UInt32)
+  nameWithType: NewRational.CPU.hash(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.hash*
   name: hash
-  href: api/System.Numerics.Rational.Rational.CPU.hash.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.hash
-  fullName: System.Numerics.Rational.Rational.CPU.hash
-  nameWithType: Rational.CPU.hash
-- uid: System.Numerics.Rational.Rational.CPU.inv
+  href: api/System.Numerics.Rational.NewRational.CPU.hash.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.hash
+  fullName: System.Numerics.Rational.NewRational.CPU.hash
+  nameWithType: NewRational.CPU.hash
+- uid: System.Numerics.Rational.NewRational.CPU.inv
   name: inv()
-  href: api/System.Numerics.Rational.Rational.CPU.inv.html#System_Numerics_Rational_Rational_CPU_inv
-  commentId: M:System.Numerics.Rational.Rational.CPU.inv
-  fullName: System.Numerics.Rational.Rational.CPU.inv()
-  nameWithType: Rational.CPU.inv()
-- uid: System.Numerics.Rational.Rational.CPU.inv*
+  href: api/System.Numerics.Rational.NewRational.CPU.inv.html#System_Numerics_Rational_NewRational_CPU_inv
+  commentId: M:System.Numerics.Rational.NewRational.CPU.inv
+  fullName: System.Numerics.Rational.NewRational.CPU.inv()
+  nameWithType: NewRational.CPU.inv()
+- uid: System.Numerics.Rational.NewRational.CPU.inv*
   name: inv
-  href: api/System.Numerics.Rational.Rational.CPU.inv.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.inv
-  fullName: System.Numerics.Rational.Rational.CPU.inv
-  nameWithType: Rational.CPU.inv
-- uid: System.Numerics.Rational.Rational.CPU.lsb
+  href: api/System.Numerics.Rational.NewRational.CPU.inv.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.inv
+  fullName: System.Numerics.Rational.NewRational.CPU.inv
+  nameWithType: NewRational.CPU.inv
+- uid: System.Numerics.Rational.NewRational.CPU.lsb
   name: lsb()
-  href: api/System.Numerics.Rational.Rational.CPU.lsb.html#System_Numerics_Rational_Rational_CPU_lsb
-  commentId: M:System.Numerics.Rational.Rational.CPU.lsb
-  fullName: System.Numerics.Rational.Rational.CPU.lsb()
-  nameWithType: Rational.CPU.lsb()
-- uid: System.Numerics.Rational.Rational.CPU.lsb*
+  href: api/System.Numerics.Rational.NewRational.CPU.lsb.html#System_Numerics_Rational_NewRational_CPU_lsb
+  commentId: M:System.Numerics.Rational.NewRational.CPU.lsb
+  fullName: System.Numerics.Rational.NewRational.CPU.lsb()
+  nameWithType: NewRational.CPU.lsb()
+- uid: System.Numerics.Rational.NewRational.CPU.lsb*
   name: lsb
-  href: api/System.Numerics.Rational.Rational.CPU.lsb.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.lsb
-  fullName: System.Numerics.Rational.Rational.CPU.lsb
-  nameWithType: Rational.CPU.lsb
-- uid: System.Numerics.Rational.Rational.CPU.mark
+  href: api/System.Numerics.Rational.NewRational.CPU.lsb.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.lsb
+  fullName: System.Numerics.Rational.NewRational.CPU.lsb
+  nameWithType: NewRational.CPU.lsb
+- uid: System.Numerics.Rational.NewRational.CPU.mark
   name: mark()
-  href: api/System.Numerics.Rational.Rational.CPU.mark.html#System_Numerics_Rational_Rational_CPU_mark
-  commentId: M:System.Numerics.Rational.Rational.CPU.mark
-  fullName: System.Numerics.Rational.Rational.CPU.mark()
-  nameWithType: Rational.CPU.mark()
-- uid: System.Numerics.Rational.Rational.CPU.mark*
+  href: api/System.Numerics.Rational.NewRational.CPU.mark.html#System_Numerics_Rational_NewRational_CPU_mark
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mark
+  fullName: System.Numerics.Rational.NewRational.CPU.mark()
+  nameWithType: NewRational.CPU.mark()
+- uid: System.Numerics.Rational.NewRational.CPU.mark*
   name: mark
-  href: api/System.Numerics.Rational.Rational.CPU.mark.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.mark
-  fullName: System.Numerics.Rational.Rational.CPU.mark
-  nameWithType: Rational.CPU.mark
-- uid: System.Numerics.Rational.Rational.CPU.mod(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.mark.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.mark
+  fullName: System.Numerics.Rational.NewRational.CPU.mark
+  nameWithType: NewRational.CPU.mark
+- uid: System.Numerics.Rational.NewRational.CPU.mod(System.Int32)
   name: mod(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.mod.html#System_Numerics_Rational_Rational_CPU_mod_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.mod(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.mod(System.Int32)
-  nameWithType: Rational.CPU.mod(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.mod*
+  href: api/System.Numerics.Rational.NewRational.CPU.mod.html#System_Numerics_Rational_NewRational_CPU_mod_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mod(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.mod(System.Int32)
+  nameWithType: NewRational.CPU.mod(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.mod*
   name: mod
-  href: api/System.Numerics.Rational.Rational.CPU.mod.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.mod
-  fullName: System.Numerics.Rational.Rational.CPU.mod
-  nameWithType: Rational.CPU.mod
-- uid: System.Numerics.Rational.Rational.CPU.msb
+  href: api/System.Numerics.Rational.NewRational.CPU.mod.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.mod
+  fullName: System.Numerics.Rational.NewRational.CPU.mod
+  nameWithType: NewRational.CPU.mod
+- uid: System.Numerics.Rational.NewRational.CPU.msb
   name: msb()
-  href: api/System.Numerics.Rational.Rational.CPU.msb.html#System_Numerics_Rational_Rational_CPU_msb
-  commentId: M:System.Numerics.Rational.Rational.CPU.msb
-  fullName: System.Numerics.Rational.Rational.CPU.msb()
-  nameWithType: Rational.CPU.msb()
-- uid: System.Numerics.Rational.Rational.CPU.msb*
+  href: api/System.Numerics.Rational.NewRational.CPU.msb.html#System_Numerics_Rational_NewRational_CPU_msb
+  commentId: M:System.Numerics.Rational.NewRational.CPU.msb
+  fullName: System.Numerics.Rational.NewRational.CPU.msb()
+  nameWithType: NewRational.CPU.msb()
+- uid: System.Numerics.Rational.NewRational.CPU.msb*
   name: msb
-  href: api/System.Numerics.Rational.Rational.CPU.msb.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.msb
-  fullName: System.Numerics.Rational.Rational.CPU.msb
-  nameWithType: Rational.CPU.msb
-- uid: System.Numerics.Rational.Rational.CPU.mul
+  href: api/System.Numerics.Rational.NewRational.CPU.msb.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.msb
+  fullName: System.Numerics.Rational.NewRational.CPU.msb
+  nameWithType: NewRational.CPU.msb
+- uid: System.Numerics.Rational.NewRational.CPU.mul
   name: mul()
-  href: api/System.Numerics.Rational.Rational.CPU.mul.html#System_Numerics_Rational_Rational_CPU_mul
-  commentId: M:System.Numerics.Rational.Rational.CPU.mul
-  fullName: System.Numerics.Rational.Rational.CPU.mul()
-  nameWithType: Rational.CPU.mul()
-- uid: System.Numerics.Rational.Rational.CPU.mul(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.mul.html#System_Numerics_Rational_NewRational_CPU_mul
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mul
+  fullName: System.Numerics.Rational.NewRational.CPU.mul()
+  nameWithType: NewRational.CPU.mul()
+- uid: System.Numerics.Rational.NewRational.CPU.mul(System.Int32,System.Int32)
   name: mul(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.mul.html#System_Numerics_Rational_Rational_CPU_mul_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.mul(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.mul(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.mul(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational)
-  name: mul(Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.mul.html#System_Numerics_Rational_Rational_CPU_mul_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.mul(Rational)
-- uid: System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: mul(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.mul.html#System_Numerics_Rational_Rational_CPU_mul_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.mul(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational,System.UInt32)
-  name: mul(Rational, UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.mul.html#System_Numerics_Rational_Rational_CPU_mul_System_Numerics_Rational_Rational_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational,System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.mul(System.Numerics.Rational.Rational, System.UInt32)
-  nameWithType: Rational.CPU.mul(Rational, UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.mul(System.UInt32,System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.mul.html#System_Numerics_Rational_NewRational_CPU_mul_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mul(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.mul(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.mul(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational)
+  name: mul(NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.mul.html#System_Numerics_Rational_NewRational_CPU_mul_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.mul(NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: mul(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.mul.html#System_Numerics_Rational_NewRational_CPU_mul_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.mul(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational,System.UInt32)
+  name: mul(NewRational, UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.mul.html#System_Numerics_Rational_NewRational_CPU_mul_System_Numerics_Rational_NewRational_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational,System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational, System.UInt32)
+  nameWithType: NewRational.CPU.mul(NewRational, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.mul(System.UInt32,System.UInt32)
   name: mul(UInt32, UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.mul.html#System_Numerics_Rational_Rational_CPU_mul_System_UInt32_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.mul(System.UInt32,System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.mul(System.UInt32, System.UInt32)
-  nameWithType: Rational.CPU.mul(UInt32, UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.mul*
+  href: api/System.Numerics.Rational.NewRational.CPU.mul.html#System_Numerics_Rational_NewRational_CPU_mul_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mul(System.UInt32,System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.mul(System.UInt32, System.UInt32)
+  nameWithType: NewRational.CPU.mul(UInt32, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.mul*
   name: mul
-  href: api/System.Numerics.Rational.Rational.CPU.mul.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.mul
-  fullName: System.Numerics.Rational.Rational.CPU.mul
-  nameWithType: Rational.CPU.mul
-- uid: System.Numerics.Rational.Rational.CPU.neg(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.mul.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.mul
+  fullName: System.Numerics.Rational.NewRational.CPU.mul
+  nameWithType: NewRational.CPU.mul
+- uid: System.Numerics.Rational.NewRational.CPU.neg(System.Int32)
   name: neg(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.neg.html#System_Numerics_Rational_Rational_CPU_neg_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.neg(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.neg(System.Int32)
-  nameWithType: Rational.CPU.neg(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.neg(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.neg.html#System_Numerics_Rational_NewRational_CPU_neg_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.neg(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.neg(System.Int32)
+  nameWithType: NewRational.CPU.neg(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.neg(System.UInt32)
   name: neg(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.neg.html#System_Numerics_Rational_Rational_CPU_neg_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.neg(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.neg(System.UInt32)
-  nameWithType: Rational.CPU.neg(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.neg*
+  href: api/System.Numerics.Rational.NewRational.CPU.neg.html#System_Numerics_Rational_NewRational_CPU_neg_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.neg(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.neg(System.UInt32)
+  nameWithType: NewRational.CPU.neg(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.neg*
   name: neg
-  href: api/System.Numerics.Rational.Rational.CPU.neg.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.neg
-  fullName: System.Numerics.Rational.Rational.CPU.neg
-  nameWithType: Rational.CPU.neg
-- uid: System.Numerics.Rational.Rational.CPU.norm(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.neg.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.neg
+  fullName: System.Numerics.Rational.NewRational.CPU.neg
+  nameWithType: NewRational.CPU.neg
+- uid: System.Numerics.Rational.NewRational.CPU.norm(System.Int32)
   name: norm(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.norm.html#System_Numerics_Rational_Rational_CPU_norm_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.norm(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.norm(System.Int32)
-  nameWithType: Rational.CPU.norm(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.norm*
+  href: api/System.Numerics.Rational.NewRational.CPU.norm.html#System_Numerics_Rational_NewRational_CPU_norm_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.norm(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.norm(System.Int32)
+  nameWithType: NewRational.CPU.norm(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.norm*
   name: norm
-  href: api/System.Numerics.Rational.Rational.CPU.norm.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.norm
-  fullName: System.Numerics.Rational.Rational.CPU.norm
-  nameWithType: Rational.CPU.norm
-- uid: System.Numerics.Rational.Rational.CPU.pop
+  href: api/System.Numerics.Rational.NewRational.CPU.norm.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.norm
+  fullName: System.Numerics.Rational.NewRational.CPU.norm
+  nameWithType: NewRational.CPU.norm
+- uid: System.Numerics.Rational.NewRational.CPU.pop
   name: pop()
-  href: api/System.Numerics.Rational.Rational.CPU.pop.html#System_Numerics_Rational_Rational_CPU_pop
-  commentId: M:System.Numerics.Rational.Rational.CPU.pop
-  fullName: System.Numerics.Rational.Rational.CPU.pop()
-  nameWithType: Rational.CPU.pop()
-- uid: System.Numerics.Rational.Rational.CPU.pop(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.pop.html#System_Numerics_Rational_NewRational_CPU_pop
+  commentId: M:System.Numerics.Rational.NewRational.CPU.pop
+  fullName: System.Numerics.Rational.NewRational.CPU.pop()
+  nameWithType: NewRational.CPU.pop()
+- uid: System.Numerics.Rational.NewRational.CPU.pop(System.Int32)
   name: pop(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.pop.html#System_Numerics_Rational_Rational_CPU_pop_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.pop(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.pop(System.Int32)
-  nameWithType: Rational.CPU.pop(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.pop*
+  href: api/System.Numerics.Rational.NewRational.CPU.pop.html#System_Numerics_Rational_NewRational_CPU_pop_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.pop(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.pop(System.Int32)
+  nameWithType: NewRational.CPU.pop(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.pop*
   name: pop
-  href: api/System.Numerics.Rational.Rational.CPU.pop.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.pop
-  fullName: System.Numerics.Rational.Rational.CPU.pop
-  nameWithType: Rational.CPU.pop
-- uid: System.Numerics.Rational.Rational.CPU.pop_dbl
+  href: api/System.Numerics.Rational.NewRational.CPU.pop.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.pop
+  fullName: System.Numerics.Rational.NewRational.CPU.pop
+  nameWithType: NewRational.CPU.pop
+- uid: System.Numerics.Rational.NewRational.CPU.pop_dbl
   name: pop_dbl()
-  href: api/System.Numerics.Rational.Rational.CPU.pop_dbl.html#System_Numerics_Rational_Rational_CPU_pop_dbl
-  commentId: M:System.Numerics.Rational.Rational.CPU.pop_dbl
-  fullName: System.Numerics.Rational.Rational.CPU.pop_dbl()
-  nameWithType: Rational.CPU.pop_dbl()
-- uid: System.Numerics.Rational.Rational.CPU.pop_dbl*
+  href: api/System.Numerics.Rational.NewRational.CPU.pop_dbl.html#System_Numerics_Rational_NewRational_CPU_pop_dbl
+  commentId: M:System.Numerics.Rational.NewRational.CPU.pop_dbl
+  fullName: System.Numerics.Rational.NewRational.CPU.pop_dbl()
+  nameWithType: NewRational.CPU.pop_dbl()
+- uid: System.Numerics.Rational.NewRational.CPU.pop_dbl*
   name: pop_dbl
-  href: api/System.Numerics.Rational.Rational.CPU.pop_dbl.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.pop_dbl
-  fullName: System.Numerics.Rational.Rational.CPU.pop_dbl
-  nameWithType: Rational.CPU.pop_dbl
-- uid: System.Numerics.Rational.Rational.CPU.pop_int
+  href: api/System.Numerics.Rational.NewRational.CPU.pop_dbl.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.pop_dbl
+  fullName: System.Numerics.Rational.NewRational.CPU.pop_dbl
+  nameWithType: NewRational.CPU.pop_dbl
+- uid: System.Numerics.Rational.NewRational.CPU.pop_int
   name: pop_int()
-  href: api/System.Numerics.Rational.Rational.CPU.pop_int.html#System_Numerics_Rational_Rational_CPU_pop_int
-  commentId: M:System.Numerics.Rational.Rational.CPU.pop_int
-  fullName: System.Numerics.Rational.Rational.CPU.pop_int()
-  nameWithType: Rational.CPU.pop_int()
-- uid: System.Numerics.Rational.Rational.CPU.pop_int*
+  href: api/System.Numerics.Rational.NewRational.CPU.pop_int.html#System_Numerics_Rational_NewRational_CPU_pop_int
+  commentId: M:System.Numerics.Rational.NewRational.CPU.pop_int
+  fullName: System.Numerics.Rational.NewRational.CPU.pop_int()
+  nameWithType: NewRational.CPU.pop_int()
+- uid: System.Numerics.Rational.NewRational.CPU.pop_int*
   name: pop_int
-  href: api/System.Numerics.Rational.Rational.CPU.pop_int.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.pop_int
-  fullName: System.Numerics.Rational.Rational.CPU.pop_int
-  nameWithType: Rational.CPU.pop_int
-- uid: System.Numerics.Rational.Rational.CPU.pop_rat
+  href: api/System.Numerics.Rational.NewRational.CPU.pop_int.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.pop_int
+  fullName: System.Numerics.Rational.NewRational.CPU.pop_int
+  nameWithType: NewRational.CPU.pop_int
+- uid: System.Numerics.Rational.NewRational.CPU.pop_rat
   name: pop_rat()
-  href: api/System.Numerics.Rational.Rational.CPU.pop_rat.html#System_Numerics_Rational_Rational_CPU_pop_rat
-  commentId: M:System.Numerics.Rational.Rational.CPU.pop_rat
-  fullName: System.Numerics.Rational.Rational.CPU.pop_rat()
-  nameWithType: Rational.CPU.pop_rat()
-- uid: System.Numerics.Rational.Rational.CPU.pop_rat*
+  href: api/System.Numerics.Rational.NewRational.CPU.pop_rat.html#System_Numerics_Rational_NewRational_CPU_pop_rat
+  commentId: M:System.Numerics.Rational.NewRational.CPU.pop_rat
+  fullName: System.Numerics.Rational.NewRational.CPU.pop_rat()
+  nameWithType: NewRational.CPU.pop_rat()
+- uid: System.Numerics.Rational.NewRational.CPU.pop_rat*
   name: pop_rat
-  href: api/System.Numerics.Rational.Rational.CPU.pop_rat.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.pop_rat
-  fullName: System.Numerics.Rational.Rational.CPU.pop_rat
-  nameWithType: Rational.CPU.pop_rat
-- uid: System.Numerics.Rational.Rational.CPU.pow(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.pop_rat.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.pop_rat
+  fullName: System.Numerics.Rational.NewRational.CPU.pop_rat
+  nameWithType: NewRational.CPU.pop_rat
+- uid: System.Numerics.Rational.NewRational.CPU.pow(System.Int32)
   name: pow(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.pow.html#System_Numerics_Rational_Rational_CPU_pow_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.pow(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.pow(System.Int32)
-  nameWithType: Rational.CPU.pow(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.pow(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.pow.html#System_Numerics_Rational_NewRational_CPU_pow_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.pow(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.pow(System.Int32)
+  nameWithType: NewRational.CPU.pow(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.pow(System.Int32,System.Int32)
   name: pow(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.pow.html#System_Numerics_Rational_Rational_CPU_pow_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.pow(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.pow(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.pow(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.pow*
+  href: api/System.Numerics.Rational.NewRational.CPU.pow.html#System_Numerics_Rational_NewRational_CPU_pow_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.pow(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.pow(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.pow(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.pow*
   name: pow
-  href: api/System.Numerics.Rational.Rational.CPU.pow.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.pow
-  fullName: System.Numerics.Rational.Rational.CPU.pow
-  nameWithType: Rational.CPU.pow
-- uid: System.Numerics.Rational.Rational.CPU.push
+  href: api/System.Numerics.Rational.NewRational.CPU.pow.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.pow
+  fullName: System.Numerics.Rational.NewRational.CPU.pow
+  nameWithType: NewRational.CPU.pow
+- uid: System.Numerics.Rational.NewRational.CPU.push
   name: push()
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push
-  commentId: M:System.Numerics.Rational.Rational.CPU.push
-  fullName: System.Numerics.Rational.Rational.CPU.push()
-  nameWithType: Rational.CPU.push()
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Decimal)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push
+  fullName: System.Numerics.Rational.NewRational.CPU.push()
+  nameWithType: NewRational.CPU.push()
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Decimal)
   name: push(Decimal)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Decimal_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Decimal)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Decimal)
-  nameWithType: Rational.CPU.push(Decimal)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Double)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Decimal_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Decimal)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Decimal)
+  nameWithType: NewRational.CPU.push(Decimal)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Double)
   name: push(Double)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Double_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Double)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Double)
-  nameWithType: Rational.CPU.push(Double)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Double,System.Boolean)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Double_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Double)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Double)
+  nameWithType: NewRational.CPU.push(Double)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Double,System.Boolean)
   name: push(Double, Boolean)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Double_System_Boolean_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Double,System.Boolean)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Double, System.Boolean)
-  nameWithType: Rational.CPU.push(Double, Boolean)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Double_System_Boolean_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Double,System.Boolean)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Double, System.Boolean)
+  nameWithType: NewRational.CPU.push(Double, Boolean)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Int32)
   name: push(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Int32)
-  nameWithType: Rational.CPU.push(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Int32)
+  nameWithType: NewRational.CPU.push(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Int32,System.Int32)
   name: push(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.push(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Int64)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.push(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Int64)
   name: push(Int64)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Int64_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Int64)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Int64)
-  nameWithType: Rational.CPU.push(Int64)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Numerics.BigInteger)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Int64)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Int64)
+  nameWithType: NewRational.CPU.push(Int64)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Numerics.BigInteger)
   name: push(BigInteger)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Numerics_BigInteger_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Numerics.BigInteger)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Numerics.BigInteger)
-  nameWithType: Rational.CPU.push(BigInteger)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Numerics.Rational.Rational)
-  name: push(Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.push(Rational)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.Single)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Numerics_BigInteger_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Numerics.BigInteger)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Numerics.BigInteger)
+  nameWithType: NewRational.CPU.push(BigInteger)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Numerics.Rational.NewRational)
+  name: push(NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.push(NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.Single)
   name: push(Single)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_Single_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.Single)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.Single)
-  nameWithType: Rational.CPU.push(Single)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_Single_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.Single)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.Single)
+  nameWithType: NewRational.CPU.push(Single)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.UInt32)
   name: push(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.UInt32)
-  nameWithType: Rational.CPU.push(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.push(System.UInt64)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.UInt32)
+  nameWithType: NewRational.CPU.push(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.push(System.UInt64)
   name: push(UInt64)
-  href: api/System.Numerics.Rational.Rational.CPU.push.html#System_Numerics_Rational_Rational_CPU_push_System_UInt64_
-  commentId: M:System.Numerics.Rational.Rational.CPU.push(System.UInt64)
-  fullName: System.Numerics.Rational.Rational.CPU.push(System.UInt64)
-  nameWithType: Rational.CPU.push(UInt64)
-- uid: System.Numerics.Rational.Rational.CPU.push*
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html#System_Numerics_Rational_NewRational_CPU_push_System_UInt64_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.push(System.UInt64)
+  fullName: System.Numerics.Rational.NewRational.CPU.push(System.UInt64)
+  nameWithType: NewRational.CPU.push(UInt64)
+- uid: System.Numerics.Rational.NewRational.CPU.push*
   name: push
-  href: api/System.Numerics.Rational.Rational.CPU.push.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.push
-  fullName: System.Numerics.Rational.Rational.CPU.push
-  nameWithType: Rational.CPU.push
-- uid: System.Numerics.Rational.Rational.CPU.rnd(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.push.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.push
+  fullName: System.Numerics.Rational.NewRational.CPU.push
+  nameWithType: NewRational.CPU.push
+- uid: System.Numerics.Rational.NewRational.CPU.rnd(System.Int32)
   name: rnd(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.rnd.html#System_Numerics_Rational_Rational_CPU_rnd_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.rnd(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.rnd(System.Int32)
-  nameWithType: Rational.CPU.rnd(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.rnd*
+  href: api/System.Numerics.Rational.NewRational.CPU.rnd.html#System_Numerics_Rational_NewRational_CPU_rnd_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.rnd(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.rnd(System.Int32)
+  nameWithType: NewRational.CPU.rnd(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.rnd*
   name: rnd
-  href: api/System.Numerics.Rational.Rational.CPU.rnd.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.rnd
-  fullName: System.Numerics.Rational.Rational.CPU.rnd
-  nameWithType: Rational.CPU.rnd
-- uid: System.Numerics.Rational.Rational.CPU.shl(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.rnd.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.rnd
+  fullName: System.Numerics.Rational.NewRational.CPU.rnd
+  nameWithType: NewRational.CPU.rnd
+- uid: System.Numerics.Rational.NewRational.CPU.shl(System.Int32,System.Int32)
   name: shl(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.shl.html#System_Numerics_Rational_Rational_CPU_shl_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.shl(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.shl(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.shl(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.shl*
+  href: api/System.Numerics.Rational.NewRational.CPU.shl.html#System_Numerics_Rational_NewRational_CPU_shl_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.shl(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.shl(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.shl(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.shl*
   name: shl
-  href: api/System.Numerics.Rational.Rational.CPU.shl.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.shl
-  fullName: System.Numerics.Rational.Rational.CPU.shl
-  nameWithType: Rational.CPU.shl
-- uid: System.Numerics.Rational.Rational.CPU.shr(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.shl.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.shl
+  fullName: System.Numerics.Rational.NewRational.CPU.shl
+  nameWithType: NewRational.CPU.shl
+- uid: System.Numerics.Rational.NewRational.CPU.shr(System.Int32,System.Int32)
   name: shr(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.shr.html#System_Numerics_Rational_Rational_CPU_shr_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.shr(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.shr(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.shr(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.shr*
+  href: api/System.Numerics.Rational.NewRational.CPU.shr.html#System_Numerics_Rational_NewRational_CPU_shr_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.shr(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.shr(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.shr(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.shr*
   name: shr
-  href: api/System.Numerics.Rational.Rational.CPU.shr.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.shr
-  fullName: System.Numerics.Rational.Rational.CPU.shr
-  nameWithType: Rational.CPU.shr
-- uid: System.Numerics.Rational.Rational.CPU.sign(System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.shr.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.shr
+  fullName: System.Numerics.Rational.NewRational.CPU.shr
+  nameWithType: NewRational.CPU.shr
+- uid: System.Numerics.Rational.NewRational.CPU.sign(System.Int32)
   name: sign(Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.sign.html#System_Numerics_Rational_Rational_CPU_sign_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.sign(System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.sign(System.Int32)
-  nameWithType: Rational.CPU.sign(Int32)
-- uid: System.Numerics.Rational.Rational.CPU.sign*
+  href: api/System.Numerics.Rational.NewRational.CPU.sign.html#System_Numerics_Rational_NewRational_CPU_sign_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.sign(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.sign(System.Int32)
+  nameWithType: NewRational.CPU.sign(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.sign*
   name: sign
-  href: api/System.Numerics.Rational.Rational.CPU.sign.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.sign
-  fullName: System.Numerics.Rational.Rational.CPU.sign
-  nameWithType: Rational.CPU.sign
-- uid: System.Numerics.Rational.Rational.CPU.sub
+  href: api/System.Numerics.Rational.NewRational.CPU.sign.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.sign
+  fullName: System.Numerics.Rational.NewRational.CPU.sign
+  nameWithType: NewRational.CPU.sign
+- uid: System.Numerics.Rational.NewRational.CPU.sub
   name: sub()
-  href: api/System.Numerics.Rational.Rational.CPU.sub.html#System_Numerics_Rational_Rational_CPU_sub
-  commentId: M:System.Numerics.Rational.Rational.CPU.sub
-  fullName: System.Numerics.Rational.Rational.CPU.sub()
-  nameWithType: Rational.CPU.sub()
-- uid: System.Numerics.Rational.Rational.CPU.sub(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.sub.html#System_Numerics_Rational_NewRational_CPU_sub
+  commentId: M:System.Numerics.Rational.NewRational.CPU.sub
+  fullName: System.Numerics.Rational.NewRational.CPU.sub()
+  nameWithType: NewRational.CPU.sub()
+- uid: System.Numerics.Rational.NewRational.CPU.sub(System.Int32,System.Int32)
   name: sub(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.sub.html#System_Numerics_Rational_Rational_CPU_sub_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.sub(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.sub(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.sub(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.sub(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: sub(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.CPU.sub.html#System_Numerics_Rational_Rational_CPU_sub_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.CPU.sub(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.CPU.sub(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.CPU.sub(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.CPU.sub(System.UInt32,System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.sub.html#System_Numerics_Rational_NewRational_CPU_sub_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.sub(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.sub(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.sub(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.sub(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: sub(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.CPU.sub.html#System_Numerics_Rational_NewRational_CPU_sub_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.sub(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.CPU.sub(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.CPU.sub(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.CPU.sub(System.UInt32,System.UInt32)
   name: sub(UInt32, UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.sub.html#System_Numerics_Rational_Rational_CPU_sub_System_UInt32_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.sub(System.UInt32,System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.sub(System.UInt32, System.UInt32)
-  nameWithType: Rational.CPU.sub(UInt32, UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.sub*
+  href: api/System.Numerics.Rational.NewRational.CPU.sub.html#System_Numerics_Rational_NewRational_CPU_sub_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.sub(System.UInt32,System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.sub(System.UInt32, System.UInt32)
+  nameWithType: NewRational.CPU.sub(UInt32, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.sub*
   name: sub
-  href: api/System.Numerics.Rational.Rational.CPU.sub.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.sub
-  fullName: System.Numerics.Rational.Rational.CPU.sub
-  nameWithType: Rational.CPU.sub
-- uid: System.Numerics.Rational.Rational.CPU.swp
+  href: api/System.Numerics.Rational.NewRational.CPU.sub.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.sub
+  fullName: System.Numerics.Rational.NewRational.CPU.sub
+  nameWithType: NewRational.CPU.sub
+- uid: System.Numerics.Rational.NewRational.CPU.swp
   name: swp()
-  href: api/System.Numerics.Rational.Rational.CPU.swp.html#System_Numerics_Rational_Rational_CPU_swp
-  commentId: M:System.Numerics.Rational.Rational.CPU.swp
-  fullName: System.Numerics.Rational.Rational.CPU.swp()
-  nameWithType: Rational.CPU.swp()
-- uid: System.Numerics.Rational.Rational.CPU.swp(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.swp.html#System_Numerics_Rational_NewRational_CPU_swp
+  commentId: M:System.Numerics.Rational.NewRational.CPU.swp
+  fullName: System.Numerics.Rational.NewRational.CPU.swp()
+  nameWithType: NewRational.CPU.swp()
+- uid: System.Numerics.Rational.NewRational.CPU.swp(System.Int32,System.Int32)
   name: swp(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.CPU.swp.html#System_Numerics_Rational_Rational_CPU_swp_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.swp(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.CPU.swp(System.Int32, System.Int32)
-  nameWithType: Rational.CPU.swp(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.CPU.swp(System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.swp.html#System_Numerics_Rational_NewRational_CPU_swp_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.swp(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.swp(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.swp(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.swp(System.UInt32)
   name: swp(UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.swp.html#System_Numerics_Rational_Rational_CPU_swp_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.swp(System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.swp(System.UInt32)
-  nameWithType: Rational.CPU.swp(UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.swp(System.UInt32,System.UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.swp.html#System_Numerics_Rational_NewRational_CPU_swp_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.swp(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.swp(System.UInt32)
+  nameWithType: NewRational.CPU.swp(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.swp(System.UInt32,System.UInt32)
   name: swp(UInt32, UInt32)
-  href: api/System.Numerics.Rational.Rational.CPU.swp.html#System_Numerics_Rational_Rational_CPU_swp_System_UInt32_System_UInt32_
-  commentId: M:System.Numerics.Rational.Rational.CPU.swp(System.UInt32,System.UInt32)
-  fullName: System.Numerics.Rational.Rational.CPU.swp(System.UInt32, System.UInt32)
-  nameWithType: Rational.CPU.swp(UInt32, UInt32)
-- uid: System.Numerics.Rational.Rational.CPU.swp*
+  href: api/System.Numerics.Rational.NewRational.CPU.swp.html#System_Numerics_Rational_NewRational_CPU_swp_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.swp(System.UInt32,System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.swp(System.UInt32, System.UInt32)
+  nameWithType: NewRational.CPU.swp(UInt32, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.swp*
   name: swp
-  href: api/System.Numerics.Rational.Rational.CPU.swp.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.swp
-  fullName: System.Numerics.Rational.Rational.CPU.swp
-  nameWithType: Rational.CPU.swp
-- uid: System.Numerics.Rational.Rational.CPU.tos(System.Span{System.Char},System.Int32@,System.Int32@,System.Int32@,System.Boolean)
+  href: api/System.Numerics.Rational.NewRational.CPU.swp.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.swp
+  fullName: System.Numerics.Rational.NewRational.CPU.swp
+  nameWithType: NewRational.CPU.swp
+- uid: System.Numerics.Rational.NewRational.CPU.tos(System.Span{System.Char},System.Int32@,System.Int32@,System.Int32@,System.Boolean)
   name: tos(Span<Char>, out Int32, out Int32, out Int32, Boolean)
-  href: api/System.Numerics.Rational.Rational.CPU.tos.html#System_Numerics_Rational_Rational_CPU_tos_System_Span_System_Char__System_Int32__System_Int32__System_Int32__System_Boolean_
-  commentId: M:System.Numerics.Rational.Rational.CPU.tos(System.Span{System.Char},System.Int32@,System.Int32@,System.Int32@,System.Boolean)
+  href: api/System.Numerics.Rational.NewRational.CPU.tos.html#System_Numerics_Rational_NewRational_CPU_tos_System_Span_System_Char__System_Int32__System_Int32__System_Int32__System_Boolean_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.tos(System.Span{System.Char},System.Int32@,System.Int32@,System.Int32@,System.Boolean)
   name.vb: tos(Span(Of Char), ByRef Int32, ByRef Int32, ByRef Int32, Boolean)
-  fullName: System.Numerics.Rational.Rational.CPU.tos(System.Span<System.Char>, out System.Int32, out System.Int32, out System.Int32, System.Boolean)
-  fullName.vb: System.Numerics.Rational.Rational.CPU.tos(System.Span(Of System.Char), ByRef System.Int32, ByRef System.Int32, ByRef System.Int32, System.Boolean)
-  nameWithType: Rational.CPU.tos(Span<Char>, out Int32, out Int32, out Int32, Boolean)
-  nameWithType.vb: Rational.CPU.tos(Span(Of Char), ByRef Int32, ByRef Int32, ByRef Int32, Boolean)
-- uid: System.Numerics.Rational.Rational.CPU.tos*
+  fullName: System.Numerics.Rational.NewRational.CPU.tos(System.Span<System.Char>, out System.Int32, out System.Int32, out System.Int32, System.Boolean)
+  fullName.vb: System.Numerics.Rational.NewRational.CPU.tos(System.Span(Of System.Char), ByRef System.Int32, ByRef System.Int32, ByRef System.Int32, System.Boolean)
+  nameWithType: NewRational.CPU.tos(Span<Char>, out Int32, out Int32, out Int32, Boolean)
+  nameWithType.vb: NewRational.CPU.tos(Span(Of Char), ByRef Int32, ByRef Int32, ByRef Int32, Boolean)
+- uid: System.Numerics.Rational.NewRational.CPU.tos*
   name: tos
-  href: api/System.Numerics.Rational.Rational.CPU.tos.html
-  commentId: Overload:System.Numerics.Rational.Rational.CPU.tos
-  fullName: System.Numerics.Rational.Rational.CPU.tos
-  nameWithType: Rational.CPU.tos
-- uid: System.Numerics.Rational.Rational.Equals(System.Numerics.Rational.Rational)
-  name: Equals(Rational)
-  href: api/System.Numerics.Rational.Rational.Equals.html#System_Numerics_Rational_Rational_Equals_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.Equals(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Equals(System.Numerics.Rational.Rational)
-  nameWithType: Rational.Equals(Rational)
-- uid: System.Numerics.Rational.Rational.Equals(System.Object)
+  href: api/System.Numerics.Rational.NewRational.CPU.tos.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.tos
+  fullName: System.Numerics.Rational.NewRational.CPU.tos
+  nameWithType: NewRational.CPU.tos
+- uid: System.Numerics.Rational.NewRational.Equals(System.Numerics.Rational.NewRational)
+  name: Equals(NewRational)
+  href: api/System.Numerics.Rational.NewRational.Equals.html#System_Numerics_Rational_NewRational_Equals_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Equals(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Equals(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Equals(NewRational)
+- uid: System.Numerics.Rational.NewRational.Equals(System.Object)
   name: Equals(Object)
-  href: api/System.Numerics.Rational.Rational.Equals.html#System_Numerics_Rational_Rational_Equals_System_Object_
-  commentId: M:System.Numerics.Rational.Rational.Equals(System.Object)
-  fullName: System.Numerics.Rational.Rational.Equals(System.Object)
-  nameWithType: Rational.Equals(Object)
-- uid: System.Numerics.Rational.Rational.Equals*
+  href: api/System.Numerics.Rational.NewRational.Equals.html#System_Numerics_Rational_NewRational_Equals_System_Object_
+  commentId: M:System.Numerics.Rational.NewRational.Equals(System.Object)
+  fullName: System.Numerics.Rational.NewRational.Equals(System.Object)
+  nameWithType: NewRational.Equals(Object)
+- uid: System.Numerics.Rational.NewRational.Equals*
   name: Equals
-  href: api/System.Numerics.Rational.Rational.Equals.html
-  commentId: Overload:System.Numerics.Rational.Rational.Equals
-  fullName: System.Numerics.Rational.Rational.Equals
-  nameWithType: Rational.Equals
-- uid: System.Numerics.Rational.Rational.GetHashCode
+  href: api/System.Numerics.Rational.NewRational.Equals.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Equals
+  fullName: System.Numerics.Rational.NewRational.Equals
+  nameWithType: NewRational.Equals
+- uid: System.Numerics.Rational.NewRational.GetHashCode
   name: GetHashCode()
-  href: api/System.Numerics.Rational.Rational.GetHashCode.html#System_Numerics_Rational_Rational_GetHashCode
-  commentId: M:System.Numerics.Rational.Rational.GetHashCode
-  fullName: System.Numerics.Rational.Rational.GetHashCode()
-  nameWithType: Rational.GetHashCode()
-- uid: System.Numerics.Rational.Rational.GetHashCode*
+  href: api/System.Numerics.Rational.NewRational.GetHashCode.html#System_Numerics_Rational_NewRational_GetHashCode
+  commentId: M:System.Numerics.Rational.NewRational.GetHashCode
+  fullName: System.Numerics.Rational.NewRational.GetHashCode()
+  nameWithType: NewRational.GetHashCode()
+- uid: System.Numerics.Rational.NewRational.GetHashCode*
   name: GetHashCode
-  href: api/System.Numerics.Rational.Rational.GetHashCode.html
-  commentId: Overload:System.Numerics.Rational.Rational.GetHashCode
-  fullName: System.Numerics.Rational.Rational.GetHashCode
-  nameWithType: Rational.GetHashCode
-- uid: System.Numerics.Rational.Rational.ILog10(System.Numerics.Rational.Rational)
-  name: ILog10(Rational)
-  href: api/System.Numerics.Rational.Rational.ILog10.html#System_Numerics_Rational_Rational_ILog10_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.ILog10(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.ILog10(System.Numerics.Rational.Rational)
-  nameWithType: Rational.ILog10(Rational)
-- uid: System.Numerics.Rational.Rational.ILog10*
+  href: api/System.Numerics.Rational.NewRational.GetHashCode.html
+  commentId: Overload:System.Numerics.Rational.NewRational.GetHashCode
+  fullName: System.Numerics.Rational.NewRational.GetHashCode
+  nameWithType: NewRational.GetHashCode
+- uid: System.Numerics.Rational.NewRational.ILog10(System.Numerics.Rational.NewRational)
+  name: ILog10(NewRational)
+  href: api/System.Numerics.Rational.NewRational.ILog10.html#System_Numerics_Rational_NewRational_ILog10_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.ILog10(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.ILog10(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.ILog10(NewRational)
+- uid: System.Numerics.Rational.NewRational.ILog10*
   name: ILog10
-  href: api/System.Numerics.Rational.Rational.ILog10.html
-  commentId: Overload:System.Numerics.Rational.Rational.ILog10
-  fullName: System.Numerics.Rational.Rational.ILog10
-  nameWithType: Rational.ILog10
-- uid: System.Numerics.Rational.Rational.Max(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Max(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.Max.html#System_Numerics_Rational_Rational_Max_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.Max(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Max(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Max(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.Max*
+  href: api/System.Numerics.Rational.NewRational.ILog10.html
+  commentId: Overload:System.Numerics.Rational.NewRational.ILog10
+  fullName: System.Numerics.Rational.NewRational.ILog10
+  nameWithType: NewRational.ILog10
+- uid: System.Numerics.Rational.NewRational.Max(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Max(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.Max.html#System_Numerics_Rational_NewRational_Max_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Max(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Max(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Max(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.Max*
   name: Max
-  href: api/System.Numerics.Rational.Rational.Max.html
-  commentId: Overload:System.Numerics.Rational.Rational.Max
-  fullName: System.Numerics.Rational.Rational.Max
-  nameWithType: Rational.Max
-- uid: System.Numerics.Rational.Rational.Min(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Min(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.Min.html#System_Numerics_Rational_Rational_Min_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.Min(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Min(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Min(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.Min*
+  href: api/System.Numerics.Rational.NewRational.Max.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Max
+  fullName: System.Numerics.Rational.NewRational.Max
+  nameWithType: NewRational.Max
+- uid: System.Numerics.Rational.NewRational.Min(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Min(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.Min.html#System_Numerics_Rational_NewRational_Min_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Min(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Min(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Min(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.Min*
   name: Min
-  href: api/System.Numerics.Rational.Rational.Min.html
-  commentId: Overload:System.Numerics.Rational.Rational.Min
-  fullName: System.Numerics.Rational.Rational.Min
-  nameWithType: Rational.Min
-- uid: System.Numerics.Rational.Rational.op_Addition(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Addition(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_Addition.html#System_Numerics_Rational_Rational_op_Addition_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_Addition(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Addition(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Addition(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_Addition*
+  href: api/System.Numerics.Rational.NewRational.Min.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Min
+  fullName: System.Numerics.Rational.NewRational.Min
+  nameWithType: NewRational.Min
+- uid: System.Numerics.Rational.NewRational.op_Addition(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Addition(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Addition.html#System_Numerics_Rational_NewRational_op_Addition_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Addition(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Addition(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Addition(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Addition*
   name: Addition
-  href: api/System.Numerics.Rational.Rational.op_Addition.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Addition
-  fullName: System.Numerics.Rational.Rational.Addition
-  nameWithType: Rational.Addition
-- uid: System.Numerics.Rational.Rational.op_Division(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Division(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_Division.html#System_Numerics_Rational_Rational_op_Division_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_Division(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Division(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Division(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_Division*
+  href: api/System.Numerics.Rational.NewRational.op_Addition.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Addition
+  fullName: System.Numerics.Rational.NewRational.Addition
+  nameWithType: NewRational.Addition
+- uid: System.Numerics.Rational.NewRational.op_Division(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Division(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Division.html#System_Numerics_Rational_NewRational_op_Division_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Division(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Division(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Division(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Division*
   name: Division
-  href: api/System.Numerics.Rational.Rational.op_Division.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Division
-  fullName: System.Numerics.Rational.Rational.Division
-  nameWithType: Rational.Division
-- uid: System.Numerics.Rational.Rational.op_Equality(System.Numerics.Rational.Rational,System.Int32)
-  name: Equality(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.op_Equality.html#System_Numerics_Rational_Rational_op_Equality_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.op_Equality(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.Equality(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.Equality(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.op_Equality(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Equality(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_Equality.html#System_Numerics_Rational_Rational_op_Equality_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_Equality(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Equality(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Equality(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_Equality*
+  href: api/System.Numerics.Rational.NewRational.op_Division.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Division
+  fullName: System.Numerics.Rational.NewRational.Division
+  nameWithType: NewRational.Division
+- uid: System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Int32)
+  name: Equality(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.op_Equality.html#System_Numerics_Rational_NewRational_op_Equality_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Equality(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.Equality(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Equality(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Equality.html#System_Numerics_Rational_NewRational_op_Equality_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Equality(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Equality(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Equality*
   name: Equality
-  href: api/System.Numerics.Rational.Rational.op_Equality.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Equality
-  fullName: System.Numerics.Rational.Rational.Equality
-  nameWithType: Rational.Equality
-- uid: System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Decimal
-  name: Explicit(Rational to Decimal)
-  href: api/System.Numerics.Rational.Rational.op_Explicit.html#System_Numerics_Rational_Rational_op_Explicit_System_Numerics_Rational_Rational__System_Decimal
-  commentId: M:System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Decimal
-  name.vb: Narrowing(Rational to Decimal)
-  fullName: System.Numerics.Rational.Rational.Explicit(System.Numerics.Rational.Rational to System.Decimal)
-  fullName.vb: System.Numerics.Rational.Rational.Narrowing(System.Numerics.Rational.Rational to System.Decimal)
-  nameWithType: Rational.Explicit(Rational to Decimal)
-  nameWithType.vb: Rational.Narrowing(Rational to Decimal)
-- uid: System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Double
-  name: Explicit(Rational to Double)
-  href: api/System.Numerics.Rational.Rational.op_Explicit.html#System_Numerics_Rational_Rational_op_Explicit_System_Numerics_Rational_Rational__System_Double
-  commentId: M:System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Double
-  name.vb: Narrowing(Rational to Double)
-  fullName: System.Numerics.Rational.Rational.Explicit(System.Numerics.Rational.Rational to System.Double)
-  fullName.vb: System.Numerics.Rational.Rational.Narrowing(System.Numerics.Rational.Rational to System.Double)
-  nameWithType: Rational.Explicit(Rational to Double)
-  nameWithType.vb: Rational.Narrowing(Rational to Double)
-- uid: System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Int32
-  name: Explicit(Rational to Int32)
-  href: api/System.Numerics.Rational.Rational.op_Explicit.html#System_Numerics_Rational_Rational_op_Explicit_System_Numerics_Rational_Rational__System_Int32
-  commentId: M:System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Int32
-  name.vb: Narrowing(Rational to Int32)
-  fullName: System.Numerics.Rational.Rational.Explicit(System.Numerics.Rational.Rational to System.Int32)
-  fullName.vb: System.Numerics.Rational.Rational.Narrowing(System.Numerics.Rational.Rational to System.Int32)
-  nameWithType: Rational.Explicit(Rational to Int32)
-  nameWithType.vb: Rational.Narrowing(Rational to Int32)
-- uid: System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Int64
-  name: Explicit(Rational to Int64)
-  href: api/System.Numerics.Rational.Rational.op_Explicit.html#System_Numerics_Rational_Rational_op_Explicit_System_Numerics_Rational_Rational__System_Int64
-  commentId: M:System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Int64
-  name.vb: Narrowing(Rational to Int64)
-  fullName: System.Numerics.Rational.Rational.Explicit(System.Numerics.Rational.Rational to System.Int64)
-  fullName.vb: System.Numerics.Rational.Rational.Narrowing(System.Numerics.Rational.Rational to System.Int64)
-  nameWithType: Rational.Explicit(Rational to Int64)
-  nameWithType.vb: Rational.Narrowing(Rational to Int64)
-- uid: System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Numerics.BigInteger
-  name: Explicit(Rational to BigInteger)
-  href: api/System.Numerics.Rational.Rational.op_Explicit.html#System_Numerics_Rational_Rational_op_Explicit_System_Numerics_Rational_Rational__System_Numerics_BigInteger
-  commentId: M:System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Numerics.BigInteger
-  name.vb: Narrowing(Rational to BigInteger)
-  fullName: System.Numerics.Rational.Rational.Explicit(System.Numerics.Rational.Rational to System.Numerics.BigInteger)
-  fullName.vb: System.Numerics.Rational.Rational.Narrowing(System.Numerics.Rational.Rational to System.Numerics.BigInteger)
-  nameWithType: Rational.Explicit(Rational to BigInteger)
-  nameWithType.vb: Rational.Narrowing(Rational to BigInteger)
-- uid: System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Single
-  name: Explicit(Rational to Single)
-  href: api/System.Numerics.Rational.Rational.op_Explicit.html#System_Numerics_Rational_Rational_op_Explicit_System_Numerics_Rational_Rational__System_Single
-  commentId: M:System.Numerics.Rational.Rational.op_Explicit(System.Numerics.Rational.Rational)~System.Single
-  name.vb: Narrowing(Rational to Single)
-  fullName: System.Numerics.Rational.Rational.Explicit(System.Numerics.Rational.Rational to System.Single)
-  fullName.vb: System.Numerics.Rational.Rational.Narrowing(System.Numerics.Rational.Rational to System.Single)
-  nameWithType: Rational.Explicit(Rational to Single)
-  nameWithType.vb: Rational.Narrowing(Rational to Single)
-- uid: System.Numerics.Rational.Rational.op_Explicit*
+  href: api/System.Numerics.Rational.NewRational.op_Equality.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Equality
+  fullName: System.Numerics.Rational.NewRational.Equality
+  nameWithType: NewRational.Equality
+- uid: System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Decimal
+  name: Explicit(NewRational to Decimal)
+  href: api/System.Numerics.Rational.NewRational.op_Explicit.html#System_Numerics_Rational_NewRational_op_Explicit_System_Numerics_Rational_NewRational__System_Decimal
+  commentId: M:System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Decimal
+  name.vb: Narrowing(NewRational to Decimal)
+  fullName: System.Numerics.Rational.NewRational.Explicit(System.Numerics.Rational.NewRational to System.Decimal)
+  fullName.vb: System.Numerics.Rational.NewRational.Narrowing(System.Numerics.Rational.NewRational to System.Decimal)
+  nameWithType: NewRational.Explicit(NewRational to Decimal)
+  nameWithType.vb: NewRational.Narrowing(NewRational to Decimal)
+- uid: System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Double
+  name: Explicit(NewRational to Double)
+  href: api/System.Numerics.Rational.NewRational.op_Explicit.html#System_Numerics_Rational_NewRational_op_Explicit_System_Numerics_Rational_NewRational__System_Double
+  commentId: M:System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Double
+  name.vb: Narrowing(NewRational to Double)
+  fullName: System.Numerics.Rational.NewRational.Explicit(System.Numerics.Rational.NewRational to System.Double)
+  fullName.vb: System.Numerics.Rational.NewRational.Narrowing(System.Numerics.Rational.NewRational to System.Double)
+  nameWithType: NewRational.Explicit(NewRational to Double)
+  nameWithType.vb: NewRational.Narrowing(NewRational to Double)
+- uid: System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Int32
+  name: Explicit(NewRational to Int32)
+  href: api/System.Numerics.Rational.NewRational.op_Explicit.html#System_Numerics_Rational_NewRational_op_Explicit_System_Numerics_Rational_NewRational__System_Int32
+  commentId: M:System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Int32
+  name.vb: Narrowing(NewRational to Int32)
+  fullName: System.Numerics.Rational.NewRational.Explicit(System.Numerics.Rational.NewRational to System.Int32)
+  fullName.vb: System.Numerics.Rational.NewRational.Narrowing(System.Numerics.Rational.NewRational to System.Int32)
+  nameWithType: NewRational.Explicit(NewRational to Int32)
+  nameWithType.vb: NewRational.Narrowing(NewRational to Int32)
+- uid: System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Int64
+  name: Explicit(NewRational to Int64)
+  href: api/System.Numerics.Rational.NewRational.op_Explicit.html#System_Numerics_Rational_NewRational_op_Explicit_System_Numerics_Rational_NewRational__System_Int64
+  commentId: M:System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Int64
+  name.vb: Narrowing(NewRational to Int64)
+  fullName: System.Numerics.Rational.NewRational.Explicit(System.Numerics.Rational.NewRational to System.Int64)
+  fullName.vb: System.Numerics.Rational.NewRational.Narrowing(System.Numerics.Rational.NewRational to System.Int64)
+  nameWithType: NewRational.Explicit(NewRational to Int64)
+  nameWithType.vb: NewRational.Narrowing(NewRational to Int64)
+- uid: System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Numerics.BigInteger
+  name: Explicit(NewRational to BigInteger)
+  href: api/System.Numerics.Rational.NewRational.op_Explicit.html#System_Numerics_Rational_NewRational_op_Explicit_System_Numerics_Rational_NewRational__System_Numerics_BigInteger
+  commentId: M:System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Numerics.BigInteger
+  name.vb: Narrowing(NewRational to BigInteger)
+  fullName: System.Numerics.Rational.NewRational.Explicit(System.Numerics.Rational.NewRational to System.Numerics.BigInteger)
+  fullName.vb: System.Numerics.Rational.NewRational.Narrowing(System.Numerics.Rational.NewRational to System.Numerics.BigInteger)
+  nameWithType: NewRational.Explicit(NewRational to BigInteger)
+  nameWithType.vb: NewRational.Narrowing(NewRational to BigInteger)
+- uid: System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Single
+  name: Explicit(NewRational to Single)
+  href: api/System.Numerics.Rational.NewRational.op_Explicit.html#System_Numerics_Rational_NewRational_op_Explicit_System_Numerics_Rational_NewRational__System_Single
+  commentId: M:System.Numerics.Rational.NewRational.op_Explicit(System.Numerics.Rational.NewRational)~System.Single
+  name.vb: Narrowing(NewRational to Single)
+  fullName: System.Numerics.Rational.NewRational.Explicit(System.Numerics.Rational.NewRational to System.Single)
+  fullName.vb: System.Numerics.Rational.NewRational.Narrowing(System.Numerics.Rational.NewRational to System.Single)
+  nameWithType: NewRational.Explicit(NewRational to Single)
+  nameWithType.vb: NewRational.Narrowing(NewRational to Single)
+- uid: System.Numerics.Rational.NewRational.op_Explicit*
   name: Explicit
-  href: api/System.Numerics.Rational.Rational.op_Explicit.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Explicit
+  href: api/System.Numerics.Rational.NewRational.op_Explicit.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Explicit
   name.vb: Narrowing
-  fullName: System.Numerics.Rational.Rational.Explicit
-  fullName.vb: System.Numerics.Rational.Rational.Narrowing
-  nameWithType: Rational.Explicit
-  nameWithType.vb: Rational.Narrowing
-- uid: System.Numerics.Rational.Rational.op_GreaterThan(System.Numerics.Rational.Rational,System.Int32)
-  name: GreaterThan(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.op_GreaterThan.html#System_Numerics_Rational_Rational_op_GreaterThan_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.op_GreaterThan(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.GreaterThan(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.GreaterThan(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.op_GreaterThan(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: GreaterThan(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_GreaterThan.html#System_Numerics_Rational_Rational_op_GreaterThan_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_GreaterThan(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.GreaterThan(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.GreaterThan(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_GreaterThan*
+  fullName: System.Numerics.Rational.NewRational.Explicit
+  fullName.vb: System.Numerics.Rational.NewRational.Narrowing
+  nameWithType: NewRational.Explicit
+  nameWithType.vb: NewRational.Narrowing
+- uid: System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Int32)
+  name: GreaterThan(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.op_GreaterThan.html#System_Numerics_Rational_NewRational_op_GreaterThan_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.GreaterThan(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.GreaterThan(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: GreaterThan(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_GreaterThan.html#System_Numerics_Rational_NewRational_op_GreaterThan_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.GreaterThan(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.GreaterThan(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_GreaterThan*
   name: GreaterThan
-  href: api/System.Numerics.Rational.Rational.op_GreaterThan.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_GreaterThan
-  fullName: System.Numerics.Rational.Rational.GreaterThan
-  nameWithType: Rational.GreaterThan
-- uid: System.Numerics.Rational.Rational.op_GreaterThanOrEqual(System.Numerics.Rational.Rational,System.Int32)
-  name: GreaterThanOrEqual(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.op_GreaterThanOrEqual.html#System_Numerics_Rational_Rational_op_GreaterThanOrEqual_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.op_GreaterThanOrEqual(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.GreaterThanOrEqual(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.GreaterThanOrEqual(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.op_GreaterThanOrEqual(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: GreaterThanOrEqual(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_GreaterThanOrEqual.html#System_Numerics_Rational_Rational_op_GreaterThanOrEqual_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_GreaterThanOrEqual(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.GreaterThanOrEqual(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.GreaterThanOrEqual(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_GreaterThanOrEqual*
+  href: api/System.Numerics.Rational.NewRational.op_GreaterThan.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_GreaterThan
+  fullName: System.Numerics.Rational.NewRational.GreaterThan
+  nameWithType: NewRational.GreaterThan
+- uid: System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Int32)
+  name: GreaterThanOrEqual(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.op_GreaterThanOrEqual.html#System_Numerics_Rational_NewRational_op_GreaterThanOrEqual_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.GreaterThanOrEqual(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.GreaterThanOrEqual(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: GreaterThanOrEqual(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_GreaterThanOrEqual.html#System_Numerics_Rational_NewRational_op_GreaterThanOrEqual_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.GreaterThanOrEqual(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.GreaterThanOrEqual(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_GreaterThanOrEqual*
   name: GreaterThanOrEqual
-  href: api/System.Numerics.Rational.Rational.op_GreaterThanOrEqual.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_GreaterThanOrEqual
-  fullName: System.Numerics.Rational.Rational.GreaterThanOrEqual
-  nameWithType: Rational.GreaterThanOrEqual
-- uid: System.Numerics.Rational.Rational.op_Implicit(System.Decimal)~System.Numerics.Rational.Rational
-  name: Implicit(Decimal to Rational)
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html#System_Numerics_Rational_Rational_op_Implicit_System_Decimal__System_Numerics_Rational_Rational
-  commentId: M:System.Numerics.Rational.Rational.op_Implicit(System.Decimal)~System.Numerics.Rational.Rational
-  name.vb: Widening(Decimal to Rational)
-  fullName: System.Numerics.Rational.Rational.Implicit(System.Decimal to System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.Widening(System.Decimal to System.Numerics.Rational.Rational)
-  nameWithType: Rational.Implicit(Decimal to Rational)
-  nameWithType.vb: Rational.Widening(Decimal to Rational)
-- uid: System.Numerics.Rational.Rational.op_Implicit(System.Double)~System.Numerics.Rational.Rational
-  name: Implicit(Double to Rational)
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html#System_Numerics_Rational_Rational_op_Implicit_System_Double__System_Numerics_Rational_Rational
-  commentId: M:System.Numerics.Rational.Rational.op_Implicit(System.Double)~System.Numerics.Rational.Rational
-  name.vb: Widening(Double to Rational)
-  fullName: System.Numerics.Rational.Rational.Implicit(System.Double to System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.Widening(System.Double to System.Numerics.Rational.Rational)
-  nameWithType: Rational.Implicit(Double to Rational)
-  nameWithType.vb: Rational.Widening(Double to Rational)
-- uid: System.Numerics.Rational.Rational.op_Implicit(System.Int32)~System.Numerics.Rational.Rational
-  name: Implicit(Int32 to Rational)
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html#System_Numerics_Rational_Rational_op_Implicit_System_Int32__System_Numerics_Rational_Rational
-  commentId: M:System.Numerics.Rational.Rational.op_Implicit(System.Int32)~System.Numerics.Rational.Rational
-  name.vb: Widening(Int32 to Rational)
-  fullName: System.Numerics.Rational.Rational.Implicit(System.Int32 to System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.Widening(System.Int32 to System.Numerics.Rational.Rational)
-  nameWithType: Rational.Implicit(Int32 to Rational)
-  nameWithType.vb: Rational.Widening(Int32 to Rational)
-- uid: System.Numerics.Rational.Rational.op_Implicit(System.Int64)~System.Numerics.Rational.Rational
-  name: Implicit(Int64 to Rational)
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html#System_Numerics_Rational_Rational_op_Implicit_System_Int64__System_Numerics_Rational_Rational
-  commentId: M:System.Numerics.Rational.Rational.op_Implicit(System.Int64)~System.Numerics.Rational.Rational
-  name.vb: Widening(Int64 to Rational)
-  fullName: System.Numerics.Rational.Rational.Implicit(System.Int64 to System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.Widening(System.Int64 to System.Numerics.Rational.Rational)
-  nameWithType: Rational.Implicit(Int64 to Rational)
-  nameWithType.vb: Rational.Widening(Int64 to Rational)
-- uid: System.Numerics.Rational.Rational.op_Implicit(System.Numerics.BigInteger)~System.Numerics.Rational.Rational
-  name: Implicit(BigInteger to Rational)
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html#System_Numerics_Rational_Rational_op_Implicit_System_Numerics_BigInteger__System_Numerics_Rational_Rational
-  commentId: M:System.Numerics.Rational.Rational.op_Implicit(System.Numerics.BigInteger)~System.Numerics.Rational.Rational
-  name.vb: Widening(BigInteger to Rational)
-  fullName: System.Numerics.Rational.Rational.Implicit(System.Numerics.BigInteger to System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.Widening(System.Numerics.BigInteger to System.Numerics.Rational.Rational)
-  nameWithType: Rational.Implicit(BigInteger to Rational)
-  nameWithType.vb: Rational.Widening(BigInteger to Rational)
-- uid: System.Numerics.Rational.Rational.op_Implicit(System.Single)~System.Numerics.Rational.Rational
-  name: Implicit(Single to Rational)
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html#System_Numerics_Rational_Rational_op_Implicit_System_Single__System_Numerics_Rational_Rational
-  commentId: M:System.Numerics.Rational.Rational.op_Implicit(System.Single)~System.Numerics.Rational.Rational
-  name.vb: Widening(Single to Rational)
-  fullName: System.Numerics.Rational.Rational.Implicit(System.Single to System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.Widening(System.Single to System.Numerics.Rational.Rational)
-  nameWithType: Rational.Implicit(Single to Rational)
-  nameWithType.vb: Rational.Widening(Single to Rational)
-- uid: System.Numerics.Rational.Rational.op_Implicit(System.UInt32)~System.Numerics.Rational.Rational
-  name: Implicit(UInt32 to Rational)
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html#System_Numerics_Rational_Rational_op_Implicit_System_UInt32__System_Numerics_Rational_Rational
-  commentId: M:System.Numerics.Rational.Rational.op_Implicit(System.UInt32)~System.Numerics.Rational.Rational
-  name.vb: Widening(UInt32 to Rational)
-  fullName: System.Numerics.Rational.Rational.Implicit(System.UInt32 to System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.Widening(System.UInt32 to System.Numerics.Rational.Rational)
-  nameWithType: Rational.Implicit(UInt32 to Rational)
-  nameWithType.vb: Rational.Widening(UInt32 to Rational)
-- uid: System.Numerics.Rational.Rational.op_Implicit(System.UInt64)~System.Numerics.Rational.Rational
-  name: Implicit(UInt64 to Rational)
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html#System_Numerics_Rational_Rational_op_Implicit_System_UInt64__System_Numerics_Rational_Rational
-  commentId: M:System.Numerics.Rational.Rational.op_Implicit(System.UInt64)~System.Numerics.Rational.Rational
-  name.vb: Widening(UInt64 to Rational)
-  fullName: System.Numerics.Rational.Rational.Implicit(System.UInt64 to System.Numerics.Rational.Rational)
-  fullName.vb: System.Numerics.Rational.Rational.Widening(System.UInt64 to System.Numerics.Rational.Rational)
-  nameWithType: Rational.Implicit(UInt64 to Rational)
-  nameWithType.vb: Rational.Widening(UInt64 to Rational)
-- uid: System.Numerics.Rational.Rational.op_Implicit*
+  href: api/System.Numerics.Rational.NewRational.op_GreaterThanOrEqual.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_GreaterThanOrEqual
+  fullName: System.Numerics.Rational.NewRational.GreaterThanOrEqual
+  nameWithType: NewRational.GreaterThanOrEqual
+- uid: System.Numerics.Rational.NewRational.op_Implicit(System.Decimal)~System.Numerics.Rational.NewRational
+  name: Implicit(Decimal to NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html#System_Numerics_Rational_NewRational_op_Implicit_System_Decimal__System_Numerics_Rational_NewRational
+  commentId: M:System.Numerics.Rational.NewRational.op_Implicit(System.Decimal)~System.Numerics.Rational.NewRational
+  name.vb: Widening(Decimal to NewRational)
+  fullName: System.Numerics.Rational.NewRational.Implicit(System.Decimal to System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.Widening(System.Decimal to System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Implicit(Decimal to NewRational)
+  nameWithType.vb: NewRational.Widening(Decimal to NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Implicit(System.Double)~System.Numerics.Rational.NewRational
+  name: Implicit(Double to NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html#System_Numerics_Rational_NewRational_op_Implicit_System_Double__System_Numerics_Rational_NewRational
+  commentId: M:System.Numerics.Rational.NewRational.op_Implicit(System.Double)~System.Numerics.Rational.NewRational
+  name.vb: Widening(Double to NewRational)
+  fullName: System.Numerics.Rational.NewRational.Implicit(System.Double to System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.Widening(System.Double to System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Implicit(Double to NewRational)
+  nameWithType.vb: NewRational.Widening(Double to NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Implicit(System.Int32)~System.Numerics.Rational.NewRational
+  name: Implicit(Int32 to NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html#System_Numerics_Rational_NewRational_op_Implicit_System_Int32__System_Numerics_Rational_NewRational
+  commentId: M:System.Numerics.Rational.NewRational.op_Implicit(System.Int32)~System.Numerics.Rational.NewRational
+  name.vb: Widening(Int32 to NewRational)
+  fullName: System.Numerics.Rational.NewRational.Implicit(System.Int32 to System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.Widening(System.Int32 to System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Implicit(Int32 to NewRational)
+  nameWithType.vb: NewRational.Widening(Int32 to NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Implicit(System.Int64)~System.Numerics.Rational.NewRational
+  name: Implicit(Int64 to NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html#System_Numerics_Rational_NewRational_op_Implicit_System_Int64__System_Numerics_Rational_NewRational
+  commentId: M:System.Numerics.Rational.NewRational.op_Implicit(System.Int64)~System.Numerics.Rational.NewRational
+  name.vb: Widening(Int64 to NewRational)
+  fullName: System.Numerics.Rational.NewRational.Implicit(System.Int64 to System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.Widening(System.Int64 to System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Implicit(Int64 to NewRational)
+  nameWithType.vb: NewRational.Widening(Int64 to NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Implicit(System.Numerics.BigInteger)~System.Numerics.Rational.NewRational
+  name: Implicit(BigInteger to NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html#System_Numerics_Rational_NewRational_op_Implicit_System_Numerics_BigInteger__System_Numerics_Rational_NewRational
+  commentId: M:System.Numerics.Rational.NewRational.op_Implicit(System.Numerics.BigInteger)~System.Numerics.Rational.NewRational
+  name.vb: Widening(BigInteger to NewRational)
+  fullName: System.Numerics.Rational.NewRational.Implicit(System.Numerics.BigInteger to System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.Widening(System.Numerics.BigInteger to System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Implicit(BigInteger to NewRational)
+  nameWithType.vb: NewRational.Widening(BigInteger to NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Implicit(System.Single)~System.Numerics.Rational.NewRational
+  name: Implicit(Single to NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html#System_Numerics_Rational_NewRational_op_Implicit_System_Single__System_Numerics_Rational_NewRational
+  commentId: M:System.Numerics.Rational.NewRational.op_Implicit(System.Single)~System.Numerics.Rational.NewRational
+  name.vb: Widening(Single to NewRational)
+  fullName: System.Numerics.Rational.NewRational.Implicit(System.Single to System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.Widening(System.Single to System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Implicit(Single to NewRational)
+  nameWithType.vb: NewRational.Widening(Single to NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Implicit(System.UInt32)~System.Numerics.Rational.NewRational
+  name: Implicit(UInt32 to NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html#System_Numerics_Rational_NewRational_op_Implicit_System_UInt32__System_Numerics_Rational_NewRational
+  commentId: M:System.Numerics.Rational.NewRational.op_Implicit(System.UInt32)~System.Numerics.Rational.NewRational
+  name.vb: Widening(UInt32 to NewRational)
+  fullName: System.Numerics.Rational.NewRational.Implicit(System.UInt32 to System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.Widening(System.UInt32 to System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Implicit(UInt32 to NewRational)
+  nameWithType.vb: NewRational.Widening(UInt32 to NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Implicit(System.UInt64)~System.Numerics.Rational.NewRational
+  name: Implicit(UInt64 to NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html#System_Numerics_Rational_NewRational_op_Implicit_System_UInt64__System_Numerics_Rational_NewRational
+  commentId: M:System.Numerics.Rational.NewRational.op_Implicit(System.UInt64)~System.Numerics.Rational.NewRational
+  name.vb: Widening(UInt64 to NewRational)
+  fullName: System.Numerics.Rational.NewRational.Implicit(System.UInt64 to System.Numerics.Rational.NewRational)
+  fullName.vb: System.Numerics.Rational.NewRational.Widening(System.UInt64 to System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Implicit(UInt64 to NewRational)
+  nameWithType.vb: NewRational.Widening(UInt64 to NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Implicit*
   name: Implicit
-  href: api/System.Numerics.Rational.Rational.op_Implicit.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Implicit
+  href: api/System.Numerics.Rational.NewRational.op_Implicit.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Implicit
   name.vb: Widening
-  fullName: System.Numerics.Rational.Rational.Implicit
-  fullName.vb: System.Numerics.Rational.Rational.Widening
-  nameWithType: Rational.Implicit
-  nameWithType.vb: Rational.Widening
-- uid: System.Numerics.Rational.Rational.op_Inequality(System.Numerics.Rational.Rational,System.Int32)
-  name: Inequality(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.op_Inequality.html#System_Numerics_Rational_Rational_op_Inequality_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.op_Inequality(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.Inequality(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.Inequality(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.op_Inequality(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Inequality(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_Inequality.html#System_Numerics_Rational_Rational_op_Inequality_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_Inequality(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Inequality(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Inequality(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_Inequality*
+  fullName: System.Numerics.Rational.NewRational.Implicit
+  fullName.vb: System.Numerics.Rational.NewRational.Widening
+  nameWithType: NewRational.Implicit
+  nameWithType.vb: NewRational.Widening
+- uid: System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Int32)
+  name: Inequality(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.op_Inequality.html#System_Numerics_Rational_NewRational_op_Inequality_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Inequality(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.Inequality(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Inequality(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Inequality.html#System_Numerics_Rational_NewRational_op_Inequality_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Inequality(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Inequality(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Inequality*
   name: Inequality
-  href: api/System.Numerics.Rational.Rational.op_Inequality.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Inequality
-  fullName: System.Numerics.Rational.Rational.Inequality
-  nameWithType: Rational.Inequality
-- uid: System.Numerics.Rational.Rational.op_LessThan(System.Numerics.Rational.Rational,System.Int32)
-  name: LessThan(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.op_LessThan.html#System_Numerics_Rational_Rational_op_LessThan_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.op_LessThan(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.LessThan(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.LessThan(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.op_LessThan(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: LessThan(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_LessThan.html#System_Numerics_Rational_Rational_op_LessThan_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_LessThan(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.LessThan(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.LessThan(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_LessThan*
+  href: api/System.Numerics.Rational.NewRational.op_Inequality.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Inequality
+  fullName: System.Numerics.Rational.NewRational.Inequality
+  nameWithType: NewRational.Inequality
+- uid: System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Int32)
+  name: LessThan(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.op_LessThan.html#System_Numerics_Rational_NewRational_op_LessThan_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.LessThan(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.LessThan(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: LessThan(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_LessThan.html#System_Numerics_Rational_NewRational_op_LessThan_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.LessThan(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.LessThan(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_LessThan*
   name: LessThan
-  href: api/System.Numerics.Rational.Rational.op_LessThan.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_LessThan
-  fullName: System.Numerics.Rational.Rational.LessThan
-  nameWithType: Rational.LessThan
-- uid: System.Numerics.Rational.Rational.op_LessThanOrEqual(System.Numerics.Rational.Rational,System.Int32)
-  name: LessThanOrEqual(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.op_LessThanOrEqual.html#System_Numerics_Rational_Rational_op_LessThanOrEqual_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.op_LessThanOrEqual(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.LessThanOrEqual(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.LessThanOrEqual(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.op_LessThanOrEqual(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: LessThanOrEqual(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_LessThanOrEqual.html#System_Numerics_Rational_Rational_op_LessThanOrEqual_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_LessThanOrEqual(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.LessThanOrEqual(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.LessThanOrEqual(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_LessThanOrEqual*
+  href: api/System.Numerics.Rational.NewRational.op_LessThan.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_LessThan
+  fullName: System.Numerics.Rational.NewRational.LessThan
+  nameWithType: NewRational.LessThan
+- uid: System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Int32)
+  name: LessThanOrEqual(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.op_LessThanOrEqual.html#System_Numerics_Rational_NewRational_op_LessThanOrEqual_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.LessThanOrEqual(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.LessThanOrEqual(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: LessThanOrEqual(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_LessThanOrEqual.html#System_Numerics_Rational_NewRational_op_LessThanOrEqual_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.LessThanOrEqual(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.LessThanOrEqual(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_LessThanOrEqual*
   name: LessThanOrEqual
-  href: api/System.Numerics.Rational.Rational.op_LessThanOrEqual.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_LessThanOrEqual
-  fullName: System.Numerics.Rational.Rational.LessThanOrEqual
-  nameWithType: Rational.LessThanOrEqual
-- uid: System.Numerics.Rational.Rational.op_Modulus(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Modulus(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_Modulus.html#System_Numerics_Rational_Rational_op_Modulus_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_Modulus(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Modulus(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Modulus(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_Modulus*
+  href: api/System.Numerics.Rational.NewRational.op_LessThanOrEqual.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_LessThanOrEqual
+  fullName: System.Numerics.Rational.NewRational.LessThanOrEqual
+  nameWithType: NewRational.LessThanOrEqual
+- uid: System.Numerics.Rational.NewRational.op_Modulus(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Modulus(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Modulus.html#System_Numerics_Rational_NewRational_op_Modulus_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Modulus(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Modulus(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Modulus(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Modulus*
   name: Modulus
-  href: api/System.Numerics.Rational.Rational.op_Modulus.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Modulus
-  fullName: System.Numerics.Rational.Rational.Modulus
-  nameWithType: Rational.Modulus
-- uid: System.Numerics.Rational.Rational.op_Multiply(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Multiply(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_Multiply.html#System_Numerics_Rational_Rational_op_Multiply_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_Multiply(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Multiply(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Multiply(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_Multiply*
+  href: api/System.Numerics.Rational.NewRational.op_Modulus.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Modulus
+  fullName: System.Numerics.Rational.NewRational.Modulus
+  nameWithType: NewRational.Modulus
+- uid: System.Numerics.Rational.NewRational.op_Multiply(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Multiply(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Multiply.html#System_Numerics_Rational_NewRational_op_Multiply_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Multiply(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Multiply(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Multiply(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Multiply*
   name: Multiply
-  href: api/System.Numerics.Rational.Rational.op_Multiply.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Multiply
-  fullName: System.Numerics.Rational.Rational.Multiply
-  nameWithType: Rational.Multiply
-- uid: System.Numerics.Rational.Rational.op_Subtraction(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  name: Subtraction(Rational, Rational)
-  href: api/System.Numerics.Rational.Rational.op_Subtraction.html#System_Numerics_Rational_Rational_op_Subtraction_System_Numerics_Rational_Rational_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_Subtraction(System.Numerics.Rational.Rational,System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Subtraction(System.Numerics.Rational.Rational, System.Numerics.Rational.Rational)
-  nameWithType: Rational.Subtraction(Rational, Rational)
-- uid: System.Numerics.Rational.Rational.op_Subtraction*
+  href: api/System.Numerics.Rational.NewRational.op_Multiply.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Multiply
+  fullName: System.Numerics.Rational.NewRational.Multiply
+  nameWithType: NewRational.Multiply
+- uid: System.Numerics.Rational.NewRational.op_Subtraction(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  name: Subtraction(NewRational, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Subtraction.html#System_Numerics_Rational_NewRational_op_Subtraction_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Subtraction(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Subtraction(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Subtraction(NewRational, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Subtraction*
   name: Subtraction
-  href: api/System.Numerics.Rational.Rational.op_Subtraction.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_Subtraction
-  fullName: System.Numerics.Rational.Rational.Subtraction
-  nameWithType: Rational.Subtraction
-- uid: System.Numerics.Rational.Rational.op_UnaryNegation(System.Numerics.Rational.Rational)
-  name: UnaryNegation(Rational)
-  href: api/System.Numerics.Rational.Rational.op_UnaryNegation.html#System_Numerics_Rational_Rational_op_UnaryNegation_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_UnaryNegation(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.UnaryNegation(System.Numerics.Rational.Rational)
-  nameWithType: Rational.UnaryNegation(Rational)
-- uid: System.Numerics.Rational.Rational.op_UnaryNegation*
+  href: api/System.Numerics.Rational.NewRational.op_Subtraction.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_Subtraction
+  fullName: System.Numerics.Rational.NewRational.Subtraction
+  nameWithType: NewRational.Subtraction
+- uid: System.Numerics.Rational.NewRational.op_UnaryNegation(System.Numerics.Rational.NewRational)
+  name: UnaryNegation(NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_UnaryNegation.html#System_Numerics_Rational_NewRational_op_UnaryNegation_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_UnaryNegation(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.UnaryNegation(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.UnaryNegation(NewRational)
+- uid: System.Numerics.Rational.NewRational.op_UnaryNegation*
   name: UnaryNegation
-  href: api/System.Numerics.Rational.Rational.op_UnaryNegation.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_UnaryNegation
-  fullName: System.Numerics.Rational.Rational.UnaryNegation
-  nameWithType: Rational.UnaryNegation
-- uid: System.Numerics.Rational.Rational.op_UnaryPlus(System.Numerics.Rational.Rational)
-  name: UnaryPlus(Rational)
-  href: api/System.Numerics.Rational.Rational.op_UnaryPlus.html#System_Numerics_Rational_Rational_op_UnaryPlus_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.op_UnaryPlus(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.UnaryPlus(System.Numerics.Rational.Rational)
-  nameWithType: Rational.UnaryPlus(Rational)
-- uid: System.Numerics.Rational.Rational.op_UnaryPlus*
+  href: api/System.Numerics.Rational.NewRational.op_UnaryNegation.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_UnaryNegation
+  fullName: System.Numerics.Rational.NewRational.UnaryNegation
+  nameWithType: NewRational.UnaryNegation
+- uid: System.Numerics.Rational.NewRational.op_UnaryPlus(System.Numerics.Rational.NewRational)
+  name: UnaryPlus(NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_UnaryPlus.html#System_Numerics_Rational_NewRational_op_UnaryPlus_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_UnaryPlus(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.UnaryPlus(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.UnaryPlus(NewRational)
+- uid: System.Numerics.Rational.NewRational.op_UnaryPlus*
   name: UnaryPlus
-  href: api/System.Numerics.Rational.Rational.op_UnaryPlus.html
-  commentId: Overload:System.Numerics.Rational.Rational.op_UnaryPlus
-  fullName: System.Numerics.Rational.Rational.UnaryPlus
-  nameWithType: Rational.UnaryPlus
-- uid: System.Numerics.Rational.Rational.Parse(System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  href: api/System.Numerics.Rational.NewRational.op_UnaryPlus.html
+  commentId: Overload:System.Numerics.Rational.NewRational.op_UnaryPlus
+  fullName: System.Numerics.Rational.NewRational.UnaryPlus
+  nameWithType: NewRational.UnaryPlus
+- uid: System.Numerics.Rational.NewRational.Parse(System.ReadOnlySpan{System.Char},System.IFormatProvider)
   name: Parse(ReadOnlySpan<Char>, IFormatProvider)
-  href: api/System.Numerics.Rational.Rational.Parse.html#System_Numerics_Rational_Rational_Parse_System_ReadOnlySpan_System_Char__System_IFormatProvider_
-  commentId: M:System.Numerics.Rational.Rational.Parse(System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  href: api/System.Numerics.Rational.NewRational.Parse.html#System_Numerics_Rational_NewRational_Parse_System_ReadOnlySpan_System_Char__System_IFormatProvider_
+  commentId: M:System.Numerics.Rational.NewRational.Parse(System.ReadOnlySpan{System.Char},System.IFormatProvider)
   name.vb: Parse(ReadOnlySpan(Of Char), IFormatProvider)
-  fullName: System.Numerics.Rational.Rational.Parse(System.ReadOnlySpan<System.Char>, System.IFormatProvider)
-  fullName.vb: System.Numerics.Rational.Rational.Parse(System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
-  nameWithType: Rational.Parse(ReadOnlySpan<Char>, IFormatProvider)
-  nameWithType.vb: Rational.Parse(ReadOnlySpan(Of Char), IFormatProvider)
-- uid: System.Numerics.Rational.Rational.Parse*
+  fullName: System.Numerics.Rational.NewRational.Parse(System.ReadOnlySpan<System.Char>, System.IFormatProvider)
+  fullName.vb: System.Numerics.Rational.NewRational.Parse(System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
+  nameWithType: NewRational.Parse(ReadOnlySpan<Char>, IFormatProvider)
+  nameWithType.vb: NewRational.Parse(ReadOnlySpan(Of Char), IFormatProvider)
+- uid: System.Numerics.Rational.NewRational.Parse*
   name: Parse
-  href: api/System.Numerics.Rational.Rational.Parse.html
-  commentId: Overload:System.Numerics.Rational.Rational.Parse
-  fullName: System.Numerics.Rational.Rational.Parse
-  nameWithType: Rational.Parse
-- uid: System.Numerics.Rational.Rational.Pow(System.Int32,System.Int32)
+  href: api/System.Numerics.Rational.NewRational.Parse.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Parse
+  fullName: System.Numerics.Rational.NewRational.Parse
+  nameWithType: NewRational.Parse
+- uid: System.Numerics.Rational.NewRational.Pow(System.Int32,System.Int32)
   name: Pow(Int32, Int32)
-  href: api/System.Numerics.Rational.Rational.Pow.html#System_Numerics_Rational_Rational_Pow_System_Int32_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.Pow(System.Int32,System.Int32)
-  fullName: System.Numerics.Rational.Rational.Pow(System.Int32, System.Int32)
-  nameWithType: Rational.Pow(Int32, Int32)
-- uid: System.Numerics.Rational.Rational.Pow(System.Numerics.Rational.Rational,System.Int32)
-  name: Pow(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.Pow.html#System_Numerics_Rational_Rational_Pow_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.Pow(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.Pow(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.Pow(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.Pow*
+  href: api/System.Numerics.Rational.NewRational.Pow.html#System_Numerics_Rational_NewRational_Pow_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.Pow(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Pow(System.Int32, System.Int32)
+  nameWithType: NewRational.Pow(Int32, Int32)
+- uid: System.Numerics.Rational.NewRational.Pow(System.Numerics.Rational.NewRational,System.Int32)
+  name: Pow(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.Pow.html#System_Numerics_Rational_NewRational_Pow_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.Pow(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Pow(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.Pow(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.Pow*
   name: Pow
-  href: api/System.Numerics.Rational.Rational.Pow.html
-  commentId: Overload:System.Numerics.Rational.Rational.Pow
-  fullName: System.Numerics.Rational.Rational.Pow
-  nameWithType: Rational.Pow
-- uid: System.Numerics.Rational.Rational.ReadFromBytes(System.ReadOnlySpan{System.Byte}@)
+  href: api/System.Numerics.Rational.NewRational.Pow.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Pow
+  fullName: System.Numerics.Rational.NewRational.Pow
+  nameWithType: NewRational.Pow
+- uid: System.Numerics.Rational.NewRational.ReadFromBytes(System.ReadOnlySpan{System.Byte}@)
   name: ReadFromBytes(ref ReadOnlySpan<Byte>)
-  href: api/System.Numerics.Rational.Rational.ReadFromBytes.html#System_Numerics_Rational_Rational_ReadFromBytes_System_ReadOnlySpan_System_Byte___
-  commentId: M:System.Numerics.Rational.Rational.ReadFromBytes(System.ReadOnlySpan{System.Byte}@)
+  href: api/System.Numerics.Rational.NewRational.ReadFromBytes.html#System_Numerics_Rational_NewRational_ReadFromBytes_System_ReadOnlySpan_System_Byte___
+  commentId: M:System.Numerics.Rational.NewRational.ReadFromBytes(System.ReadOnlySpan{System.Byte}@)
   name.vb: ReadFromBytes(ByRef ReadOnlySpan(Of Byte))
-  fullName: System.Numerics.Rational.Rational.ReadFromBytes(ref System.ReadOnlySpan<System.Byte>)
-  fullName.vb: System.Numerics.Rational.Rational.ReadFromBytes(ByRef System.ReadOnlySpan(Of System.Byte))
-  nameWithType: Rational.ReadFromBytes(ref ReadOnlySpan<Byte>)
-  nameWithType.vb: Rational.ReadFromBytes(ByRef ReadOnlySpan(Of Byte))
-- uid: System.Numerics.Rational.Rational.ReadFromBytes*
+  fullName: System.Numerics.Rational.NewRational.ReadFromBytes(ref System.ReadOnlySpan<System.Byte>)
+  fullName.vb: System.Numerics.Rational.NewRational.ReadFromBytes(ByRef System.ReadOnlySpan(Of System.Byte))
+  nameWithType: NewRational.ReadFromBytes(ref ReadOnlySpan<Byte>)
+  nameWithType.vb: NewRational.ReadFromBytes(ByRef ReadOnlySpan(Of Byte))
+- uid: System.Numerics.Rational.NewRational.ReadFromBytes*
   name: ReadFromBytes
-  href: api/System.Numerics.Rational.Rational.ReadFromBytes.html
-  commentId: Overload:System.Numerics.Rational.Rational.ReadFromBytes
-  fullName: System.Numerics.Rational.Rational.ReadFromBytes
-  nameWithType: Rational.ReadFromBytes
-- uid: System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational)
-  name: Round(Rational)
-  href: api/System.Numerics.Rational.Rational.Round.html#System_Numerics_Rational_Rational_Round_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational)
-  nameWithType: Rational.Round(Rational)
-- uid: System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational,System.Int32)
-  name: Round(Rational, Int32)
-  href: api/System.Numerics.Rational.Rational.Round.html#System_Numerics_Rational_Rational_Round_System_Numerics_Rational_Rational_System_Int32_
-  commentId: M:System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational,System.Int32)
-  fullName: System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational, System.Int32)
-  nameWithType: Rational.Round(Rational, Int32)
-- uid: System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational,System.Int32,System.MidpointRounding)
-  name: Round(Rational, Int32, MidpointRounding)
-  href: api/System.Numerics.Rational.Rational.Round.html#System_Numerics_Rational_Rational_Round_System_Numerics_Rational_Rational_System_Int32_System_MidpointRounding_
-  commentId: M:System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational,System.Int32,System.MidpointRounding)
-  fullName: System.Numerics.Rational.Rational.Round(System.Numerics.Rational.Rational, System.Int32, System.MidpointRounding)
-  nameWithType: Rational.Round(Rational, Int32, MidpointRounding)
-- uid: System.Numerics.Rational.Rational.Round*
+  href: api/System.Numerics.Rational.NewRational.ReadFromBytes.html
+  commentId: Overload:System.Numerics.Rational.NewRational.ReadFromBytes
+  fullName: System.Numerics.Rational.NewRational.ReadFromBytes
+  nameWithType: NewRational.ReadFromBytes
+- uid: System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational)
+  name: Round(NewRational)
+  href: api/System.Numerics.Rational.NewRational.Round.html#System_Numerics_Rational_NewRational_Round_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Round(NewRational)
+- uid: System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational,System.Int32)
+  name: Round(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.Round.html#System_Numerics_Rational_NewRational_Round_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.Round(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational,System.Int32,System.MidpointRounding)
+  name: Round(NewRational, Int32, MidpointRounding)
+  href: api/System.Numerics.Rational.NewRational.Round.html#System_Numerics_Rational_NewRational_Round_System_Numerics_Rational_NewRational_System_Int32_System_MidpointRounding_
+  commentId: M:System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational,System.Int32,System.MidpointRounding)
+  fullName: System.Numerics.Rational.NewRational.Round(System.Numerics.Rational.NewRational, System.Int32, System.MidpointRounding)
+  nameWithType: NewRational.Round(NewRational, Int32, MidpointRounding)
+- uid: System.Numerics.Rational.NewRational.Round*
   name: Round
-  href: api/System.Numerics.Rational.Rational.Round.html
-  commentId: Overload:System.Numerics.Rational.Rational.Round
-  fullName: System.Numerics.Rational.Rational.Round
-  nameWithType: Rational.Round
-- uid: System.Numerics.Rational.Rational.Sign(System.Numerics.Rational.Rational)
-  name: Sign(Rational)
-  href: api/System.Numerics.Rational.Rational.Sign.html#System_Numerics_Rational_Rational_Sign_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.Sign(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Sign(System.Numerics.Rational.Rational)
-  nameWithType: Rational.Sign(Rational)
-- uid: System.Numerics.Rational.Rational.Sign*
+  href: api/System.Numerics.Rational.NewRational.Round.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Round
+  fullName: System.Numerics.Rational.NewRational.Round
+  nameWithType: NewRational.Round
+- uid: System.Numerics.Rational.NewRational.Sign(System.Numerics.Rational.NewRational)
+  name: Sign(NewRational)
+  href: api/System.Numerics.Rational.NewRational.Sign.html#System_Numerics_Rational_NewRational_Sign_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Sign(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Sign(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Sign(NewRational)
+- uid: System.Numerics.Rational.NewRational.Sign*
   name: Sign
-  href: api/System.Numerics.Rational.Rational.Sign.html
-  commentId: Overload:System.Numerics.Rational.Rational.Sign
-  fullName: System.Numerics.Rational.Rational.Sign
-  nameWithType: Rational.Sign
-- uid: System.Numerics.Rational.Rational.task_cpu
+  href: api/System.Numerics.Rational.NewRational.Sign.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Sign
+  fullName: System.Numerics.Rational.NewRational.Sign
+  nameWithType: NewRational.Sign
+- uid: System.Numerics.Rational.NewRational.task_cpu
   name: task_cpu
-  href: api/System.Numerics.Rational.Rational.task_cpu.html#System_Numerics_Rational_Rational_task_cpu
-  commentId: P:System.Numerics.Rational.Rational.task_cpu
-  fullName: System.Numerics.Rational.Rational.task_cpu
-  nameWithType: Rational.task_cpu
-- uid: System.Numerics.Rational.Rational.task_cpu*
+  href: api/System.Numerics.Rational.NewRational.task_cpu.html#System_Numerics_Rational_NewRational_task_cpu
+  commentId: P:System.Numerics.Rational.NewRational.task_cpu
+  fullName: System.Numerics.Rational.NewRational.task_cpu
+  nameWithType: NewRational.task_cpu
+- uid: System.Numerics.Rational.NewRational.task_cpu*
   name: task_cpu
-  href: api/System.Numerics.Rational.Rational.task_cpu.html
-  commentId: Overload:System.Numerics.Rational.Rational.task_cpu
-  fullName: System.Numerics.Rational.Rational.task_cpu
-  nameWithType: Rational.task_cpu
-- uid: System.Numerics.Rational.Rational.ToString
+  href: api/System.Numerics.Rational.NewRational.task_cpu.html
+  commentId: Overload:System.Numerics.Rational.NewRational.task_cpu
+  fullName: System.Numerics.Rational.NewRational.task_cpu
+  nameWithType: NewRational.task_cpu
+- uid: System.Numerics.Rational.NewRational.ToString
   name: ToString()
-  href: api/System.Numerics.Rational.Rational.ToString.html#System_Numerics_Rational_Rational_ToString
-  commentId: M:System.Numerics.Rational.Rational.ToString
-  fullName: System.Numerics.Rational.Rational.ToString()
-  nameWithType: Rational.ToString()
-- uid: System.Numerics.Rational.Rational.ToString(System.String,System.IFormatProvider)
+  href: api/System.Numerics.Rational.NewRational.ToString.html#System_Numerics_Rational_NewRational_ToString
+  commentId: M:System.Numerics.Rational.NewRational.ToString
+  fullName: System.Numerics.Rational.NewRational.ToString()
+  nameWithType: NewRational.ToString()
+- uid: System.Numerics.Rational.NewRational.ToString(System.String,System.IFormatProvider)
   name: ToString(String, IFormatProvider)
-  href: api/System.Numerics.Rational.Rational.ToString.html#System_Numerics_Rational_Rational_ToString_System_String_System_IFormatProvider_
-  commentId: M:System.Numerics.Rational.Rational.ToString(System.String,System.IFormatProvider)
-  fullName: System.Numerics.Rational.Rational.ToString(System.String, System.IFormatProvider)
-  nameWithType: Rational.ToString(String, IFormatProvider)
-- uid: System.Numerics.Rational.Rational.ToString*
+  href: api/System.Numerics.Rational.NewRational.ToString.html#System_Numerics_Rational_NewRational_ToString_System_String_System_IFormatProvider_
+  commentId: M:System.Numerics.Rational.NewRational.ToString(System.String,System.IFormatProvider)
+  fullName: System.Numerics.Rational.NewRational.ToString(System.String, System.IFormatProvider)
+  nameWithType: NewRational.ToString(String, IFormatProvider)
+- uid: System.Numerics.Rational.NewRational.ToString*
   name: ToString
-  href: api/System.Numerics.Rational.Rational.ToString.html
-  commentId: Overload:System.Numerics.Rational.Rational.ToString
-  fullName: System.Numerics.Rational.Rational.ToString
-  nameWithType: Rational.ToString
-- uid: System.Numerics.Rational.Rational.Trunc(System.Numerics.Rational.Rational)
-  name: Trunc(Rational)
-  href: api/System.Numerics.Rational.Rational.Trunc.html#System_Numerics_Rational_Rational_Trunc_System_Numerics_Rational_Rational_
-  commentId: M:System.Numerics.Rational.Rational.Trunc(System.Numerics.Rational.Rational)
-  fullName: System.Numerics.Rational.Rational.Trunc(System.Numerics.Rational.Rational)
-  nameWithType: Rational.Trunc(Rational)
-- uid: System.Numerics.Rational.Rational.Trunc*
+  href: api/System.Numerics.Rational.NewRational.ToString.html
+  commentId: Overload:System.Numerics.Rational.NewRational.ToString
+  fullName: System.Numerics.Rational.NewRational.ToString
+  nameWithType: NewRational.ToString
+- uid: System.Numerics.Rational.NewRational.Trunc(System.Numerics.Rational.NewRational)
+  name: Trunc(NewRational)
+  href: api/System.Numerics.Rational.NewRational.Trunc.html#System_Numerics_Rational_NewRational_Trunc_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Trunc(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Trunc(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Trunc(NewRational)
+- uid: System.Numerics.Rational.NewRational.Trunc*
   name: Trunc
-  href: api/System.Numerics.Rational.Rational.Trunc.html
-  commentId: Overload:System.Numerics.Rational.Rational.Trunc
-  fullName: System.Numerics.Rational.Rational.Trunc
-  nameWithType: Rational.Trunc
-- uid: System.Numerics.Rational.Rational.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  href: api/System.Numerics.Rational.NewRational.Trunc.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Trunc
+  fullName: System.Numerics.Rational.NewRational.Trunc
+  nameWithType: NewRational.Trunc
+- uid: System.Numerics.Rational.NewRational.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
   name: TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
-  href: api/System.Numerics.Rational.Rational.TryFormat.html#System_Numerics_Rational_Rational_TryFormat_System_Span_System_Char__System_Int32__System_ReadOnlySpan_System_Char__System_IFormatProvider_
-  commentId: M:System.Numerics.Rational.Rational.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  href: api/System.Numerics.Rational.NewRational.TryFormat.html#System_Numerics_Rational_NewRational_TryFormat_System_Span_System_Char__System_Int32__System_ReadOnlySpan_System_Char__System_IFormatProvider_
+  commentId: M:System.Numerics.Rational.NewRational.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
   name.vb: TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
-  fullName: System.Numerics.Rational.Rational.TryFormat(System.Span<System.Char>, out System.Int32, System.ReadOnlySpan<System.Char>, System.IFormatProvider)
-  fullName.vb: System.Numerics.Rational.Rational.TryFormat(System.Span(Of System.Char), ByRef System.Int32, System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
-  nameWithType: Rational.TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
-  nameWithType.vb: Rational.TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
-- uid: System.Numerics.Rational.Rational.TryFormat*
+  fullName: System.Numerics.Rational.NewRational.TryFormat(System.Span<System.Char>, out System.Int32, System.ReadOnlySpan<System.Char>, System.IFormatProvider)
+  fullName.vb: System.Numerics.Rational.NewRational.TryFormat(System.Span(Of System.Char), ByRef System.Int32, System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
+  nameWithType: NewRational.TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  nameWithType.vb: NewRational.TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+- uid: System.Numerics.Rational.NewRational.TryFormat*
   name: TryFormat
-  href: api/System.Numerics.Rational.Rational.TryFormat.html
-  commentId: Overload:System.Numerics.Rational.Rational.TryFormat
-  fullName: System.Numerics.Rational.Rational.TryFormat
-  nameWithType: Rational.TryFormat
-- uid: System.Numerics.Rational.Rational.WriteToBytes(System.Span{System.Byte}@)
+  href: api/System.Numerics.Rational.NewRational.TryFormat.html
+  commentId: Overload:System.Numerics.Rational.NewRational.TryFormat
+  fullName: System.Numerics.Rational.NewRational.TryFormat
+  nameWithType: NewRational.TryFormat
+- uid: System.Numerics.Rational.NewRational.WriteToBytes(System.Span{System.Byte}@)
   name: WriteToBytes(ref Span<Byte>)
-  href: api/System.Numerics.Rational.Rational.WriteToBytes.html#System_Numerics_Rational_Rational_WriteToBytes_System_Span_System_Byte___
-  commentId: M:System.Numerics.Rational.Rational.WriteToBytes(System.Span{System.Byte}@)
+  href: api/System.Numerics.Rational.NewRational.WriteToBytes.html#System_Numerics_Rational_NewRational_WriteToBytes_System_Span_System_Byte___
+  commentId: M:System.Numerics.Rational.NewRational.WriteToBytes(System.Span{System.Byte}@)
   name.vb: WriteToBytes(ByRef Span(Of Byte))
-  fullName: System.Numerics.Rational.Rational.WriteToBytes(ref System.Span<System.Byte>)
-  fullName.vb: System.Numerics.Rational.Rational.WriteToBytes(ByRef System.Span(Of System.Byte))
-  nameWithType: Rational.WriteToBytes(ref Span<Byte>)
-  nameWithType.vb: Rational.WriteToBytes(ByRef Span(Of Byte))
-- uid: System.Numerics.Rational.Rational.WriteToBytes*
+  fullName: System.Numerics.Rational.NewRational.WriteToBytes(ref System.Span<System.Byte>)
+  fullName.vb: System.Numerics.Rational.NewRational.WriteToBytes(ByRef System.Span(Of System.Byte))
+  nameWithType: NewRational.WriteToBytes(ref Span<Byte>)
+  nameWithType.vb: NewRational.WriteToBytes(ByRef Span(Of Byte))
+- uid: System.Numerics.Rational.NewRational.WriteToBytes*
   name: WriteToBytes
-  href: api/System.Numerics.Rational.Rational.WriteToBytes.html
-  commentId: Overload:System.Numerics.Rational.Rational.WriteToBytes
-  fullName: System.Numerics.Rational.Rational.WriteToBytes
-  nameWithType: Rational.WriteToBytes
+  href: api/System.Numerics.Rational.NewRational.WriteToBytes.html
+  commentId: Overload:System.Numerics.Rational.NewRational.WriteToBytes
+  fullName: System.Numerics.Rational.NewRational.WriteToBytes
+  nameWithType: NewRational.WriteToBytes

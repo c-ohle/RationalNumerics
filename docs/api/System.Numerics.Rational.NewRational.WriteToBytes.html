@@ -5,9 +5,11 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>PLACEHOLDER </title>
+    <title>Method WriteToBytes
+   </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="PLACEHOLDER ">
+    <meta name="title" content="Method WriteToBytes
+   ">
     <meta name="generator" content="docfx 2.59.1.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
@@ -182,8 +184,8 @@
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.op_UnaryPlus.html" title="UnaryPlus" class="">UnaryPlus</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.Rational.NewRational.WriteToBytes.html" title="WriteToBytes" class="">WriteToBytes</a>
+                                <li class="active">
+                                  <a href="System.Numerics.Rational.NewRational.WriteToBytes.html" title="WriteToBytes" class="active">WriteToBytes</a>
                                 </li>
                               </ul>  </li>
                           <li class="">
@@ -296,10 +298,73 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="">
-<h1 id="placeholder">PLACEHOLDER</h1>
+            <article class="content wrap" id="_content" data-uid="System.Numerics.Rational.NewRational.WriteToBytes*">
 
-<p>empty</p>
+<h1 id="System_Numerics_Rational_NewRational_WriteToBytes_" data-uid="System.Numerics.Rational.NewRational.WriteToBytes*">Method WriteToBytes
+</h1>
+<div class="markdown level0 summary"></div>
+<div class="markdown level0 conceptual"></div>
+
+<span class="small pull-right mobile-hide">
+  <span class="divider">|</span>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_WriteToBytes_System_Span_System_Byte___.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.WriteToBytes(System.Span%7BSystem.Byte%7D%40)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+</span>
+<span class="small pull-right mobile-hide">
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L267">View Source</a>
+</span>
+<a id="System_Numerics_Rational_NewRational_WriteToBytes_" data-uid="System.Numerics.Rational.NewRational.WriteToBytes*"></a>
+<h4 id="System_Numerics_Rational_NewRational_WriteToBytes_System_Span_System_Byte___" data-uid="System.Numerics.Rational.NewRational.WriteToBytes(System.Span{System.Byte}@)">WriteToBytes(ref Span&lt;Byte&gt;)</h4>
+<div class="markdown level1 summary"><p>Copies the value of this <a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a> as little-endian twos-complement bytes.<br>
+If the value is zero, outputs one uint whose element is 0x00000000.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+<h5 class="decalaration">Declaration</h5>
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public readonly int WriteToBytes(ref Span&lt;byte&gt; destination)</code></pre>
+</div>
+<h5 class="parameters">Parameters</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="xref">System.Span</span>&lt;<span class="xref">System.Byte</span>&gt;</td>
+      <td><span class="parametername">destination</span></td>
+      <td><p>The destination span to which the resulting bytes should be written.</p>
+</td>
+    </tr>
+  </tbody>
+</table>
+<h5 class="returns">Returns</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="xref">System.Int32</span></td>
+      <td><p>The number of bytes written or required in case of an empty or undersized destination.</p>
+</td>
+    </tr>
+  </tbody>
+</table>
+<h5 id="System_Numerics_Rational_NewRational_WriteToBytes_System_Span_System_Byte____remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>The destination Span will get the offset of the number of bytes written.<br>
+In case of undersized destination, as signal the span is reset to default.<br>
+This allows efficient code in serialization sequences.</p>
+</div>
+<h5 id="System_Numerics_Rational_NewRational_WriteToBytes_System_Span_System_Byte____examples">Examples</h5>
+<pre><code>    X.WriteToBytes(ref dest);<br>Y.WriteToBytes(ref dest);<br>Z.WriteToBytes(ref dest);
+    if(dest == default) return false; //undersized destination</code></pre>
+
 </article>
           </div>
           
@@ -307,6 +372,12 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_WriteToBytes_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.WriteToBytes*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L267" class="contribution-link">View Source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

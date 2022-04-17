@@ -1,9 +1,9 @@
-﻿using rat = System.Numerics.Rational.Rational;
+﻿using rat = System.Numerics.Rational.NewRational;
 
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Example using Rational for a Vector3
+  /// Example using NewRational for a Vector3
   /// </summary>
   [Serializable]
   public readonly struct Vector3R : IEquatable<Vector3R>, ISpanFormattable
@@ -116,7 +116,7 @@ namespace System.Numerics.Rational
     public static Vector3R Normalize(in Vector3R v)
     {
       //int i = LongAxis(v); var l = i == 0 ? v.X : i == 1 ? v.Y : v.Z;
-      //var s = Rational.Sign(l); if (s < 0) l = -l;
+      //var s = NewRational.Sign(l); if (s < 0) l = -l;
       //return new Vector3R(i == 0 ? s : v.X / l, i == 1 ? s : v.Y / l, i == 2 ? s : v.Z / l);      
       var cpu = rat.task_cpu; cpu.push(v.Z); cpu.push(v.Y); cpu.push(v.X);
       cpu.norm3(); return new Vector3R(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());

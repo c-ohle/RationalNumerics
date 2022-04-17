@@ -1,9 +1,9 @@
-﻿using rat = System.Numerics.Rational.Rational;
+﻿using rat = System.Numerics.Rational.NewRational;
 
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Example using Rational for a Plane
+  /// Example using NewRational for a Plane
   /// </summary>
   [Serializable]
   public readonly struct PlaneR : IEquatable<PlaneR>, ISpanFormattable

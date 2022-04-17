@@ -1,9 +1,9 @@
-﻿using rat = System.Numerics.Rational.Rational;
+﻿using rat = System.Numerics.Rational.NewRational;
 
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Example using Rational for a Vector2
+  /// Example using NewRational for a Vector2
   /// </summary>
   [Serializable]
   public readonly struct Vector2R : IEquatable<Vector2R>, ISpanFormattable
