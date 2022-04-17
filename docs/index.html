@@ -80,13 +80,15 @@ It works fine but in praxis it has several disadvantages:</p>
 <li>The system requires a lot of internal memory copies, bad for the overall performance.</li>
 <li>There is no way to benefit from the performance improvements in .NET Core, like using Spans, Buffers and Intrinsics.</li>
 </ul>
-<p>NewRational is based on a completely new system.<br>
-The interface itself is of course the same as for all other numeric types, supporting the basic arithmetic operations via operators, conversions to and from numeric system types, string formatting and parsing, binary serialization, etc.<br>
+<p>NewRational is based on a completely new system to achieve better efficiency and performance.<br>
+The interface itself is of course the same as for all other numeric types, supporting the
+basic arithmetic operations via operators, conversions from and to the numeric system types,
+string formatting and parsing, binary serialization, etc.<br>
 As an immutable, readonly struct with only one array field, the layout is as small as possible and similar to a System.String.<br>
 Internal the class has its own big-integer calculation core, highly optimized for the purposes of rational arithmetics, encapsulated in a stack machine.<br>
 This stack machine is public and offers a second interface layer with a machine language like instruction set.<br>
 Using this interface allows optimization on function level with performance improvements by factor 4 to 10.</p>
-<p><em>Example: Classic cross product for a Vector3 type, this one with:</em> <code>Rational X, Y, Z;</code></p>
+<p><em>Example: Classic cross product for a Vector3 type, this one with:</em> <code>NewRational X, Y, Z;</code></p>
 <pre><code>public static Vector3R Cross(Vector3R a, Vector3R b)
 { 
   var x = a.Y * b.Z - a.Z * b.Y; 
@@ -99,17 +101,17 @@ Using this interface allows optimization on function level with performance impr
 <pre><code>public static Vector3R Cross(Vector3R a, Vector3R b)
 {
   var cpu = NewRational.task_cpu;
-  cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub(); // z = a.X * b.Y - a.Y * b.X
-  cpu.mul(a.Z, b.X); cpu.mul(a.X, b.Z); cpu.sub(); // y = a.Z * b.X - a.X * b.Z
-  cpu.mul(a.Y, b.Z); cpu.mul(a.Z, b.Y); cpu.sub(); // x = a.Y * b.Z - a.Z * b.Y
+  cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub();
+  cpu.mul(a.Z, b.X); cpu.mul(a.X, b.Z); cpu.sub();
+  cpu.mul(a.Y, b.Z); cpu.mul(a.Z, b.Y); cpu.sub();
   return new Vector3R(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
 }
 </code></pre>
 <p><em>The optimized version performs 4 x faster, only 3 final normalizations and memory allocs are necessary (instead of 9 for the first version).</em></p>
 <p>As the example shows, using the stack machine directly is not much more difficult or less readable.<br>
-Furthermore, this design separates the NewRational struct from the calculation core, the final number object is always normalized what makes the handling, comparsions etc. etc. much easier and doesn't impact the performance of the calculations.</p>
+Furthermore, this design separates the NewRational struct from the calculation core, the final number object is always normalized what makes the handling, comparsions etc. much easier and doesn't impact the performance of the calculations.</p>
 <h3 id="data-layout">Data Layout</h3>
-<p>All data, numerator and denumerator, is in an uint array of variable length.<br>
+<p>All data, numerator and denominator, is stored in a single variable-length uint array.<br>
 This gives the NewRational struct itself a machine word size and can therefore internal passed around as fast as possible.</p>
 <pre><code>public readonly struct NewRational
 {
