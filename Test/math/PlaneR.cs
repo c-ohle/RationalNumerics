@@ -1,12 +1,12 @@
-﻿using rat = System.Numerics.Rational.NewRational;
-
+﻿
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Example using NewRational for a Plane
+  /// A Plane class based on NewRational.<br/>
+  /// <i>This is just a non optimal example implementation!</i>/>
   /// </summary>
-  [Serializable]
-  public readonly struct PlaneR : IEquatable<PlaneR>, ISpanFormattable
+  [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
+  public readonly struct PlaneR : IEquatable<PlaneR>, IFormattable, ISpanFormattable
   {
     public readonly Vector3R Normal; public readonly rat Dist;
     public PlaneR(rat x, rat y, rat z, rat d)
@@ -21,7 +21,7 @@ namespace System.Numerics.Rational
     {
       return $"{Normal}; {Dist}";
     }
-    public readonly string ToString(string? format, IFormatProvider? provider)
+    public readonly string ToString(string? format, IFormatProvider? provider = null)
     {
       return $"{Normal.ToString(format, provider)}; {Dist.ToString(format, provider)}";
     }

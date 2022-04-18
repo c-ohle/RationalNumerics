@@ -89,7 +89,7 @@ Internal the class has its own big-integer calculation core, highly optimized fo
 This stack machine is public and offers a second interface layer with a machine language like instruction set.<br>
 Using this interface allows optimization on function level with performance improvements by factor 4 to 10.</p>
 <p><em>Example: Classic cross product for a Vector3 type, this one with:</em> <code>NewRational X, Y, Z;</code></p>
-<pre><code>public static Vector3R Cross(Vector3R a, Vector3R b)
+<pre><code class="lang-c#">public static Vector3R Cross(Vector3R a, Vector3R b)
 { 
   var x = a.Y * b.Z - a.Z * b.Y; 
   var y = a.Z * b.X - a.X * b.Z;
@@ -98,7 +98,7 @@ Using this interface allows optimization on function level with performance impr
 }
 </code></pre>
 <p><em>The same function can be optimized using the stack machine (cpu):</em></p>
-<pre><code>public static Vector3R Cross(Vector3R a, Vector3R b)
+<pre><code class="lang-c#">public static Vector3R Cross(Vector3R a, Vector3R b)
 {
   var cpu = NewRational.task_cpu;
   cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub();
@@ -113,7 +113,7 @@ Furthermore, this design separates the NewRational struct from the calculation c
 <h3 id="data-layout">Data Layout</h3>
 <p>All data, numerator and denominator, is stored in a single variable-length uint array.<br>
 This gives the NewRational struct itself a machine word size and can therefore internal passed around as fast as possible.</p>
-<pre><code>public readonly struct NewRational
+<pre><code class="lang-c#">public readonly struct NewRational
 {
   private readonly uint[] p; // the one and only field
 </code></pre>
@@ -133,7 +133,7 @@ This is the price for a optimal throughput and less code as there are no special
 <h2 id="stack-machine">Stack machine</h2>
 <p>The stack machine, named CPU, is implemented as nested class in NewRational to get access to the private member.<br>
 The class has only two private fields, an array of arrays of uint (uint[][] p) and a index (int i) that marks the current stack top.</p>
-<pre><code>public struct NewRational 
+<pre><code class="lang-c#">public struct NewRational 
 {  
   public class CPU
   {
@@ -147,7 +147,7 @@ and so no further memory management is necessary.<br>
 However, in consequence, for every single calculation step with NewRational numbers it needs a instance of
 such stack-machine object what is only efficient when it is as shared object always available.
 For this there is one thread-local static instance named <code>task_cpu</code>, exposed as static property in NewRational.</p>
-<pre><code>public static CPU task_cpu
+<pre><code class="lang-c#">public static CPU task_cpu
 {
   get { return _cpu ??= new CPU(); }
 }
@@ -160,7 +160,7 @@ For this there is one thread-local static instance named <code>task_cpu</code>, 
 These instructions, for readability as short words, are self explaining basic commands like add(), sub(), mul(), div(), different push() and pop(),  bit level operations like shl(), shr(), but also higher level commands like pow(), mod(), rnd() etc.</p>
 <p>Since the rational numbers can have arbitrary size, it is important for the performance to avoid unnecessary memory copies.<br>
 This explains several versions of same instructions, for example:</p>
-<pre><code>  cpu.push(x); // implies a memory copy
+<pre><code class="lang-c#">  cpu.push(x); // implies a memory copy
   cpu.push(y); // implies a memory copy
   cpu.add();  
   // For performance it is better to write:
@@ -173,7 +173,7 @@ To do this there are swap instructions, <code>cpu.swp()</code>, which internally
 <p>A test app is currently under development that will generate detailed benchmark reports comparing usual implementations with the new system.<br>
 In general, the performance increases by at least a factor of 2, by using the stack machine up to a factor of 10 and more.<br>
 This applies to geometric algorithms where precision is important and not so much calculating with gigantic numbers.<br>
-For really huge numbers, with kBytes of digit data, the bottleneck is the integer multiplication as O(n^2) operation (with simple algorithm).<br>
+For really huge numbers, with kBytes of digit data, the bottleneck is the integer multiplication as O(n^2^) operation (with simple algorithm).<br>
 Then, the performance of both systems equalizes again.</p>
 <p>Using NewRational for pure integer arithmetic is not faster than using BigInteger.<br>
 But by using the stack machine in functions, iterations etc., the performance can be increased.</p>

@@ -26,7 +26,7 @@ namespace System.Numerics.Rational
     /// </remarks>
     /// <returns>The string representation of the current <see cref="NewRational"/> value.</returns>
     public override readonly string ToString()
-    {      
+    {
       Span<char> sp = stackalloc char[64];
       TryFormat(sp, out var ns); return sp.Slice(0, ns).ToString();
     }
@@ -888,11 +888,36 @@ namespace System.Numerics.Rational
     /// The integral part of the <see cref="NewRational"/> number.<br/> 
     /// This is the number that remains after any fractional digits have been discarded.
     /// </returns>
-    public static NewRational Trunc(NewRational a)
+    public static NewRational Truncate(NewRational a)
     {
-      var cpu = task_cpu;
-      cpu.push(a); cpu.mod(); cpu.swp(); cpu.pop();
-      return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(a);
+      cpu.rnd(0, 0); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Rounds a specified <see cref="NewRational"/> number to the closest integer toward negative infinity.
+    /// </summary>
+    /// The <see cref="NewRational"/> number to round.
+    /// <returns>
+    /// If <paramref name="a"/> has a fractional part, the next whole number toward negative
+    /// infinity that is less than <paramref name="a"/>.<br/>
+    /// or if <paramref name="a"/> doesn't have a fractional part, <paramref name="a"/> is returned unchanged.<br/>
+    /// </returns>
+    public static NewRational Floor(NewRational a)
+    {
+      var cpu = task_cpu; cpu.push(a);
+      cpu.rnd(0, cpu.sign() >= 0 ? 0 : 4); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Returns the smallest integral value that is greater than or equal to the specified number.
+    /// </summary>
+    /// <param name="a">A <see cref="NewRational"/> number.</param>
+    /// <returns>
+    /// The smallest integral value that is greater than or equal to the <paramref name="a"/> parameter.
+    /// </returns>
+    public static NewRational Ceiling(NewRational a)
+    {
+      var cpu = task_cpu; cpu.push(a);
+      cpu.rnd(0, cpu.sign() < 0 ? 0 : 4); return cpu.pop_rat();
     }
     /// <summary>
     /// Rounds a <see cref="NewRational"/> number to the nearest integral value
@@ -903,7 +928,7 @@ namespace System.Numerics.Rational
     public static NewRational Round(NewRational a)
     {
       var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0); return cpu.pop_rat();
+      cpu.rnd(0, 1); return cpu.pop_rat();
     }
     /// <summary>
     /// Rounds a <see cref="NewRational"/> number to a specified number of fractional
@@ -931,7 +956,15 @@ namespace System.Numerics.Rational
     /// </returns>
     public static NewRational Round(NewRational a, int digits, MidpointRounding mode)
     {
-      return Round(a, digits); //todo: MidpointRounding 
+      int f = 1;
+      switch (mode)
+      {
+        case MidpointRounding.ToZero: f = 0; break;
+        case MidpointRounding.ToPositiveInfinity: if (Sign(a) < 0) f = 0; else f = 4; break;
+        case MidpointRounding.ToNegativeInfinity: if (Sign(a) > 0) f = 0; else f = 4; break;
+      }
+      var cpu = task_cpu; cpu.push(a);
+      cpu.rnd(digits, f); return cpu.pop_rat();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.
@@ -996,7 +1029,10 @@ namespace System.Numerics.Rational
       /// </summary>
       public void push()
       {
-        fixed (uint* p = rent(4)) setz(p);
+        fixed (uint* p = rent(4))
+        {
+          *(ulong*)p = 1; *(ulong*)(p + 2) = 0x100000001;
+        }
       }
       /// <summary>
       /// Pushes the supplied <see cref="NewRational"/> value onto the stack.
@@ -1040,7 +1076,7 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = rent(4))
         {
-          p[0] = 1; p[1] = v; 
+          p[0] = 1; p[1] = v;
           *(ulong*)(p + 2) = 0x100000001;
         }
       }
@@ -1089,7 +1125,7 @@ namespace System.Numerics.Rational
         var d = MathF.Abs(v) * Math.Pow(10, p); //-32..44
         if (d < 1e6) { d *= 10; p++; }
         var m = (uint)Math.Round(d);
-        push(m); pow(10, p); div(); if (v < 0) neg(); 
+        push(m); pow(10, p); div(); if (v < 0) neg();
       }
       /// <summary>
       /// Pushes the supplied <see cref="double"/> value onto the stack.
@@ -1128,7 +1164,7 @@ namespace System.Numerics.Rational
         fixed (uint* p = rent((unchecked((uint)(e < 0 ? -e : e)) >> 5) + 8))
         {
           p[0] = 2; p[1] = *(uint*)&v; p[2] = (unchecked((uint)h) & 0x000FFFFF) | 0x100000;
-          if (e == -1075) { if ((p[2] &= 0xfffff) == 0) if (p[p[0] = 1] == 0) { setz(p); return; } e++; } // denormalized
+          if (e == -1075) { if ((p[2] &= 0xfffff) == 0) if (p[p[0] = 1] == 0) { *(ulong*)(p + 2) = 0x100000001; return; } e++; } // denormalized
           if (e > 0) shl(p, e); var q = p + (p[0] + 1);
           *(ulong*)q = 0x100000001; if (e < 0) shl(q, -e);
           p[0] |= (unchecked((uint)h) & F.Sign) | F.Norm;
@@ -1140,10 +1176,11 @@ namespace System.Numerics.Rational
       /// <param name="v">The value to push.</param>
       public void push(decimal v)
       {
-        var b = (uint*)&v; uint f = b[0], e = (f >> 16) & 0xff; //0-28 
+        var b = (uint*)&v; uint f = b[0], e = (f >> 16) & 0xff; //0..28 
         fixed (uint* p = rent(9))
         {
           *(ulong*)&p[1] = *(ulong*)&b[2]; p[3] = b[1]; p[0] = p[3] != 0 ? 3u : p[2] != 0 ? 2u : 1;
+          if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
           var s = p + (p[0] + 1);
           if (e == 0) { *(ulong*)s = 0x100000001; }
           else
@@ -1696,43 +1733,44 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Pops the value at the top of the stack.<br/> 
       /// Divides the numerator by the denominator and 
-      /// pushes the remainder and the quotient as integers on the stack.
+      /// pushes the remainder and the quotient as integer values on the stack.
       /// </summary>
       /// <remarks>
-      /// By default the integer division truncates towards zero.<br/>
-      /// Optional: flag 1 rounds the quotient like midpoint rounding to zero.<br/>
-      /// Optional: flag 2 rounds the quotient like midpoint rounding away from zero.<br/>
-      /// Optional: flag 8 skip divison, gets numerator and denominator as integer values on stack.<br/>
+      /// 0 quotient truncated towards zero.<br/>
+      /// 1 quotient rounded away from zero.<br/>
+      /// 2 quotient rounded to even.<br/>
+      /// 4 quotient ceiling.<br/>
+      /// 8 skip division, numerator and denominator remaining on stack.<br/>
       /// </remarks>
-      /// <param name="f">A <see cref="int"/> value as flags for rounding options.</param>
-      public void mod(int f = 0) //0: truncate, 1: round, 8: num / den
+      /// <param name="f">A <see cref="int"/>flags see remarks.</param>
+      public void mod(int f = 0)
       {
         fixed (uint* u = p[this.i - 1])
         fixed (uint* v = rent(len(u) + 1))
         {
           var h = u[0]; u[0] &= F.Mask; var t = u + u[0] + 1;
           if (f != 8) div(u, t, v); else copy(v, t, t[0] + 1);
-          if ((f & (1 | 2)) != 0) // rounding 
+          if ((f & (1 | 2 | 4)) != 0)
           {
-            shr(t, 1); var e = cms(u, t);
-            if (f == 1 ? e > 0 : e >= 0) { var w = 0x100000001; add(v, (uint*)&w, v); }
+            if (f == 4) f = *(ulong*)u != 1 ? 1 : 0;
+            else { shr(t, 1); var x = cms(u, t); f = f == 1 ? x : x + 1; }
+            if (f > 0) { var w = 0x100000001; add(v, (uint*)&w, v); }
           }
-          if (*(ulong*)v == 1) h = 0;
           *(ulong*)(u + u[0] + 1) = *(ulong*)(v + v[0] + 1) = 0x100000001;
-          v[0] |= (h & F.Sign);
+          if ((h & F.Sign) != 0 && *(ulong*)v != 1) v[0] |= F.Sign;
         }
       }
       /// <summary>
       /// Rounds the value at the top of the stack 
-      /// to the specified number of fractional decimal digits 
-      /// and rounds midpoint values to the nearest even number.
+      /// to the specified number of fractional decimal digits.<br/>
       /// </summary>
-      /// <param name="c">A <see cref="int"/> value specifies the number of decimal digits to round to.</param>
-      public void rnd(int c)
+      /// <param name="c">Specifies the number of decimal digits to round to.</param>
+      /// <param name="f">Midpoint rounding see: <see cref="mod(int)"/>.</param>
+      public void rnd(int c, int f = 1)
       {
         if (c >= 0) fixed (uint* p = this.p[this.i - 1]) if (isint(p)) return;
-        if (c == 0) { mod(0x01); swp(); pop(); }
-        else { pow(10, c); swp(); mul(0, 1); mod(0x01); swp(); pop(); swp(); div(); }
+        if (c == 0) { mod(f); swp(); pop(); }
+        else { pow(10, c); swp(); mul(0, 1); mod(f); swp(); pop(); swp(); div(); }
       }
       /// <summary>
       /// Pushes the specified number x raised to the specified power y to the stack.
@@ -1906,7 +1944,7 @@ namespace System.Numerics.Rational
       /// <returns>true if the values are equal, otherwise false.</returns>
       public bool equ(NewRational a, NewRational b)
       {
-        if (a.p == b.p) return true; 
+        if (a.p == b.p) return true;
         fixed (uint* u = a.p, v = b.p)
         {
           if (u == null) return isz(v);
@@ -2107,11 +2145,11 @@ namespace System.Numerics.Rational
           if (sa == sb) add(s, t, w);
           else
           {
-            var si = cms(s, t); if (si == 0) { setz(w); return; }
+            var si = cms(s, t); if (si == 0) { *(ulong*)w = 1; *(ulong*)(w + 2) = 0x100000001; return; }
             if (si < 0) { var h = s; s = t; t = h; sa ^= F.Sign; }
             sub(s, t, w);
           }
-          if (*(ulong*)w == 1) { setz(w); return; }
+          if (*(ulong*)w == 1) { *(ulong*)(w + 2) = 0x100000001; return; }
           mul(ud, vd, w + (w[0] + 1)); w[0] |= sa | F.Norm;
         }
       }
@@ -2122,7 +2160,7 @@ namespace System.Numerics.Rational
         {
           var s = (v[0] & F.Mask) + 1;
           var t = (u[0] & F.Mask) + 1;
-          mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1) { setz(w); return; }
+          mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1) { *(ulong*)(w + 2) = 0x100000001; return; }
           mul(u + t, inv ? v : v + s, w + (w[0] + 1));
           w[0] |= ((u[0] ^ v[0]) & F.Sign) | F.Norm;
         }
@@ -2387,11 +2425,6 @@ namespace System.Numerics.Rational
         return 0;
       }
 
-      [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      static void setz(uint* p)
-      {
-        *(ulong*)p = 1; *(ulong*)(p + 2) = 0x100000001;
-      }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static bool isz(uint* p)
       {

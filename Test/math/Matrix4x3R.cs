@@ -1,9 +1,9 @@
-﻿using rat = System.Numerics.Rational.NewRational;
-
+﻿
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Example using NewRational for a Matrix
+  /// A Matrix4x3 class based on NewRational.<br/>
+  /// <i>This is just a non optimal example implementation!</i>/>
   /// </summary>
   [Serializable]
   public struct Matrix4x3R : IEquatable<Matrix4x3R>

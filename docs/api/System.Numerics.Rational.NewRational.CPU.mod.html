@@ -95,6 +95,9 @@
                                   <a href="System.Numerics.Rational.NewRational.op_Addition.html" title="Addition" class="">Addition</a>
                                 </li>
                                 <li class="">
+                                  <a href="System.Numerics.Rational.NewRational.Ceiling.html" title="Ceiling" class="">Ceiling</a>
+                                </li>
+                                <li class="">
                                   <a href="System.Numerics.Rational.NewRational.CompareTo.html" title="CompareTo" class="">CompareTo</a>
                                 </li>
                                 <li class="">
@@ -108,6 +111,9 @@
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.op_Explicit.html" title="Explicit" class="">Explicit</a>
+                                </li>
+                                <li class="">
+                                  <a href="System.Numerics.Rational.NewRational.Floor.html" title="Floor" class="">Floor</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.GetHashCode.html" title="GetHashCode" class="">GetHashCode</a>
@@ -173,7 +179,7 @@
                                   <a href="System.Numerics.Rational.NewRational.ToString.html" title="ToString" class="">ToString</a>
                                 </li>
                                 <li class="">
-                                  <a href="System.Numerics.Rational.NewRational.Trunc.html" title="Trunc" class="">Trunc</a>
+                                  <a href="System.Numerics.Rational.NewRational.Truncate.html" title="Truncate" class="">Truncate</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.TryFormat.html" title="TryFormat" class="">TryFormat</a>
@@ -310,13 +316,13 @@
   <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_mod_System_Int32_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.mod(System.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1708">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1746">View Source</a>
 </span>
 <a id="System_Numerics_Rational_NewRational_CPU_mod_" data-uid="System.Numerics.Rational.NewRational.CPU.mod*"></a>
 <h4 id="System_Numerics_Rational_NewRational_CPU_mod_System_Int32_" data-uid="System.Numerics.Rational.NewRational.CPU.mod(System.Int32)">mod(Int32)</h4>
 <div class="markdown level1 summary"><p>Pops the value at the top of the stack.<br>
 Divides the numerator by the denominator and
-pushes the remainder and the quotient as integers on the stack.</p>
+pushes the remainder and the quotient as integer values on the stack.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
@@ -336,16 +342,17 @@ pushes the remainder and the quotient as integers on the stack.</p>
     <tr>
       <td><span class="xref">System.Int32</span></td>
       <td><span class="parametername">f</span></td>
-      <td><p>A <span class="xref">System.Int32</span> value as flags for rounding options.</p>
+      <td><p>A <span class="xref">System.Int32</span>flags see remarks.</p>
 </td>
     </tr>
   </tbody>
 </table>
 <h5 id="System_Numerics_Rational_NewRational_CPU_mod_System_Int32__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>By default the integer division truncates towards zero.<br>
-Optional: flag 1 rounds the quotient like midpoint rounding to zero.<br>
-Optional: flag 2 rounds the quotient like midpoint rounding away from zero.<br>
-Optional: flag 8 skip divison, gets numerator and denominator as integer values on stack.<br></p>
+<div class="markdown level1 remarks"><p>0 quotient truncated towards zero.<br>
+1 quotient rounded away from zero.<br>
+2 quotient rounded to even.<br>
+4 quotient ceiling.<br>
+8 skip division, numerator and denominator remaining on stack.<br></p>
 </div>
 </article>
           </div>
@@ -358,7 +365,7 @@ Optional: flag 8 skip divison, gets numerator and denominator as integer values 
                     <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_mod_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.mod*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1708" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1746" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

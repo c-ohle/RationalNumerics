@@ -43,6 +43,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.Abs
   fullName: System.Numerics.Rational.NewRational.Abs
   nameWithType: NewRational.Abs
+- uid: System.Numerics.Rational.NewRational.Ceiling(System.Numerics.Rational.NewRational)
+  name: Ceiling(NewRational)
+  href: api/System.Numerics.Rational.NewRational.Ceiling.html#System_Numerics_Rational_NewRational_Ceiling_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Ceiling(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Ceiling(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Ceiling(NewRational)
+- uid: System.Numerics.Rational.NewRational.Ceiling*
+  name: Ceiling
+  href: api/System.Numerics.Rational.NewRational.Ceiling.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Ceiling
+  fullName: System.Numerics.Rational.NewRational.Ceiling
+  nameWithType: NewRational.Ceiling
 - uid: System.Numerics.Rational.NewRational.CompareTo(System.Int32)
   name: CompareTo(Int32)
   href: api/System.Numerics.Rational.NewRational.CompareTo.html#System_Numerics_Rational_NewRational_CompareTo_System_Int32_
@@ -598,12 +610,12 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.push
   fullName: System.Numerics.Rational.NewRational.CPU.push
   nameWithType: NewRational.CPU.push
-- uid: System.Numerics.Rational.NewRational.CPU.rnd(System.Int32)
-  name: rnd(Int32)
-  href: api/System.Numerics.Rational.NewRational.CPU.rnd.html#System_Numerics_Rational_NewRational_CPU_rnd_System_Int32_
-  commentId: M:System.Numerics.Rational.NewRational.CPU.rnd(System.Int32)
-  fullName: System.Numerics.Rational.NewRational.CPU.rnd(System.Int32)
-  nameWithType: NewRational.CPU.rnd(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.rnd(System.Int32,System.Int32)
+  name: rnd(Int32, Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.rnd.html#System_Numerics_Rational_NewRational_CPU_rnd_System_Int32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.rnd(System.Int32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.rnd(System.Int32, System.Int32)
+  nameWithType: NewRational.CPU.rnd(Int32, Int32)
 - uid: System.Numerics.Rational.NewRational.CPU.rnd*
   name: rnd
   href: api/System.Numerics.Rational.NewRational.CPU.rnd.html
@@ -739,6 +751,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.Equals
   fullName: System.Numerics.Rational.NewRational.Equals
   nameWithType: NewRational.Equals
+- uid: System.Numerics.Rational.NewRational.Floor(System.Numerics.Rational.NewRational)
+  name: Floor(NewRational)
+  href: api/System.Numerics.Rational.NewRational.Floor.html#System_Numerics_Rational_NewRational_Floor_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Floor(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Floor(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Floor(NewRational)
+- uid: System.Numerics.Rational.NewRational.Floor*
+  name: Floor
+  href: api/System.Numerics.Rational.NewRational.Floor.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Floor
+  fullName: System.Numerics.Rational.NewRational.Floor
+  nameWithType: NewRational.Floor
 - uid: System.Numerics.Rational.NewRational.GetHashCode
   name: GetHashCode()
   href: api/System.Numerics.Rational.NewRational.GetHashCode.html#System_Numerics_Rational_NewRational_GetHashCode
@@ -1237,18 +1261,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.ToString
   fullName: System.Numerics.Rational.NewRational.ToString
   nameWithType: NewRational.ToString
-- uid: System.Numerics.Rational.NewRational.Trunc(System.Numerics.Rational.NewRational)
-  name: Trunc(NewRational)
-  href: api/System.Numerics.Rational.NewRational.Trunc.html#System_Numerics_Rational_NewRational_Trunc_System_Numerics_Rational_NewRational_
-  commentId: M:System.Numerics.Rational.NewRational.Trunc(System.Numerics.Rational.NewRational)
-  fullName: System.Numerics.Rational.NewRational.Trunc(System.Numerics.Rational.NewRational)
-  nameWithType: NewRational.Trunc(NewRational)
-- uid: System.Numerics.Rational.NewRational.Trunc*
-  name: Trunc
-  href: api/System.Numerics.Rational.NewRational.Trunc.html
-  commentId: Overload:System.Numerics.Rational.NewRational.Trunc
-  fullName: System.Numerics.Rational.NewRational.Trunc
-  nameWithType: NewRational.Trunc
+- uid: System.Numerics.Rational.NewRational.Truncate(System.Numerics.Rational.NewRational)
+  name: Truncate(NewRational)
+  href: api/System.Numerics.Rational.NewRational.Truncate.html#System_Numerics_Rational_NewRational_Truncate_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.Truncate(System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Truncate(System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Truncate(NewRational)
+- uid: System.Numerics.Rational.NewRational.Truncate*
+  name: Truncate
+  href: api/System.Numerics.Rational.NewRational.Truncate.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Truncate
+  fullName: System.Numerics.Rational.NewRational.Truncate
+  nameWithType: NewRational.Truncate
 - uid: System.Numerics.Rational.NewRational.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
   name: TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
   href: api/System.Numerics.Rational.NewRational.TryFormat.html#System_Numerics_Rational_NewRational_TryFormat_System_Span_System_Char__System_Int32__System_ReadOnlySpan_System_Char__System_IFormatProvider_

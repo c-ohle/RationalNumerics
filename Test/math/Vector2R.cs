@@ -1,12 +1,12 @@
-﻿using rat = System.Numerics.Rational.NewRational;
-
+﻿
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Example using NewRational for a Vector2
+  /// A Vector2 class based on NewRational.<br/>
+  /// <i>This is just a non optimal example implementation!</i>/>
   /// </summary>
-  [Serializable]
-  public readonly struct Vector2R : IEquatable<Vector2R>, ISpanFormattable
+  [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
+  public readonly struct Vector2R : IEquatable<Vector2R>, IFormattable, ISpanFormattable
   {
     public readonly rat X, Y;
     public Vector2R(rat x, rat y)
@@ -17,7 +17,7 @@ namespace System.Numerics.Rational
     {
       return $"{X}; {Y}";
     }
-    public readonly string ToString(string? format, IFormatProvider? provider)
+    public readonly string ToString(string? format, IFormatProvider? provider = null)
     {
       return $"{X.ToString(format, provider)}; {Y.ToString(format, provider)}";
     }

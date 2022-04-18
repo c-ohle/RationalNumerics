@@ -1,5 +1,4 @@
-﻿using rat = System.Numerics.Rational.NewRational;
-
+﻿
 namespace System.Numerics.Rational
 {
   static class Extensions
