@@ -8,12 +8,16 @@ using System.Numerics;
 namespace Test
 {
   internal static class Program
-  {    
+  {
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize();
+      ApplicationConfiguration.Initialize(); test();
       Application.Run(new Form { Text = "Under construction", Width = 640, Height = 480 });
+    }
+
+    static void test()
+    {
     }
   }
 }
