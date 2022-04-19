@@ -170,19 +170,19 @@ This explains several versions of same instructions, for example:</p>
 Here we have buffers of arbitrary size as stack entries and for performance it is all about to avoid unnecessary memory copies.<br>
 To do this there are swap instructions, <code>cpu.swp()</code>, which internally exchange buffer pointers and this operation is fast since a pointer has machine word size.</p>
 <h2 id="string-formatting">String formatting</h2>
-<p>Compared to other numeric types, the string formatting for Rational has some special features.<br>
+<p>Compared to other numeric types, string formatting for Rational has some special features.<br>
 First of all, there is support for all
 <a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings">Standard</a>-
 and the
-<a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings">Custom</a> formats for numeric types like double and decimal,<br>
-exposed by the interface functions of <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iformattable?f1url=%3FappId%3DDev16IDEF1%26l%3DEN-US%26k%3Dk(System.IFormattable);k(DevLang-csharp)%26rd%3Dtrue&amp;view=net-6.0">IFormattable</a>
+<a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings">Custom</a> formats for numeric types like double and decimal and<br>
+is exposed by the interface functions of <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iformattable?f1url=%3FappId%3DDev16IDEF1%26l%3DEN-US%26k%3Dk(System.IFormattable);k(DevLang-csharp)%26rd%3Dtrue&amp;view=net-6.0">IFormattable</a>
 and <a href="https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable?view=net-6.0">ISpanFormattable</a>.<br>
-If a format is specified, the output should be identical to that of an equivalent System.Double value,
+If a format is specified, the output should be identical to that of an equivalent double value,
 with the same conventions for rounding, exponential form etc.<br>
 Selfexplaining, with the difference that the specified number of decimal digits for rational is not limited.</p>
-<p>Default ToString already shows differences.<br>
-First there is the automatic detection of repeating decimals to allow a exact string representation when possible.<br>
-The position where the repetion starts is marked bei an <code>'</code> (aphostrop):</p>
+<p>The default ToString already shows differences.<br>
+First there is the automatic detection of repeating decimals that allow a exact string representation when possible.<br>
+The position where the repetition starts is marked bei a <code>'</code> (aphostrop):</p>
 <pre><code class="lang-c#">  x = (NewRational)1 / 3;
   s = x.ToString();       // &quot;0,'3&quot;    instead of &quot;0.3333333333333...&quot;	
   x = (NewRational)3227 / 555;
@@ -203,13 +203,16 @@ If the number has a higher precision than will fit in this range,
   x = MathR.PI(digits: 1000) * NewRational.Pow(10, 1000);
   s = x.ToString();         // &quot;3.1415926535897932384626433832795…E+1000&quot;      
 </code></pre>
-<p><strong>NOTE:</strong> In this form the last digit is not rounded.</p>
-<p>For compatibility, no <code>'</code> decimal repetition marks or <code>…</code> trailing ellipsis are inserted when using standard formats.<br>
-Furthermore, format R (Round Trip), since this format has to ensure
-that the number can be read back without loss of precision,
-for the case that the decimal representation does not fit in the (specified) range
-the number will formatted in fraction representation.<br>
-Therefore and in difference to other numbers, the number extension for R has also a meaning:</p>
+<p>This is necessary to distinguish between exact number representations and reduced ones.<br>
+eg. &quot;0.3333&quot; for NewRational is exactly 0.3333 and not 1/3 or &quot;0.'3&quot;.<br>
+So the trailing ellipsis <code>…</code> makes it absolutely clear that the string representation doesn't exactly match the original numeric value.<br>
+<strong>NOTE:</strong> In this reduced form the digits are not rounded.</p>
+<p>For compatibility, no decimal repetition marks <code>'</code> or trailing ellipsis <code>…</code> are inserted when using standard formats.<br>
+Furthermore, format <code>R</code> (Round Trip), since this format has to ensure
+that the number can read back without loss of precision,
+for the case that the decimal representation does not fit in the (specified) range,
+the number will formatted in fraction representation. eg.<code>&quot;1/3&quot;</code><br>
+Therefore and in difference to other numbers, the number extension for <code>R</code> has also a meaning:</p>
 <pre><code class="lang-c#">  x = MathR.PI(32);
   s = x.ToString();         // &quot;3.1415926535897932384626433832795…&quot;      
   s = x.ToString(&quot;E&quot;);      // &quot;3.141593E+000&quot;
@@ -222,14 +225,14 @@ Therefore and in difference to other numbers, the number extension for R has als
   s = x.ToString(&quot;0.####&quot;); // &quot;3.1416&quot;
 </code></pre>
 <p>Furthermore there a additional, non-standard formats.<br>
-Format L is identic to standard format F but without trailing zeros.</p>
+Format <code>L</code> is identic to standard format <code>F</code> but without trailing zeros.</p>
 <pre><code class="lang-c#">  x = MathR.PI(32);
   s = x.ToString(&quot;F40&quot;);    // &quot;3.1415926535897932384626433832795000000000&quot;
   s = x.ToString(&quot;L40&quot;);    // &quot;3.1415926535897932384626433832795&quot;
   x = MathR.PI(1000);
   s = x.ToString(&quot;L5000&quot;);  // &quot;3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387528865875332083814206171776691473035982534904287554687311595628638823537875937519577818577805321712268066130019278766111959092164201989&quot;
 </code></pre>
-<p>Format Q as a non-standard format for an exact representation as fraction:</p>
+<p>Format <code>Q</code> as a non-standard format for an exact representation as fraction:</p>
 <pre><code class="lang-c#">  x = (NewRational)8 / 7; 
   s = x.ToString();         // &quot;1.'142857&quot;      
   s = x.ToString(&quot;Q&quot;);      // &quot;8/7&quot;
