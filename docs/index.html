@@ -118,7 +118,7 @@ This gives the NewRational struct itself a machine word size and can therefore i
   private readonly uint[] p; // the one and only field
 </code></pre>
 <p>The array starts with a uint header containing a sign-bit and the number of following uint digits for the numerator.<br>
-Diectly followed by the same structure for the denominator. The order is little-endian.<br>
+Immediately followed by the same structure for the denominator. The order is little-endian.<br>
 A null array, as default value of the struct, represents the number 0 (zero).</p>
 <p><img src="images/rat_p_struct.png" alt="Rat P Struct"></p>
 <p>This simple structure has several advantages:</p>
@@ -240,7 +240,17 @@ Format <code>L</code> is identic to standard format <code>F</code> but without t
   s = x.ToString();         // &quot;1.4142135623730950488016887242096…&quot;      
   s = x.ToString(&quot;Q&quot;);      // &quot;141421356237309504880168872421/100000000000000000000000000000&quot;      
 </code></pre>
-<h2 id="performance-comparsions">Performance comparsions</h2>
+<h2 id="exceptions">Exceptions</h2>
+<p>Division and modulo with NewRational throws a System.DivideByZeroException if the dividend is 0 (zero).<br>
+No other type of numeric exception is thrown, since overflows are not inherent.<br>
+However, there is a possibility to get a System.OverflowException when a number with its digits is too big to fit in a C# array.<br>
+Currently, the maximum size of an array for .NET is 2GB,
+which corresponds to a theoretical maximum NewRational integer value of: 2^34359738240^ - 1.</p>
+<p>No arithmetic exceptions are thrown when using the stack engine.
+Division by zero gives a NaN value as for floating point arithmetic.<br>
+Therefore, no try-catch handling is required at this interface layer to keep the stack in track.<br>
+However, a wrong stack index as program bug leads of course to an IndexOutOfRangeException.</p>
+<h2 id="performance">Performance</h2>
 <p>A test app is currently under development that will generate detailed benchmark reports comparing usual implementations with the new system.<br>
 In general, the performance increases by at least a factor of 2, by using the stack machine up to a factor of 10 and more.<br>
 This applies to geometric algorithms where precision is important and not so much calculating with gigantic numbers.<br>

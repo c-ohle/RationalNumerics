@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Method Sign
+    <title>Method lim
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Method Sign
+    <meta name="title" content="Method lim
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -166,8 +166,8 @@
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.Round.html" title="Round" class="">Round</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.Rational.NewRational.Sign.html" title="Sign" class="active">Sign</a>
+                                <li class="">
+                                  <a href="System.Numerics.Rational.NewRational.Sign.html" title="Sign" class="">Sign</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.op_Subtraction.html" title="Subtraction" class="">Subtraction</a>
@@ -235,8 +235,8 @@
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.CPU.inv.html" title="inv" class="">inv</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.Rational.NewRational.CPU.lim.html" title="lim" class="">lim</a>
+                                <li class="active">
+                                  <a href="System.Numerics.Rational.NewRational.CPU.lim.html" title="lim" class="active">lim</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.CPU.lsb.html" title="lsb" class="">lsb</a>
@@ -307,29 +307,29 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.Rational.NewRational.Sign*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.Rational.NewRational.CPU.lim*">
 
-<h1 id="System_Numerics_Rational_NewRational_Sign_" data-uid="System.Numerics.Rational.NewRational.Sign*">Method Sign
+<h1 id="System_Numerics_Rational_NewRational_CPU_lim_" data-uid="System.Numerics.Rational.NewRational.CPU.lim*">Method lim
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_Sign_System_Numerics_Rational_NewRational_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.Sign(System.Numerics.Rational.NewRational)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_lim_System_UInt32_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L836">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1848">View Source</a>
 </span>
-<a id="System_Numerics_Rational_NewRational_Sign_" data-uid="System.Numerics.Rational.NewRational.Sign*"></a>
-<h4 id="System_Numerics_Rational_NewRational_Sign_System_Numerics_Rational_NewRational_" data-uid="System.Numerics.Rational.NewRational.Sign(System.Numerics.Rational.NewRational)">Sign(NewRational)</h4>
-<div class="markdown level1 summary"><p>Gets a <span class="xref">System.Int32</span> number that indicates the sign
-(negative, positive, or zero) of a <a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a> number.</p>
+<a id="System_Numerics_Rational_NewRational_CPU_lim_" data-uid="System.Numerics.Rational.NewRational.CPU.lim*"></a>
+<h4 id="System_Numerics_Rational_NewRational_CPU_lim_System_UInt32_" data-uid="System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)">lim(UInt32)</h4>
+<div class="markdown level1 summary"><p>Limitates the binary digits of the value at the top of the stack to the specified count <code data-dev-comment-type="paramref" class="paramref">c</code>.<br>
+If the number of digits in numerator or denominator exceeds this count the bits will shifted right by the difference.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static int Sign(NewRational a)</code></pre>
+  <pre><code class="lang-csharp hljs">public void lim(uint c)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -342,34 +342,17 @@
   </thead>
   <tbody>
     <tr>
-      <td><a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a></td>
-      <td><span class="parametername">a</span></td>
-      <td><p>A <a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a> number.</p>
+      <td><span class="xref">System.UInt32</span></td>
+      <td><span class="parametername">c</span></td>
+      <td><p>A positive number as bit count.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><p>A <span class="xref">System.Int32</span> that indicates the sign of the <a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a> number, as
-shown in the following table.<br>
-Number – Description<br>
--1 – The value of the object is negative.<br>
-0 – The value of the object is 0 (zero).<br>
-+1 – The value of the object is positive.<br></p>
-</td>
-    </tr>
-  </tbody>
-</table>
+<h5 id="System_Numerics_Rational_NewRational_CPU_lim_System_UInt32__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>This is a fast binary rounding operation that limits precision to increase the performance.<br>
+Mainly intended for iterations where the successive numeric operations internally produce much more precision than is finally needed.</p>
+</div>
 </article>
           </div>
           
@@ -378,10 +361,10 @@ Number – Description<br>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_Sign_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.Sign*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_lim_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.lim*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L836" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1848" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

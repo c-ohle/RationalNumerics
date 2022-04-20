@@ -340,6 +340,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.inv
   fullName: System.Numerics.Rational.NewRational.CPU.inv
   nameWithType: NewRational.CPU.inv
+- uid: System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)
+  name: lim(UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.lim.html#System_Numerics_Rational_NewRational_CPU_lim_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)
+  nameWithType: NewRational.CPU.lim(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.lim*
+  name: lim
+  href: api/System.Numerics.Rational.NewRational.CPU.lim.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.lim
+  fullName: System.Numerics.Rational.NewRational.CPU.lim
+  nameWithType: NewRational.CPU.lim
 - uid: System.Numerics.Rational.NewRational.CPU.lsb
   name: lsb()
   href: api/System.Numerics.Rational.NewRational.CPU.lsb.html#System_Numerics_Rational_NewRational_CPU_lsb
@@ -418,6 +430,12 @@ references:
   commentId: M:System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational,System.UInt32)
   fullName: System.Numerics.Rational.NewRational.CPU.mul(System.Numerics.Rational.NewRational, System.UInt32)
   nameWithType: NewRational.CPU.mul(NewRational, UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.mul(System.UInt32)
+  name: mul(UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.mul.html#System_Numerics_Rational_NewRational_CPU_mul_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.mul(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.mul(System.UInt32)
+  nameWithType: NewRational.CPU.mul(UInt32)
 - uid: System.Numerics.Rational.NewRational.CPU.mul(System.UInt32,System.UInt32)
   name: mul(UInt32, UInt32)
   href: api/System.Numerics.Rational.NewRational.CPU.mul.html#System_Numerics_Rational_NewRational_CPU_mul_System_UInt32_System_UInt32_
