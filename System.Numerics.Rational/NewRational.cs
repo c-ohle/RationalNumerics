@@ -538,8 +538,10 @@ namespace System.Numerics.Rational
         var cb = BitOperations.LeadingZeroCount(b[nb]);
         var va = ((ulong)a[na] << 32 + ca) | (na < 2 ? 0 : ((ulong)a[na - 1] << ca) | (na < 3 ? 0 : (ulong)a[na - 2] >> 32 - ca));
         var vb = ((ulong)b[nb] << 32 + cb) | (nb < 2 ? 0 : ((ulong)b[nb - 1] << cb) | (nb < 3 ? 0 : (ulong)b[nb - 2] >> 32 - cb));
+        if (vb == 0) return double.NaN;
         var e = ((na << 5) - ca) - ((nb << 5) - cb);
-        if (e <= -1022 || e > +1023) return Math.Sign(e) / 0.0; //+/- infinity
+        if (e < -1021) return double.NegativeInfinity;
+        if (e > +1023) return double.PositiveInfinity;
         var r = (double)(va >> 11) / (vb >> 11);
         var x = (0x3ff + e) << 52; r *= *(double*)&x; // r *= Math.Pow(2, e);
         if ((a[0] & F.Sign) != 0) r = -r; return r;
@@ -645,6 +647,7 @@ namespace System.Numerics.Rational
     /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static NewRational operator /(NewRational a, NewRational b)
     {
+      if (b.p == null) throw new DivideByZeroException(nameof(b));
       var cpu = task_cpu; cpu.div(a, b); return cpu.pop_rat();
     }
     /// <summary>
@@ -660,7 +663,8 @@ namespace System.Numerics.Rational
     public static NewRational operator %(NewRational a, NewRational b)
     {
       //return a - Truncate(a / b) * b;
-      var cpu = task_cpu; //todo: opt for int
+      if (b.p == null) throw new DivideByZeroException(nameof(b));
+      var cpu = task_cpu; //todo: optimize for integers
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
       cpu.mul(b); cpu.neg(); cpu.add(a);
       return cpu.pop_rat();
@@ -997,10 +1001,10 @@ namespace System.Numerics.Rational
       /// Initializes a new instance of a <see cref="CPU"/> class that
       /// has the specified initial stack capacity.
       /// </summary>
-      /// <param name="capacity">The initial stack capacity.</param>
+      /// <param name="capacity">The initial stack capacity that must be greater than 0 (zero).</param>
       public CPU(uint capacity = 32)
       {
-        p = new uint[capacity][];
+        p = new uint[capacity][]; Debug.Assert(capacity > 0);
       }
       /// <summary>
       /// Returns a temporary absolute index of the current stack top
@@ -1120,7 +1124,8 @@ namespace System.Numerics.Rational
       public void push(float v)
       {
         if (v == 0) { push(); return; }
-        var e = (byte)(*(uint*)&v >> 23) - 126;
+        var e = unchecked((byte)(*(uint*)&v >> 23) - 126); //Debug.Assert(!float.IsFinite(v) == (e == 0x81));
+        if (e == 0x81) { nan(); return; }
         var p = 6 - ((e * 19728) >> 16);
         var d = MathF.Abs(v) * Math.Pow(10, p); //-32..44
         if (d < 1e6) { d *= 10; p++; }
@@ -1139,7 +1144,8 @@ namespace System.Numerics.Rational
       public void push(double v)
       {
         if (v == 0) { push(); return; }
-        var e = (int)((*(ulong*)&v >> 52) & 0x7FF) - 1022;
+        var e = unchecked((int)((*(ulong*)&v >> 52) & 0x7FF) - 1022); //Debug.Assert(!double.IsFinite(v) == (e == 0x401));
+        if (e == 0x401) { nan(); return; } //NaN 
         var p = 14 - ((e * 19728) >> 16); //-14..43
         var d = Math.Abs(v) * Math.Pow(10, p);
         if (d < 1e14) { d *= 10; p++; }
@@ -1159,8 +1165,8 @@ namespace System.Numerics.Rational
       public void push(double v, bool exact)
       {
         if (v == 0) { push(); return; }
-        int h = ((int*)&v)[1], e = ((h >> 20) & 0x7FF) - 1075;
-        if (e == 0x3cc) throw new ArgumentOutOfRangeException(); //NaN 
+        int h = ((int*)&v)[1], e = ((h >> 20) & 0x7FF) - 1075; // Debug.Assert(!double.IsFinite(v) == (e == 0x3cc));
+        if (e == 0x3cc) { nan(); return; } //NaN 
         fixed (uint* p = rent((unchecked((uint)(e < 0 ? -e : e)) >> 5) + 8))
         {
           p[0] = 2; p[1] = *(uint*)&v; p[2] = (unchecked((uint)h) & 0x000FFFFF) | 0x100000;
@@ -1574,6 +1580,20 @@ namespace System.Numerics.Rational
         fixed (uint* v = p[b]) mul(u, v, false);
       }
       /// <summary>
+      /// Multiplies the value at index a as absolute index in the stack
+      /// and the value on top of the stack.<br/>
+      /// Replaces the value on top of the stack with the result.
+      /// </summary>
+      /// <remarks>
+      /// see: <see cref="mark()"/> for absolute indices. 
+      /// </remarks>
+      /// <param name="a">Absolute index of a stack entry.</param>
+      public void mul(uint a)
+      {
+        fixed (uint* u = p[i - 1], v = p[a]) mul(u, v, false);
+        swp(); pop();
+      }
+      /// <summary>
       /// Multiplies value a and the value on top of the stack.<br/>
       /// Replaces the value on top of the stack with the result.
       /// </summary>
@@ -1652,7 +1672,7 @@ namespace System.Numerics.Rational
       /// <param name="b">A <see cref="NewRational"/> as second value.</param>
       public void div(NewRational a, NewRational b)
       {
-        if (b.p == null) { throw new DivideByZeroException(); }
+        if (b.p == null) { nan(); return; }
         if (a.p == null) { push(); return; }
         fixed (uint* u = a.p, v = b.p) mul(u, v, true);
       }
@@ -1691,21 +1711,21 @@ namespace System.Numerics.Rational
       /// Shifts the numerator value to the left (in zeros) by the specified number of bits.
       /// </summary>
       /// <remarks>
-      /// Shifts only the numerator value what is a fast alernative to 
-      /// multiplies by power's of two.<br/>
-      /// Shift of the denominator is possible by calling <see cref="inv()"/> before and after.
+      /// Shifts the numerator value only, which is a fast alternative to multiplies by powers of two.<br/>
+      /// To shift the denominator is possible by calling <see cref="inv()"/> before and after.
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
       public void shl(int c, int i = 0)
       {
+        if (c <= 0) { Debug.Assert(c == 0); return; }
         fixed (uint* u = p[this.i - 1 - i])
-        fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1))
+        fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1)) //todo: optimize see shr
         {
           var n = (u[0] & F.Mask) + 1;
           copy(v, u, n); shl(v, c);
           copy(v + v[0] + 1, u + n, u[n] + 1);
-          v[0] |= u[0] & F.Sign; swp(i + 1); pop();
+          v[0] |= (u[0] & F.Sign) | F.Norm; swp(i + 1); pop();
         }
       }
       /// <summary>
@@ -1713,21 +1733,20 @@ namespace System.Numerics.Rational
       /// Shifts the numerator value to the right (in zeros) by the specified number of bits.
       /// </summary>
       /// <remarks>
-      /// Shifts only the numerator value what is a fast alernative to 
-      /// integer divisions by power's of two.<br/>
-      /// Shift of the denominator is possible by calling <see cref="inv()"/> before and after.
+      /// Shifts the numerator value only, which is a fast alternative to divisions by powers of two.<br/>
+      /// To shift the denominator is possible by calling <see cref="inv()"/> before and after.
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
       public void shr(int c, int i = 0)
       {
-        fixed (uint* u = p[this.i - 1 - i])
-        fixed (uint* v = rent(len(u)))
+        if (c <= 0) { Debug.Assert(c == 0); return; }
+        fixed (uint* p = this.p[this.i - 1 - i])
         {
-          var n = (u[0] & F.Mask) + 1;
-          copy(v, u, n); shr(v, c); //if (*(ulong*)t == 1) return default;
-          copy(v + v[0] + 1, u + n, u[n] + 1);
-          v[0] |= u[0] & F.Sign; swp(i + 1); pop();
+          var h = p[0]; var a = h & F.Mask;
+          shr(p, c); if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
+          if (p[0] != a) copy(p + p[0] + 1, p + a + 1, p[a + 1] + 1);
+          p[0] |= (h & F.Sign) | F.Norm;
         }
       }
       /// <summary>
@@ -1816,6 +1835,30 @@ namespace System.Numerics.Rational
       public void fac(uint c)
       {
         push(1); for (uint i = 2; i <= c; i++) { push(i); mul(); }
+      }
+      /// <summary>
+      /// Limitates the binary digits of the value at the top of the stack to the specified count <paramref name="c"/>.<br/>
+      /// If the number of digits in numerator or denominator exceeds this count the bits will shifted right by the difference.
+      /// </summary>
+      /// <remarks>
+      /// This is a fast binary rounding operation that limits precision to increase the performance.<br/>
+      /// Mainly intended for iterations where the successive numeric operations internally produce much more precision than is finally needed.
+      /// </remarks>
+      /// <param name="c">A positive number as bit count.</param>
+      public void lim(uint c)
+      {
+        Debug.Assert(c > 0);
+        fixed (uint* p = this.p[this.i - 1])
+        {
+          if (isz(p)) return;
+          var h = p[0]; var a = h & F.Mask; var q = p + a + 1; var b = q[0];
+          var u = (a << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[a]));
+          var v = (b << 5) - unchecked((uint)BitOperations.LeadingZeroCount(q[b]));
+          if (u > v) u = v; if (u <= c) return;
+          var t = (int)(u - c); shr(p, t); shr(q, t);
+          if (p[0] != a) copy(p + p[0] + 1, q, q[0] + 1);
+          p[0] |= (h & F.Sign) | F.Norm;
+        }
       }
 
       /// <summary>
@@ -2053,10 +2096,9 @@ namespace System.Numerics.Rational
           return 0;
         }
       }
-      //todo: gcd(), lcd(), lim();
+
       //public void gcd() { }
       //public void lcd() { }
-      //public void lim(uint bits) { }
 
       /// <summary>
       /// Converts the value on top of the stack to decimal digits.
@@ -2125,10 +2167,14 @@ namespace System.Numerics.Rational
         var a = p[i++];
         if (a == null || a.Length < n)
         {
-          p[i - 1] = a = new uint[1 << (BitOperations.Log2(n - 1) + 1)];
+          p[i - 1] = a = new uint[1 << (BitOperations.Log2(n - 1) + 1)]; //4, 8, 16, ...
           if (i == p.Length) Array.Resize(ref p, i << 1);
         }
         return a;
+      }
+      void nan()
+      {
+        fixed (uint* p = rent(4)) *(ulong*)p = *(ulong*)(p + 2) = 1;
       }
       void add(uint* u, uint* v, bool neg)
       {
@@ -2183,6 +2229,7 @@ namespace System.Numerics.Rational
         Debug.Assert((p[0] & F.Norm) != 0);
         var d = p + ((p[0] & F.Mask) + 1);
         if (*(ulong*)d == 0x100000001) { p[0] &= ~F.Norm; return; }
+        if (*(ulong*)d == 1) { *(ulong*)p = *(ulong*)(p + 2) = 1; return; } //NaN
         var l = len(p);
         fixed (uint* s = rent(l << 1))
         {
@@ -2454,6 +2501,7 @@ namespace System.Numerics.Rational
 
     #region private 
     [ThreadStatic] private static CPU? _cpu;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     NewRational(uint[] p) { this.p = p; }
     struct F { internal const uint Mask = 0x0fffffff, Sign = 0x80000000, Norm = 0x40000000; }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

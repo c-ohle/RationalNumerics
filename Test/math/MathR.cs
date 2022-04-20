@@ -14,9 +14,9 @@ namespace System.Numerics.Rational
     /// <returns>Returns the numerator of <paramref name="a"/>.</returns>
     public static rat Numerator(rat a)
     {
-      var cpu = rat.task_cpu; cpu.push(a); 
-      cpu.mod(8); var s = cpu.sign(); cpu.pop(); 
-      if(s < 0) cpu.neg(); return cpu.pop_rat(); 
+      var cpu = rat.task_cpu; cpu.push(a);
+      cpu.mod(8); var s = cpu.sign(); cpu.pop();
+      if (s < 0) cpu.neg(); return cpu.pop_rat();
     }
     /// <summary>
     /// Returns the denominator of the specified number.
@@ -96,13 +96,13 @@ namespace System.Numerics.Rational
     /// Converts a <see cref="rat"/> number to a continued fraction<br/>
     /// to the common string format: "[1;2,3,4,5]"
     /// </summary>
-    /// <param name="v">The number to convert.</param>
+    /// <param name="a">The number to convert.</param>
     /// <returns>A <see cref="string"/> formatted as continued fraction.</returns>
-    static string GetContinuedFraction(rat v)
+    public static string GetContinuedFraction(rat a)
     {
       var wr = new System.Buffers.ArrayBufferWriter<char>(256);
       wr.GetSpan(1)[0] = '['; wr.Advance(1);
-      var cpu = rat.task_cpu; cpu.push(v);
+      var cpu = rat.task_cpu; cpu.push(a);
       for (int i = 0, e, ns; ; i++)
       {
         cpu.dup(); cpu.mod(0); cpu.swp(); cpu.pop();
@@ -125,7 +125,7 @@ namespace System.Numerics.Rational
     /// </summary>
     /// <param name="s">The value to parse.</param>
     /// <returns>A <see cref="rat"/> number.</returns>
-    static rat ParseContinuedFraction(ReadOnlySpan<char> s)
+    public static rat ParseContinuedFraction(ReadOnlySpan<char> s)
     {
       var cpu = rat.task_cpu; cpu.push();
       for (; s.Length != 0;)

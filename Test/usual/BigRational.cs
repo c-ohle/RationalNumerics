@@ -6,13 +6,13 @@ using System.Numerics.Rational;
 namespace Test
 {
   /// <summary>
-  /// Usual  implementation of a rational number class based on <see cref="System.Numerics.BigInteger"/>.<br/>
+  /// Usual implementation of a rational number class based on <see cref="System.Numerics.BigInteger"/>.<br/>
   /// </summary>
   /// <remarks>
-  /// <i>This class is only intended for speed comparisons and benchmark tests for the new <see cref="NewRational"/> class.</i>
+  /// <i>This class is only intended for speed comparisons and benchmark tests with <see cref="NewRational"/>.</i>
   /// </remarks>
   [DebuggerDisplay("{ToString(\"\"),nq}")]
-  public struct OldRational : IEquatable<OldRational>, IComparable<OldRational>, IFormattable
+  public struct BigRational : IEquatable<BigRational>, IComparable<BigRational>, IFormattable
   {
     BigInteger num, den;
     public int Sign => num.Sign;
@@ -37,9 +37,9 @@ namespace Test
     }
     public override bool Equals(object? b)
     {
-      return b is OldRational n ? Equals(n) : false;
+      return b is BigRational n ? Equals(n) : false;
     }
-    public int CompareTo(OldRational b)
+    public int CompareTo(BigRational b)
     {
       var s1 = num.Sign;
       if (s1 != b.num.Sign) return s1 > b.num.Sign ? +1 : -1;
@@ -54,105 +54,105 @@ namespace Test
       if (s3 < 0 && s2 > 0) return -s1;
       return (num * b.den).CompareTo(b.num * den);
     }
-    public bool Equals(OldRational b)
+    public bool Equals(BigRational b)
     {
       return num.Equals(b.num) && den.Equals(b.den);
     }
-    public static implicit operator OldRational(int v)
+    public static implicit operator BigRational(int v)
     {
-      return new OldRational { num = v, den = 1 };
+      return new BigRational { num = v, den = 1 };
     }
-    public static implicit operator OldRational(long v)
+    public static implicit operator BigRational(long v)
     {
-      return new OldRational { num = v, den = 1 };
+      return new BigRational { num = v, den = 1 };
     }
-    public static implicit operator OldRational(ulong v)
+    public static implicit operator BigRational(ulong v)
     {
-      return new OldRational { num = v, den = 1 };
+      return new BigRational { num = v, den = 1 };
     }
-    public static implicit operator NewRational(OldRational v)
+    public static implicit operator NewRational(BigRational v)
     {
       return (NewRational)v.num / (NewRational)v.den;
     }
-    public static explicit operator OldRational(NewRational v)
+    public static explicit operator BigRational(NewRational v)
     {
       var cpu = NewRational.task_cpu; cpu.push(v); cpu.mod(8);
       if (cpu.sign() < 0) { cpu.neg(0); cpu.neg(1); }
       cpu.swp();
-      return new OldRational { num = (BigInteger)cpu.pop_rat(), den = (BigInteger)cpu.pop_rat() };
+      return new BigRational { num = (BigInteger)cpu.pop_rat(), den = (BigInteger)cpu.pop_rat() };
     }
-    public static OldRational operator +(OldRational a)
+    public static BigRational operator +(BigRational a)
     {
       return a;
     }
-    public static OldRational operator -(OldRational a)
+    public static BigRational operator -(BigRational a)
     {
       a.num = -a.num; return a;
     }
-    public static OldRational operator +(OldRational a, OldRational b)
+    public static BigRational operator +(BigRational a, BigRational b)
     {
       a.num = a.num * b.den + a.den * b.num;
       a.den = a.den * b.den;
       a.normalize(); return a;
     }
-    public static OldRational operator -(OldRational a, OldRational b)
+    public static BigRational operator -(BigRational a, BigRational b)
     {
       a.num = a.num * b.den - a.den * b.num;
       a.den = a.den * b.den;
       a.normalize(); return a;
     }
-    public static OldRational operator *(OldRational a, OldRational b)
+    public static BigRational operator *(BigRational a, BigRational b)
     {
       a.num *= b.num;
       a.den *= b.den;
       a.normalize(); return a;
     }
-    public static OldRational operator /(OldRational a, OldRational b)
+    public static BigRational operator /(BigRational a, BigRational b)
     {
       if (b.num.IsZero) throw new DivideByZeroException();
       a.num *= b.den;
       a.den *= b.num;
       a.normalize(); return a;
     }
-    public static bool operator ==(OldRational a, OldRational b)
+    public static bool operator ==(BigRational a, BigRational b)
     {
       return a.Equals(b);
     }
-    public static bool operator !=(OldRational a, OldRational b)
+    public static bool operator !=(BigRational a, BigRational b)
     {
       return !a.Equals(b);
     }
-    public static bool operator <=(OldRational a, OldRational b)
+    public static bool operator <=(BigRational a, BigRational b)
     {
       return a.CompareTo(b) <= 0;
     }
-    public static bool operator >=(OldRational a, OldRational b)
+    public static bool operator >=(BigRational a, BigRational b)
     {
       return a.CompareTo(b) >= 0;
     }
-    public static bool operator <(OldRational a, OldRational b)
+    public static bool operator <(BigRational a, BigRational b)
     {
       return a.CompareTo(b) < 0;
     }
-    public static bool operator >(OldRational a, OldRational b)
+    public static bool operator >(BigRational a, BigRational b)
     {
       return a.CompareTo(b) > 0;
     }
-    public static OldRational Abs(OldRational a)
+    public static BigRational Abs(BigRational a)
     {
       return a.Sign < 0 ? -a : a;
     }
-    public static OldRational Min(OldRational a, OldRational b)
+    public static BigRational Min(BigRational a, BigRational b)
     {
       return a < b ? a : b;
     }
-    public static OldRational Max(OldRational a, OldRational b)
+    public static BigRational Max(BigRational a, BigRational b)
     {
       return a > b ? a : b;
     }
-    public static OldRational Pow(OldRational a, int b)
+    public static BigRational Pow(BigRational a, int b)
     {
-      OldRational result = 1;
+      BigRational result = 1;
       for (var e = unchecked((uint)(b < 0 ? -b : b)); ; e >>= 1)
       {
         if ((e & 1) != 0) result *= a;
@@ -161,12 +161,12 @@ namespace Test
       if (b < 0) result = 1 / result;
       return result;
     }
-    public static OldRational Round(OldRational a, int digits)
+    public static BigRational Round(BigRational a, int digits)
     {
       var e = Pow(10, digits); var b = a * e;
       var div = BigInteger.DivRem(BigInteger.Abs(b.num), b.den, out var rem);
       if (rem > (b.den >> 1)) div += 1;
-      var result = new OldRational { num = b.Sign >= 0 ? div : -div, den = 1 } / e;
+      var result = new BigRational { num = b.Sign >= 0 ? div : -div, den = 1 } / e;
       return result;
     }
     void normalize()
