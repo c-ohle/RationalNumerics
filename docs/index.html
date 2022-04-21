@@ -245,7 +245,7 @@ Format <code>L</code> is identic to standard format <code>F</code> but without t
 No other type of numeric exception is thrown, since overflows are not inherent.<br>
 However, there is a possibility to get a System.OverflowException when a number with its digits is too big to fit in a C# array.<br>
 Currently, the maximum size of an array for .NET is 2GB,
-which corresponds to a theoretical maximum NewRational integer value of: 2^34359738240^ - 1.</p>
+which corresponds to a theoretical maximum NewRational integer value of: 2<sup>34359738240</sup> - 1.</p>
 <p>No arithmetic exceptions are thrown when using the stack engine.
 Division by zero gives a NaN value as for floating point arithmetic.<br>
 Therefore, no try-catch handling is required at this interface layer to keep the stack in track.<br>
@@ -254,11 +254,12 @@ However, a wrong stack index as program bug leads of course to an IndexOutOfRang
 <p>A test app is currently under development that will generate detailed benchmark reports comparing usual implementations with the new system.<br>
 In general, the performance increases by at least a factor of 2, by using the stack machine up to a factor of 10 and more.<br>
 This applies to geometric algorithms where precision is important and not so much calculating with gigantic numbers.<br>
-For really huge numbers, with kBytes of digit data, the bottleneck is the integer multiplication as O(n^2^) operation (with simple algorithm).<br>
+For really huge numbers, with kBytes of digit data, the bottleneck is the integer multiplication as O(n<sup>2</sup>) operation (with simple algorithm).<br>
 Then, the performance of both systems equalizes again.</p>
 <p>Using NewRational for pure integer arithmetic is not faster than using BigInteger.<br>
 But by using the stack machine in functions, iterations etc., the performance can be increased.</p>
 <hr>
+<p>Project URL: <a href="https://github.com/c-ohle/RationalNumerics">https://github.com/c-ohle/RationalNumerics</a></p>
 <p><img src="images/underconst.png" alt="T1"></p>
 <!-- 
 
