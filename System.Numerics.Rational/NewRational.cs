@@ -613,7 +613,7 @@ namespace System.Numerics.Rational
     /// </summary>
     /// <param name="a">The first value to add.</param>
     /// <param name="b">The second value to add.</param>
-    /// <returns>The sum of a and b.</returns>
+    /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
     public static NewRational operator +(NewRational a, NewRational b)
     {
       var cpu = task_cpu; cpu.add(a, b); return cpu.pop_rat();
@@ -1332,7 +1332,7 @@ namespace System.Numerics.Rational
         var t = p[i - 1]; p[i - 1] = p[i - 2]; p[i - 2] = t;
       }
       /// <summary>
-      /// Swaps the values at index a and b relative to the top of the stack.
+      /// Swaps the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack.
       /// </summary>
       /// <param name="a">Relative index of the first stack entry.</param>
       /// <param name="b">Relative index of the second stack entry.</param>
@@ -1342,7 +1342,7 @@ namespace System.Numerics.Rational
         //swp(unchecked((uint)(this.i - 1 - i)), unchecked((uint)(this.i - 1 - k)));
       }
       /// <summary>
-      /// Swaps the values at index a and b as absolute indices in the stack.
+      /// Swaps the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack.
       /// </summary>
       /// <remarks>
       /// see: <see cref="mark()"/> for absolute indices. 
@@ -1354,7 +1354,7 @@ namespace System.Numerics.Rational
         var t = p[a]; p[a] = p[b]; p[b] = t;
       }
       /// <summary>
-      /// Swaps the values at index a as absolute index with the value on top of the stack.
+      /// Swaps the values at index <paramref name="a"/> as absolute index with the value on top of the stack.
       /// </summary>
       /// <param name="a">Absolute index a stack entry.</param>
       public void swp(uint a)
@@ -1362,7 +1362,7 @@ namespace System.Numerics.Rational
         var t = p[a]; p[a] = p[i - 1]; p[i - 1] = t;
       }
       /// <summary>
-      /// Duplicates the value at index i relative to the top of the stack 
+      /// Duplicates the value at index <paramref name="a"/> relative to the top of the stack 
       /// and pushes it as copy on top of the stack.
       /// </summary>
       /// <remarks>
@@ -1370,10 +1370,10 @@ namespace System.Numerics.Rational
       /// it is more efficient to use swap when possible.
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
-      /// <param name="i">Relative index of a stack entry.</param>
-      public void dup(int i = 0)
+      /// <param name="a">Relative index of a stack entry.</param>
+      public void dup(int a = 0)
       {
-        dup(unchecked((uint)(this.i - 1 - i)));
+        dup(unchecked((uint)(this.i - 1 - a)));
         //fixed (uint* u = this.p[this.i - 1 - i])
         //{
         //  var n = len(u);
@@ -1381,7 +1381,7 @@ namespace System.Numerics.Rational
         //}
       }
       /// <summary>
-      /// Duplicates the value at index i as absolute index in the stack 
+      /// Duplicates the value at index <paramref name="a"/> as absolute index in the stack 
       /// and pushes it as copy on top of the stack.
       /// </summary>
       /// <remarks>
@@ -1389,43 +1389,43 @@ namespace System.Numerics.Rational
       /// it is more efficient to use <see cref="swp"/> when possible.
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
-      /// <param name="i">Absolute index of a stack entry.</param>
-      public void dup(uint i)
+      /// <param name="a">Absolute index of a stack entry.</param>
+      public void dup(uint a)
       {
-        fixed (uint* u = this.p[i])
+        fixed (uint* u = this.p[a])
         {
           var n = len(u);
           fixed (uint* v = rent(n)) copy(v, u, n);
         }
       }
       /// <summary>
-      /// Negates the value at index i relative to the top of the stack.<br/>
+      /// Negates the value at index <paramref name="a"/> relative to the top of the stack.<br/>
       /// Default index 0 negates the value on top of the stack.
       /// </summary>
-      /// <param name="i">Relative index of a stack entry.</param>
-      public void neg(int i = 0)
+      /// <param name="a">Relative index of a stack entry.</param>
+      public void neg(int a = 0)
       {
-        neg(unchecked((uint)(this.i - 1 - i))); // fixed (uint* p = this.p[this.i - 1 - i]) if (!isz(p)) p[0] ^= F.Sign;
+        neg(unchecked((uint)(this.i - 1 - a))); // fixed (uint* p = this.p[this.i - 1 - i]) if (!isz(p)) p[0] ^= F.Sign;
       }
       /// <summary>
-      /// Negates the value at index i as absolute index in the stack.<br/>
+      /// Negates the value at index <paramref name="a"/> as absolute index in the stack.<br/>
       /// </summary>
       /// <remarks>
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
-      /// <param name="i">Relative index of a stack entry.</param>
-      public void neg(uint i)
+      /// <param name="a">Absolute index of a stack entry.</param>
+      public void neg(uint a)
       {
-        fixed (uint* p = this.p[i]) if (!isz(p)) p[0] ^= F.Sign;
+        fixed (uint* p = this.p[a]) if (!isz(p)) p[0] ^= F.Sign;
       }
       /// <summary>
-      /// Convert the value at index i relative to the top of the stack to it's absolute value.<br/>
+      /// Convert the value at index <paramref name="a"/> relative to the top of the stack to it's absolute value.<br/>
       /// Default index 0 addresses the value on top of the stack.
       /// </summary>
-      /// <param name="i">Relative index of a stack entry.</param>
-      public void abs(int i = 0)
+      /// <param name="a">Relative index of a stack entry.</param>
+      public void abs(int a = 0)
       {
-        fixed (uint* p = this.p[this.i - 1 - i]) p[0] &= ~F.Sign;
+        fixed (uint* p = this.p[this.i - 1 - a]) p[0] &= ~F.Sign;
       }
       /// <summary>
       /// Adds the first two values on top of the stack 
@@ -1436,7 +1436,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[i - 2], v = p[i - 1]) add(u, v, false); swp(0, 2); pop(2);
       }
       /// <summary>
-      /// Adds the values at index a and b relative to the top of the stack
+      /// Adds the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack
       /// and replaces the value at index a with the result.
       /// </summary>
       /// <param name="a">Relative index of the first stack entry.</param>
@@ -1448,7 +1448,7 @@ namespace System.Numerics.Rational
         swp(a + 1); pop();
       }
       /// <summary>
-      /// Adds the values at index a and b as absolute indices in the stack
+      /// Adds the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack
       /// and pushes the result on top of the stack.
       /// </summary>
       /// <remarks>
@@ -1487,7 +1487,7 @@ namespace System.Numerics.Rational
         swp(); pop();
       }
       /// <summary>
-      /// Adds the values a and b and pushes the result on the stack.
+      /// Adds the values <paramref name="a"/> and <paramref name="b"/> and pushes the result on the stack.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> as first value.</param>
       /// <param name="b">A <see cref="NewRational"/> as second value.</param>
@@ -1502,14 +1502,14 @@ namespace System.Numerics.Rational
       /// and replaces them with the result.
       /// </summary>
       /// <remarks>
-      /// a - b where b is the value on top of the stack 
+      /// a - b where b is the value on top of the stack. 
       /// </remarks>
       public void sub()
       {
         fixed (uint* u = p[i - 2], v = p[i - 1]) add(u, v, true); swp(0, 2); pop(2);
       }
       /// <summary>
-      /// Subtracts the values at index a and b relative to the top of the stack
+      /// Subtracts the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack
       /// and replaces the value at index a with the result.
       /// </summary>
       /// <param name="a">Relative index of the first stack entry.</param>
@@ -1521,7 +1521,7 @@ namespace System.Numerics.Rational
         swp(a + 1); pop();
       }
       /// <summary>
-      /// Subtracts the values at index a and b as absolute indices in the stack
+      /// Subtracts the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack
       /// and pushes the result on top of the stack.
       /// </summary>
       /// <remarks>
@@ -1535,7 +1535,7 @@ namespace System.Numerics.Rational
         fixed (uint* v = p[b]) add(u, v, true);
       }
       /// <summary>
-      /// Subtracts the values a and b and pushes the result on the stack.
+      /// Subtracts the values <paramref name="a"/> and <paramref name="b"/> and pushes the result on the stack.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> as first value.</param>
       /// <param name="b">A <see cref="NewRational"/> as second value.</param>
@@ -1554,7 +1554,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[i - 2], v = p[i - 1]) mul(u, v, false); swp(0, 2); pop(2);
       }
       /// <summary>
-      /// Multiplies the values at index a and b relative to the top of the stack
+      /// Multiplies the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack
       /// and replaces the value at index a with the result.
       /// </summary>
       /// <param name="a">Relative index of the first stack entry.</param>
@@ -1566,7 +1566,7 @@ namespace System.Numerics.Rational
         swp(a + 1); pop();
       }
       /// <summary>
-      /// Multiplies the values at index a and b as absolute indices in the stack
+      /// Multiplies the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack
       /// and pushes the result on top of the stack.
       /// </summary>
       /// <remarks>
@@ -1619,7 +1619,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = a.p, v = p[b]) mul(u, v, false);
       }
       /// <summary>
-      /// Multiplies the values a and b and pushes the result on the stack.
+      /// Multiplies the values <paramref name="a"/> and <paramref name="b"/> and pushes the result on the stack.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> as first value.</param>
       /// <param name="b">A <see cref="NewRational"/> as second value.</param>
@@ -1641,7 +1641,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[i - 2], v = p[i - 1]) mul(u, v, true); swp(0, 2); pop(2);
       }
       /// <summary>
-      /// Divides the values at index a and b relative to the top of the stack
+      /// Divides the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack
       /// and replaces the value at index a with the result.
       /// </summary>
       /// <param name="a">Relative index of the first stack entry.</param>
@@ -1653,7 +1653,7 @@ namespace System.Numerics.Rational
         swp(a + 1); pop();
       }
       /// <summary>
-      /// Divides the values at index a and b as absolute indices in the stack
+      /// Divides the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack
       /// and pushes the result on top of the stack.
       /// </summary>
       /// <remarks>
@@ -1666,7 +1666,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[a], v = p[b]) mul(u, v, true);
       }
       /// <summary>
-      /// Divides the values a and b and pushes the result on the stack.
+      /// Divides the values <paramref name="a"/> and <paramref name="b"/> and pushes the result on the stack.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> as first value.</param>
       /// <param name="b">A <see cref="NewRational"/> as second value.</param>
@@ -1686,6 +1686,34 @@ namespace System.Numerics.Rational
       {
         if (a.p == null) { push(); return; }
         fixed (uint* u = a.p, v = p[this.i - 1 - i]) mul(u, v, true);
+      }
+      /// <summary>
+      /// Squares the value at index <paramref name="a"/> relative to the top of the stack.<br/>
+      /// Default index 0 squares the value on top of the stack.
+      /// </summary>
+      /// <param name="a">Relative index of a stack entry.</param>
+      public void sqr(int a = 0)
+      {
+        //mul(a, a); return;
+        sqr(unchecked((uint)(this.i - 1 - a)));
+        swp(a + 1); pop();
+      }
+      /// <summary>
+      /// Squares the value at index <paramref name="a"/> as absolute index in the stack.<br/>
+      /// </summary>
+      /// <remarks>
+      /// see: <see cref="mark()"/> for absolute indices. 
+      /// </remarks>
+      /// <param name="a">Absolute index of a stack entry.</param>
+      public void sqr(uint a)
+      {
+        //mul(a, a); return;
+        fixed (uint* u = this.p[a])
+        fixed (uint* w = rent(len(u) << 1))
+        {
+          sqr(u, w); if (*(ulong*)w == 1) { *(ulong*)(w + 2) = 0x100000001; return; }
+          sqr(u + ((u[0] & F.Mask) + 1), w + (w[0] + 1)); w[0] |= F.Norm;
+        }
       }
       /// <summary>
       /// Replaces the value on top of the stack with it's multiplicative inverse,
@@ -1807,7 +1835,7 @@ namespace System.Numerics.Rational
           for (; ; e >>= 1)
           {
             if ((e & 1) != 0) mul(1, 0);
-            if (e == 1) break; mul(0, 0); //expl sqr?
+            if (e == 1) break; sqr();// mul(0, 0);
           }
           pop();
         }
@@ -1824,7 +1852,7 @@ namespace System.Numerics.Rational
         for (var e = unchecked((uint)(y < 0 ? -y : y)); ; e >>= 1)
         {
           if ((e & 1) != 0) mul(1, 0);
-          if (e <= 1) break; mul(0, 0);
+          if (e <= 1) break; sqr(); // mul(0, 0);
         }
         pop(); if (y < 0) inv();
       }
@@ -1860,23 +1888,22 @@ namespace System.Numerics.Rational
           p[0] |= (h & F.Sign) | F.Norm;
         }
       }
-
       /// <summary>
       /// Gets a number that indicates the sign of the value at index i relative to the top of the stack.<br/>
       /// Default index 0 returns the sign of the value on top of the stack.
       /// </summary>
-      /// <param name="i">Relative index of a stack entry.</param>
+      /// <param name="a">Relative index of a stack entry.</param>
       /// <returns>
       /// -1 – value is less than zero.<br/>
       /// 0 – value is equal to zero.<br/>
       /// 1 – value is greater than zero.<br/>
       /// </returns>
-      public int sign(int i = 0)
+      public int sign(int a = 0)
       {
-        fixed (uint* u = p[this.i - 1 - i]) return sig(u);
+        fixed (uint* u = p[this.i - 1 - a]) return sig(u);
       }
       /// <summary>
-      /// Compares the <u>absolute</u> values at index a and b relative to the top of the stack.<br/>
+      /// Compares the <u>absolute</u> values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack.<br/>
       /// </summary>
       /// <param name="a">Relative index of the first stack entry.</param>
       /// <param name="b">Relative index of the second stack entry.</param>
@@ -1896,7 +1923,7 @@ namespace System.Numerics.Rational
         }
       }
       /// <summary>
-      /// Compares the values at index a and b relative to the top of the stack.<br/>
+      /// Compares the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack.<br/>
       /// </summary>
       /// <param name="a">Relative index of the first stack entry.</param>
       /// <param name="b">Relative index of the second stack entry.</param>
@@ -1911,7 +1938,7 @@ namespace System.Numerics.Rational
         fixed (uint* v = p[this.i - 1 - b]) return cmp(u, v);
       }
       /// <summary>
-      /// Compares the values at index a and b as absolute indices in the stack.
+      /// Compares the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack.
       /// </summary>
       /// <remarks>
       /// see: <see cref="mark()"/> for absolute indices. 
@@ -2005,7 +2032,7 @@ namespace System.Numerics.Rational
         }
       }
       /// <summary>
-      /// Compares the values at index a and b as absolute indices in the stack for equality.
+      /// Compares the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack for equality.
       /// </summary>
       /// <remarks>
       /// see: <see cref="mark()"/> for absolute indices. 
@@ -2096,10 +2123,24 @@ namespace System.Numerics.Rational
           return 0;
         }
       }
-
-      //public void gcd() { }
-      //public void lcd() { }
-
+      /// <summary>
+      /// Finds the greatest common divisor (GCD) of the numerators<br/>
+      /// of the first two values on top of the stack and replaces them with the result.
+      /// </summary>
+      /// <remarks>
+      /// This operation makes only sense for integer values since the denominators are ignored.
+      /// </remarks>
+      public void gcd()
+      {
+        fixed (uint* u = this.p[this.i - 2])
+        fixed (uint* v = this.p[this.i - 1])
+        {
+          u[0] &= F.Mask; v[0] &= F.Mask;
+          var r = isz(u) ? v : isz(v) ? u : gcd(u, v);
+          *(ulong*)(r + (r[0] + 1)) = 0x100000001;
+          if (r == v) swp(); pop();
+        }
+      }
       /// <summary>
       /// Converts the value on top of the stack to decimal digits.
       /// </summary>
@@ -2201,8 +2242,7 @@ namespace System.Numerics.Rational
       }
       void mul(uint* u, uint* v, bool inv)
       {
-        var l = len(u) + len(v);
-        fixed (uint* w = rent(l))
+        fixed (uint* w = rent(len(u) + len(v)))
         {
           var s = (v[0] & F.Mask) + 1;
           var t = (u[0] & F.Mask) + 1;
@@ -2261,12 +2301,11 @@ namespace System.Numerics.Rational
       static void mul(uint* a, uint* b, uint* r)
       {
         uint na = a[0] & F.Mask, nb = b[0] & F.Mask;
-        if (na < nb) { var t1 = na; na = nb; nb = t1; var t2 = a; a = b; b = t2; }
+        if (na < nb) { var u = na; na = nb; nb = u; var v = a; a = b; b = v; }
         uint f = b[1];
         if (nb == 1)
         {
           if (f == 0) { *(ulong*)r = 1; return; }
-          //if (f == 1) { copy(r + 1, a + 1, r[0] = na); return; }
           if (f == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
         }
         ulong c = 0;
@@ -2287,8 +2326,29 @@ namespace System.Numerics.Rational
           }
           s[na + 1] = unchecked((uint)c);
         }
-        for (r[0] = na + nb; r[r[0]] == 0 && r[0] > 1; r[0]--) ;
-        //for (na += nb; r[na] == 0 && na > 1; na--) ; r[0] = na;
+        //for (r[0] = na + nb; r[r[0]] == 0 && r[0] > 1; r[0]--) ;
+        if (r[r[0] = na + nb] == 0 && r[0] > 1) { r[0]--; Debug.Assert(!(r[r[0]] == 0 && r[0] > 1)); }
+      }
+      static void sqr(uint* a, uint* r)
+      {
+        uint n = *a++ & F.Mask; var v = r + 1;
+        if (n == 1)
+        {
+          *(ulong*)v = (ulong)a[0] * a[0];
+          r[0] = r[2] != 0 ? 2u : 1u; return;
+        }
+        for (uint i = 0; i < n; i++)
+        {
+          ulong c = 0;
+          for (uint j = 0; j < i; j++)
+          {
+            ulong e = v[i + j] + c, f = (ulong)a[j] * a[i];
+            v[i + j] = unchecked((uint)(e + (f << 1)));
+            c = (f + (e >> 1)) >> 31;
+          }
+          *(ulong*)(v + (i << 1)) = (ulong)a[i] * a[i] + c;
+        }
+        if (r[r[0] = n << 1] == 0 && r[0] > 1) { r[0]--; Debug.Assert(!(r[r[0]] == 0 && r[0] > 1)); }
       }
       static void div(uint* a, uint* b, uint* r)
       {
@@ -2457,6 +2517,7 @@ namespace System.Numerics.Rational
       }
       static int clz(uint* p)
       {
+        Debug.Assert(!isz(p));
         for (int i = 1; ; i++)
         {
           var x = BitOperations.TrailingZeroCount(p[i]);
@@ -2476,8 +2537,7 @@ namespace System.Numerics.Rational
       static bool isz(uint* p)
       {
         Debug.Assert((*(ulong*)p & ~(ulong)(F.Norm | F.Sign)) != 1 || *(ulong*)p == 1);
-        return *(ulong*)p == 1;
-        //return (*(ulong*)p & ~(ulong)F.Norm) == 1;
+        return *(ulong*)p == 1; //return (*(ulong*)p & ~(ulong)F.Norm) == 1;
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static bool isint(uint* p)
@@ -2492,7 +2552,7 @@ namespace System.Numerics.Rational
     }
 
     /// <summary>
-    /// Access to a shared thread static instance of an CPU object.
+    /// Thread static instance of a <see cref="CPU"/> for general use.
     /// </summary>
     public static CPU task_cpu
     {
@@ -2503,7 +2563,7 @@ namespace System.Numerics.Rational
     [ThreadStatic] private static CPU? _cpu;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     NewRational(uint[] p) { this.p = p; }
-    struct F { internal const uint Mask = 0x0fffffff, Sign = 0x80000000, Norm = 0x40000000; }
+    struct F { internal const uint Mask = 0x3fffffff, Sign = 0x80000000, Norm = 0x40000000; }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static uint len(uint* p)
     {

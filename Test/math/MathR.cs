@@ -143,5 +143,36 @@ namespace System.Numerics.Rational
       }
       return cpu.pop_rat();
     }
+    /// <summary>
+    /// Finds the greatest common divisor (GCD) of two <see cref="rat"/> integer values.
+    /// </summary>
+    /// <remarks>
+    /// This operation makes only sense for integer values.
+    /// </remarks>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static rat GreatestCommonDivisor(rat a, rat b)
+    {
+      var cpu = rat.task_cpu; cpu.push(a); cpu.push(b);
+      cpu.gcd(); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Finds the least common multiple (LCM) of two <see cref="rat"/> integer values.
+    /// </summary>
+    /// <remarks>
+    /// This operation makes only sense for integer values.
+    /// </remarks>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
+    /// <returns>The least common multiple of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static rat LeastCommonMultiple(rat a, rat b)
+    {
+      //|a * b| / gcd(a, b) == |a / gcd(a, b) * b|
+      var cpu = rat.task_cpu; cpu.push(a); cpu.push(b);
+      cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
+      return cpu.pop_rat();
+    }
+
   }
 }

@@ -20,7 +20,7 @@ namespace Test
     }
 
     static void test()
-    {
+    {      
     }
   }
 
@@ -44,7 +44,7 @@ namespace Test
         t2.Checked = driver == 2;
       };
     }
-    
+
     Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2;
     Task? task; bool cancel; long t1, t2;
     System.Windows.Forms.Timer? timer; Action<int>? tool;
@@ -149,11 +149,11 @@ namespace Test
           for (; i < imax; i++)
           {
             // var u = a * a - b * b + x;
-            cpu.mul(m + 2, m + 2); cpu.mul(m + 3, m + 3); cpu.sub(); cpu.add(m + 1); cpu.lim(64);
+            cpu.sqr(m + 2); cpu.sqr(m + 3); cpu.sub(); cpu.add(m + 1); cpu.lim(64);
             // var v = 2 * a * b + y;
             cpu.mul(m + 2, m + 3); cpu.shl(1); cpu.add(m + 0); cpu.lim(64);
             // if (u * u + v * v > 4) break;
-            cpu.mul(m + 4, m + 4); cpu.mul(m + 5, m + 5); cpu.add();
+            cpu.sqr(m + 4); cpu.sqr(m + 5); cpu.add();
             if (cpu.cmp(qmax) > 0) { cpu.pop(3); break; }
             // a = u; b = v;
             cpu.swp(m + 2, m + 4); cpu.swp(m + 3, m + 5); cpu.pop(3);
@@ -167,7 +167,7 @@ namespace Test
       );
       t2 = Environment.TickCount;
     }
-    
+
     void start()
     {
       stop(); var size = ClientSize;
@@ -303,7 +303,11 @@ namespace Test
       my += y2 - y1;
       update();
     }
-
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+      base.OnKeyDown(e);
+      if (e.KeyCode == Keys.Space) update();
+    }
     static uint col(int r, int g, int b) { return 0xff000000 | (uint)((r << 16) | (g << 8) | b); }
     static uint[] colors = { col(66, 30, 15), col(25, 7, 26), col(9, 1, 47), col(4, 4, 73), col(0, 7, 100), col(12, 44, 138), col(24, 82, 177), col(57, 125, 209), col(134, 181, 229), col(211, 236, 248), col(241, 233, 191), col(248, 201, 95), col(255, 170, 0), col(204, 128, 0), col(153, 87, 0), col(106, 52, 3) };
     uint[]? map = null;
