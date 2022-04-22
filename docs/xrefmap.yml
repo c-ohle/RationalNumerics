@@ -283,6 +283,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.fac
   fullName: System.Numerics.Rational.NewRational.CPU.fac
   nameWithType: NewRational.CPU.fac
+- uid: System.Numerics.Rational.NewRational.CPU.gcd
+  name: gcd()
+  href: api/System.Numerics.Rational.NewRational.CPU.gcd.html#System_Numerics_Rational_NewRational_CPU_gcd
+  commentId: M:System.Numerics.Rational.NewRational.CPU.gcd
+  fullName: System.Numerics.Rational.NewRational.CPU.gcd()
+  nameWithType: NewRational.CPU.gcd()
+- uid: System.Numerics.Rational.NewRational.CPU.gcd*
+  name: gcd
+  href: api/System.Numerics.Rational.NewRational.CPU.gcd.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.gcd
+  fullName: System.Numerics.Rational.NewRational.CPU.gcd
+  nameWithType: NewRational.CPU.gcd
 - uid: System.Numerics.Rational.NewRational.CPU.get(System.UInt32,System.Double@)
   name: get(UInt32, out Double)
   href: api/System.Numerics.Rational.NewRational.CPU.get.html#System_Numerics_Rational_NewRational_CPU_get_System_UInt32_System_Double__
@@ -676,6 +688,24 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.sign
   fullName: System.Numerics.Rational.NewRational.CPU.sign
   nameWithType: NewRational.CPU.sign
+- uid: System.Numerics.Rational.NewRational.CPU.sqr(System.Int32)
+  name: sqr(Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.sqr.html#System_Numerics_Rational_NewRational_CPU_sqr_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.sqr(System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.sqr(System.Int32)
+  nameWithType: NewRational.CPU.sqr(Int32)
+- uid: System.Numerics.Rational.NewRational.CPU.sqr(System.UInt32)
+  name: sqr(UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.sqr.html#System_Numerics_Rational_NewRational_CPU_sqr_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.sqr(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.sqr(System.UInt32)
+  nameWithType: NewRational.CPU.sqr(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.sqr*
+  name: sqr
+  href: api/System.Numerics.Rational.NewRational.CPU.sqr.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.sqr
+  fullName: System.Numerics.Rational.NewRational.CPU.sqr
+  nameWithType: NewRational.CPU.sqr
 - uid: System.Numerics.Rational.NewRational.CPU.sub
   name: sub()
   href: api/System.Numerics.Rational.NewRational.CPU.sub.html#System_Numerics_Rational_NewRational_CPU_sub

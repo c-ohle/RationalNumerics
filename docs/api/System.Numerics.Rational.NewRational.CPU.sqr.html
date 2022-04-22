@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Operator UnaryNegation
+    <title>Method sqr
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Operator UnaryNegation
+    <meta name="title" content="Method sqr
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -184,8 +184,8 @@
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.TryFormat.html" title="TryFormat" class="">TryFormat</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.Rational.NewRational.op_UnaryNegation.html" title="UnaryNegation" class="active">UnaryNegation</a>
+                                <li class="">
+                                  <a href="System.Numerics.Rational.NewRational.op_UnaryNegation.html" title="UnaryNegation" class="">UnaryNegation</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.op_UnaryPlus.html" title="UnaryPlus" class="">UnaryPlus</a>
@@ -292,8 +292,8 @@
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.CPU.sign.html" title="sign" class="">sign</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.Rational.NewRational.CPU.sqr.html" title="sqr" class="">sqr</a>
+                                <li class="active">
+                                  <a href="System.Numerics.Rational.NewRational.CPU.sqr.html" title="sqr" class="active">sqr</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.CPU.sub.html" title="sub" class="">sub</a>
@@ -313,28 +313,29 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.Rational.NewRational.op_UnaryNegation*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.Rational.NewRational.CPU.sqr*">
 
-<h1 id="System_Numerics_Rational_NewRational_op_UnaryNegation_" data-uid="System.Numerics.Rational.NewRational.op_UnaryNegation*">Operator UnaryNegation
+<h1 id="System_Numerics_Rational_NewRational_CPU_sqr_" data-uid="System.Numerics.Rational.NewRational.CPU.sqr*">Method sqr
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_op_UnaryNegation_System_Numerics_Rational_NewRational_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.op_UnaryNegation(System.Numerics.Rational.NewRational)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_sqr_System_Int32_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.sqr(System.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L607">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1695">View Source</a>
 </span>
-<a id="System_Numerics_Rational_NewRational_op_UnaryNegation_" data-uid="System.Numerics.Rational.NewRational.op_UnaryNegation*"></a>
-<h4 id="System_Numerics_Rational_NewRational_op_UnaryNegation_System_Numerics_Rational_NewRational_" data-uid="System.Numerics.Rational.NewRational.op_UnaryNegation(System.Numerics.Rational.NewRational)">UnaryNegation(NewRational)</h4>
-<div class="markdown level1 summary"><p>Negates a specified <a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a> value.</p>
+<a id="System_Numerics_Rational_NewRational_CPU_sqr_" data-uid="System.Numerics.Rational.NewRational.CPU.sqr*"></a>
+<h4 id="System_Numerics_Rational_NewRational_CPU_sqr_System_Int32_" data-uid="System.Numerics.Rational.NewRational.CPU.sqr(System.Int32)">sqr(Int32)</h4>
+<div class="markdown level1 summary"><p>Squares the value at index <code data-dev-comment-type="paramref" class="paramref">a</code> relative to the top of the stack.<br>
+Default index 0 squares the value on top of the stack.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static NewRational operator -(NewRational a)</code></pre>
+  <pre><code class="lang-csharp hljs">public void sqr(int a = 0)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -347,29 +348,50 @@
   </thead>
   <tbody>
     <tr>
-      <td><a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a></td>
+      <td><span class="xref">System.Int32</span></td>
       <td><span class="parametername">a</span></td>
-      <td><p>The value to negate.</p>
+      <td><p>Relative index of a stack entry.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 class="returns">Returns</h5>
+<span class="small pull-right mobile-hide">
+  <span class="divider">|</span>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_sqr_System_UInt32_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.sqr(System.UInt32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+</span>
+<span class="small pull-right mobile-hide">
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1708">View Source</a>
+</span>
+<a id="System_Numerics_Rational_NewRational_CPU_sqr_" data-uid="System.Numerics.Rational.NewRational.CPU.sqr*"></a>
+<h4 id="System_Numerics_Rational_NewRational_CPU_sqr_System_UInt32_" data-uid="System.Numerics.Rational.NewRational.CPU.sqr(System.UInt32)">sqr(UInt32)</h4>
+<div class="markdown level1 summary"><p>Squares the value at index <code data-dev-comment-type="paramref" class="paramref">a</code> as absolute index in the stack.<br></p>
+</div>
+<div class="markdown level1 conceptual"></div>
+<h5 class="decalaration">Declaration</h5>
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public void sqr(uint a)</code></pre>
+</div>
+<h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
   <thead>
     <tr>
       <th>Type</th>
+      <th>Name</th>
       <th>Description</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a></td>
-      <td><p>The result of the value parameter multiplied by negative one (-1).</p>
+      <td><span class="xref">System.UInt32</span></td>
+      <td><span class="parametername">a</span></td>
+      <td><p>Absolute index of a stack entry.</p>
 </td>
     </tr>
   </tbody>
 </table>
+<h5 id="System_Numerics_Rational_NewRational_CPU_sqr_System_UInt32__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>see: <a class="xref" href="System.Numerics.Rational.NewRational.CPU.mark.html#System_Numerics_Rational_NewRational_CPU_mark">mark()</a> for absolute indices.</p>
+</div>
 </article>
           </div>
           
@@ -378,10 +400,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_op_UnaryNegation_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.op_UnaryNegation*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_sqr_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.sqr*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L607" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1695" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>
