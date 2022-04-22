@@ -20,7 +20,7 @@ namespace Test
     }
 
     static void test()
-    {      
+    {
     }
   }
 
@@ -46,33 +46,27 @@ namespace Test
     }
 
     Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2;
-    Task? task; bool cancel; long t1, t2;
-    System.Windows.Forms.Timer? timer; Action<int>? tool;
+    Task? task; bool cancel, dostart; long t1, t2; Action<int>? tool;
+    System.Windows.Forms.Timer timer = new() { Interval = 100 };
 
-    rat mx = -0.7, my = 0, scale = 1.2f;
-    rat xmin, xmax, ymin, ymax, qmax = 4; int imax = 32;
+    rat mx = -0.7, my = 0, scale = 1.2f, qmax = 4; int imax = 32;
 
     void mandel_dbl()
     {
       calcmap(); if (map == null) return;
-      var scalx = scale * dx / dy;
-      this.xmin = mx - scalx; this.xmax = mx + scalx;
-      this.ymin = my - scale; this.ymax = my + scale;
-
-      var xmin = (double)this.xmin; var xmax = (double)this.xmax;
-      var ymin = (double)this.ymin; var ymax = (double)this.ymax; var qmax = (double)this.qmax;
-      var fx = (xmax - xmin) / dx;
-      var fy = (ymax - ymin) / dy;
+      var x1 = (double)(mx - scale * dx / dy);
+      var y1 = (double)(my - scale);
+      var fi = (double)(2 * scale / dy); var qmax = (double)this.qmax;
       t1 = Environment.TickCount;
       //for (int py = 0; py < dy; py++)
       Parallel.For(0, dy, (py, po) =>
       {
         if (cancel) { po.Break(); return; }
         var p = scan + py * (stride >> 2);
-        var y = ymin + py * fy;
-        for (int px = 0; px < dx; px++)
+        var y = y1 + py * fi;
+        for (int px = 0; px < dx && !cancel; px++)
         {
-          var x = xmin + px * fx;
+          var x = x1 + px * fi;
           int i = 0; var a = x; var b = y;
           for (; i < imax; i++)
           {
@@ -90,24 +84,19 @@ namespace Test
     void mandel_big()
     {
       calcmap(); if (map == null) return;
-      var scalx = scale * dx / dy;
-      this.xmin = mx - scalx; this.xmax = mx + scalx;
-      this.ymin = my - scale; this.ymax = my + scale;
-
-      var xmin = (BigRational)this.xmin; var xmax = (BigRational)this.xmax;
-      var ymin = (BigRational)this.ymin; var ymax = (BigRational)this.ymax; var qmax = (BigRational)this.qmax;
-      var fx = (xmax - xmin) / dx;
-      var fy = (ymax - ymin) / dy;
+      var x1 = (BigRational)(mx - scale * dx / dy);
+      var y1 = (BigRational)(my - scale);
+      var fi = (BigRational)(2 * scale / dy); var qmax = (BigRational)this.qmax;
       t1 = Environment.TickCount;
       //for (int py = 0; py < dy; py++)
       Parallel.For(0, dy, (py, po) =>
       {
         if (cancel) { po.Break(); return; }
         var p = scan + py * (stride >> 2);
-        var y = ymin + py * fy;
-        for (int px = 0; px < dx; px++)
+        var y = y1 + py * fi;
+        for (int px = 0; px < dx && !cancel; px++)
         {
-          var x = xmin + px * fx;
+          var x = x1 + px * fi;
           int i = 0; var a = x; var b = y;
           for (; i < imax; i++)
           {
@@ -125,12 +114,9 @@ namespace Test
     void mandel_rat()
     {
       calcmap(); if (map == null) return;
-      var scalx = scale * dx / dy;
-      xmin = mx - scalx; xmax = mx + scalx;
-      ymin = my - scale; ymax = my + scale;
-
-      var fx = (xmax - xmin) / dx;
-      var fy = (ymax - ymin) / dy;
+      var x1 = mx - scale * dx / dy;
+      var y1 = my - scale;
+      var fi = 2 * scale / dy;
       t1 = Environment.TickCount;
       //for (int py = 0; py < dy; py++)
       Parallel.For(0, dy, (py, po) =>
@@ -138,11 +124,12 @@ namespace Test
         if (cancel) { po.Break(); return; }
         var p = scan + py * (stride >> 2);
         var cpu = rat.task_cpu; var m = cpu.mark();
-        //var y = ymin + py * fy;
-        cpu.push(ymin); cpu.push(fy); cpu.push(py); cpu.mul(); cpu.add(); cpu.norm();
-        cpu.push(xmin); //var x = xmin;
-        for (int px = 0; px < dx; px++)
+        //var y = y1 + py * f1;
+        cpu.push(y1); cpu.push(fi); cpu.push(py); cpu.mul(); cpu.add(); cpu.norm();
+        cpu.push(x1); //var x = xmin;
+        for (int px = 0; px < dx && !cancel; px++)
         {
+          //if (cancel) { po.Break(); break; }
           int i = 0; //var a = x; var b = y;
           cpu.dup(m + 1); // var a = x;
           cpu.dup(m + 0); // var b = y;
@@ -160,7 +147,7 @@ namespace Test
           }
           cpu.pop(2); // a, b
           p[px] = i < imax ? map[i] : 0;
-          cpu.add(fx); cpu.norm(); //x += fx;
+          cpu.add(fi); cpu.norm(); //x += fi;
         }
         cpu.pop(2);
       }
@@ -179,11 +166,12 @@ namespace Test
         scan = (uint*)lb.Scan0.ToPointer(); stride = lb.Stride; bmp.UnlockBits(lb);
       }
       task = new Task(driver == 0 ? mandel_dbl : driver == 1 ? mandel_big : mandel_rat);
-      cancel = false; task.Start(); timer?.Start();
+      cancel = dostart = false; task.Start(); timer.Start();
     }
     void stop()
     {
-      if (task != null) { timer?.Stop(); cancel = true; task.Wait(); task.Dispose(); task = null; }
+      timer.Stop();
+      if (task != null) { cancel = true; task.Wait(); task.Dispose(); task = null; }
     }
     void update()
     {
@@ -192,11 +180,11 @@ namespace Test
 
     protected override void OnHandleCreated(EventArgs e)
     {
-      timer = new() { Interval = 100 }; timer.Tick += Timer_Tick;
+      timer.Tick += Timer_Tick;
     }
     protected override void OnHandleDestroyed(EventArgs e)
     {
-      if (task != null) { cancel = true; task.Wait(); task.Dispose(); task = null; }
+      stop();
       if (timer != null) { timer.Tick -= Timer_Tick; timer.Dispose(); timer = null; }
       if (bmp != null) { bmp.Dispose(); bmp = null; }
     }
@@ -210,12 +198,24 @@ namespace Test
     }
     void Timer_Tick(object? sender, EventArgs e)
     {
+      if (dostart) { dostart = false; start(); return; }
       Invalidate(); //Update();
-      if (task != null && task.IsCompleted) { timer?.Stop(); return; }
+      if (task != null && task.IsCompleted) { timer.Stop(); Update(); return; }
     }
     protected override void OnSizeChanged(EventArgs e)
     {
-      Invalidate(); //Update();
+      if (bmp == null) return;
+      stop(); var p1 = s2r(new Point()); var p2 = s2r(new Point(dx, dy));
+      var size = ClientSize;
+      var tmp = new Bitmap(dx = size.Width, dy = size.Height, PixelFormat.Format32bppRgb);
+      var s1 = r2s(p1); var s2 = r2s(p2);
+      using (var g = Graphics.FromImage(tmp))
+        g.DrawImage(bmp, s1.X, s1.Y, s2.X - s1.X, s2.Y - s1.Y);
+      bmp.Dispose(); bmp = tmp;
+      var lb = bmp.LockBits(new Rectangle(0, 0, dx, dy), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
+      scan = (uint*)lb.Scan0.ToPointer(); stride = lb.Stride; bmp.UnlockBits(lb);
+      Invalidate(); Update();
+      dostart = true; timer.Start(); //start();
     }
 
     Action<int> tool_move()
@@ -226,23 +226,23 @@ namespace Test
       {
         if (id == 0)
         {
+          stop();
           var p2 = Cursor.Position;
           this.mx = x1 - (2 * (p2.X - p1.X)) * scale / dy;
           this.my = y1 - (2 * (p2.Y - p1.Y)) * scale / dy;
-
-          stop();
           if (bmp != null)
-            using (var gr = Graphics.FromImage(bmp))
+            using (var g = Graphics.FromImage(bmp))
             {
               var sx = p2.X - po.X; var sy = p2.Y - po.Y;
-              gr.DrawImage(bmp, sx, sy);
-              if (sx > 0) gr.FillRectangle(Brushes.Black, 0, 0, sx, dy);
-              if (sx < 0) gr.FillRectangle(Brushes.Black, dx + sx, 0, -sx, dy);
-              if (sy > 0) gr.FillRectangle(Brushes.Black, 0, 0, dx, sy);
-              if (sy < 0) gr.FillRectangle(Brushes.Black, 0, dy + sy, dx, -sy);
-              po = p2;
+              g.DrawImage(bmp, sx, sy);
+              if (sx > 0) g.FillRectangle(Brushes.Black, 0, 0, sx, dy);
+              if (sx < 0) g.FillRectangle(Brushes.Black, dx + sx, 0, -sx, dy);
+              if (sy > 0) g.FillRectangle(Brushes.Black, 0, 0, dx, sy);
+              if (sy < 0) g.FillRectangle(Brushes.Black, 0, dy + sy, dx, -sy);
+              po = p2; //Invalidate(); Update();
             }
-          update();
+          Invalidate(); Update();
+          dostart = true; timer.Start(); //start();
         }
       };
     }
@@ -255,7 +255,7 @@ namespace Test
         {
           var p2 = Cursor.Position;
           var i = Math.Max(16, Math.Min(1000, x1 + p1.Y - p2.Y));
-          if (imax != i) { stop(); imax = i; update(); }
+          if (imax != i) { stop(); imax = i; dostart = true; timer.Start(); }
         }
       };
     }
@@ -288,20 +288,26 @@ namespace Test
     }
     protected override void OnMouseWheel(MouseEventArgs e)
     {
+      stop();
+      var p1 = s2r(new Point()); var p2 = s2r(new Point(dx, dy));
       var p = e.Location;
       var d = 1 - e.Delta * (1f / 120) * 0.1f;
-
-      var x1 = (dx - p.X * 2) * scale / dy;
-      var y1 = (dy - p.Y * 2) * scale / dy;
-
-      scale *= d;
-
-      var x2 = (dx - p.X * 2) * scale / dy;
-      var y2 = (dy - p.Y * 2) * scale / dy;
-
-      mx += x2 - x1;
-      my += y2 - y1;
-      update();
+      var t = scale; scale *= d;
+      t = (scale - t) / dy;
+      mx += (dx - p.X * 2) * t;
+      my += (dy - p.Y * 2) * t;
+      if (bmp != null)
+        using (var g = Graphics.FromImage(bmp))
+        {
+          var s1 = r2s(p1); var s2 = r2s(p2);
+          g.DrawImage(bmp, s1.X, s1.Y, s2.X - s1.X, s2.Y - s1.Y);
+          if (s1.X > 0) g.FillRectangle(Brushes.Black, 0, 0, s1.X, dy);
+          if (s2.X < dx) g.FillRectangle(Brushes.Black, s2.X, 0, dx - s2.X, dy);
+          if (s1.Y > 0) g.FillRectangle(Brushes.Black, 0, 0, dx, s1.Y);
+          if (s2.Y < dy) g.FillRectangle(Brushes.Black, 0, s2.Y, dx, dy - s2.Y);
+        }
+      Invalidate(); Update();
+      dostart = true; timer.Start(); // start();// update();
     }
     protected override void OnKeyDown(KeyEventArgs e)
     {
@@ -325,6 +331,18 @@ namespace Test
         var r = (((colors[y] >> 16) & 0xff) * f2 + ((colors[y + 1] >> 16) & 0xff) * f1) >> 8;
         map[i] = 0xff000000 | (r << 16) | (g << 8) | b;
       }
+    }
+    Vector2R s2r(Point p)
+    {
+      var x1 = mx + scale * (2 * p.X - dx) / dy;
+      var y1 = my + scale * (2 * p.Y - dy) / dy;
+      return new Vector2R(x1, y1);
+    }
+    Point r2s(Vector2R p)
+    {
+      var x = ((int)((p.X - mx) * dy / scale) + dx) / 2;
+      var y = ((int)((p.Y - my) * dy / scale) + dy) / 2;
+      return new Point(x, y);
     }
   }
 }
