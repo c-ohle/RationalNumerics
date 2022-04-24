@@ -10,7 +10,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWin32Manifest>true</NoWin32Manifest>
     <IsPublishable>False</IsPublishable>
-    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Company>Christian Ohle</Company>
     <Copyright>© Christian Ohle</Copyright>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>

@@ -26,48 +26,58 @@ namespace Test
     public bool Manual
     {
       get => manual;
-      set { manual = value; if (!manual) delaystart(); }
+      set { if (manual == value) return; stop(); manual = value; delaystart(); }
     }
     public enum MandelDriver { NewRational = 2, BigInteger = 1, Double = 0 }
     public MandelDriver Driver
     {
       get => (MandelDriver)driver;
-      set { stop(); driver = (int)value; if (bmp != null) start(); }
+      set { if (value == Driver) return; stop(); driver = (int)value; delaystart(); }
     }
     public int Iterations
     {
       get => imax;
-      set { if (imax == value) return; stop(); imax = Math.Max(4, Math.Min(1000, value)); if (bmp != null) start(); }
-    }
-    public int ToolRound
-    {
-      get => toolround;
       set
       {
-        if (value == toolround) return;
-        var up = bmp != null && value < toolround;
-        toolround = value;
-        if (!up) return; stop();
-        scale = rat.Round(scale, toolround);
-        mx = rat.Round(mx, toolround);
-        my = rat.Round(my, toolround);
-        delaystart();
+        value = Math.Max(4, Math.Min(1000, value));
+        if (imax == value) return; stop(); imax = value; delaystart();
+      }
+    }
+    public int Lim
+    {
+      get => lim;
+      set
+      {
+        value = Math.Max(4, Math.Min(1000, value)); if (value == lim) return;
+        stop(); lim = value; delaystart();
       }
     }
     public rat Scaling
     {
       get => scale;
-      set { if (value == scale) return; stop(); scale = value; if (bmp != null) start(); }
+      set
+      {
+        if (value == scale) return;
+        stop(); scale = value; delaystart();
+      }
     }
     public rat CenterX
     {
       get => mx;
-      set { if (value == mx) return; stop(); mx = value; if (bmp != null) start(); }
+      set
+      {
+        if (value == mx) return;
+        stop(); mx = value; delaystart();
+      }
     }
     public rat CenterY
     {
       get => my;
-      set { if (value == my) return; stop(); my = value; if (bmp != null) start(); }
+      set
+      {
+        if (value == my) return;
+        stop(); my = value; delaystart();
+      }
     }
     public long RenderTime
     {
@@ -94,11 +104,11 @@ namespace Test
       t1 = t2 = 0; StateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2, toolround = 20;
+    Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2;
     Task? task; bool cancel, dostart, manual; long t1, t2; Action<int>? tool;
     System.Windows.Forms.Timer timer = new() { Interval = 100 };
 
-    rat mx = -0.7, my = 0, scale = 1.2f, qmax = 4; int imax = 32;
+    rat mx = -0.7, my = 0, scale = 1.2f, qmax = 4; int imax = 32, lim = 64;
 
     void mandel_dbl()
     {
@@ -180,14 +190,14 @@ namespace Test
         {
           //if (cancel) { po.Break(); break; }
           int i = 0; //var a = x; var b = y;
-          cpu.dup(m + 1); // var a = x;
-          cpu.dup(m + 0); // var b = y;
+          cpu.dup(m + 1); //var a = x;
+          cpu.dup(m + 0); //var b = y;
           for (; i < imax; i++)
           {
             // var u = a * a - b * b + x;
-            cpu.sqr(m + 2); cpu.sqr(m + 3); cpu.sub(); cpu.add(m + 1); cpu.lim(64);
+            cpu.sqr(m + 2); cpu.sqr(m + 3); cpu.sub(); cpu.add(m + 1); cpu.lim((uint)lim); //64
             // var v = 2 * a * b + y;
-            cpu.mul(m + 2, m + 3); cpu.shl(1); cpu.add(m + 0); cpu.lim(64);
+            cpu.mul(m + 2, m + 3); cpu.shl(1); cpu.add(m + 0); cpu.lim((uint)lim);
             // if (u * u + v * v > 4) break;
             cpu.sqr(m + 4); cpu.sqr(m + 5); cpu.add();
             if (cpu.cmp(qmax) > 0) { cpu.pop(3); break; }
@@ -218,7 +228,11 @@ namespace Test
       task = new Task(driver == 0 ? mandel_dbl : driver == 1 ? mandel_big : mandel_rat);
       cancel = dostart = false; task.Start(); timer.Start(); StateChanged?.Invoke(this, EventArgs.Empty);
     }
-    void delaystart() { dostart = true; timer.Start(); }
+    void delaystart()
+    {
+      if (bmp == null || manual) return;
+      dostart = true; timer.Start();
+    }
     void stop()
     {
       timer.Stop();
@@ -280,8 +294,9 @@ namespace Test
           var p2 = Cursor.Position;
           mx = x1 - (2 * (p2.X - p1.X)) * scale / dy;
           my = y1 - (2 * (p2.Y - p1.Y)) * scale / dy;
-          mx = rat.Round(mx, toolround);
-          my = rat.Round(my, toolround);
+          var l = rat.ILog10(scale);
+          mx = rat.Round(mx, 4 - l);
+          my = rat.Round(my, 4 - l);
           if (bmp != null)
             using (var g = Graphics.FromImage(bmp))
             {
@@ -340,10 +355,12 @@ namespace Test
       var p1 = s2r(new Point()); var p2 = s2r(new Point(dx, dy));
       var p = e.Location;
       var d = 1 - e.Delta * (1f / 120) * 0.1f;
-      var t = scale; scale *= d; scale = rat.Round(scale, toolround);
+      var t = scale; scale *= d;
+      var l = rat.ILog10(scale);
+      scale = rat.Round(scale, 5 - l);
       t = (scale - t) / dy;
-      mx += (dx - p.X * 2) * t; mx = rat.Round(mx, toolround);
-      my += (dy - p.Y * 2) * t; my = rat.Round(my, toolround);
+      mx += t * (dx - p.X * 2); mx = rat.Round(mx, 4 - l);
+      my += t * (dy - p.Y * 2); my = rat.Round(my, 4 - l);
       if (bmp != null)
         using (var g = Graphics.FromImage(bmp))
         {
@@ -359,8 +376,7 @@ namespace Test
     }
     protected override void OnKeyDown(KeyEventArgs e)
     {
-      base.OnKeyDown(e);
-      if (e.KeyCode == Keys.Space) update();
+      base.OnKeyDown(e); //if (e.KeyCode == Keys.Space) update();
     }
     static uint col(int r, int g, int b) { return 0xff000000 | (uint)((r << 16) | (g << 8) | b); }
     static uint[] colors = { col(66, 30, 15), col(25, 7, 26), col(9, 1, 47), col(4, 4, 73), col(0, 7, 100), col(12, 44, 138), col(24, 82, 177), col(57, 125, 209), col(134, 181, 229), col(211, 236, 248), col(241, 233, 191), col(248, 201, 95), col(255, 170, 0), col(204, 128, 0), col(153, 87, 0), col(106, 52, 3) };

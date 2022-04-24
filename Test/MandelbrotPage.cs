@@ -49,7 +49,7 @@ namespace Test
       textBoxCenterX.Text = mandelbrotView1.CenterX.ToString();
       textBoxCenterY.Text = mandelbrotView1.CenterY.ToString();
       numericUpDownIter.Value = mandelbrotView1.Iterations;
-      numericUpDownRound.Value= mandelbrotView1.ToolRound;
+      numericUpDownRound.Value= mandelbrotView1.Lim;
     }
     void textBox_Leave(object sender, EventArgs e)
     {
@@ -70,7 +70,7 @@ namespace Test
       }
 
     }
-    private void textBoxCenter_KeyPress(object sender, KeyPressEventArgs e)
+    void textBox_KeyPress(object sender, KeyPressEventArgs e)
     {
       if (e.KeyChar == 13)
       {
@@ -83,7 +83,7 @@ namespace Test
         mandelbrotView1.Iterations = (int)numericUpDownIter.Value;
       else if(sender == numericUpDownRound)
       { 
-        mandelbrotView1.ToolRound = (int)numericUpDownRound.Value;
+        mandelbrotView1.Lim = (int)numericUpDownRound.Value;
         update();
       }
     }
@@ -96,7 +96,12 @@ namespace Test
       if (checkBoxActive2.Checked)
       {
         if (mandelbrotView1.RenderTime != 0)
+        {
+          mandelbrotView2.Driver = ModifierKeys == Keys.Alt ? 
+            MandelbrotView.MandelDriver.Double : 
+            MandelbrotView.MandelDriver.BigInteger;
           mandelbrotView2.Start();
+        }
       }
       else
       {

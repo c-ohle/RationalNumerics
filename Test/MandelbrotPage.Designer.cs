@@ -120,7 +120,6 @@
       this.mandelbrotView1.StateChanged = null;
       this.mandelbrotView1.TabIndex = 3;
       this.mandelbrotView1.TabStop = false;
-      this.mandelbrotView1.ToolRound = 20;
       // 
       // label3
       // 
@@ -154,7 +153,7 @@
       // label6
       // 
       this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label6.Location = new System.Drawing.Point(243, 14);
+      this.label6.Location = new System.Drawing.Point(242, 14);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(219, 20);
       this.label6.TabIndex = 7;
@@ -167,7 +166,7 @@
       this.checkBoxActive2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxActive2.Checked = true;
       this.checkBoxActive2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxActive2.Location = new System.Drawing.Point(237, 437);
+      this.checkBoxActive2.Location = new System.Drawing.Point(236, 437);
       this.checkBoxActive2.Name = "checkBoxActive2";
       this.checkBoxActive2.Size = new System.Drawing.Size(225, 24);
       this.checkBoxActive2.TabIndex = 7;
@@ -191,11 +190,10 @@
       this.mandelbrotView2.Name = "mandelbrotView2";
       this.mandelbrotView2.PropChanged = null;
       this.mandelbrotView2.Scaling = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView2.Scaling")));
-      this.mandelbrotView2.Size = new System.Drawing.Size(455, 391);
+      this.mandelbrotView2.Size = new System.Drawing.Size(454, 391);
       this.mandelbrotView2.StateChanged = null;
       this.mandelbrotView2.TabIndex = 3;
       this.mandelbrotView2.TabStop = false;
-      this.mandelbrotView2.ToolRound = 20;
       // 
       // labelState2
       // 
@@ -227,7 +225,7 @@
       this.textBoxScaling.Size = new System.Drawing.Size(196, 27);
       this.textBoxScaling.TabIndex = 3;
       this.textBoxScaling.WordWrap = false;
-      this.textBoxScaling.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCenter_KeyPress);
+      this.textBoxScaling.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
       this.textBoxScaling.Leave += new System.EventHandler(this.textBox_Leave);
       // 
       // labelRelation
@@ -252,7 +250,7 @@
       this.textBoxCenterX.Size = new System.Drawing.Size(225, 27);
       this.textBoxCenterX.TabIndex = 1;
       this.textBoxCenterX.WordWrap = false;
-      this.textBoxCenterX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCenter_KeyPress);
+      this.textBoxCenterX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
       this.textBoxCenterX.Leave += new System.EventHandler(this.textBox_Leave);
       // 
       // label5
@@ -305,7 +303,7 @@
       this.textBoxCenterY.Size = new System.Drawing.Size(225, 27);
       this.textBoxCenterY.TabIndex = 2;
       this.textBoxCenterY.WordWrap = false;
-      this.textBoxCenterY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCenter_KeyPress);
+      this.textBoxCenterY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
       this.textBoxCenterY.Leave += new System.EventHandler(this.textBox_Leave);
       // 
       // numericUpDownIter
@@ -347,16 +345,21 @@
       // 
       // numericUpDownRound
       // 
-      this.numericUpDownRound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericUpDownRound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.numericUpDownRound.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.numericUpDownRound.Location = new System.Drawing.Point(870, 529);
+      this.numericUpDownRound.Location = new System.Drawing.Point(552, 561);
       this.numericUpDownRound.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
+      this.numericUpDownRound.Minimum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
       this.numericUpDownRound.Name = "numericUpDownRound";
-      this.numericUpDownRound.Size = new System.Drawing.Size(94, 27);
+      this.numericUpDownRound.Size = new System.Drawing.Size(56, 27);
       this.numericUpDownRound.TabIndex = 5;
       this.numericUpDownRound.Value = new decimal(new int[] {
             16,
@@ -368,12 +371,12 @@
       // 
       // label10
       // 
-      this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.label10.Location = new System.Drawing.Point(646, 531);
+      this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label10.Location = new System.Drawing.Point(514, 563);
       this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(222, 20);
+      this.label10.Size = new System.Drawing.Size(35, 21);
       this.label10.TabIndex = 4;
-      this.label10.Text = "Tools digit rounding:";
+      this.label10.Text = "lim:";
       this.label10.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // MandelbrotPage

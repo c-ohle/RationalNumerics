@@ -15,14 +15,10 @@ namespace Test
     {
       ApplicationConfiguration.Initialize(); test();
       Application.Run(new MainFrame());
-      //var form = new Form { Text = "Under construction", Width = 400, Height = 400 };
-      //form.Controls.Add(new MandelbrotView { Dock = DockStyle.Fill });
-      //Application.Run(form);
     }
 
     static void test()
     {
     }
   }
-
 }

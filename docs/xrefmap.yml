@@ -55,12 +55,12 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.Ceiling
   fullName: System.Numerics.Rational.NewRational.Ceiling
   nameWithType: NewRational.Ceiling
-- uid: System.Numerics.Rational.NewRational.CompareTo(System.Int32)
-  name: CompareTo(Int32)
-  href: api/System.Numerics.Rational.NewRational.CompareTo.html#System_Numerics_Rational_NewRational_CompareTo_System_Int32_
-  commentId: M:System.Numerics.Rational.NewRational.CompareTo(System.Int32)
-  fullName: System.Numerics.Rational.NewRational.CompareTo(System.Int32)
-  nameWithType: NewRational.CompareTo(Int32)
+- uid: System.Numerics.Rational.NewRational.CompareTo(System.Int64)
+  name: CompareTo(Int64)
+  href: api/System.Numerics.Rational.NewRational.CompareTo.html#System_Numerics_Rational_NewRational_CompareTo_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.CompareTo(System.Int64)
+  fullName: System.Numerics.Rational.NewRational.CompareTo(System.Int64)
+  nameWithType: NewRational.CompareTo(Int64)
 - uid: System.Numerics.Rational.NewRational.CompareTo(System.Numerics.Rational.NewRational)
   name: CompareTo(NewRational)
   href: api/System.Numerics.Rational.NewRational.CompareTo.html#System_Numerics_Rational_NewRational_CompareTo_System_Numerics_Rational_NewRational_
@@ -859,6 +859,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.Min
   fullName: System.Numerics.Rational.NewRational.Min
   nameWithType: NewRational.Min
+- uid: System.Numerics.Rational.NewRational.op_Addition(System.Int64,System.Numerics.Rational.NewRational)
+  name: Addition(Int64, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Addition.html#System_Numerics_Rational_NewRational_op_Addition_System_Int64_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Addition(System.Int64,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Addition(System.Int64, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Addition(Int64, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Addition(System.Numerics.Rational.NewRational,System.Int64)
+  name: Addition(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_Addition.html#System_Numerics_Rational_NewRational_op_Addition_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_Addition(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.Addition(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.Addition(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_Addition(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: Addition(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_Addition.html#System_Numerics_Rational_NewRational_op_Addition_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -871,6 +883,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.op_Addition
   fullName: System.Numerics.Rational.NewRational.Addition
   nameWithType: NewRational.Addition
+- uid: System.Numerics.Rational.NewRational.op_Division(System.Int64,System.Numerics.Rational.NewRational)
+  name: Division(Int64, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Division.html#System_Numerics_Rational_NewRational_op_Division_System_Int64_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Division(System.Int64,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Division(System.Int64, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Division(Int64, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Division(System.Numerics.Rational.NewRational,System.Int64)
+  name: Division(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_Division.html#System_Numerics_Rational_NewRational_op_Division_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_Division(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.Division(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.Division(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_Division(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: Division(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_Division.html#System_Numerics_Rational_NewRational_op_Division_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -883,12 +907,12 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.op_Division
   fullName: System.Numerics.Rational.NewRational.Division
   nameWithType: NewRational.Division
-- uid: System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Int32)
-  name: Equality(NewRational, Int32)
-  href: api/System.Numerics.Rational.NewRational.op_Equality.html#System_Numerics_Rational_NewRational_op_Equality_System_Numerics_Rational_NewRational_System_Int32_
-  commentId: M:System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Int32)
-  fullName: System.Numerics.Rational.NewRational.Equality(System.Numerics.Rational.NewRational, System.Int32)
-  nameWithType: NewRational.Equality(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Int64)
+  name: Equality(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_Equality.html#System_Numerics_Rational_NewRational_op_Equality_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.Equality(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.Equality(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_Equality(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: Equality(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_Equality.html#System_Numerics_Rational_NewRational_op_Equality_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -964,12 +988,12 @@ references:
   fullName.vb: System.Numerics.Rational.NewRational.Narrowing
   nameWithType: NewRational.Explicit
   nameWithType.vb: NewRational.Narrowing
-- uid: System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Int32)
-  name: GreaterThan(NewRational, Int32)
-  href: api/System.Numerics.Rational.NewRational.op_GreaterThan.html#System_Numerics_Rational_NewRational_op_GreaterThan_System_Numerics_Rational_NewRational_System_Int32_
-  commentId: M:System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Int32)
-  fullName: System.Numerics.Rational.NewRational.GreaterThan(System.Numerics.Rational.NewRational, System.Int32)
-  nameWithType: NewRational.GreaterThan(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Int64)
+  name: GreaterThan(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_GreaterThan.html#System_Numerics_Rational_NewRational_op_GreaterThan_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.GreaterThan(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.GreaterThan(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_GreaterThan(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: GreaterThan(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_GreaterThan.html#System_Numerics_Rational_NewRational_op_GreaterThan_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -982,12 +1006,12 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.op_GreaterThan
   fullName: System.Numerics.Rational.NewRational.GreaterThan
   nameWithType: NewRational.GreaterThan
-- uid: System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Int32)
-  name: GreaterThanOrEqual(NewRational, Int32)
-  href: api/System.Numerics.Rational.NewRational.op_GreaterThanOrEqual.html#System_Numerics_Rational_NewRational_op_GreaterThanOrEqual_System_Numerics_Rational_NewRational_System_Int32_
-  commentId: M:System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Int32)
-  fullName: System.Numerics.Rational.NewRational.GreaterThanOrEqual(System.Numerics.Rational.NewRational, System.Int32)
-  nameWithType: NewRational.GreaterThanOrEqual(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Int64)
+  name: GreaterThanOrEqual(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_GreaterThanOrEqual.html#System_Numerics_Rational_NewRational_op_GreaterThanOrEqual_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.GreaterThanOrEqual(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.GreaterThanOrEqual(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_GreaterThanOrEqual(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: GreaterThanOrEqual(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_GreaterThanOrEqual.html#System_Numerics_Rational_NewRational_op_GreaterThanOrEqual_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -1081,12 +1105,12 @@ references:
   fullName.vb: System.Numerics.Rational.NewRational.Widening
   nameWithType: NewRational.Implicit
   nameWithType.vb: NewRational.Widening
-- uid: System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Int32)
-  name: Inequality(NewRational, Int32)
-  href: api/System.Numerics.Rational.NewRational.op_Inequality.html#System_Numerics_Rational_NewRational_op_Inequality_System_Numerics_Rational_NewRational_System_Int32_
-  commentId: M:System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Int32)
-  fullName: System.Numerics.Rational.NewRational.Inequality(System.Numerics.Rational.NewRational, System.Int32)
-  nameWithType: NewRational.Inequality(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Int64)
+  name: Inequality(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_Inequality.html#System_Numerics_Rational_NewRational_op_Inequality_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.Inequality(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.Inequality(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_Inequality(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: Inequality(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_Inequality.html#System_Numerics_Rational_NewRational_op_Inequality_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -1099,12 +1123,12 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.op_Inequality
   fullName: System.Numerics.Rational.NewRational.Inequality
   nameWithType: NewRational.Inequality
-- uid: System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Int32)
-  name: LessThan(NewRational, Int32)
-  href: api/System.Numerics.Rational.NewRational.op_LessThan.html#System_Numerics_Rational_NewRational_op_LessThan_System_Numerics_Rational_NewRational_System_Int32_
-  commentId: M:System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Int32)
-  fullName: System.Numerics.Rational.NewRational.LessThan(System.Numerics.Rational.NewRational, System.Int32)
-  nameWithType: NewRational.LessThan(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Int64)
+  name: LessThan(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_LessThan.html#System_Numerics_Rational_NewRational_op_LessThan_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.LessThan(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.LessThan(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_LessThan(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: LessThan(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_LessThan.html#System_Numerics_Rational_NewRational_op_LessThan_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -1117,12 +1141,12 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.op_LessThan
   fullName: System.Numerics.Rational.NewRational.LessThan
   nameWithType: NewRational.LessThan
-- uid: System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Int32)
-  name: LessThanOrEqual(NewRational, Int32)
-  href: api/System.Numerics.Rational.NewRational.op_LessThanOrEqual.html#System_Numerics_Rational_NewRational_op_LessThanOrEqual_System_Numerics_Rational_NewRational_System_Int32_
-  commentId: M:System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Int32)
-  fullName: System.Numerics.Rational.NewRational.LessThanOrEqual(System.Numerics.Rational.NewRational, System.Int32)
-  nameWithType: NewRational.LessThanOrEqual(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Int64)
+  name: LessThanOrEqual(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_LessThanOrEqual.html#System_Numerics_Rational_NewRational_op_LessThanOrEqual_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.LessThanOrEqual(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.LessThanOrEqual(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_LessThanOrEqual(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: LessThanOrEqual(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_LessThanOrEqual.html#System_Numerics_Rational_NewRational_op_LessThanOrEqual_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -1147,6 +1171,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.op_Modulus
   fullName: System.Numerics.Rational.NewRational.Modulus
   nameWithType: NewRational.Modulus
+- uid: System.Numerics.Rational.NewRational.op_Multiply(System.Int64,System.Numerics.Rational.NewRational)
+  name: Multiply(Int64, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Multiply.html#System_Numerics_Rational_NewRational_op_Multiply_System_Int64_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Multiply(System.Int64,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Multiply(System.Int64, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Multiply(Int64, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Multiply(System.Numerics.Rational.NewRational,System.Int64)
+  name: Multiply(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_Multiply.html#System_Numerics_Rational_NewRational_op_Multiply_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_Multiply(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.Multiply(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.Multiply(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_Multiply(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: Multiply(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_Multiply.html#System_Numerics_Rational_NewRational_op_Multiply_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -1159,6 +1195,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.op_Multiply
   fullName: System.Numerics.Rational.NewRational.Multiply
   nameWithType: NewRational.Multiply
+- uid: System.Numerics.Rational.NewRational.op_Subtraction(System.Int64,System.Numerics.Rational.NewRational)
+  name: Subtraction(Int64, NewRational)
+  href: api/System.Numerics.Rational.NewRational.op_Subtraction.html#System_Numerics_Rational_NewRational_op_Subtraction_System_Int64_System_Numerics_Rational_NewRational_
+  commentId: M:System.Numerics.Rational.NewRational.op_Subtraction(System.Int64,System.Numerics.Rational.NewRational)
+  fullName: System.Numerics.Rational.NewRational.Subtraction(System.Int64, System.Numerics.Rational.NewRational)
+  nameWithType: NewRational.Subtraction(Int64, NewRational)
+- uid: System.Numerics.Rational.NewRational.op_Subtraction(System.Numerics.Rational.NewRational,System.Int64)
+  name: Subtraction(NewRational, Int64)
+  href: api/System.Numerics.Rational.NewRational.op_Subtraction.html#System_Numerics_Rational_NewRational_op_Subtraction_System_Numerics_Rational_NewRational_System_Int64_
+  commentId: M:System.Numerics.Rational.NewRational.op_Subtraction(System.Numerics.Rational.NewRational,System.Int64)
+  fullName: System.Numerics.Rational.NewRational.Subtraction(System.Numerics.Rational.NewRational, System.Int64)
+  nameWithType: NewRational.Subtraction(NewRational, Int64)
 - uid: System.Numerics.Rational.NewRational.op_Subtraction(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: Subtraction(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.op_Subtraction.html#System_Numerics_Rational_NewRational_op_Subtraction_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_

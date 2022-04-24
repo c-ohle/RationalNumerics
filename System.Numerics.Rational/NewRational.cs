@@ -365,7 +365,7 @@ namespace System.Numerics.Rational
     /// Zero – The current instance equals other.<br/>
     /// Greater than zero – The current instance is greater than other.<br/>
     /// </returns>
-    public readonly int CompareTo(int b)
+    public readonly int CompareTo(long b)
     {
       if (b == 0) return Sign(this);
       if (p == null) return -Math.Sign(b);
@@ -664,7 +664,7 @@ namespace System.Numerics.Rational
     {
       //return a - Truncate(a / b) * b;
       if (b.p == null) throw new DivideByZeroException(nameof(b));
-      var cpu = task_cpu; //todo: optimize for integers
+      var cpu = task_cpu; //todo: % optimization for integers
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
       cpu.mul(b); cpu.neg(); cpu.add(a);
       return cpu.pop_rat();
@@ -735,90 +735,214 @@ namespace System.Numerics.Rational
       return a.CompareTo(b) > 0;
     }
 
+    #region integer operator
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value and
-    /// an <see cref="int"/> value are equal.
+    /// Adds the values of a specified <see cref="NewRational"/> and a <see cref="long"/> number.
     /// </summary>
     /// <remarks>
-    /// For fast comparisons of common cases like: <c>x == 0</c>.
+    /// Fast addition of common cases like: <c>x + 1</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
+    /// </remarks>
+    /// <param name="a">The first value to add.</param>
+    /// <param name="b">The second value to add.</param>
+    /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static NewRational operator +(NewRational a, long b)
+    {
+      var cpu = task_cpu; cpu.push(b); cpu.add(a); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Subtracts the values of a specified <see cref="NewRational"/> from another <see cref="long"/> value.
+    /// </summary>
+    /// <remarks>
+    /// Fast subtraction of common cases like: <c>x - 1</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
+    /// </remarks>
+    /// <param name="a">The value to subtract from (the minuend).</param>
+    /// <param name="b">The value to subtract (the subtrahend).</param>
+    /// <returns>The result of subtracting b from a.</returns>
+    public static NewRational operator -(NewRational a, long b)
+    {
+      return a + -b; // var cpu = task_cpu; cpu.push(-b); cpu.add(a); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Multiplies the values of a specified <see cref="NewRational"/> and a <see cref="long"/> number.
+    /// </summary>
+    /// <remarks>
+    /// Fast multiplication of common cases like: <c>x * 2</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
+    /// </remarks>
+    /// <param name="a">The first value to multiply.</param>
+    /// <param name="b">The second value to multiply.</param>
+    /// <returns>The product of left and right.</returns>
+    public static NewRational operator *(NewRational a, long b)
+    {
+      var cpu = task_cpu; cpu.push(b); cpu.mul(a); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Divides the values of a specified <see cref="NewRational"/> and a <see cref="long"/> number.
+    /// </summary>
+    /// <remarks>
+    /// Fast divison of common cases like: <c>x / 2</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
+    /// </remarks>
+    /// <param name="a">The value to be divided. (dividend)</param>
+    /// <param name="b">The value to divide by. (devisor)</param>
+    /// <returns>The result of the division.</returns>
+    /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
+    public static NewRational operator /(NewRational a, long b)
+    {
+      if (b == 0) throw new DivideByZeroException(nameof(b));
+      var cpu = task_cpu; cpu.push(b); cpu.div(a, 0); cpu.swp(); cpu.pop(); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Adds the values of a specified <see cref="long"/> and a <see cref="NewRational"/> number.
+    /// </summary>
+    /// <remarks>
+    /// Fast addition of common cases like: <c>1 + x</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
+    /// </remarks>
+    /// <param name="a">The first value to add.</param>
+    /// <param name="b">The second value to add.</param>
+    /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static NewRational operator +(long a, NewRational b)
+    {
+      return b + a; // var cpu = task_cpu; cpu.push(a); cpu.add(b); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Subtracts the values of a specified <see cref="long"/> from another <see cref="NewRational"/> value.
+    /// </summary>
+    /// <remarks>
+    /// Fast subtraction of common cases like: <c>1 - x</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
+    /// </remarks>
+    /// <param name="a">The value to subtract from (the minuend).</param>
+    /// <param name="b">The value to subtract (the subtrahend).</param>
+    /// <returns>The result of subtracting b from a.</returns>
+    public static NewRational operator -(long a, NewRational b)
+    {
+      var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.sub(); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Multiplies the values of a specified <see cref="long"/> and a <see cref="NewRational"/> number.
+    /// </summary>
+    /// <remarks>
+    /// Fast multiplication of common cases like: <c>2 * x</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
+    /// </remarks>
+    /// <param name="a">The first value to multiply.</param>
+    /// <param name="b">The second value to multiply.</param>
+    /// <returns>The product of left and right.</returns>
+    public static NewRational operator *(long a, NewRational b)
+    {
+      return b * a; //var cpu = task_cpu; cpu.push(a); cpu.mul(b); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Divides the values of a specified <see cref="long"/> and a <see cref="NewRational"/> number.
+    /// </summary>
+    /// <remarks>
+    /// Fast divison of common cases like: <c>2 / x</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
+    /// </remarks>
+    /// <param name="a">The value to be divided. (dividend)</param>
+    /// <param name="b">The value to divide by. (devisor)</param>
+    /// <returns>The result of the division.</returns>
+    /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
+    public static NewRational operator /(long a, NewRational b)
+    {
+      if (b.p == null) throw new DivideByZeroException(nameof(b));
+      var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.div(); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Returns a value that indicates whether a <see cref="NewRational"/> value and
+    /// an <see cref="long"/> value are equal.
+    /// </summary>
+    /// <remarks>
+    /// For fast comparisons of common cases like: <c>x == 0</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems. 
     /// </remarks>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if the left and right parameters have the same value; otherwise, false.</returns>
-    public static bool operator ==(NewRational a, int b)
+    public static bool operator ==(NewRational a, long b)
     {
       return a.CompareTo(b) == 0;
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="NewRational"/> value and
-    /// an <see cref="int"/> value are not equal.
+    /// an <see cref="long"/> value are not equal.
     /// </summary>
     /// <remarks>
-    /// For fast comparisons of common cases like: <c>x != 0</c>.
+    /// For fast comparisons of common cases like: <c>x != 0</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems.
     /// </remarks>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left and right are not equal; otherwise, false.</returns>
-    public static bool operator !=(NewRational a, int b)
+    public static bool operator !=(NewRational a, long b)
     {
       return a.CompareTo(b) != 0;
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="NewRational"/> value is
-    /// less than or equal to an <see cref="int"/> value.
+    /// less than or equal to an <see cref="long"/> value.
     /// </summary>
     /// <remarks>
-    /// For fast comparisons of common cases like: <c>x &lt;= 0</c>.
+    /// For fast comparisons of common cases like: <c>x &lt;= 0</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems.
     /// </remarks>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than or equal to right; otherwise, false.</returns>
-    public static bool operator <=(NewRational a, int b)
+    public static bool operator <=(NewRational a, long b)
     {
       return a.CompareTo(b) <= 0;
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="NewRational"/> value is
-    /// greater than or equal to an <see cref="int"/> value.
+    /// greater than or equal to an <see cref="long"/> value.
     /// </summary>
     /// <remarks>
-    /// For fast comparisons of common cases like: <c>x &gt;= 0</c>.
+    /// For fast comparisons of common cases like: <c>x &gt;= 0</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems.
     /// </remarks>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than or equal to right; otherwise, false.</returns>
-    public static bool operator >=(NewRational a, int b)
+    public static bool operator >=(NewRational a, long b)
     {
       return a.CompareTo(b) >= 0;
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="NewRational"/> value is
-    /// less than an <see cref="int"/> value.
+    /// less than an <see cref="long"/> value.
     /// </summary>
     /// <remarks>
-    /// For fast comparisons of common cases like: <c>x &lt; 0</c>.
+    /// For fast comparisons of common cases like: <c>x &lt; 0</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems.
     /// </remarks>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than right; otherwise, false.</returns>
-    public static bool operator <(NewRational a, int b)
+    public static bool operator <(NewRational a, long b)
     {
       return a.CompareTo(b) < 0;
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="NewRational"/> value is
-    /// greater than an <see cref="int"/> value.
+    /// greater than an <see cref="long"/> value.
     /// </summary>
     /// <remarks>
-    /// For fast comparisons of common cases like: <c>x &gt; 0</c>.
+    /// For fast comparisons of common cases like: <c>x &gt; 0</c>.<br/>
+    /// Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems.
     /// </remarks>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than right; otherwise, false.</returns>
-    public static bool operator >(NewRational a, int b)
+    public static bool operator >(NewRational a, long b)
     {
       return a.CompareTo(b) > 0;
     }
+    #endregion
 
     /// <summary>
     /// Gets a <see cref="int"/> number that indicates the sign 
@@ -835,11 +959,9 @@ namespace System.Numerics.Rational
     /// </returns>
     public static int Sign(NewRational a)
     {
-      //if (p.p == null) return 0;
-      //fixed (uint* u = p.p) return cpu.sig(u);
       return a.p == null ? 0 :
         (a.p[0] & F.Sign) != 0 ? -1 :
-        (a.p[0] & F.Mask) == 1 && a.p[1] == 0 ? 0 : +1;
+        (a.p[0] & F.Mask) == 1 && a.p[1] == 0 ? 0 : +1; //debug view 
     }
     /// <summary>
     /// Gets the integer base 10 logarithm of a <see cref="NewRational"/> number.
@@ -1476,7 +1598,7 @@ namespace System.Numerics.Rational
         swp(); pop();
       }
       /// <summary>
-      /// Adds value a and the value on top of the stack.<br/>
+      /// Adds value <paramref name="a"/> and the value on top of the stack.<br/>
       /// Replaces the value on top of the stack with the result.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> value.</param>
@@ -1594,18 +1716,18 @@ namespace System.Numerics.Rational
         swp(); pop();
       }
       /// <summary>
-      /// Multiplies value a and the value on top of the stack.<br/>
+      /// Multiplies value <paramref name="a"/> and the value on top of the stack.<br/>
       /// Replaces the value on top of the stack with the result.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> value.</param>
       public void mul(NewRational a)
       {
-        if (a.p == null) return;
-        fixed (uint* u = p[i - 1], v = a.p) mul(u, v, false);
+        if (a.p == null) push();
+        else fixed (uint* u = p[i - 1], v = a.p) mul(u, v, false);
         swp(); pop();
       }
       /// <summary>
-      /// Multiplies the value a and the value at b as absolute index in the stack
+      /// Multiplies the value <paramref name="a"/> and the value at b as absolute index in the stack
       /// and pushes the result on the stack.
       /// </summary>
       /// <remarks>
@@ -1677,15 +1799,15 @@ namespace System.Numerics.Rational
         fixed (uint* u = a.p, v = b.p) mul(u, v, true);
       }
       /// <summary>
-      /// Divides the value a and the value at index b relative to the top of the stack.
+      /// Divides the value <paramref name="a"/> and the value at index <paramref name="b"/> relative to the top of the stack.<br/>
       /// Pushes the result on top of the stack.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> as first value.</param>
       /// <param name="b">A relative index of a stack entry.</param>
-      public void div(NewRational a, int i)
+      public void div(NewRational a, int b)
       {
         if (a.p == null) { push(); return; }
-        fixed (uint* u = a.p, v = p[this.i - 1 - i]) mul(u, v, true);
+        fixed (uint* u = a.p, v = p[this.i - 1 - b]) mul(u, v, true);
       }
       /// <summary>
       /// Squares the value at index <paramref name="a"/> relative to the top of the stack.<br/>
@@ -1973,7 +2095,7 @@ namespace System.Numerics.Rational
         return cmp((uint)(this.i - 1), b);
       }
       /// <summary>
-      /// Compares the <see cref="NewRational"/> value a with the <see cref="NewRational"/> value b.
+      /// Compares the <see cref="NewRational"/> value <paramref name="a"/> with the <see cref="NewRational"/> value b.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> as first value.</param>
       /// <param name="b">A <see cref="NewRational"/> as second value.</param>
@@ -2007,7 +2129,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[this.i - 1], v = b.p) return cmp(u, v);
       }
       /// <summary>
-      /// Compares the <see cref="NewRational"/> value a with the <see cref="NewRational"/> value b for equality.
+      /// Compares the <see cref="NewRational"/> value <paramref name="a"/> with the <see cref="NewRational"/> value b for equality.
       /// </summary>
       /// <param name="a">A <see cref="NewRational"/> value as first value.</param>
       /// <param name="b">A <see cref="NewRational"/> value as second value.</param>
