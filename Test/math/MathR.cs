@@ -2,8 +2,8 @@
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Implementation of some common mathematical functions.<br/>
-  /// <i>This are just non optimal example implementations!</i>/>
+  /// Implementation of some common mathematical functions for <see cref="rat"/>.<br/>
+  /// <i>These are just non-optimal example implementations for testing!</i>
   /// </summary>
   public class MathR
   {

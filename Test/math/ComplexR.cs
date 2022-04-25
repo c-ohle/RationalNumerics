@@ -4,8 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// A Complex number class based on NewRational.<br/>
-  /// <i>This is just a non optimal example implementation!</i>/>
+  /// A Complex number class based on <see cref="rat"/>.<br/>
+  /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct ComplexR : IEquatable<ComplexR>, IFormattable //, ISpanFormattable

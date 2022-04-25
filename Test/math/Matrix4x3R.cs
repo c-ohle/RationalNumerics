@@ -2,8 +2,8 @@
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// A Matrix4x3 class based on NewRational.<br/>
-  /// <i>This is just a non optimal example implementation!</i>/>
+  /// A Matrix4x3 class based on <see cref="rat"/>.<br/>
+  /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   [Serializable]
   public struct Matrix4x3R : IEquatable<Matrix4x3R>

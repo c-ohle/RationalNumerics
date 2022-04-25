@@ -1,6 +1,9 @@
 ﻿
 namespace System.Numerics.Rational
 {
+  /// <summary>
+  /// Extensions for <see cref="rat.CPU"/>.
+  /// </summary>
   static class Extensions
   {
     /// <summary>

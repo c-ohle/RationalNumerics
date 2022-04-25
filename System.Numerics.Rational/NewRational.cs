@@ -1496,11 +1496,6 @@ namespace System.Numerics.Rational
       public void dup(int a = 0)
       {
         dup(unchecked((uint)(this.i - 1 - a)));
-        //fixed (uint* u = this.p[this.i - 1 - i])
-        //{
-        //  var n = len(u);
-        //  fixed (uint* v = rent(n)) copy(v, u, n);
-        //}
       }
       /// <summary>
       /// Duplicates the value at index <paramref name="a"/> as absolute index in the stack 
@@ -1870,12 +1865,15 @@ namespace System.Numerics.Rational
       {
         if (c <= 0) { Debug.Assert(c == 0); return; }
         fixed (uint* u = p[this.i - 1 - i])
-        fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1)) //todo: optimize see shr
         {
-          var n = (u[0] & F.Mask) + 1;
-          copy(v, u, n); shl(v, c);
-          copy(v + v[0] + 1, u + n, u[n] + 1);
-          v[0] |= (u[0] & F.Sign) | F.Norm; swp(i + 1); pop();
+          if (*(ulong*)u == 1) return;
+          fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1)) //todo: optimize see shr
+          {
+            var n = (u[0] & F.Mask) + 1;
+            copy(v, u, n); shl(v, c);
+            copy(v + v[0] + 1, u + n, u[n] + 1);
+            v[0] |= (u[0] & F.Sign) | F.Norm; swp(i + 1); pop();
+          }
         }
       }
       /// <summary>
@@ -2430,6 +2428,13 @@ namespace System.Numerics.Rational
           if (f == 0) { *(ulong*)r = 1; return; }
           if (f == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
         }
+        //if (nb >= klim) //todo: benchmarks
+        //{
+        //  var n = na + nb; for (uint i = 1; i <= n; i++) r[i] = 0;
+        //  kmul(a + 1, na, b + 1, nb, r + 1, n);
+        //  r[0] = n; while (r[r[0]] == 0) r[0]--;
+        //  return;
+        //}
         ulong c = 0;
         for (uint i = 1; i <= na; i++)
         {
@@ -2448,7 +2453,6 @@ namespace System.Numerics.Rational
           }
           s[na + 1] = unchecked((uint)c);
         }
-        //for (r[0] = na + nb; r[r[0]] == 0 && r[0] > 1; r[0]--) ;
         if (r[r[0] = na + nb] == 0 && r[0] > 1) { r[0]--; Debug.Assert(!(r[r[0]] == 0 && r[0] > 1)); }
       }
       static void sqr(uint* a, uint* r)
@@ -2717,6 +2721,68 @@ namespace System.Numerics.Rational
           }
         }
       }
+      #region experimental
+#if false
+      public void cut(int c, int i = 0)
+      {
+        Debug.Assert(c >= 0);
+        fixed (uint* p = this.p[this.i - 1 - i])
+        {
+          var h = p[0]; var n = h & F.Mask;
+          var x = unchecked(((uint)c >> 5) + 1); if (x > n) return;
+          p[x] &= unchecked((uint)((1 << (c & 31)) - 1)); for (; x > 1 && p[x] == 0; x--) ;
+          if (n != x) { copy(p + (x + 1), p + (x + 1) + (n - x), p[n + 1] + (x + 1)); p[0] = x; }
+          if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
+          p[0] |= (h & F.Sign) | F.Norm;
+        }
+      }
+      const uint klim = 16;
+      static void kmul(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+      {
+        Debug.Assert(na >= nb && nr == na + nb);
+        if (nb < klim)
+        {
+          for (uint i = 0; i < nb; i++)
+          {
+            ulong c = 0, d;
+            for (uint k = 0; k < na; k++, c = d >> 32) r[i + k] = unchecked((uint)(d = r[i + k] + c + (ulong)a[k] * b[i]));
+            r[i + na] = (uint)c;
+          }
+          return;
+        }
+        uint n = nb >> 1, m = n << 1;
+        kmul(a, n, b, n, r, m); // p1 = al * bl
+        kmul(a + n, na - n, b + n, nb - n, r + m, nr - m); // p2 = ah * bh
+        uint r1 = na - n + 1, r2 = nb - n + 1, r3 = r1 + r2, r4 = r1 + r2 + r3;
+        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; for (uint i = 0; i < r4; i++) t1[i] = 0;
+        add(a + n, na - n, a, n, t1, r1);
+        add(b + n, nb - n, b, n, t2, r2);
+        kmul(t1, r1, t2, r2, t3, r3); // p3 = (ah + al) * (bh + bl)
+        sub(r + m, nr - m, r, m, t3, r3);
+        ada(r + n, nr - n, t3, r3); // (p2 << m) + ((p3 - (p1 + p2)) << n) + p1
+        static void sub(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+        {
+          uint i = 0; long c = 0, d;
+          for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i] - b[i]));
+          for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i]));
+          for (; c != 0 && i < nr; i++, c = d >> 32) r[i] = unchecked((uint)(d = r[i] + c));
+        }
+        static void add(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+        {
+          uint i = 0; ulong c = 0, d; Debug.Assert(na >= nb && nr == na + 1);
+          for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
+          for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = a[i] + c));
+          r[i] = unchecked((uint)c);
+        }
+        static void ada(uint* a, uint na, uint* b, uint nb)
+        {
+          uint i = 0; ulong c = 0L, d; Debug.Assert(na >= nb);
+          for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
+          for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
+        }
+      }
+#endif
+      #endregion
     }
     #endregion
   }
