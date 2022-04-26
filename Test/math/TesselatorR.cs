@@ -6,9 +6,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Test.math
+namespace Test
 {
-  public enum Winding { EvenOdd = 0, NonZero = 1, Positive = 2, Negative = 3, AbsGeqTwo = 4, GeqThree = 5 }
+  public enum Winding { EvenOdd = 0, NonZero = 1, Positive = 2, Negative = 3, AbsGeqTwo = 4, AbsGeqThree = 5 }
 
   /// <summary>
   /// Tesselator based on <see cref="rat"/>.<br/>
@@ -17,7 +17,7 @@ namespace Test.math
   public class TesselatorR
   {
     public Winding Winding = Winding.EvenOdd;
-    public Option Options = Option.Fill | Option.OutlinePrecise | Option.Trim;
+    public Option Options = Option.Fill | Option.Delaunay | Option.OutlinePrecise | Option.Trim;
     public void SetNormal(in Vector3R v)
     {
       var i = Vector3R.LongAxis(v);
@@ -52,6 +52,10 @@ namespace Test.math
       cpu.push(x); cpu.norm(); cpu.swp(m + 0); cpu.pop();
       cpu.push(y); cpu.norm(); cpu.swp(m + 1); cpu.pop();
       cpu.push(z); cpu.norm(); cpu.swp(m + 2); cpu.pop();
+    }
+    public void AddVertex(Vector2 p)
+    {
+      AddVertex(p.X, p.Y, 0);
     }
     public void EndContour()
     {
@@ -169,7 +173,7 @@ namespace Test.math
                 if (Math.Abs(old) == 1 && Math.Abs(dir) == 2) { k = i; continue; }
                 if (Math.Abs(old) == 2 && Math.Abs(dir) == 1) break;
                 goto skip;
-              case Winding.GeqThree:
+              case Winding.AbsGeqThree:
                 if (old == 2 && dir == 3) { k = i; continue; }
                 if (old == 3 && dir == 2) break;
                 goto skip;
@@ -253,8 +257,8 @@ namespace Test.math
         var c = (uint)((j = kk[i].a) * 8); ref var w = ref pp[j]; if (w.line == -1) continue;
         var t = add(c + 6, y2, -1 - j); if (ii[w.line].a == -1) ii[w.line].a = t; else ii[w.line].b = t;
       }
-      if ((Options & (Option.FillFast | Option.Fill)) != 0) fill();
-      if (shv != 0 && (Options & Option.IndexOnly) == 0)
+      if ((Options & Option.Fill) != 0) fill();
+      if (shv != 0)
       {
         // var f = shv == 1 ? kill : kill / shv;
         var t = cpu.mark(); cpu.push(-123); if (shv != 1) { cpu.push(shv); cpu.div(); }
@@ -268,8 +272,7 @@ namespace Test.math
         cpu.pop();
       }
       if ((Options & (Option.Outline | Option.OutlinePrecise)) != 0) outline();
-      if ((Options & Option.Fill) != 0) optimize();
-      if ((Options & Option.IndexOnly) != 0) { this.np = 0; state = 3; return; }
+      if ((Options & (Option.Fill|Option.Delaunay)) == (Option.Fill | Option.Delaunay)) optimize();
       if (pro != 0) project(pro << 2);
       if ((Options & Option.Trim) != 0) trim(); state = 3;
     }
@@ -330,11 +333,11 @@ namespace Test.math
     [Flags]
     public enum Option
     {
-      Fill = 0x0100, FillFast = 0x0200, IndexOnly = 0x0800,
+      Fill = 0x0100, Delaunay = 0x0200,
       Outline = 0x1000, OutlinePrecise = 0x2000, Trim = 0x8000,
       NormX = 0x10000, NormY = 0x20000, NormZ = 0x40000, NormNeg = 0x80000
     }
-    #pragma warning disable CS8602
+#pragma warning disable CS8602
     const int hash = 199; //1103
     int state, ns, nl, nc, fi; int[]? ss, ll, lc;
     int np; (int next, int ic, int line, int fl)[] pp;

@@ -155,7 +155,7 @@ For this there is one thread-local static instance named <code>task_cpu</code>, 
 </code></pre>
 <p>Thread static means that each thread has its own instance of a task_cpu when needed, ensuring thread safety.</p>
 <p>This simple system has the advantage that it is also easy to debug:</p>
-<img src="images/debug_pi2.png" width="400">
+<img src="images/debug_pi2.png" width="400">  
 <p>The system implies that the stack machine exposes an <a href="api/System.Numerics.Rational.NewRational.CPU.html">instruction set</a>.<br>
 These instructions, for readability as short words, are self explaining basic commands like add(), sub(), mul(), div(), different push() and pop(),  bit level operations like shl(), shr(), but also higher level commands like pow(), mod(), rnd() etc.</p>
 <p>Since the rational numbers can have arbitrary size, it is important for the performance to avoid unnecessary memory copies.<br>
@@ -224,7 +224,7 @@ Therefore and in difference to other numbers, the number extension for <code>R</
   s = x.ToString(&quot;R40&quot;);    // &quot;3.1415926535897932384626433832795&quot;
   s = x.ToString(&quot;0.####&quot;); // &quot;3.1416&quot;
 </code></pre>
-<p>Furthermore there a additional, non-standard formats.<br>
+<p>Furthermore there are additional non-standard formats.<br>
 Format <code>L</code> is identic to standard format <code>F</code> but without trailing zeros.</p>
 <pre><code class="lang-c#">  x = MathR.PI(32);
   s = x.ToString(&quot;F40&quot;);    // &quot;3.1415926535897932384626433832795000000000&quot;
@@ -246,7 +246,7 @@ No other type of numeric exception is thrown, since overflows are not inherent.<
 However, there is a possibility to get a System.OverflowException when a number with its digits is too big to fit in a C# array.<br>
 Currently, the maximum size of an array for .NET is 2GB,
 which corresponds to a theoretical maximum NewRational integer value of: 2<sup>34359738240</sup> - 1.</p>
-<p>No arithmetic exceptions are thrown when using the stack engine.
+<p>No arithmetic exceptions are thrown when using the stack machine.
 Division by zero gives a NaN value as for floating point arithmetic.<br>
 Therefore, no try-catch handling is required at this interface layer to keep the stack in track.<br>
 However, a wrong stack index as program bug leads of course to an IndexOutOfRangeException.</p>
@@ -256,22 +256,11 @@ In general, the performance increases by at least a factor of 2, by using the st
 This applies to geometric algorithms where precision is important and not so much calculating with gigantic numbers.<br>
 For really huge numbers, with kBytes of digit data, the bottleneck is the integer multiplication as O(n<sup>2</sup>) operation (with simple algorithm).<br>
 Then, the performance of both systems equalizes again.</p>
-<p>Using NewRational for pure integer arithmetic is not faster than using BigInteger.<br>
-But by using the stack machine in functions, iterations etc., the performance can be increased.</p>
+<p>For <strong>pure integer arithmetic</strong>, NewRational is barely faster than BigInteger.<br>
+However, the performance of integer arithmetic procedures can also be significantly increased by using the stacking machine.</p>
 <hr>
 <p>Project URL: <a href="https://github.com/c-ohle/RationalNumerics">https://github.com/c-ohle/RationalNumerics</a></p>
 <p><img src="images/underconst.png" alt="T1"></p>
-<!-- 
-
-### [API Documentation](api/System.Numerics.Rational.NewRational.yml)
- 
-![\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}](https://latex.codecogs.com/svg.latex?x%3D%5Cfrac%7B-b%5Cpm%5Csqrt%7Bb%5E2-4ac%7D%7D%7B2a%7D)
-
-![](https://latex.codecogs.com/svg.image?\frac{1}{3}&space;\sqrt{2})
-
-[!include[](../RationalNumerics/readme.md)] 
- 
--->
 </article>
           </div>
           

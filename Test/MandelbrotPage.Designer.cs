@@ -111,6 +111,7 @@
       this.mandelbrotView1.CenterY = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView1.CenterY")));
       this.mandelbrotView1.Driver = Test.MandelbrotView.MandelDriver.NewRational;
       this.mandelbrotView1.Iterations = 32;
+      this.mandelbrotView1.Lim = 64;
       this.mandelbrotView1.Location = new System.Drawing.Point(11, 45);
       this.mandelbrotView1.Manual = false;
       this.mandelbrotView1.Name = "mandelbrotView1";
@@ -153,7 +154,7 @@
       // label6
       // 
       this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label6.Location = new System.Drawing.Point(242, 14);
+      this.label6.Location = new System.Drawing.Point(241, 14);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(219, 20);
       this.label6.TabIndex = 7;
@@ -166,7 +167,7 @@
       this.checkBoxActive2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxActive2.Checked = true;
       this.checkBoxActive2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxActive2.Location = new System.Drawing.Point(236, 437);
+      this.checkBoxActive2.Location = new System.Drawing.Point(235, 437);
       this.checkBoxActive2.Name = "checkBoxActive2";
       this.checkBoxActive2.Size = new System.Drawing.Size(225, 24);
       this.checkBoxActive2.TabIndex = 7;
@@ -185,12 +186,13 @@
       this.mandelbrotView2.Driver = Test.MandelbrotView.MandelDriver.BigInteger;
       this.mandelbrotView2.Enabled = false;
       this.mandelbrotView2.Iterations = 32;
+      this.mandelbrotView2.Lim = 64;
       this.mandelbrotView2.Location = new System.Drawing.Point(7, 45);
       this.mandelbrotView2.Manual = true;
       this.mandelbrotView2.Name = "mandelbrotView2";
       this.mandelbrotView2.PropChanged = null;
       this.mandelbrotView2.Scaling = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView2.Scaling")));
-      this.mandelbrotView2.Size = new System.Drawing.Size(454, 391);
+      this.mandelbrotView2.Size = new System.Drawing.Size(453, 391);
       this.mandelbrotView2.StateChanged = null;
       this.mandelbrotView2.TabIndex = 3;
       this.mandelbrotView2.TabStop = false;
@@ -347,7 +349,7 @@
       // 
       this.numericUpDownRound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.numericUpDownRound.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.numericUpDownRound.Location = new System.Drawing.Point(552, 561);
+      this.numericUpDownRound.Location = new System.Drawing.Point(550, 561);
       this.numericUpDownRound.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -362,7 +364,7 @@
       this.numericUpDownRound.Size = new System.Drawing.Size(56, 27);
       this.numericUpDownRound.TabIndex = 5;
       this.numericUpDownRound.Value = new decimal(new int[] {
-            16,
+            32,
             0,
             0,
             0});

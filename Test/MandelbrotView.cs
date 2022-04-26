@@ -88,7 +88,7 @@ namespace Test
     public void Start()
     {
       if (task != null) return;
-      var t = manual; manual = false; start(); manual = t;
+      restart = true; start();
     }
     public void Stop()
     {
@@ -96,7 +96,8 @@ namespace Test
     }
     public void Reset()
     {
-      stop(); mx = -0.7; my = 0; scale = 1.2f; imax = 32; start();
+      stop(); mx = -0.7; my = 0; scale = 1.2; imax = 32; lim = 64;
+      delaystart();
     }
     public void Clear()
     {
@@ -105,10 +106,9 @@ namespace Test
     }
 
     Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2;
-    Task? task; bool cancel, dostart, manual; long t1, t2; Action<int>? tool;
+    Task? task; bool cancel, dostart, restart, manual; long t1, t2; Action<int>? tool;
     System.Windows.Forms.Timer timer = new() { Interval = 100 };
-
-    rat mx = -0.7, my = 0, scale = 1.2f, qmax = 4; int imax = 32, lim = 64;
+    rat mx = -0.7, my = 0, scale = 1.2, qmax = 4; int imax = 32, lim = 64;
 
     void mandel_dbl()
     {
@@ -216,10 +216,11 @@ namespace Test
 
     void start()
     {
-      stop(); if (manual) return; var size = ClientSize;
+      stop(); if (manual && !restart) return; restart = false; 
+      var size = ClientSize;
       if (bmp == null || bmp.Size != size)
       {
-        if (bmp != null) bmp.Dispose();
+        bmp?.Dispose();
         bmp = new Bitmap(dx = size.Width, dy = size.Height, PixelFormat.Format32bppRgb);
         var lb = bmp.LockBits(new Rectangle(0, 0, dx, dy), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
         scan = (uint*)lb.Scan0.ToPointer(); stride = lb.Stride; bmp.UnlockBits(lb);
@@ -246,7 +247,8 @@ namespace Test
     void Timer_Tick(object? sender, EventArgs e)
     {
       if (dostart) { dostart = false; start(); return; }
-      Invalidate(); //Update();
+      if (!Visible) { stop(); bmp?.Dispose(); bmp = null; restart = true; return; }
+      Invalidate();
       if (task != null && task.IsCompleted) { timer.Stop(); if (t1 == t2) t2 = t1 + 1; Update(); StateChanged?.Invoke(this, EventArgs.Empty); return; }
     }
     protected override void OnHandleCreated(EventArgs e)
@@ -262,10 +264,8 @@ namespace Test
     protected override void OnPaintBackground(PaintEventArgs pevent) { }
     protected override void OnPaint(PaintEventArgs e)
     {
-      if (bmp == null || bmp.Size != ClientSize) { start(); }
+      if (bmp == null || bmp.Size != ClientSize) start();
       if (bmp != null) e.Graphics.DrawImage(bmp, 0, 0); else e.Graphics.Clear(Color.Black);
-      //if (task != null && task.IsCompleted)
-      //  e.Graphics.DrawString($"{imax} iterations {t2 - t1} ms", SystemFonts.DefaultFont, Brushes.White, 4, 4);
     }
     protected override void OnSizeChanged(EventArgs e)
     {
@@ -312,19 +312,6 @@ namespace Test
         }
       };
     }
-    //Action<int> tool_imax()
-    //{
-    //  var p1 = Cursor.Position; var x1 = imax;
-    //  return id =>
-    //  {
-    //    if (id == 0)
-    //    {
-    //      var p2 = Cursor.Position;
-    //      var i = Math.Max(16, Math.Min(1000, x1 + p1.Y - p2.Y));
-    //      if (imax != i) { stop(); imax = i; delaystart(); }
-    //    }
-    //  };
-    //}
 
     protected override void OnMouseDown(MouseEventArgs e)
     {
