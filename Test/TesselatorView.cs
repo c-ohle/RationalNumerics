@@ -38,9 +38,6 @@ namespace Test
     protected override void OnPaintBackground(PaintEventArgs e) { }
     protected override void OnPaint(PaintEventArgs e)
     {
-      var g = e.Graphics; g.Clear(Color.White);
-      g.SmoothingMode = SmoothingMode.AntiAlias;
-      pen ??= new Pen(Color.Black, 1);
       tess ??= new TesselatorR();
       tess.Winding = Winding;
       tess.Options = (tess.Options & ~TesselatorR.Option.Delaunay) | (Delaunay ? TesselatorR.Option.Delaunay : 0);
@@ -52,12 +49,17 @@ namespace Test
           tess.AddVertex(Points[a + k]);
         tess.EndContour();
       }
-      var t1 = Stopwatch.GetTimestamp();// Environment.TickCount;
+      var t1 = Stopwatch.GetTimestamp();
       tess.EndPolygon();
       var t2 = Stopwatch.GetTimestamp();
-
       var indices = tess.Indices;
       var vertices = tess.VerticesVector3;
+
+      var g = e.Graphics; g.Clear(Color.White);
+      g.SmoothingMode = SmoothingMode.AntiAlias;
+      g.TranslateTransform(mx, my);
+      g.ScaleTransform(ms, ms);
+      pen ??= new Pen(Color.Black, 1);
       if (DrawSurface)
       {
         pointsf ??= new PointF[3];
@@ -71,7 +73,7 @@ namespace Test
       }
       if (DrawMesh)
       {
-        pen.Width = 1f; pen.Color = DrawSurface ? Color.Goldenrod : Color.LightGray;
+        pen.Width = 1f / ms; pen.Color = DrawSurface ? Color.Goldenrod : Color.LightGray;
         for (int i = 0; i < indices.Length; i += 3)
         {
           var p1 = vertices[indices[i + 0]];
@@ -84,7 +86,7 @@ namespace Test
       }
       if (DrawPolygons)
       {
-        pen.Width = 1; pen.Color = Color.Gray;
+        pen.Width = 1f / ms; pen.Color = Color.Gray;
         for (int i = 0, a = 0; i < Counts.Count; a += Counts[i++])
           for (int k = 0, n = Counts[i]; k < n; k++)
           {
@@ -97,7 +99,7 @@ namespace Test
       {
         var outline = tess.Outline;
         var counts = tess.OutlineCounts;
-        pen.Width = 2; pen.Color = Color.Black;
+        pen.Width = 2 / ms; pen.Color = Color.Black;
         for (int i = 0, a = 0; i < counts.Length; a += counts[i++])
           for (int k = 0, n = counts[i]; k < n; k++)
           {
@@ -108,20 +110,110 @@ namespace Test
       }
       if (DrawPoints)
       {
+        pen.Width = 1 / ms; pen.Color = Color.Black; var f = prad / ms;
         for (int i = 0; i < Points.Count; i++)
         {
           var p = Points[i];
-          var r = new RectangleF(p.X - 3, p.Y - 3, 6, 6);
+          var r = new RectangleF(p.X - f, p.Y - f, 2 * f, 2 * f);
           g.FillEllipse(Brushes.White, r);
-          g.DrawEllipse(Pens.Black, r);
-
+          g.DrawEllipse(pen, r);
         }
-
       }
-
+      g.ResetTransform();
       var font = this.Font; var y = 4;
-      g.DrawString($"{vertices.Length} vertices {indices.Length/3} polygones", font, Brushes.Black, 4, y); y += font.Height;
+      g.DrawString($"{vertices.Length} vertices {indices.Length / 3} polygones", font, Brushes.Black, 4, y); y += font.Height;
       g.DrawString($"{(t2 - t1) * 1000 / Stopwatch.Frequency} ms", font, Brushes.Black, 4, y); y += font.Height;
+    }
+
+    float mx, my, ms = 1, prad = 4;
+    Action<int>? tool;
+    Action<int> tool_move()
+    {
+      var ox = mx; var oy = my;
+      var p1 = Cursor.Position;
+      return id =>
+      {
+        if (id == 0)
+        {
+          var p2 = Cursor.Position;
+          mx = ox + (p2.X - p1.X);
+          my = oy + (p2.Y - p1.Y);
+          Invalidate(); Update();
+        }
+      };
+    }
+    Action<int> tool_point(int i)
+    {
+      var po = Points[i];
+      var p1 = s2p(Cursor.Position);
+      return id =>
+      {
+        if (id == 0)
+        {
+          var p2 = s2p(Cursor.Position);
+          Points[i] = po + p2 - p1;
+          Invalidate(); Update();
+        }
+      };
+    }
+    protected override void OnMouseDown(MouseEventArgs e)
+    {
+      if (e.Button == MouseButtons.Left)
+      {
+        Capture = true; var i = pick(e.Location);
+        tool = i >= 0 ? tool_point(i) :
+          tool_move(); //ModifierKeys == Keys.Shift ? tool_imax() :
+      }
+    }
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+      if (tool != null) tool(0);
+      else
+      {
+        var i = pick(e.Location);
+        Cursor = i >= 0 ? Cursors.Cross : Cursors.Default;
+      }
+    }
+    protected override void OnMouseUp(MouseEventArgs e)
+    {
+      if (tool != null) { tool(1); tool = null; Capture = false; }
+    }
+    protected override void OnLeave(EventArgs e)
+    {
+      if (tool != null) { tool(2); tool = null; Capture = false; }
+    }
+    protected override void OnMouseWheel(MouseEventArgs e)
+    {
+      var p = e.Location; var v = s2p(p);
+      var d = 1 + e.Delta * (0.1f / 120);
+      ms *= d; var s = p2s(v);
+      mx -= s.X - p.X;
+      my -= s.Y - p.Y;
+      Invalidate(); Update();
+    }
+
+    Vector2 p2s(Vector2 p)
+    {
+      return new Vector2(p.X * ms + mx, p.Y * ms + my);
+    }
+    Vector2 s2p(Point p)
+    {
+      return new Vector2((p.X - mx) / ms, (p.Y - my) / ms);
+    }
+    int pick(Point s)
+    {
+      var p = new Vector2(s.X, s.Y);
+      if (DrawPoints)
+      {
+        var r = prad * prad;
+        for (int i = 0; i < Points.Count; i++)
+          if ((p2s(Points[i]) - p).LengthSquared() < r) return i;
+      }
+      return -1;
+    }
+    public void Reset()
+    {
+      mx = 0; my = 0; ms = 1; Invalidate();
     }
   }
 }

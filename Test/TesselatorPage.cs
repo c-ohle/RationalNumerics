@@ -72,5 +72,6 @@ namespace Test
       add_ellipse(new Vector2(300 - 10, 200), new Vector2(20, 20), 16);
       add_ellipse(new Vector2(400 + 10, 200), new Vector2(20, 20), 16);
     }
+         
   }
 }

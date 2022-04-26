@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 namespace Test
@@ -106,7 +107,7 @@ namespace Test
     }
 
     Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2;
-    Task? task; bool cancel, dostart, restart, manual; long t1, t2; Action<int>? tool;
+    Task? task; bool cancel, dostart, restart, manual; long t1, t2;
     System.Windows.Forms.Timer timer = new() { Interval = 100 };
     rat mx = -0.7, my = 0, scale = 1.2, qmax = 4; int imax = 32, lim = 64;
 
@@ -282,6 +283,7 @@ namespace Test
       Invalidate(); Update(); delaystart();
     }
 
+    Action<int>? tool;
     Action<int> tool_move()
     {
       var p1 = Cursor.Position; var po = p1;
@@ -320,11 +322,10 @@ namespace Test
         Capture = true;
         tool = tool_move(); //ModifierKeys == Keys.Shift ? tool_imax() :
       }
-      base.OnMouseDown(e);
     }
     protected override void OnMouseMove(MouseEventArgs e)
     {
-      if (tool != null) { tool(0); }
+      if (tool != null) tool(0);
     }
     protected override void OnMouseUp(MouseEventArgs e)
     {
@@ -334,14 +335,13 @@ namespace Test
     protected override void OnMouseLeave(EventArgs e)
     {
       if (tool != null) { tool(2); tool = null; Capture = false; }
-      base.OnMouseLeave(e);
     }
     protected override void OnMouseWheel(MouseEventArgs e)
     {
       stop();
       var p1 = s2r(new Point()); var p2 = s2r(new Point(dx, dy));
       var p = e.Location;
-      var d = 1 - e.Delta * (1f / 120) * 0.1f;
+      var d = 1 - e.Delta * (0.1f / 120);
       var t = scale; scale *= d;
       var l = rat.ILog10(scale);
       scale = rat.Round(scale, 5 - l);

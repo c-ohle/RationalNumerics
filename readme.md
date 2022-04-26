@@ -12,9 +12,16 @@ is available on [github-pages](https://c-ohle.github.io/RationalNumerics/).
 As ultimate speed test compared to an ordinary "BigRational" class, here the Mandelbrot set.   
 This as example contains everything, all basic numeric operations, small and big numbers, numbers with few and with many digits, iterations, threading and is generally very computationally intensive.  
 It shows that the new system is many times faster than what is even possible with conventional technique.  
+Theoretically, the increase in performance should be around factor of 10, which the test confirms.  
 By zooming deeper into the Mandelbrot set, a factor of 20 and more is possible due to the massive memory garbage the old system implies.
 
-![Mandel1](docs/images/mandel1.png)
+![mandel1](docs/images/mandel1.png)
+
+The second example as ultimate test for the stacking machine.  
+The Tesselator uses its own instance of a NewRational.CPU stack machine, which is also used as a vertex buffer and almost all CPU instructions are in use.  
+In this form no further memory allocations are necessary at runtime and the tessellation can never fail what is a big problem for any floating-point tessellation algorithm. 
+
+![tess1](docs/images/tess1.png)
 
 More detailed benchmarks coming soon.   
 
