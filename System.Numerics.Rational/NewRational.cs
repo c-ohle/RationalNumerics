@@ -73,6 +73,7 @@ namespace System.Numerics.Rational
     /// <returns>true if the formatting operation succeeds; false otherwise.</returns>
     public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
     {
+      if (isnan(this.p)) return float.NaN.TryFormat(destination, out charsWritten, null, provider);
       int digs = 32, round = -1, emin = -4, emax = +16; var fc = '\0';
       var info = NumberFormatInfo.GetInstance(provider);
       if (format.Length != 0)
@@ -184,6 +185,14 @@ namespace System.Numerics.Rational
           cpu.pop(); if (--i == 0) break; ws[x++] = '/';
         }
         if (s < 0) ws[x++] = '-'; ws.Slice(0, x).Reverse(); ws = ws.Slice(x);
+      }
+      static bool isnan(uint[] p) //for debug
+      {
+        if (p == null) return false;
+        var i1 = p[0] & 0x3fffffff; if (i1 == 0 || i1 + 3 > p.Length) return true;
+        var i2 = p[i1 + 1]; if (i2 == 0 || i1 + i2 + 2 > p.Length) return true;
+        if (i2 == 1 && p[i1 + i2 + 1] == 0) return true;
+        return false;
       }
     }
     /// <summary>
@@ -1811,7 +1820,6 @@ namespace System.Numerics.Rational
       /// <param name="a">Relative index of a stack entry.</param>
       public void sqr(int a = 0)
       {
-        //mul(a, a); return;
         sqr(unchecked((uint)(this.i - 1 - a)));
         swp(a + 1); pop();
       }
@@ -1824,7 +1832,6 @@ namespace System.Numerics.Rational
       /// <param name="a">Absolute index of a stack entry.</param>
       public void sqr(uint a)
       {
-        //mul(a, a); return;
         fixed (uint* u = this.p[a])
         fixed (uint* w = rent(len(u) << 1))
         {
@@ -2275,8 +2282,8 @@ namespace System.Numerics.Rational
       public void tos(Span<char> sp, out int ns, out int exp, out int rep, bool reps)
       {
         var p = this.p[this.i - 1]; exp = ns = 0; rep = -1;
-        var i1 = p[0] & 0x3fffffff; if (i1 == 0 || i1 + 3 > p.Length) { pop(); return; } // NaN
-        var i2 = p[i1 + 1]; if (i2 == 0 || i1 + i2 + 2 > p.Length) { pop(); return; } // NaN
+        var i1 = p[0] & 0x3fffffff; //if (i1 == 0 || i1 + 3 > p.Length) { pop(); return; } // NaN
+        var i2 = p[i1 + 1]; //if (i2 == 0 || i1 + i2 + 2 > p.Length) { pop(); return; } // NaN
         var c1 = ((long)i1 << 5) - BitOperations.LeadingZeroCount(p[i1]);
         var c2 = ((long)i2 << 5) - BitOperations.LeadingZeroCount(p[i1 + 1 + i2]);
         if (c2 == 0) { pop(); return; } // NaN
@@ -2456,16 +2463,25 @@ namespace System.Numerics.Rational
           *(ulong*)v = (ulong)a[0] * a[0];
           r[0] = r[2] != 0 ? 2u : 1u; return;
         }
-        for (uint i = 0; i < n; i++)
+        if (n == 2) //todo: benchmark
         {
-          ulong c = 0;
-          for (uint j = 0; j < i; j++)
+          var t1 = (ulong)a[0] * a[0];
+          var t2 = (ulong)a[0] * a[1];
+          var t3 = (ulong)a[1] * a[1];
+          var t4 = t2 + (t1 >> 32);
+          var t5 = t2 + (uint)t4;
+          ((ulong*)v)[0] = t5 << 32 | (uint)t1;
+          ((ulong*)v)[1] = t3 + (t4 >> 32) + (t5 >> 32);
+        }
+        else
+        {
+          for (uint i = 0; i < n; i++)
           {
-            ulong e = v[i + j] + c, f = (ulong)a[j] * a[i];
-            v[i + j] = unchecked((uint)(e + (f << 1)));
-            c = (f + (e >> 1)) >> 31;
+            ulong c = 0, e, f;
+            for (uint j = 0; j < i; j++, c = (f + (e >> 1)) >> 31)
+              v[i + j] = unchecked((uint)((e = v[i + j] + c) + ((f = (ulong)a[j] * a[i]) << 1)));
+            *(ulong*)(v + (i << 1)) = (ulong)a[i] * a[i] + c;
           }
-          *(ulong*)(v + (i << 1)) = (ulong)a[i] * a[i] + c;
         }
         if (r[r[0] = n << 1] == 0 && r[0] > 1) { r[0]--; Debug.Assert(!(r[r[0]] == 0 && r[0] > 1)); }
       }
