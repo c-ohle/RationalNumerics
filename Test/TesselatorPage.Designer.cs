@@ -47,6 +47,7 @@
       this.labelStatus = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+      this.buttonReset = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -154,7 +155,7 @@
       this.groupBox1.Controls.Add(this.checkBoxPoints);
       this.groupBox1.Location = new System.Drawing.Point(761, 47);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(196, 112);
+      this.groupBox1.Size = new System.Drawing.Size(196, 103);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Display Input ";
@@ -191,7 +192,7 @@
       this.groupBox2.Controls.Add(this.checkBoxDrawSurface);
       this.groupBox2.Controls.Add(this.checkBoxDrawMesh);
       this.groupBox2.Controls.Add(this.checkBoxDrawOutlines);
-      this.groupBox2.Location = new System.Drawing.Point(761, 369);
+      this.groupBox2.Location = new System.Drawing.Point(761, 359);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(196, 135);
       this.groupBox2.TabIndex = 3;
@@ -206,7 +207,7 @@
       this.groupBox3.Controls.Add(this.checkBoxDelaunay);
       this.groupBox3.Controls.Add(this.label2);
       this.groupBox3.Controls.Add(this.comboBoxWinding);
-      this.groupBox3.Location = new System.Drawing.Point(761, 165);
+      this.groupBox3.Location = new System.Drawing.Point(761, 156);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(196, 198);
       this.groupBox3.TabIndex = 2;
@@ -275,10 +276,22 @@
       this.label3.TabIndex = 0;
       this.label3.Text = "High-precision tessellation based on rational arithmetic.";
       // 
+      // buttonReset
+      // 
+      this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonReset.Location = new System.Drawing.Point(863, 561);
+      this.buttonReset.Name = "buttonReset";
+      this.buttonReset.Size = new System.Drawing.Size(94, 29);
+      this.buttonReset.TabIndex = 4;
+      this.buttonReset.Text = "Reset";
+      this.buttonReset.UseVisualStyleBackColor = true;
+      this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+      // 
       // TesselatorPage
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.buttonReset);
       this.Controls.Add(this.label3);
       this.Controls.Add(this.labelStatus);
       this.Controls.Add(this.groupBox3);
@@ -319,5 +332,6 @@
     private CheckBox checkBox2;
     private CheckBox checkBox1;
     private ToolTip toolTip1;
+    private Button buttonReset;
   }
 }

@@ -17,7 +17,7 @@ namespace Test
       Application.Run(new MainFrame());
     }
     static void test()
-    {      
+    {
     }
   }
 }

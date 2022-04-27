@@ -21,7 +21,7 @@ namespace Test
     protected override void OnLoad(EventArgs e)
     {
       update();
-      addface();
+      setdemo1();
     }
     void update()
     {
@@ -60,7 +60,7 @@ namespace Test
         midpoint + new Vector2(MathF.Cos(i * f), MathF.Sin(i * f)) * radii);
       v.Counts.Add(v.Points.Count - c);
     }
-    void addface()
+    void setdemo1()
     {
       var v = tesselatorView1;
       v.Points.Clear(); v.Counts.Clear();
@@ -72,6 +72,13 @@ namespace Test
       add_ellipse(new Vector2(300 - 10, 200), new Vector2(20, 20), 16);
       add_ellipse(new Vector2(400 + 10, 200), new Vector2(20, 20), 16);
     }
-         
+
+    private void buttonReset_Click(object sender, EventArgs e)
+    {
+      setdemo1();
+      tesselatorView1.Reset(); 
+      tesselatorView1.Invalidate();
+      init = false; update(); init = true;
+    }
   }
 }

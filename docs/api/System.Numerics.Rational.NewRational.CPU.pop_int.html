@@ -354,11 +354,9 @@ convert the numerator and returns it as <span class="xref">System.Int32</span> v
   </tbody>
 </table>
 <h5 id="System_Numerics_Rational_NewRational_CPU_pop_int_remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>Only the first 32-bit of the numerator are interpreted and retuned as integer.<br>
-The function is intended for the fastest possible access to results that are always in the range of <span class="xref">System.Int32</span>.<br>
-For example: <code>x % 10</code> results.<br>
-For the case, rounding, range checks etc. should be done in previous calls.<br>
-Or simple convert from double: <code>var i = (int)<a class="xref" href="System.Numerics.Rational.NewRational.CPU.pop_dbl.html#System_Numerics_Rational_NewRational_CPU_pop_dbl">pop_dbl()</a></code></p>
+<div class="markdown level1 remarks"><p>Only the first 32-bit of the numerator are interpreted and retuned as <span class="xref">System.Int32</span>.<br>
+It conforms to the convention of integer casts like the cast from <span class="xref">System.Int64</span> to <span class="xref">System.Int32</span>.<br>
+The function is intended for the fastest possible access to integer results in the range of <span class="xref">System.Int32</span>.<br></p>
 </div>
 </article>
           </div>

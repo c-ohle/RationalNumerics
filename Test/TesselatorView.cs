@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -16,10 +17,7 @@ namespace Test
   {
     public TesselatorView()
     {
-      DoubleBuffered = true;
-      DrawPolygons = true;
-      Winding = Winding.EvenOdd; Delaunay = true;
-      DrawSurface = DrawOutlines = DrawMesh = true;
+      DoubleBuffered = true; Reset();
     }
     public bool DrawPolygons { get; set; }
     public bool DrawPoints { get; set; }
@@ -28,9 +26,16 @@ namespace Test
     public bool DrawSurface { get; set; }
     public bool DrawOutlines { get; set; }
     public bool DrawMesh { get; set; }
-
     public readonly List<Vector2> Points = new();
     public readonly List<int> Counts = new();
+    public void Reset()
+    {
+      Winding = Winding.EvenOdd;
+      DrawPolygons = true; DrawPoints = false;
+      Winding = Winding.EvenOdd; Delaunay = true;
+      DrawSurface = DrawOutlines = DrawMesh = true;
+      mx = 0; my = 0; ms = 1; Invalidate();
+    }
 
     TesselatorR? tess;
     PointF[]? pointsf; Pen? pen;
@@ -125,7 +130,7 @@ namespace Test
       g.DrawString($"{(t2 - t1) * 1000 / Stopwatch.Frequency} ms", font, Brushes.Black, 4, y); y += font.Height;
     }
 
-    float mx, my, ms = 1, prad = 4;
+    float mx, my, ms, prad = 4;
     Action<int>? tool;
     Action<int> tool_move()
     {
@@ -142,7 +147,7 @@ namespace Test
         }
       };
     }
-    Action<int> tool_point(int i)
+    Action<int> tool_movepoint(int i)
     {
       var po = Points[i];
       var p1 = s2p(Cursor.Position);
@@ -156,13 +161,30 @@ namespace Test
         }
       };
     }
+    Action<int> tool_movepoly(int x)
+    {
+      int i = 0, a = 0; for (; i < x; a += Counts[i++]) ;
+      var pp = Points.Skip(a).Take(Counts[i]).ToArray();
+      var po = Points[i];
+      var p1 = s2p(Cursor.Position);
+      return id =>
+      {
+        if (id == 0)
+        {
+          var p2 = s2p(Cursor.Position); var dp = p2 - p1;
+          for (int k = 0; k < pp.Length; k++) Points[a + k] = pp[k] + dp;
+          Invalidate(); Update();
+        }
+      };
+    }
     protected override void OnMouseDown(MouseEventArgs e)
     {
       if (e.Button == MouseButtons.Left)
       {
-        Capture = true; var i = pick(e.Location);
-        tool = i >= 0 ? tool_point(i) :
-          tool_move(); //ModifierKeys == Keys.Shift ? tool_imax() :
+        Capture = true; var i = pick(e.Location); tool =
+          (i & 0x10000000) != 0 ? tool_movepoint(i & 0x0fffffff) :
+          (i & 0x20000000) != 0 ? tool_movepoly(i & 0x0fffffff) :
+          tool_move();
       }
     }
     protected override void OnMouseMove(MouseEventArgs e)
@@ -170,8 +192,9 @@ namespace Test
       if (tool != null) tool(0);
       else
       {
-        var i = pick(e.Location);
-        Cursor = i >= 0 ? Cursors.Cross : Cursors.Default;
+        var i = pick(e.Location); Cursor =
+          (i & 0x10000000) != 0 ? Cursors.Cross :
+          (i & 0x20000000) != 0 ? Cursors.UpArrow : Cursors.Default;
       }
     }
     protected override void OnMouseUp(MouseEventArgs e)
@@ -200,20 +223,52 @@ namespace Test
     {
       return new Vector2((p.X - mx) / ms, (p.Y - my) / ms);
     }
-    int pick(Point s)
+    unsafe int pick(Point s)
     {
       var p = new Vector2(s.X, s.Y);
       if (DrawPoints)
       {
         var r = prad * prad;
         for (int i = 0; i < Points.Count; i++)
-          if ((p2s(Points[i]) - p).LengthSquared() < r) return i;
+          if ((p2s(Points[i]) - p).LengthSquared() < r) return 0x10000000 | i;
       }
-      return -1;
-    }
-    public void Reset()
-    {
-      mx = 0; my = 0; ms = 1; Invalidate();
+
+      if (DrawOutlines && tess != null && pen != null)
+      {
+        var vertices = tess.VerticesVector3;
+        var outline = tess.Outline;
+        var counts = tess.OutlineCounts;
+        uint pixel = 0;
+        using (var pbm = new Bitmap(1, 1, 4, PixelFormat.Format32bppRgb, new IntPtr(&pixel)))
+        using (var g = Graphics.FromImage(pbm))
+        {
+          g.TranslateTransform(mx - s.X, my - s.Y);
+          g.ScaleTransform(ms, ms);
+          pen.Width = 5 / ms; pen.Color = Color.White;
+          for (int i = 0, a = 0; i < counts.Length; a += counts[i++])
+            for (int k = 0, n = counts[i]; k < n; k++)
+            {
+              var p1 = vertices[outline[a + k]];
+              var p2 = vertices[outline[a + (k + 1) % n]];
+              g.DrawLine(pen, p1.X, p1.Y, p2.X, p2.Y);
+            }
+          if (pixel != 0)
+          {
+            pixel = 0;
+            for (int i = 0, a = 0; i < Counts.Count; a += Counts[i++])
+            {
+              for (int k = 0, n = Counts[i]; k < n; k++)
+              {
+                var p1 = Points[a + k];
+                var p2 = Points[a + (k + 1) % n];
+                g.DrawLine(pen, p1.X, p1.Y, p2.X, p2.Y);
+              }
+              if (pixel != 0) return i | 0x20000000;
+            }
+          }
+        }
+      }
+      return 0;
     }
   }
 }

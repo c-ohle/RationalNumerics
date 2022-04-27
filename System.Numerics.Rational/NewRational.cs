@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 namespace System.Numerics.Rational
 {
@@ -302,7 +304,7 @@ namespace System.Numerics.Rational
     public override readonly int GetHashCode()
     {
       if (this.p == null) return 0x00280081;
-      uint h = 0; Debug.Assert((p[0] & F.Norm) == 0);
+      uint h = 0; Debug.Assert((p[0] & 0x40000000) == 0);
       fixed (uint* p = this.p)
         for (uint i = 0, n = len(p); i < n; i++)
           h = ((h << 7) | (h >> 25)) ^ p[i]; //todo: check BitOperations.RotateLeft faster than shifts?
@@ -457,7 +459,7 @@ namespace System.Numerics.Rational
     /// </remarks>
     /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
     /// <returns>A <see cref="NewRational"/> number that is rounded to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(System.Single value)
+    public static implicit operator NewRational(float value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
@@ -533,7 +535,7 @@ namespace System.Numerics.Rational
       if (value.p == null) return 0;
       fixed (uint* a = value.p)
       {
-        var na = a[0] & F.Mask; var b = a + (na + 1); var nb = b[0];
+        var na = a[0] & 0x3fffffff; var b = a + (na + 1); var nb = b[0];
         var ca = BitOperations.LeadingZeroCount(a[na]);
         var cb = BitOperations.LeadingZeroCount(b[nb]);
         var va = ((ulong)a[na] << 32 + ca) | (na < 2 ? 0 : ((ulong)a[na - 1] << ca) | (na < 3 ? 0 : (ulong)a[na - 2] >> 32 - ca));
@@ -544,7 +546,7 @@ namespace System.Numerics.Rational
         if (e > +1023) return double.PositiveInfinity;
         var r = (double)(va >> 11) / (vb >> 11);
         var x = (0x3ff + e) << 52; r *= *(double*)&x; // r *= Math.Pow(2, e);
-        if ((a[0] & F.Sign) != 0) r = -r; return r;
+        if ((a[0] & 0x80000000) != 0) r = -r; return r;
       }
     }
     /// <summary>
@@ -557,16 +559,16 @@ namespace System.Numerics.Rational
       if (value.p == null) return default;
       fixed (uint* p = value.p)
       {
-        var d = dec(p, out var s) / dec(p + (p[0] & F.Mask) + 1, out var t);
+        var d = dec(p, out var s) / dec(p + (p[0] & 0x3fffffff) + 1, out var t);
         if (s != t) d *= new decimal(Math.Pow(2, s - t)); return d;
       }
       static decimal dec(uint* p, out int e)
       {
-        var n = p[0] & F.Mask; var c = n < 4 ? n : 4;
+        var n = p[0] & 0x3fffffff; var c = n < 4 ? n : 4;
         var t = stackalloc uint[5] { c, 0, 0, 0, 0 }; copy(t + 1, p + 1 + (n - c), c);
         e = (int)(n << 5) - BitOperations.LeadingZeroCount(p[n]) - 96;
         if (e <= 0) e = 0; else CPU.shr(t, e - ((int)(n - c) << 5));
-        return new decimal((int)t[1], (int)t[2], (int)t[3], (p[0] & F.Sign) != 0, 0);
+        return new decimal((int)t[1], (int)t[2], (int)t[3], (p[0] & 0x80000000) != 0, 0);
       }
     }
     /// <summary>
@@ -583,10 +585,10 @@ namespace System.Numerics.Rational
       if (value.p == null) return default;
       fixed (uint* p = value.p)
       {
-        var n = p[0] & F.Mask; var b = p + (n + 1);
-        var r = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), (int)n << 2), true);
+        var n = p[0] & 0x3fffffff; var b = p + (n + 1);
+        var r = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), (int)n << 2), true, false);
         if (*(ulong*)b != 0x100000001) r /= new BigInteger(new ReadOnlySpan<byte>(b + 1, (int)b[0] << 2), true);
-        return (p[0] & F.Sign) == 0 ? r : -r;
+        return (p[0] & 0x80000000) == 0 ? r : -r;
       }
     }
 
@@ -960,8 +962,8 @@ namespace System.Numerics.Rational
     public static int Sign(NewRational a)
     {
       return a.p == null ? 0 :
-        (a.p[0] & F.Sign) != 0 ? -1 :
-        (a.p[0] & F.Mask) == 1 && a.p[1] == 0 ? 0 : +1; //debug view 
+        (a.p[0] & 0x80000000) != 0 ? -1 :
+        (a.p[0] & 0x3fffffff) == 1 && a.p[1] == 0 ? 0 : +1; //debug view 
     }
     /// <summary>
     /// Gets the integer base 10 logarithm of a <see cref="NewRational"/> number.
@@ -1181,7 +1183,7 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = rent(4))
         {
-          p[0] = (v < 0 ? F.Sign : 0) | 1;
+          p[0] = (v < 0 ? 0x80000000 : 0) | 1;
           p[1] = unchecked((uint)(v < 0 ? -v : v)); *(ulong*)(p + 2) = 0x100000001;
         }
       }
@@ -1215,7 +1217,7 @@ namespace System.Numerics.Rational
         var u = unchecked((int)v); if (u == v) { push(u); return; }
         fixed (uint* p = rent(5))
         {
-          p[0] = (v < 0 ? F.Sign : 0) | 2;
+          p[0] = (v < 0 ? 0x80000000 : 0) | 2;
           *(ulong*)(p + 1) = unchecked((ulong)(v < 0 ? -v : v));
           *(ulong*)(p + 3) = 0x100000001;
         }
@@ -1295,7 +1297,7 @@ namespace System.Numerics.Rational
           if (e == -1075) { if ((p[2] &= 0xfffff) == 0) if (p[p[0] = 1] == 0) { *(ulong*)(p + 2) = 0x100000001; return; } e++; } // denormalized
           if (e > 0) shl(p, e); var q = p + (p[0] + 1);
           *(ulong*)q = 0x100000001; if (e < 0) shl(q, -e);
-          p[0] |= (unchecked((uint)h) & F.Sign) | F.Norm;
+          p[0] |= (unchecked((uint)h) & 0x80000000) | 0x40000000;
         }
       }
       /// <summary>
@@ -1316,9 +1318,9 @@ namespace System.Numerics.Rational
             var t = (ulong*)(s + 1); var h = e < 19 ? e : 19;
             t[0] = (ulong)Math.Pow(10, h);
             t[1] = h == e ? 0 : Math.BigMul(t[0], (ulong)Math.Pow(10, e - h), out t[0]);
-            s[0] = s[3] != 0 ? 3u : s[2] != 0 ? 2u : 1; p[0] |= F.Norm;
+            s[0] = s[3] != 0 ? 3u : s[2] != 0 ? 2u : 1; p[0] |= 0x40000000;
           }
-          p[0] |= f & F.Sign;
+          p[0] |= f & 0x80000000;
         }
       }
       /// <summary>
@@ -1332,7 +1334,7 @@ namespace System.Numerics.Rational
         fixed (uint* p = rent(unchecked((uint)(c + 3))))
         {
           p[c] = 0; v.TryWriteBytes(new Span<byte>(p + 1, n), out _, true); Debug.Assert(p[c] != 0);
-          p[0] = unchecked((uint)c) | (si < 0 ? F.Sign : 0);
+          p[0] = unchecked((uint)c) | (si < 0 ? 0x80000000 : 0);
           *(ulong*)(p + c + 1) = 0x100000001;
         }
       }
@@ -1352,7 +1354,7 @@ namespace System.Numerics.Rational
         fixed (uint* p = this.p[i])
         {
           if (isz(p)) { v = default; return; }
-          if ((p[0] & F.Norm) != 0) norm(p);
+          if ((p[0] & 0x40000000) != 0) norm(p);
           var n = len(p); var a = new uint[n];
           fixed (uint* s = a) copy(s, p, n);
           v = new NewRational(a);
@@ -1414,11 +1416,9 @@ namespace System.Numerics.Rational
       /// convert the numerator and returns it as <see cref="int"/> value.<br/>
       /// </summary>
       /// <remarks>
-      /// Only the first 32-bit of the numerator are interpreted and retuned as integer.<br/>
-      /// The function is intended for the fastest possible access to results that are always in the range of <see cref="int"/>.<br/>
-      /// For example: <c>x % 10</c> results.<br/>
-      /// For the case, rounding, range checks etc. should be done in previous calls.<br/>
-      /// Or simple convert from double: <c>var i = (int)<see cref="pop_dbl()"/></c>  
+      /// Only the first 32-bit of the numerator are interpreted and retuned as <see cref="int"/>.<br/>
+      /// It conforms to the convention of integer casts like the cast from <see cref="long"/> to <see cref="int"/>.<br/>
+      /// The function is intended for the fastest possible access to integer results in the range of <see cref="int"/>.<br/>
       /// </remarks>
       /// <returns>A <see cref="int"/> value.</returns>
       public int pop_int()
@@ -1426,7 +1426,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[i - 1])
         {
           var i = unchecked((int)u[1]);
-          if ((u[0] & F.Sign) != 0) i = -i;
+          if ((u[0] & 0x80000000) != 0) i = -i;
           pop(); return i;
         }
       }
@@ -1522,7 +1522,7 @@ namespace System.Numerics.Rational
       /// <param name="a">Relative index of a stack entry.</param>
       public void neg(int a = 0)
       {
-        neg(unchecked((uint)(this.i - 1 - a))); // fixed (uint* p = this.p[this.i - 1 - i]) if (!isz(p)) p[0] ^= F.Sign;
+        neg(unchecked((uint)(this.i - 1 - a))); // fixed (uint* p = this.p[this.i - 1 - i]) if (!isz(p)) p[0] ^= 0x80000000;
       }
       /// <summary>
       /// Negates the value at index <paramref name="a"/> as absolute index in the stack.<br/>
@@ -1533,7 +1533,7 @@ namespace System.Numerics.Rational
       /// <param name="a">Absolute index of a stack entry.</param>
       public void neg(uint a)
       {
-        fixed (uint* p = this.p[a]) if (!isz(p)) p[0] ^= F.Sign;
+        fixed (uint* p = this.p[a]) if (!isz(p)) p[0] ^= 0x80000000;
       }
       /// <summary>
       /// Convert the value at index <paramref name="a"/> relative to the top of the stack to it's absolute value.<br/>
@@ -1542,7 +1542,7 @@ namespace System.Numerics.Rational
       /// <param name="a">Relative index of a stack entry.</param>
       public void abs(int a = 0)
       {
-        fixed (uint* p = this.p[this.i - 1 - a]) p[0] &= ~F.Sign;
+        fixed (uint* p = this.p[this.i - 1 - a]) p[0] &= ~0x80000000;
       }
       /// <summary>
       /// Adds the first two values on top of the stack 
@@ -1829,7 +1829,7 @@ namespace System.Numerics.Rational
         fixed (uint* w = rent(len(u) << 1))
         {
           sqr(u, w); if (*(ulong*)w == 1) { *(ulong*)(w + 2) = 0x100000001; return; }
-          sqr(u + ((u[0] & F.Mask) + 1), w + (w[0] + 1)); w[0] |= F.Norm;
+          sqr(u + ((u[0] & 0x3fffffff) + 1), w + (w[0] + 1)); w[0] |= 0x40000000;
         }
       }
       /// <summary>
@@ -1845,9 +1845,9 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[i - 1])
         fixed (uint* v = rent(len(u)))
         {
-          uint n = (u[0] & F.Mask) + 1, m = u[n] + 1;
-          copy(v, u + n, m); v[0] |= u[0] & (F.Sign | F.Norm);
-          copy(v + m, u, n); v[m] &= F.Mask;
+          uint n = (u[0] & 0x3fffffff) + 1, m = u[n] + 1;
+          copy(v, u + n, m); v[0] |= u[0] & (0x80000000 | 0x40000000);
+          copy(v + m, u, n); v[m] &= 0x3fffffff;
           swp(); pop();
         }
       }
@@ -1869,10 +1869,10 @@ namespace System.Numerics.Rational
           if (*(ulong*)u == 1) return;
           fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1)) //todo: optimize see shr
           {
-            var n = (u[0] & F.Mask) + 1;
+            var n = (u[0] & 0x3fffffff) + 1;
             copy(v, u, n); shl(v, c);
             copy(v + v[0] + 1, u + n, u[n] + 1);
-            v[0] |= (u[0] & F.Sign) | F.Norm; swp(i + 1); pop();
+            v[0] |= (u[0] & 0x80000000) | 0x40000000; swp(i + 1); pop();
           }
         }
       }
@@ -1891,10 +1891,10 @@ namespace System.Numerics.Rational
         if (c <= 0) { Debug.Assert(c == 0); return; }
         fixed (uint* p = this.p[this.i - 1 - i])
         {
-          var h = p[0]; var a = h & F.Mask;
+          var h = p[0]; var a = h & 0x3fffffff;
           shr(p, c); if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
           if (p[0] != a) copy(p + p[0] + 1, p + a + 1, p[a + 1] + 1);
-          p[0] |= (h & F.Sign) | F.Norm;
+          p[0] |= (h & 0x80000000) | 0x40000000;
         }
       }
       /// <summary>
@@ -1915,7 +1915,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[this.i - 1])
         fixed (uint* v = rent(len(u) + 1))
         {
-          var h = u[0]; u[0] &= F.Mask; var t = u + u[0] + 1;
+          var h = u[0]; u[0] &= 0x3fffffff; var t = u + u[0] + 1;
           if (f != 8) div(u, t, v); else copy(v, t, t[0] + 1);
           if ((f & (1 | 2 | 4)) != 0)
           {
@@ -1924,7 +1924,7 @@ namespace System.Numerics.Rational
             if (f > 0) { var w = 0x100000001; add(v, (uint*)&w, v); }
           }
           *(ulong*)(u + u[0] + 1) = *(ulong*)(v + v[0] + 1) = 0x100000001;
-          if ((h & F.Sign) != 0 && *(ulong*)v != 1) v[0] |= F.Sign;
+          if ((h & 0x80000000) != 0 && *(ulong*)v != 1) v[0] |= 0x80000000;
         }
       }
       /// <summary>
@@ -1999,13 +1999,13 @@ namespace System.Numerics.Rational
         fixed (uint* p = this.p[this.i - 1])
         {
           if (isz(p)) return;
-          var h = p[0]; var a = h & F.Mask; var q = p + a + 1; var b = q[0];
+          var h = p[0]; var a = h & 0x3fffffff; var q = p + a + 1; var b = q[0];
           var u = (a << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[a]));
           var v = (b << 5) - unchecked((uint)BitOperations.LeadingZeroCount(q[b]));
           if (u > v) u = v; if (u <= c) return;
           var t = (int)(u - c); shr(p, t); shr(q, t);
           if (p[0] != a) copy(p + p[0] + 1, q, q[0] + 1);
-          p[0] |= (h & F.Sign) | F.Norm;
+          p[0] |= (h & 0x80000000) | 0x40000000;
         }
       }
       /// <summary>
@@ -2037,8 +2037,8 @@ namespace System.Numerics.Rational
         fixed (uint* u = p[this.i - 1 - a])
         fixed (uint* v = p[this.i - 1 - b])
         {
-          var x = u[0]; u[0] &= ~F.Sign;
-          var y = v[0]; v[0] &= ~F.Sign;
+          var x = u[0]; u[0] &= ~0x80000000;
+          var y = v[0]; v[0] &= ~0x80000000;
           var c = cmp(u, v); u[0] = x; v[0] = y; return c;
         }
       }
@@ -2139,7 +2139,7 @@ namespace System.Numerics.Rational
         {
           if (u == null) return isz(v);
           if (v == null) return isz(u);
-          if (((u[0] | v[0]) & F.Norm) == 0)
+          if (((u[0] | v[0]) & 0x40000000) == 0)
           {
             var n = len(u); // for (uint i = 0; i < n; i++) if (u[i] != v[i]) return false;
             for (uint i = 0, c = n >> 1; i < c; i++)
@@ -2193,7 +2193,7 @@ namespace System.Numerics.Rational
       public void norm(int i = 0)
       {
         fixed (uint* u = p[this.i - 1 - i])
-          if ((u[0] & F.Norm) != 0) norm(u);
+          if ((u[0] & 0x40000000) != 0) norm(u);
       }
       /// <summary>
       /// Calculates a hash value for the value at b as absolute index in the stack.
@@ -2208,7 +2208,7 @@ namespace System.Numerics.Rational
       /// <returns>A <see cref="uint"/> value as hash value.</returns>
       public uint hash(uint i)
       {
-        var p = this.p[i]; if ((p[0] & F.Norm) != 0) fixed (uint* u = p) norm(u);
+        var p = this.p[i]; if ((p[0] & 0x40000000) != 0) fixed (uint* u = p) norm(u);
         return unchecked((uint)new NewRational(p).GetHashCode());
       }
       /// <summary>
@@ -2222,7 +2222,7 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = this.p[this.i - 1])
         {
-          var n = p[0] & F.Mask;
+          var n = p[0] & 0x3fffffff;
           return (n << 5) - (uint)BitOperations.LeadingZeroCount(p[n]);
         }
       }
@@ -2237,7 +2237,7 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = this.p[this.i - 1])
         {
-          for (uint t = 1, n = p[0] & F.Mask; t <= n; t++)
+          for (uint t = 1, n = p[0] & 0x3fffffff; t <= n; t++)
             if (p[t] != 0)
               return ((t - 1) << 5) + (uint)BitOperations.TrailingZeroCount(p[t]) + 1;
           return 0;
@@ -2255,7 +2255,7 @@ namespace System.Numerics.Rational
         fixed (uint* u = this.p[this.i - 2])
         fixed (uint* v = this.p[this.i - 1])
         {
-          u[0] &= F.Mask; v[0] &= F.Mask;
+          u[0] &= 0x3fffffff; v[0] &= 0x3fffffff;
           var r = isz(u) ? v : isz(v) ? u : gcd(u, v);
           *(ulong*)(r + (r[0] + 1)) = 0x100000001;
           if (r == v) swp(); pop();
@@ -2275,7 +2275,7 @@ namespace System.Numerics.Rational
       public void tos(Span<char> sp, out int ns, out int exp, out int rep, bool reps)
       {
         var p = this.p[this.i - 1]; exp = ns = 0; rep = -1;
-        var i1 = p[0] & F.Mask; if (i1 == 0 || i1 + 3 > p.Length) { pop(); return; } // NaN
+        var i1 = p[0] & 0x3fffffff; if (i1 == 0 || i1 + 3 > p.Length) { pop(); return; } // NaN
         var i2 = p[i1 + 1]; if (i2 == 0 || i1 + i2 + 2 > p.Length) { pop(); return; } // NaN
         var c1 = ((long)i1 << 5) - BitOperations.LeadingZeroCount(p[i1]);
         var c2 = ((long)i2 << 5) - BitOperations.LeadingZeroCount(p[i1 + 1 + i2]);
@@ -2293,7 +2293,7 @@ namespace System.Numerics.Rational
         int nr = 0; uint* rr = null; IntPtr mem = default;
         if (reps)
         {
-          nr = unchecked((int)(this.p[this.i - 3][0] & F.Mask)) + 1;
+          nr = unchecked((int)(this.p[this.i - 3][0] & 0x3fffffff)) + 1;
           var need = sp.Length * nr;
           if (need <= 0x8000) { var t = stackalloc uint[need]; rr = t; }
           else rr = (uint*)(mem = Marshal.AllocCoTaskMem(need << 2));
@@ -2306,7 +2306,7 @@ namespace System.Numerics.Rational
           {
             fixed (uint* tt = this.p[this.i - 2])
             {
-              tt[0] &= F.Mask; Debug.Assert(tt[0] < nr);
+              tt[0] &= 0x3fffffff; Debug.Assert(tt[0] < nr);
               for (t = 0; t < i && !(sp[t] == c && cms(tt, rr + t * nr) == 0); t++) ;
               if (t < i)
               {
@@ -2342,10 +2342,10 @@ namespace System.Numerics.Rational
         var l = len(u) + len(v);
         fixed (uint* w = rent(l * 3))
         {
-          var sa = u[0] & F.Sign;
-          var sb = v[0] & F.Sign; if (neg) sb ^= F.Sign;
-          var ud = u + ((u[0] & F.Mask) + 1);
-          var vd = v + ((v[0] & F.Mask) + 1);
+          var sa = u[0] & 0x80000000;
+          var sb = v[0] & 0x80000000; if (neg) sb ^= 0x80000000;
+          var ud = u + ((u[0] & 0x3fffffff) + 1);
+          var vd = v + ((v[0] & 0x3fffffff) + 1);
           uint* s = w + (l << 1), t;
           mul(u, vd, s);
           mul(v, ud, t = s + (s[0] + 1));
@@ -2353,30 +2353,30 @@ namespace System.Numerics.Rational
           else
           {
             var si = cms(s, t); if (si == 0) { *(ulong*)w = 1; *(ulong*)(w + 2) = 0x100000001; return; }
-            if (si < 0) { var h = s; s = t; t = h; sa ^= F.Sign; }
+            if (si < 0) { var h = s; s = t; t = h; sa ^= 0x80000000; }
             sub(s, t, w);
           }
           if (*(ulong*)w == 1) { *(ulong*)(w + 2) = 0x100000001; return; }
-          mul(ud, vd, w + (w[0] + 1)); w[0] |= sa | F.Norm;
+          mul(ud, vd, w + (w[0] + 1)); w[0] |= sa | 0x40000000;
         }
       }
       void mul(uint* u, uint* v, bool inv)
       {
         fixed (uint* w = rent(len(u) + len(v)))
         {
-          var s = (v[0] & F.Mask) + 1;
-          var t = (u[0] & F.Mask) + 1;
+          var s = (v[0] & 0x3fffffff) + 1;
+          var t = (u[0] & 0x3fffffff) + 1;
           mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1) { *(ulong*)(w + 2) = 0x100000001; return; }
           mul(u + t, inv ? v : v + s, w + (w[0] + 1));
-          w[0] |= ((u[0] ^ v[0]) & F.Sign) | F.Norm;
+          w[0] |= ((u[0] ^ v[0]) & 0x80000000) | 0x40000000;
         }
       }
       int cmp(uint* a, uint* b)
       {
         int sa = sig(a), sb = sig(b);
         if (sa != sb) return sa > sb ? +1 : -1; if (sa == 0) return 0;
-        uint na, la = (na = a[0] & F.Mask) + a[na + 1];
-        uint nb, lb = (nb = b[0] & F.Mask) + b[nb + 1];
+        uint na, la = (na = a[0] & 0x3fffffff) + a[na + 1];
+        uint nb, lb = (nb = b[0] & 0x3fffffff) + b[nb + 1];
         fixed (uint* u = rent(la + lb + 4))
         {
           mul(a, b + (nb + 1), u); var v = u + (u[0] + 1);
@@ -2386,20 +2386,20 @@ namespace System.Numerics.Rational
       }
       void norm(uint* p)
       {
-        Debug.Assert((p[0] & F.Norm) != 0);
-        var d = p + ((p[0] & F.Mask) + 1);
-        if (*(ulong*)d == 0x100000001) { p[0] &= ~F.Norm; return; }
+        Debug.Assert((p[0] & 0x40000000) != 0);
+        var d = p + ((p[0] & 0x3fffffff) + 1);
+        if (*(ulong*)d == 0x100000001) { p[0] &= ~0x40000000u; return; }
         if (*(ulong*)d == 1) { *(ulong*)p = *(ulong*)(p + 2) = 1; return; } //NaN
         var l = len(p);
         fixed (uint* s = rent(l << 1))
         {
-          copy(s, p, l); s[0] &= F.Mask;
+          copy(s, p, l); s[0] &= 0x3fffffff;
           var e = gcd(s, s + (s[0] + 1));
-          if (*(ulong*)e == 0x100000001) { p[0] &= ~F.Norm; pop(); return; }
+          if (*(ulong*)e == 0x100000001) { p[0] &= ~0x40000000u; pop(); return; }
           var t = s + l; var h = p[0];
-          copy(t, p, l); t[0] &= F.Mask;
+          copy(t, p, l); t[0] &= 0x3fffffff;
           d = t + (t[0] + 1); div(t, e, p); div(d, e, p + (p[0] + 1));
-          p[0] |= (h & F.Sign); pop();
+          p[0] |= (h & 0x80000000); pop();
         }
       }
 
@@ -2420,7 +2420,7 @@ namespace System.Numerics.Rational
       }
       static void mul(uint* a, uint* b, uint* r)
       {
-        uint na = a[0] & F.Mask, nb = b[0] & F.Mask;
+        uint na = a[0] & 0x3fffffff, nb = b[0] & 0x3fffffff;
         if (na < nb) { var u = na; na = nb; nb = u; var v = a; a = b; b = v; }
         uint f = b[1];
         if (nb == 1)
@@ -2428,13 +2428,6 @@ namespace System.Numerics.Rational
           if (f == 0) { *(ulong*)r = 1; return; }
           if (f == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
         }
-        //if (nb >= klim) //todo: benchmarks
-        //{
-        //  var n = na + nb; for (uint i = 1; i <= n; i++) r[i] = 0;
-        //  kmul(a + 1, na, b + 1, nb, r + 1, n);
-        //  r[0] = n; while (r[r[0]] == 0) r[0]--;
-        //  return;
-        //}
         ulong c = 0;
         for (uint i = 1; i <= na; i++)
         {
@@ -2457,7 +2450,7 @@ namespace System.Numerics.Rational
       }
       static void sqr(uint* a, uint* r)
       {
-        uint n = *a++ & F.Mask; var v = r + 1;
+        uint n = *a++ & 0x3fffffff; var v = r + 1;
         if (n == 1)
         {
           *(ulong*)v = (ulong)a[0] * a[0];
@@ -2478,7 +2471,7 @@ namespace System.Numerics.Rational
       }
       static void div(uint* a, uint* b, uint* r)
       {
-        uint na = a[0], nb = b[0] & F.Mask; if (r != null) *(ulong*)r = 1;
+        uint na = a[0], nb = b[0] & 0x3fffffff; if (r != null) *(ulong*)r = 1;
         if (na < nb) return;
         if (na == 1)
         {
@@ -2523,13 +2516,13 @@ namespace System.Numerics.Rational
             vl = (vl << sh) | (va >> sb);
           }
           ulong di = vh / dh;
-          if (di > 0xFFFFFFFF) di = 0xFFFFFFFF;
+          if (di > 0xffffffff) di = 0xffffffff;
           for (; ; )
           {
             ulong th = dh * di;
             ulong tl = dl * di;
             th = th + (tl >> 32);
-            tl = tl & 0xFFFFFFFF;
+            tl = tl & 0xffffffff;
             if (th < vh) break; if (th > vh) { di--; continue; }
             if (tl < vl) break; if (tl > vl) { di--; continue; }
             break;
@@ -2564,7 +2557,7 @@ namespace System.Numerics.Rational
       }
       static void shl(uint* p, int c)
       {
-        var s = c & 31; uint d = (uint)c >> 5, n = p[0] & F.Mask; p[0] = p[n + 1] = 0;
+        var s = c & 31; uint d = (uint)c >> 5, n = p[0] & 0x3fffffff; p[0] = p[n + 1] = 0;
         for (int i = (int)n + 1; i > 0; i--) p[i + d] = (p[i] << s) | unchecked((uint)((ulong)p[i - 1] >> (32 - s)));
         for (int i = 1; i <= d; i++) p[i] = 0;
         n += d; p[0] = p[n + 1] != 0 ? n + 1 : n;
@@ -2572,11 +2565,10 @@ namespace System.Numerics.Rational
       internal static void shr(uint* p, int c)
       {
         int s = c & 31, r = 32 - s;
-        uint n = p[0] & F.Mask, i = 0, k = 1 + unchecked((uint)c >> 5), l = k <= n ? p[k++] >> s : 0;
+        uint n = p[0] & 0x3fffffff, i = 0, k = 1 + unchecked((uint)c >> 5), l = k <= n ? p[k++] >> s : 0;
         while (k <= n) { var t = p[k++]; p[++i] = l | unchecked((uint)((ulong)t << r)); l = t >> s; }
         if (l != 0 || i == 0) p[++i] = l; p[0] = i;
       }
-
       static uint* gcd(uint* u, uint* v)
       {
         var su = clz(u); if (su != 0) shr(u, su);
@@ -2658,23 +2650,70 @@ namespace System.Numerics.Rational
           if (a[i] != b[i]) return a[i] > b[i] ? +1 : -1;
         return 0;
       }
-
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static bool isz(uint* p)
       {
-        Debug.Assert((*(ulong*)p & ~(ulong)(F.Norm | F.Sign)) != 1 || *(ulong*)p == 1);
-        return *(ulong*)p == 1; //return (*(ulong*)p & ~(ulong)F.Norm) == 1;
+        Debug.Assert((*(ulong*)p & ~(ulong)(0x40000000 | 0x80000000)) != 1 || *(ulong*)p == 1);
+        return *(ulong*)p == 1; //return (*(ulong*)p & ~(ulong)0x40000000) == 1;
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static bool isint(uint* p)
       {
-        return *(ulong*)(p + ((p[0] & F.Mask) + 1)) == 0x100000001;
+        return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000001;
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static int sig(uint* p)
       {
-        return (p[0] & F.Sign) != 0 ? -1 : isz(p) ? 0 : +1;
+        return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
       }
+      #region experimental
+      static void _mul(uint* a, uint* b, uint* r)
+      {
+        uint na = a[0] & 0x3fffffff, nb = b[0] & 0x3fffffff;
+        if (na < nb) { var t1 = na; na = nb; nb = t1; var t2 = a; a = b; b = t2; }
+        if (nb == 1)
+        {
+          if (b[1] == 0) { *(ulong*)r = 1; return; }
+          if (b[1] == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
+        }
+        var mx = Vector128.Create(0u, 1, 2, 3);
+        for (uint k = 0; k < nb; k++)
+        {
+          var bl = Avx2.BroadcastScalarToVector256(b + 1 + k);
+          uint c = 0;
+          for (uint i = 0; i < na; i += 4)
+          {
+            var ma = Avx2.Subtract(mx, Vector128.Create(na - i));
+            var va = Avx2.ConvertToVector256Int64(Avx2.MaskLoad(a + 1 + i, ma));
+            var u6 = Avx2.Multiply(Vector256.AsUInt32(va), bl);
+            if (k != 0)
+            {
+              var uc = Avx2.ConvertToVector256Int64(Avx2.MaskLoad(r + 1 + k + i, ma));
+              u6 = Avx2.Add(u6, Vector256.AsUInt64(uc));
+            }
+            if (c != 0) { u6 = Avx2.Add(u6, Vector256.CreateScalar((ulong)c)); c = 0; }
+            for (; ; )
+            {
+              var cm = Avx2.CompareEqual(Vector256.AsUInt32(u6), Vector256.CreateScalar(0u));
+              var mm = (uint)Avx2.MoveMask(Vector256.AsByte(cm));
+              if ((~mm & 0xf0f0f0f0) == 0) break;
+              var t1 = Vector256.AsUInt32(u6);
+              var t2 = Avx2.And(t1, Vector256.Create(0u, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff));
+              c += Vector256.GetElement(t2, 7);
+              t2 = Avx2.PermuteVar8x32(t2, Vector256.Create(0u, 0, 1, 0, 3, 0, 5, 0));
+              u6 = Vector256.AsUInt64(Avx2.And(t1, Vector256.Create(0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0u)));
+              u6 = Avx2.Add(u6, Vector256.AsUInt64(t2));
+            }
+            var u7 = Avx2.PermuteVar8x32(Vector256.AsUInt32(u6), Vector256.Create(0u, 2, 4, 6, 1, 3, 5, 7));
+            var u8 = Avx2.ExtractVector128(u7, 0);
+            var mc = Avx2.Subtract(mx, Vector128.Create(na + 1 - i));
+            Avx2.MaskStore(r + 1 + k + i, mc, u8);
+          }
+          if ((na & 3) == 0) r[na + k + 1] = c; else if (c != 0) { }
+        }
+        for (r[0] = na + nb; r[r[0]] == 0 && r[0] > 1; r[0]--) ;
+      }
+      #endregion
     }
 
     /// <summary>
@@ -2689,11 +2728,10 @@ namespace System.Numerics.Rational
     [ThreadStatic] private static CPU? _cpu;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     NewRational(uint[] p) { this.p = p; }
-    struct F { internal const uint Mask = 0x3fffffff, Sign = 0x80000000, Norm = 0x40000000; }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static uint len(uint* p)
     {
-      var n = p[0] & F.Mask;
+      var n = p[0] & 0x3fffffff;
       return n + p[n + 1] + 2;
     }
     static void copy(uint* d, uint* s, uint n)
@@ -2721,68 +2759,6 @@ namespace System.Numerics.Rational
           }
         }
       }
-      #region experimental
-#if false
-      public void cut(int c, int i = 0)
-      {
-        Debug.Assert(c >= 0);
-        fixed (uint* p = this.p[this.i - 1 - i])
-        {
-          var h = p[0]; var n = h & F.Mask;
-          var x = unchecked(((uint)c >> 5) + 1); if (x > n) return;
-          p[x] &= unchecked((uint)((1 << (c & 31)) - 1)); for (; x > 1 && p[x] == 0; x--) ;
-          if (n != x) { copy(p + (x + 1), p + (x + 1) + (n - x), p[n + 1] + (x + 1)); p[0] = x; }
-          if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
-          p[0] |= (h & F.Sign) | F.Norm;
-        }
-      }
-      const uint klim = 16;
-      static void kmul(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
-      {
-        Debug.Assert(na >= nb && nr == na + nb);
-        if (nb < klim)
-        {
-          for (uint i = 0; i < nb; i++)
-          {
-            ulong c = 0, d;
-            for (uint k = 0; k < na; k++, c = d >> 32) r[i + k] = unchecked((uint)(d = r[i + k] + c + (ulong)a[k] * b[i]));
-            r[i + na] = (uint)c;
-          }
-          return;
-        }
-        uint n = nb >> 1, m = n << 1;
-        kmul(a, n, b, n, r, m); // p1 = al * bl
-        kmul(a + n, na - n, b + n, nb - n, r + m, nr - m); // p2 = ah * bh
-        uint r1 = na - n + 1, r2 = nb - n + 1, r3 = r1 + r2, r4 = r1 + r2 + r3;
-        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; for (uint i = 0; i < r4; i++) t1[i] = 0;
-        add(a + n, na - n, a, n, t1, r1);
-        add(b + n, nb - n, b, n, t2, r2);
-        kmul(t1, r1, t2, r2, t3, r3); // p3 = (ah + al) * (bh + bl)
-        sub(r + m, nr - m, r, m, t3, r3);
-        ada(r + n, nr - n, t3, r3); // (p2 << m) + ((p3 - (p1 + p2)) << n) + p1
-        static void sub(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
-        {
-          uint i = 0; long c = 0, d;
-          for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i] - b[i]));
-          for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i]));
-          for (; c != 0 && i < nr; i++, c = d >> 32) r[i] = unchecked((uint)(d = r[i] + c));
-        }
-        static void add(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
-        {
-          uint i = 0; ulong c = 0, d; Debug.Assert(na >= nb && nr == na + 1);
-          for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
-          for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = a[i] + c));
-          r[i] = unchecked((uint)c);
-        }
-        static void ada(uint* a, uint na, uint* b, uint nb)
-        {
-          uint i = 0; ulong c = 0L, d; Debug.Assert(na >= nb);
-          for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
-          for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
-        }
-      }
-#endif
-      #endregion
     }
     #endregion
   }

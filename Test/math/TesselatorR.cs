@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+#pragma warning disable CS8602
 
 namespace Test
 {
@@ -35,10 +31,6 @@ namespace Test
       if (state != 1) { state = 0; throw new Exception(); }
       state = 2; fi = np;
     }
-    public void AddVertex(in Vector3R p)
-    {
-      AddVertex(p.X, p.Y, p.Z);
-    }
     public void AddVertex(rat x, rat y, rat z = default)
     {
       if (state != 2) { state = 0; throw new Exception(); }
@@ -56,6 +48,10 @@ namespace Test
     public void AddVertex(Vector2 p)
     {
       AddVertex(p.X, p.Y, 0);
+    }
+    public void AddVertex(in Vector3R p)
+    {
+      AddVertex(p.X, p.Y, p.Z);
     }
     public void EndContour()
     {
@@ -337,7 +333,6 @@ namespace Test
       Outline = 0x1000, OutlinePrecise = 0x2000, Trim = 0x8000,
       NormX = 0x10000, NormY = 0x20000, NormZ = 0x40000, NormNeg = 0x80000
     }
-#pragma warning disable CS8602
     const int hash = 199; //1103
     int state, ns, nl, nc, fi; int[]? ss, ll, lc;
     int np; (int next, int ic, int line, int fl)[] pp;
@@ -573,7 +568,6 @@ namespace Test
       Debug.Assert(pp.Length >= np);
       fixed (void* tp = pp)
       {
-#if true
         var dd = (Vector2*)tp;
         for (int i = 0; i < np; i++)
         {
@@ -607,44 +601,6 @@ namespace Test
           var l = Vector2.Dot(d = p - d, d);
           return l >= r;
         }
-#else        
-        var dd = ((double x, double y)*)tp;
-        for (int i = 0; i < np; i++)
-        {
-          cpu.get((uint)(i * 8 + 0), out dd[i].x);
-          cpu.get((uint)(i * 8 + 1), out dd[i].y);
-        }
-        for (int i = 0, t; i < ns; i++)
-        {
-          if (kk[i].b == 1) continue; var k = kk[i].a; if (k == -1) continue;
-          int u1, u2, v2, i1 = ss[i], i2 = ss[u1 = mod(i, 1)], i3 = ss[u2 = mod(i, 2)], k3 = ss[v2 = mod(k, 2)];
-          if (circum(dd, i1, i2, i3, k3)) { kk[i].b = kk[k].b = 1; continue; } //ok
-          ss[i] = k3; ss[k] = i3; int j = i, v1 = mod(k, 1);
-          if ((t = kk[u1].a) != -1) { kk[t].b = 0; if (t < j) j = t; }
-          if ((t = kk[v1].a) != -1) { kk[t].b = 0; if (t < j) j = t; }
-          if ((t = kk[i].a = kk[v2].a) != -1) { kk[t].a = i; kk[t].b = 0; if (t < j) j = t; }
-          if ((t = kk[k].a = kk[u2].a) != -1) { kk[t].a = k; kk[t].b = 0; if (t < j) j = t; }
-          kk[kk[u2].a = v2].a = u2; if (j < i) i = j - 1;
-        }
-        static double ccw(in (double x, double y) a, in (double x, double y) b) => a.x * b.y - a.y * b.x;
-        static double dot(in (double x, double y) a) => a.x * a.x + a.y * a.y;
-        //if (dd == null || dd.Length < np) dd = new (double x, double y)[np]; // ensure(ref dd, tp.Length);
-        static bool circum((double x, double y)* dd, int i1, int i2, int i3, int i4)
-        {
-          var a = dd[i1]; var b = dd[i2];
-          var c = dd[i3]; var d = dd[i4];
-          var ab = (x: (a.x + b.x) * 0.5, y: (a.y + b.y) * 0.5);
-          var bc = (x: (b.x + c.x) * 0.5, y: (b.y + c.y) * 0.5);
-          var va = (x: a.y - b.y, y: b.x - a.x);
-          var vb = (x: b.y - c.y, y: c.x - b.x);
-          var f = ccw(vb, (ab.x - bc.x, ab.y - bc.y)) / ccw(va, vb);
-          var x = ab.x + va.x * f;
-          var y = ab.y + va.y * f;
-          var r = dot((x - a.x, y - a.y));
-          var l = dot((x - d.x, y - d.y));
-          return l >= r;
-        }
-#endif
       }
     }
     void trim()
