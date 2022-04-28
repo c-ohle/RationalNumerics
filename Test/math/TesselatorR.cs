@@ -488,14 +488,14 @@ namespace Test
     int project(int m)
     {
       if (m == 0 && (m = (((int)Options >> 15) & 0x12) | (((int)Options >> 17) & 1)) == 0) return m;
-      for (int i = 0; i < np; i++)
+      for (uint i = 0; i < np; i++)
       {
-        var k = (uint)(i * 8);
+        var k = i * 8;
         if ((m & 0x40) != 0) cpu.neg(k + 1); // p.y = -p.y;
         switch (m & 0xf)
         {
-          case 1: case 8: { cpu.swp(k + 0, k + 1); cpu.swp(k + 0, k + 2); } break; // new vector3(p.z, p.x, p.y);
-          case 2: case 4: { cpu.swp(k + 0, k + 1); cpu.swp(k + 1, k + 2); } break; // new vector3(p.y, p.z, p.x);
+          case 1: case 8: cpu.swp(k + 0, k + 1); cpu.swp(k + 0, k + 2); break; // new vector3(p.z, p.x, p.y);
+          case 2: case 4: cpu.swp(k + 0, k + 1); cpu.swp(k + 1, k + 2); break; // new vector3(p.y, p.z, p.x);
         }
         if ((m & 0x10) != 0) cpu.neg(k + 1); // p.y = -p.y;
       }

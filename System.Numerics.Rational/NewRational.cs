@@ -1192,7 +1192,7 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = rent(4))
         {
-          p[0] = (v < 0 ? 0x80000000 : 0) | 1;
+          p[0] = unchecked((uint)v & 0x80000000) | 1;
           p[1] = unchecked((uint)(v < 0 ? -v : v)); *(ulong*)(p + 2) = 0x100000001;
         }
       }
