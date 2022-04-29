@@ -383,8 +383,8 @@
       // 
       // MandelbrotPage
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      //this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+      //this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.buttonReset);
       this.Controls.Add(this.numericUpDownRound);
       this.Controls.Add(this.numericUpDownIter);

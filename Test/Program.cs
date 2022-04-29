@@ -14,6 +14,9 @@ namespace Test
     static void Main()
     {
       ApplicationConfiguration.Initialize(); test();
+      //Application.EnableVisualStyles();
+      //Application.SetCompatibleTextRenderingDefault(false);
+      //Application.SetHighDpiMode(HighDpiMode.SystemAware);
       Application.Run(new MainFrame());
     }
     static void test()

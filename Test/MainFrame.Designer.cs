@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.mandelbrotPage1 = new Test.MandelbrotPage();
@@ -130,8 +131,8 @@
       // 
       // MainFrame
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      //this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+      //this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1018, 621);
       this.Controls.Add(this.tabControl1);
       this.Controls.Add(this.labelDebug);
