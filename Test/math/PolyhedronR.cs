@@ -45,7 +45,7 @@ namespace Test
 
       var tess = Pool.Rent<TesselatorR>();
       tess.Winding = Winding.AbsGeqTwo;
-      tess.Options = TesselatorR.Option.Fill;
+      tess.Options = TesselatorR.Option.Fill | TesselatorR.Option.Delaunay;
 
       for (int i = 0; i < bee.Length; i++)
       {
@@ -65,7 +65,7 @@ namespace Test
         tess.EndPolygon();
         add(ppp, iii, tess); if (map != null) map.AddRange(Enumerable.Repeat((i << 1) | 1, (iii.Count - nii) / 3));
       }
-      tess.Winding = Winding.Positive;
+      tess.Winding = Winding.Positive;  
       for (int i = 0; i < aee.Length; i++)
       {
         var e = aee[i]; var box = getbox(app, e.ii); var nii = iii.Count;
@@ -137,7 +137,7 @@ namespace Test
 
       var tess = Pool.Rent<TesselatorR>();
       tess.Winding = Winding.NonZero;
-      tess.Options = TesselatorR.Option.Fill;
+      tess.Options = TesselatorR.Option.Fill | TesselatorR.Option.Delaunay;
 
       var iii = Pool.Rent<List<int>>(); iii.Clear(); iii.EnsureCapacity(ni);
       var ppp = Pool.Rent<Dictionary<Vector3R, int>>(); ppp.Clear(); ppp.EnsureCapacity(np);
@@ -183,12 +183,12 @@ namespace Test
         if (ff[ii[i]] == 0 && ff[ii[k = mod(i)]] == 0)
           add(abs, ii[k], ii[i]);
 
-      tess.SetNormal(plane.Normal);
+      tess.SetNormal(plane.Normal); //tess.Options ^= TesselatorR.Option.NormNeg;
       tess.BeginPolygon();
       tessel(tess, pp, abs);
       tess.EndPolygon();
       iii.Clear(); var t2 = ppp.Count;
-      add(ppp, iii, tess); Debug.Assert(t2 == ppp.Count);
+      add(ppp, iii, tess); Debug.Assert(t2 == ppp.Count); //for (int i = 0; i < iii.Count; i += 3) { var t = iii[i]; iii[i] = iii[i + 1]; iii[i + 1] = t; }
       ii.AddRange(iii);
 
       if (map != null) { map.AddRange(Enumerable.Repeat(1, iii.Count / 3)); Debug.Assert(map.Count * 3 == ii.Count); }
@@ -279,7 +279,7 @@ namespace Test
     {
       int np = pp.Count, fa = 0;
       for (int i = 0; i < np; i++)
-        fa |= ff[i] = 1 << (1 + PlaneR.DotCoordSign(plane, pp[i]));
+        fa |= ff[i] = 1 << (1 - PlaneR.DotCoordSign(plane, pp[i]));
       return fa;
     }
     static (Vector3R min, Vector3R max) getbox(List<Vector3R> pp)
@@ -469,7 +469,7 @@ namespace Test
       throw new Exception();
     }
 
-    static class Pool
+    public static class Pool
     {
       static GCHandle[] pool = new GCHandle[4]; static int count;
       public static T Rent<T>() where T : new()

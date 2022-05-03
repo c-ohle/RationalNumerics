@@ -620,8 +620,8 @@ namespace Test
           break;
         case 0x0200: //WM_MOUSEMOVE
           if (tool != null) { point = new System.Drawing.Point((int)m.LParam); tool(0); Refresh(); return; }
-          pick(new System.Drawing.Point((int)m.LParam));
-          SetCursor(LoadCursor(null, (void*)Math.Max(32512, OnDispatch(m.Msg, new PC(this))))); return;
+          pick(new System.Drawing.Point((int)m.LParam)); OnDispatch(m.Msg, new PC(this)); 
+          break;
         case 0x0202: //WM_LBUTTONUP
         case 0x0205: //WM_RBUTTONUP
         case 0x0208: //WM_MBUTTONUP
@@ -650,10 +650,9 @@ namespace Test
           if (OnDispatch(m.Msg, new PC(this)) != 0) return;
           break;
         case 0x0005: releasebuffers(false); Invalidate(); base.Invalidate(); break; //WM_SIZE
-        case 0x0020: m.Result = (IntPtr)1; return; // WM_SETCURSOR
+        //case 0x0020: m.Result = (IntPtr)1; return; // WM_SETCURSOR
         case 0x0100: //WM_KEYDOWN  
-        case 0x0102: //WM_CHAR   
-                     //case 0x0104: //WM_SYSKEYDOWN
+        case 0x0102: //WM_CHAR //case 0x0104: //WM_SYSKEYDOWN
           if (OnDispatch(m.Msg | ((int)m.WParam << 16), new PC(this)) != 0) { Refresh(); return; }
           break;
         case 0x0007:  //WM_SETFOCUS
@@ -757,8 +756,7 @@ namespace Test
     public enum Rasterizer { CullNone = 0, CullFront = 1, CullBack = 2, Wireframe = 3 }
     public enum Sampler { Default = 0, Font = 1, Line = 2 }
     public enum DepthStencil { Default = 0, ZWrite = 1, StencilInc = 2, StencilDec = 3, ClearZ = 4, TwoSide = 5, ClearStencil = 6 }
-    public enum SysCursor { ARROW = 32512, IBEAM = 32513, WAIT = 32514, CROSS = 32515, UPARROW = 32516, SIZE = 32640, ICON = 32641, SIZENWSE = 32642, SIZENESW = 32643, SIZEWE = 32644, SIZENS = 32645, SIZEALL = 32646, NO = 32648, HAND = 32649, APPSTARTING = 32650, HELP = 32651 }
-
+    
     static Vector3 ToVector3(Vector4 p)
     {
       return new Vector3(p.X / p.W, p.Y / p.W, p.Z / p.W);
@@ -1004,9 +1002,9 @@ namespace Test
         vv[15].p = new Vector3(box.Min.X, box.Min.Y, box.Max.Z);
         this.EndVertices(16, Topology.LineStrip);
       }
-      public void DrawPolygon(int np)
+      public void DrawPolygon(int i, int np)
       {
-        DrawPolygon((Vector3*)StackPtr + 13, np);
+        DrawPolygon(((Vector3*)StackPtr + 13) + i, np);
       }
       public void DrawPolygon(Vector3* pp, int np)
       {
@@ -1238,11 +1236,11 @@ namespace Test
       internal DC(DX11Ctrl p) { view = p; }
       DX11Ctrl view;
 
-      internal void Clear(CLEAR fl)
+      public void Clear(CLEAR fl)
       {
         context.ClearDepthStencilView(currentdsv, fl, 1, 0);
       }
-      internal int State
+      public int State
       {
         get { return mode; }
         set
