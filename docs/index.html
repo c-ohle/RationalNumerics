@@ -72,12 +72,12 @@
 <p>There are already many implementations of rational number classes called Rational, BigRational, Fraction etc.<br>
 For C# the useful ones are based on a combination of System.Numerics.BigInteger for numerator and denominator,<br>
 which in fact has the benefit of a really simple implementation.<br>
-It works fine but in praxis it has several disadvantages:</p>
+It works well, but in practice has several disadvantages:</p>
 <ul>
 <li>Performance is limited by System.Numerics.BigInteger which is not primarily designed for rational arithmetic.</li>
-<li>Using BigInteger leads to a lot of unnecessary memory allocations for all the intermediate results at runtime, which means, extra work for the GC.</li>
+<li>Using BigInteger leads to a lot of unnecessary memory allocations for all intermediate results at runtime which means extra work for the GC.</li>
 <li>Based on BigInteger the struct size of a Rational is unnecessary big, therefore also inefficient to use in Vector or Matrix classes.</li>
-<li>The system requires a lot of internal memory copies, bad for the overall performance.</li>
+<li>The system requires a lot of internal memory copies bad for the overall performance.</li>
 <li>There is no way to benefit from the performance improvements in .NET Core, like using Spans, Buffers and Intrinsics.</li>
 </ul>
 <p>NewRational is based on a completely new system to achieve better efficiency and performance.<br>
@@ -112,7 +112,7 @@ Using this interface allows optimization on function level with performance impr
 Furthermore, this design separates the NewRational struct from the calculation core, the final number object is always normalized what makes the handling, comparsions etc. much easier and doesn't impact the performance of the calculations.</p>
 <h3 id="data-layout">Data Layout</h3>
 <p>All data, numerator and denominator, is stored in a single variable-length uint array.<br>
-This gives the NewRational struct itself a machine word size and can therefore internal passed around as fast as possible.</p>
+This gives the NewRational struct itself a machine word size and therefore can be passed around internal as fast as possible.</p>
 <pre><code class="lang-c#">public readonly struct NewRational
 {
   private readonly uint[] p; // the one and only field
@@ -125,28 +125,27 @@ A null array, as default value of the struct, represents the number 0 (zero).</p
 <ul>
 <li>Exchange, transfer, serialization and marshalling is easy, for example via COM.</li>
 <li>The calculation core can directly access the integer parts without conversions.</li>
-<li>As Span it is very efficient to build vectors or multidimensional matrices.</li>
+<li>As <code>Span</code> it is very efficient to build vectors or multidimensional matrices.</li>
 <li>The content is easy to debug.</li>
 </ul>
-<p>The disadvantage is that small numbers that would fit in a machine word, also requires an array.<br>
+<p>The disadvantage is that small numbers require an array even if they would fit in a machine word.<br>
 This is the price for a optimal throughput and less code as there are no special cases to handle.</p>
 <h2 id="stack-machine">Stack machine</h2>
 <p>The stack machine, named CPU, is implemented as nested class in NewRational to get access to the private member.<br>
-The class has only two private fields, an array of arrays of uint (uint[][] p) and a index (int i) that marks the current stack top.</p>
+The class has only two private fields: An array of arrays of uint (uint[][] p) and an index (int i) that marks the current stack top.</p>
 <pre><code class="lang-c#">public struct NewRational 
 {  
   public class CPU
   {
     uint[][] p; int i;
 </code></pre>
-<p>A push operation increases the index and can use the buffer at p[i], which is mostly already of the required size.<br>
+<p>A push operation increases the index and can use the buffer at p[i], which mostly already has the required size.<br>
 A pop operation does nothing else than decrement the index.<br>
 Each uint[] buffer in the stack represents a rational number with the same data layout as in struct NewRational.</p>
 <p>Internally the stack is used excessively for all basic arithmetic operations
 and so no further memory management is necessary.<br>
 However, in consequence, for every single calculation step with NewRational numbers it needs a instance of
-such stack-machine object what is only efficient when it is as shared object always available.
-For this there is one thread-local static instance named <code>task_cpu</code>, exposed as static property in NewRational.</p>
+such stack-machine object what is only efficient when it is as shared object always available. There is a thread-local static instance called <code>task_cpu</code> for this, which is exposed as a static property in NewRational.</p>
 <pre><code class="lang-c#">public static CPU task_cpu
 {
   get { return _cpu ??= new CPU(); }

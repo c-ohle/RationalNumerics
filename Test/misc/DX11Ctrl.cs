@@ -65,7 +65,7 @@ namespace Test
 
     protected uint BkColor { get; set; }
     protected abstract void OnRender(DC dc);
-    protected abstract int OnDispatch(int id, PC dc);
+    protected abstract int OnMouse(int id, PC dc);
 
     VIEWPORT viewport; bool inval;
     ISwapChain? swapchain; void* rtv, dsv; //IRenderTargetView, IDepthStencilView
@@ -616,48 +616,48 @@ namespace Test
         case 0x0204: //WM_RBUTTONDOWN
         case 0x0207: //WM_MBUTTONDOWN
           Capture = true; //Focus();
-          pick(new System.Drawing.Point((int)m.LParam)); if (OnDispatch(m.Msg, new PC(this)) != 0) return;
+          pick(new System.Drawing.Point((int)m.LParam)); if (OnMouse(m.Msg, new PC(this)) != 0) return;
           break;
         case 0x0200: //WM_MOUSEMOVE
           if (tool != null) { point = new System.Drawing.Point((int)m.LParam); tool(0); Refresh(); return; }
-          pick(new System.Drawing.Point((int)m.LParam)); OnDispatch(m.Msg, new PC(this)); 
+          pick(new System.Drawing.Point((int)m.LParam)); OnMouse(m.Msg, new PC(this));
           break;
         case 0x0202: //WM_LBUTTONUP
         case 0x0205: //WM_RBUTTONUP
         case 0x0208: //WM_MBUTTONUP
           Capture = false;
           if (tool != null) { tool(1); tool = null; }
-          if (OnDispatch(m.Msg, new PC(this)) != 0) return;
+          if (OnMouse(m.Msg, new PC(this)) != 0) return;
           break;
         case 0x020A: //WM_MOUSEWHEEL
         case 0x020E: //WM_MOUSEHWHEEL
           if (tool != null) return;
           pick(PointToClient(Cursor.Position)); pickprim = (int)m.WParam.ToInt64() >> 16;
-          OnDispatch(m.Msg, new PC(this));
+          OnMouse(m.Msg, new PC(this));
           return;
         case 0x0203: //WM_LBUTTONDBLCLK  
-          OnDispatch(m.Msg, new PC(this));
+          OnMouse(m.Msg, new PC(this));
           return;
         case 0x02A3: //WM_MOUSELEAVE
           if (indrag) return;
           if (tool != null) { tool(1); tool = null; }
-          OnDispatch(m.Msg, new PC(this)); pickdata = pickview = null; pickid = 0;
+          OnMouse(m.Msg, new PC(this)); pickdata = pickview = null; pickid = 0;
           return;
         //case 0x0233: //WM_DROPFILES
         //  OnDispatch(m.Msg, new PC(this));
         //  return;
         case 0x007B: //WM_CONTEXTMENU 
-          if (OnDispatch(m.Msg, new PC(this)) != 0) return;
+          if (OnMouse(m.Msg, new PC(this)) != 0) return;
           break;
         case 0x0005: releasebuffers(false); Invalidate(); base.Invalidate(); break; //WM_SIZE
         //case 0x0020: m.Result = (IntPtr)1; return; // WM_SETCURSOR
         case 0x0100: //WM_KEYDOWN  
         case 0x0102: //WM_CHAR //case 0x0104: //WM_SYSKEYDOWN
-          if (OnDispatch(m.Msg | ((int)m.WParam << 16), new PC(this)) != 0) { Refresh(); return; }
+          if (OnMouse(m.Msg | ((int)m.WParam << 16), new PC(this)) != 0) { Refresh(); return; }
           break;
         case 0x0007:  //WM_SETFOCUS
         case 0x0008:  //WM_KILLFOCUS
-          OnDispatch(m.Msg, new PC(this));
+          OnMouse(m.Msg, new PC(this));
           return;
         case 0x0001: //WM_CREATE
           next = first; first = this;
@@ -678,7 +678,7 @@ namespace Test
     {
       indrag = true; if (tool != null) { tool(1); tool = null; }
       pick(PointToClient(Cursor.Position)); var t = this.Tag; this.Tag = e.Data;
-      OnDispatch(0x0233, new PC(this)); this.Tag = t; //WM_DROPFILES      
+      OnMouse(0x0233, new PC(this)); this.Tag = t; //WM_DROPFILES      
       if (tool != null) e.Effect = DragDropEffects.Copy;
     }
     protected override void OnDragOver(DragEventArgs e)
@@ -756,7 +756,31 @@ namespace Test
     public enum Rasterizer { CullNone = 0, CullFront = 1, CullBack = 2, Wireframe = 3 }
     public enum Sampler { Default = 0, Font = 1, Line = 2 }
     public enum DepthStencil { Default = 0, ZWrite = 1, StencilInc = 2, StencilDec = 3, ClearZ = 4, TwoSide = 5, ClearStencil = 6 }
-    
+    public enum State
+    {
+      Default2D = (
+        ((int)PixelShader.Color << 4) |
+        ((int)VertexShader.Default << 28) |
+        ((int)DepthStencil.Default << 8) |
+        ((int)Rasterizer.CullNone << 16) |
+        ((int)BlendState.Opaque << 12)),
+      Default3D = (
+        ((int)PixelShader.Color3D << 4) |
+        ((int)VertexShader.Lighting << 28) |
+        ((int)DepthStencil.ZWrite << 8) |
+        ((int)Rasterizer.CullBack << 16) |
+        ((int)BlendState.Opaque << 12) |
+        ((int)Topology.TriangleListAdj)),
+      Shadows3D = (
+        ((int)PixelShader.Null << 4) |
+        ((int)VertexShader.World << 28) |
+        ((int)DepthStencil.TwoSide << 8) |
+        ((int)Rasterizer.CullNone << 16) |
+        ((int)BlendState.Opaque << 12) |
+        ((int)Topology.TriangleListAdj) |
+        ((int)GeometryShader.Shadows << 24)),
+    }
+
     static Vector3 ToVector3(Vector4 p)
     {
       return new Vector3(p.X / p.W, p.Y / p.W, p.Z / p.W);
@@ -1240,18 +1264,18 @@ namespace Test
       {
         context.ClearDepthStencilView(currentdsv, fl, 1, 0);
       }
-      public int State
+      public State State
       {
-        get { return mode; }
+        get { return (State)mode; }
         set
         {
-          if (((value ^ mode) & 0x00000f00) != 0)
+          if ((((int)value ^ mode) & 0x00000f00) != 0)
             switch ((DepthStencil)((mode & 0x00000f00) >> 8))//dc.DepthStencil)
             {
               case DepthStencil.StencilInc: stencilref++; drvmode |= 0x00000f00; break;
               case DepthStencil.StencilDec: stencilref--; drvmode |= 0x00000f00; break;
             }
-          mode = value;
+          mode = (int)value;
         }
       }
       internal Vertex* BeginVertices(int nv)
