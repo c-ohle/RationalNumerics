@@ -2435,23 +2435,32 @@ namespace System.Numerics.Rational
           if (f == 0) { *(ulong*)r = 1; return; }
           if (f == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
         }
-        ulong c = 0;
-        for (uint i = 1; i <= na; i++)
+        //if (na == 1) *(ulong*)(r + 1) = (ulong)a[1] * b[1];
+        //else
+        if (na == 2 && Bmi2.X64.IsSupported)
         {
-          var d = (ulong)a[i] * f + c;
-          r[i] = unchecked((uint)d); c = d >> 32;
+          *(ulong*)(r + 3) = Bmi2.X64.MultiplyNoFlags(*(ulong*)(a + 1), nb == 2 ? *(ulong*)(b + 1) : b[1], (ulong*)(r + 1));
         }
-        r[na + 1] = unchecked((uint)c);
-        for (uint k = 1; k < nb; k++)
+        else
         {
-          f = b[k + 1]; c = 0; var s = r + k;
-          //if (f == 0) { s[na + 1] = 0; continue; }
+          ulong c = 0;
           for (uint i = 1; i <= na; i++)
           {
-            var d = (ulong)a[i] * f + c + s[i];
-            s[i] = unchecked((uint)d); c = d >> 32;
+            var d = (ulong)a[i] * f + c;
+            r[i] = unchecked((uint)d); c = d >> 32;
           }
-          s[na + 1] = unchecked((uint)c);
+          r[na + 1] = unchecked((uint)c);
+          for (uint k = 1; k < nb; k++)
+          {
+            f = b[k + 1]; c = 0; var s = r + k;
+            //if (f == 0) { s[na + 1] = 0; continue; }
+            for (uint i = 1; i <= na; i++)
+            {
+              var d = (ulong)a[i] * f + c + s[i];
+              s[i] = unchecked((uint)d); c = d >> 32;
+            }
+            s[na + 1] = unchecked((uint)c);
+          }
         }
         if (r[r[0] = na + nb] == 0 && r[0] > 1) { r[0]--; Debug.Assert(!(r[r[0]] == 0 && r[0] > 1)); }
       }
@@ -2463,15 +2472,16 @@ namespace System.Numerics.Rational
           *(ulong*)v = (ulong)a[0] * a[0];
           r[0] = r[2] != 0 ? 2u : 1u; return;
         }
-        if (n == 2) //todo: benchmark
+        if (n == 2 && Bmi2.X64.IsSupported)
         {
-          var t1 = (ulong)a[0] * a[0];
-          var t2 = (ulong)a[0] * a[1];
-          var t3 = (ulong)a[1] * a[1];
-          var t4 = t2 + (t1 >> 32);
-          var t5 = t2 + (uint)t4;
-          ((ulong*)v)[0] = t5 << 32 | (uint)t1;
-          ((ulong*)v)[1] = t3 + (t4 >> 32) + (t5 >> 32);
+          ((ulong*)v)[1] = Bmi2.X64.MultiplyNoFlags(*(ulong*)a, *(ulong*)a, ((ulong*)v));
+          //var t1 = (ulong)a[0] * a[0];
+          //var t2 = (ulong)a[0] * a[1];
+          //var t3 = (ulong)a[1] * a[1];
+          //var t4 = t2 + (t1 >> 32);
+          //var t5 = t2 + (uint)t4;
+          //((ulong*)v)[0] = t5 << 32 | (uint)t1;
+          //((ulong*)v)[1] = t3 + (t4 >> 32) + (t5 >> 32);
         }
         else
         {
@@ -2683,52 +2693,52 @@ namespace System.Numerics.Rational
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
       }
       #region experimental
-      static void _mul(uint* a, uint* b, uint* r)
-      {
-        uint na = a[0] & 0x3fffffff, nb = b[0] & 0x3fffffff;
-        if (na < nb) { var t1 = na; na = nb; nb = t1; var t2 = a; a = b; b = t2; }
-        if (nb == 1)
-        {
-          if (b[1] == 0) { *(ulong*)r = 1; return; }
-          if (b[1] == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
-        }
-        var mx = Vector128.Create(0u, 1, 2, 3);
-        for (uint k = 0; k < nb; k++)
-        {
-          var bl = Avx2.BroadcastScalarToVector256(b + 1 + k);
-          uint c = 0;
-          for (uint i = 0; i < na; i += 4)
-          {
-            var ma = Avx2.Subtract(mx, Vector128.Create(na - i));
-            var va = Avx2.ConvertToVector256Int64(Avx2.MaskLoad(a + 1 + i, ma));
-            var u6 = Avx2.Multiply(Vector256.AsUInt32(va), bl);
-            if (k != 0)
-            {
-              var uc = Avx2.ConvertToVector256Int64(Avx2.MaskLoad(r + 1 + k + i, ma));
-              u6 = Avx2.Add(u6, Vector256.AsUInt64(uc));
-            }
-            if (c != 0) { u6 = Avx2.Add(u6, Vector256.CreateScalar((ulong)c)); c = 0; }
-            for (; ; )
-            {
-              var cm = Avx2.CompareEqual(Vector256.AsUInt32(u6), Vector256.CreateScalar(0u));
-              var mm = (uint)Avx2.MoveMask(Vector256.AsByte(cm));
-              if ((~mm & 0xf0f0f0f0) == 0) break;
-              var t1 = Vector256.AsUInt32(u6);
-              var t2 = Avx2.And(t1, Vector256.Create(0u, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff));
-              c += Vector256.GetElement(t2, 7);
-              t2 = Avx2.PermuteVar8x32(t2, Vector256.Create(0u, 0, 1, 0, 3, 0, 5, 0));
-              u6 = Vector256.AsUInt64(Avx2.And(t1, Vector256.Create(0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0u)));
-              u6 = Avx2.Add(u6, Vector256.AsUInt64(t2));
-            }
-            var u7 = Avx2.PermuteVar8x32(Vector256.AsUInt32(u6), Vector256.Create(0u, 2, 4, 6, 1, 3, 5, 7));
-            var u8 = Avx2.ExtractVector128(u7, 0);
-            var mc = Avx2.Subtract(mx, Vector128.Create(na + 1 - i));
-            Avx2.MaskStore(r + 1 + k + i, mc, u8);
-          }
-          if ((na & 3) == 0) r[na + k + 1] = c; else if (c != 0) { }
-        }
-        for (r[0] = na + nb; r[r[0]] == 0 && r[0] > 1; r[0]--) ;
-      }
+      //static void _mul(uint* a, uint* b, uint* r)
+      //{
+      //  uint na = a[0] & 0x3fffffff, nb = b[0] & 0x3fffffff;
+      //  if (na < nb) { var t1 = na; na = nb; nb = t1; var t2 = a; a = b; b = t2; }
+      //  if (nb == 1)
+      //  {
+      //    if (b[1] == 0) { *(ulong*)r = 1; return; }
+      //    if (b[1] == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
+      //  }
+      //  var mx = Vector128.Create(0u, 1, 2, 3);
+      //  for (uint k = 0; k < nb; k++)
+      //  {
+      //    var bl = Avx2.BroadcastScalarToVector256(b + 1 + k);
+      //    uint c = 0;
+      //    for (uint i = 0; i < na; i += 4)
+      //    {
+      //      var ma = Avx2.Subtract(mx, Vector128.Create(na - i));
+      //      var va = Avx2.ConvertToVector256Int64(Avx2.MaskLoad(a + 1 + i, ma));
+      //      var u6 = Avx2.Multiply(Vector256.AsUInt32(va), bl);
+      //      if (k != 0)
+      //      {
+      //        var uc = Avx2.ConvertToVector256Int64(Avx2.MaskLoad(r + 1 + k + i, ma));
+      //        u6 = Avx2.Add(u6, Vector256.AsUInt64(uc));
+      //      }
+      //      if (c != 0) { u6 = Avx2.Add(u6, Vector256.CreateScalar((ulong)c)); c = 0; }
+      //      for (; ; )
+      //      {
+      //        var cm = Avx2.CompareEqual(Vector256.AsUInt32(u6), Vector256.CreateScalar(0u));
+      //        var mm = (uint)Avx2.MoveMask(Vector256.AsByte(cm));
+      //        if ((~mm & 0xf0f0f0f0) == 0) break;
+      //        var t1 = Vector256.AsUInt32(u6);
+      //        var t2 = Avx2.And(t1, Vector256.Create(0u, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff));
+      //        c += Vector256.GetElement(t2, 7);
+      //        t2 = Avx2.PermuteVar8x32(t2, Vector256.Create(0u, 0, 1, 0, 3, 0, 5, 0));
+      //        u6 = Vector256.AsUInt64(Avx2.And(t1, Vector256.Create(0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0u)));
+      //        u6 = Avx2.Add(u6, Vector256.AsUInt64(t2));
+      //      }
+      //      var u7 = Avx2.PermuteVar8x32(Vector256.AsUInt32(u6), Vector256.Create(0u, 2, 4, 6, 1, 3, 5, 7));
+      //      var u8 = Avx2.ExtractVector128(u7, 0);
+      //      var mc = Avx2.Subtract(mx, Vector128.Create(na + 1 - i));
+      //      Avx2.MaskStore(r + 1 + k + i, mc, u8);
+      //    }
+      //    if ((na & 3) == 0) r[na + k + 1] = c; else if (c != 0) { }
+      //  }
+      //  for (r[0] = na + nb; r[r[0]] == 0 && r[0] > 1; r[0]--) ;
+      //}
       #endregion
     }
 

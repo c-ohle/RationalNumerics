@@ -156,7 +156,7 @@ such stack-machine object what is only efficient when it is as shared object alw
 <p>This simple system has the advantage that it is also easy to debug:</p>
 <img src="images/debug_pi2.png" width="400">  
 <p>The system implies that the stack machine exposes an <a href="api/System.Numerics.Rational.NewRational.CPU.html">instruction set</a>.<br>
-These instructions, for readability as short words, are self explaining basic commands like add(), sub(), mul(), div(), different push() and pop(),  bit level operations like shl(), shr(), but also higher level commands like pow(), mod(), rnd() etc.</p>
+These instructions, for readability as short words, are self explaining basic commands like add(), sub(), mul(), div(), different push() and pop(), bit level operations like shl(), shr(), but also higher level commands like pow(), mod(), rnd() etc.</p>
 <p>Since the rational numbers can have arbitrary size, it is important for the performance to avoid unnecessary memory copies.<br>
 This explains several versions of same instructions, for example:</p>
 <pre><code class="lang-c#">  cpu.push(x); // implies a memory copy
