@@ -53,6 +53,12 @@ namespace Test
     {
       AddVertex(p.X, p.Y, p.Z);
     }
+    //public void AddVertex((int x, int y) p)
+    //{
+    //  var m = cpu.mark(); AddVertex(default(rat), default(rat), default(rat));
+    //  cpu.push(p.x); cpu.swp(m + 0); cpu.pop();
+    //  cpu.push(p.y); cpu.swp(m + 1); cpu.pop();
+    //}
     public void EndContour()
     {
       if (state != 2) { state = 0; throw new Exception(); }

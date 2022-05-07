@@ -57,11 +57,13 @@ namespace Test
       release(ref rtvtex); release(ref dsvtex); release(ref rtvcpu); release(ref dsvcpu); release(ref rtv1); release(ref dsv1);
       if (context != null) { Marshal.ReleaseComObject(context); context = null; }
       if (device != null) { var c = Marshal.ReleaseComObject(device); device = null; }
+      if (wdc != null) { ReleaseDC(null, wdc); wdc = null; }
     }
 
     static long drvsettings;
     const int maxstack = 10000000; //10 MB
     static byte* BasePtr; static byte* StackPtr;
+    static void* wdc;
 
     protected uint BkColor { get; set; }
     protected abstract void OnRender(DC dc);
@@ -736,7 +738,7 @@ namespace Test
             item.DropDownItems.Add(new ToolStripMenuItem($"{i} Samples") { Tag = i, Checked = current == i });
         return 0;
       }
-      if (test is not uint id) return 0;
+      if (test is not int id) return 0;
       drvsettings = (drvsettings & 0xffffffff) | ((long)(int)id << 32);
       releasebuffers(true); Invalidate(); OnDeviceSettings(drvsettings); return 0;
     }
@@ -779,6 +781,13 @@ namespace Test
         ((int)BlendState.Opaque << 12) |
         ((int)Topology.TriangleListAdj) |
         ((int)GeometryShader.Shadows << 24)),
+      Text2D = (
+        ((int)PixelShader.Font << 4) |
+        ((int)VertexShader.Default << 28) |
+        ((int)DepthStencil.Default << 8) |
+        ((int)Rasterizer.CullBack << 16) |
+        ((int)BlendState.Alpha << 12) |
+        ((int)Sampler.Font << 20)),
     }
 
     static Vector3 ToVector3(Vector4 p)
@@ -1239,10 +1248,7 @@ namespace Test
       public void DrawText(float x, float y, string s)
       {
         var t1 = this.State;
-        this.PixelShader = PixelShader.Font;
-        this.BlendState = BlendState.Alpha;
-        this.Sampler = Sampler.Font;
-        this.Rasterizer = Rasterizer.CullBack; //for draw2d
+        this.State = State.Text2D;
         fixed (char* p = s) this.Font.Draw(this, x, y, p, s.Length);
         this.State = t1;
       }
@@ -1257,8 +1263,7 @@ namespace Test
         SetIndexBuffer(ib);
         apply(); context.DrawIndexed(nv, i, 0);
       }
-      internal DC(DX11Ctrl p) { view = p; }
-      DX11Ctrl view;
+      internal DC(DX11Ctrl p) => view = p; DX11Ctrl view;
 
       public void Clear(CLEAR fl)
       {
@@ -1796,7 +1801,6 @@ namespace Test
       {
         memcpy(p, data); return data.Length;
       }
-
       public void PreInit(string chars)
       {
         fixed (char* s = chars) create(s, chars.Length);
@@ -1805,42 +1809,54 @@ namespace Test
       public float Size
       {
         get { return size; }
-        set { size = value; }
+        //set { size = value; }
       }
       public float Ascent
       {
-        get { return ascent * size; }
+        get { return ascent; }
       }
       public float Descent
       {
-        get { return descent * size; }
+        get { return descent; }
       }
       public float Height
       {
-        get { return (ascent + descent) * size; }
+        get { return ascent + descent; }
       }
-      //public float Height2 { get { return height * size; } }
-      //public float IntLeading { get { return intlead * size; } }
-      //public float ExtLeading { get { return extlead * size; } }
-
+      //public float Height2 { get { return height; } }
+      //public float IntLeading { get { return intlead; } }
+      //public float ExtLeading { get { return extlead; } }
       public int Measure(char* s, int n, ref float cx)
       {
-        float x = 0, dx; int i = 0;
-        for (; i < n; i++)
-        {
-          var c = s[i]; int j; if (!dict.TryGetValue(c, out j)) { create(s + i, n - i); j = dict[c]; }
-          dx = glyphs[j].incx * size;
-          if (i != 0) { float k; if (kern.TryGetValue((((uint)c << 16) | s[i - 1]), out k)) dx += k * size; }
-          if (x + dx > cx) break; x += dx;
-        }
+        var po = SelectObject(wdc, hfont);
+        var re = default(GCP_RESULTS); re.lStructSize = sizeof(GCP_RESULTS);
+        re.lpDx = (int*)StackPtr; re.nGlyphs = n;
+        var hr = GetCharacterPlacementW(wdc, s, n, 0, &re, 0x0008); // GCP_USEKERNING
+        SelectObject(wdc, po);
+        int i = 0; float x = 0, dx;
+        for (; i < n; i++) { dx = re.lpDx[i]; if (x + dx > cx) break; x += dx; }
         cx = x; return i;
+
+        //float x = 0, dx; int i = 0;
+        //for (; i < n; i++)
+        //{
+        //  var c = s[i]; int j; if (!dict.TryGetValue(c, out j)) { create(s + i, n - i); j = dict[c]; }
+        //  dx = glyphs[j].incx * size;
+        //  if (i != 0) { float k; if (kern.TryGetValue((((uint)c << 16) | s[i - 1]), out k)) dx += k * size; }
+        //  if (x + dx > cx) break; x += dx;
+        //}
+        //cx = x; return i;
       }
       internal void Draw(DC dc, float x, float y, char* s, int n)
       {
         if (inpick != 0) return;
+        var po = SelectObject(wdc, hfont);
+        var re = default(GCP_RESULTS); re.lStructSize = sizeof(GCP_RESULTS);
+        re.lpDx = (int*)StackPtr; re.nGlyphs = n; StackPtr = (byte*)(re.lpDx + n);
+        GetCharacterPlacementW(wdc, s, n, 0, &re, 0x0008); // GCP_USEKERNING
+        SelectObject(wdc, po);
         var t1 = texture; texture = null;
         var topo = Topology.TriangleStrip;
-        var f = 1 / size; x *= f; y *= f;
         for (int a = 0, b = 0, j, bsrv = -1, csrv = -1, nc = 0; ; b++)
         {
           if (b < n)
@@ -1852,23 +1868,22 @@ namespace Test
           {
             if (nc != 0)
             {
-              //SetTexture(srvs[csrv]);
               var vv = dc.BeginVertices(nc << 2);
               for (; a < b; a++)
               {
-                if (a != 0) { float k; if (kern.TryGetValue((((uint)s[a] << 16) | s[a - 1]), out k)) x += k; }
+                //if (a != 0) { float k; if (kern.TryGetValue((((uint)s[a] << 16) | s[a - 1]), out k)) x += k; }
                 var pg = glyphs + dict[s[a]];
                 if (pg->srv != -1)
                 {
-                  vv[0].p.X = vv[2].p.X = (x + pg->orgx) * size;
-                  vv[0].p.Y = vv[1].p.Y = (y - pg->orgy) * size;
-                  vv[1].p.X = vv[3].p.X = vv[0].p.X + pg->boxx * size;
-                  vv[3].p.Y = vv[2].p.Y = vv[0].p.Y + pg->boxy * size;
+                  vv[0].p.X = vv[2].p.X = x + pg->orgx;
+                  vv[0].p.Y = vv[1].p.Y = y - pg->orgy;
+                  vv[1].p.X = vv[3].p.X = vv[0].p.X + pg->boxx;
+                  vv[3].p.Y = vv[2].p.Y = vv[0].p.Y + pg->boxy;
                   vv[0].t.X = vv[2].t.X = pg->x1;
                   vv[1].t.X = vv[3].t.X = pg->x2;
                   vv[2].t.Y = vv[3].t.Y = 1; vv += 4;
                 }
-                x += pg->incx;
+                x += re.lpDx[a]; //x += pg->incx;
               }
               dc.EndVertices(nc << 2, topo); topo = 0;
             }
@@ -1883,10 +1898,11 @@ namespace Test
           if (bsrv != -1) nc++;
         }
         texture = t1;
+        StackPtr = (byte*)re.lpDx;
       }
 
-      string? name; float size, ascent, descent, scale; void* hfont;
-      Dictionary<char, int>? dict; Dictionary<uint, float> kern;
+      string? name; float size, ascent, descent; void* hfont;
+      Dictionary<char, int>? dict; //Dictionary<uint, float> kern;
       struct Glyph { internal float boxx, boxy, orgx, orgy, incx, x1, x2; internal int srv; }
       Glyph* glyphs; int glyphn, glypha;
       void*[]? srvs; int srvn; /*D3D11.IShaderResourceView*/
@@ -1894,7 +1910,7 @@ namespace Test
       {
         var rs = new ReadOnlySpan<byte>(data);
         Read(ref rs, out name); Read(ref rs, out float size); Read(ref rs, out FontStyle style);
-        this.size = size; scale = 1f / size;
+        this.size = size;
         fixed (char* s = name) hfont = CreateFontW(-(int)(size * 1.75), 0, 0, 0,
             (style & FontStyle.Bold) != 0 ? 700 : 400,
             (style & FontStyle.Italic) != 0 ? 1 : 0,
@@ -1905,27 +1921,21 @@ namespace Test
             0,
             5, //CLEARTYPE_QUALITY
             0, s);
-        var hdc = GetDC(null);
-        var po = SelectObject(hdc, hfont);
+        if (wdc == null) wdc = GetDC(null);
+        var po = SelectObject(wdc, hfont);
         int* textmetric = (int*)StackPtr;
-        GetTextMetrics(hdc, textmetric);
+        GetTextMetrics(wdc, textmetric);
+        SelectObject(wdc, po);
+        ascent = textmetric[1];
+        descent = textmetric[2];
         //height = textmetric[0] * scale;
-        ascent = textmetric[1] * scale;
-        descent = textmetric[2] * scale;
         //intlead = textmetric[3] * scale;
         //extlead = textmetric[4] * scale;
-        var nk = GetKerningPairsW(hdc, 0, null) << 1;
-        var kk = (uint*)StackPtr;
-        var kr = GetKerningPairsW(hdc, nk >> 1, kk);
-        kern = new Dictionary<uint, float>(kr >> 1);
-        for (int i = 0, v; i < nk; i += 2) if ((v = *(int*)&kk[i + 1]) != 0) kern[kk[i]] = v * scale;
-        SelectObject(hdc, po); ReleaseDC(null, hdc);
         dict = new Dictionary<char, int>(128);
       }
       void create(char* s, int n)
       {
         const int ex = 4;
-
         int nc = 0; var cc = (char*)StackPtr;
         for (int i = 0; i < n; i++)
         {
@@ -1939,19 +1949,17 @@ namespace Test
           var cb = (glypha = (((glyphn + nc) >> 5) + 1) << 5) * sizeof(Glyph);
           glyphs = (Glyph*)Marshal.ReAllocCoTaskMem((IntPtr)glyphs, cb).ToPointer();// realloc(glyphs, cb);
         }
-        Matrix4x4 ma; var m2 = (int*)&ma; m2[0] = m2[3] = 0x10000;
-        var hdc = GetDC(null);
-        var po = SelectObject(hdc, hfont);
+        var ma = default(Matrix4x4); var m2 = (int*)&ma; m2[0] = m2[3] = 0x10000;
+        var po = SelectObject(wdc, hfont);
         for (int i1 = 0, i2 = 0, gi = glyphn; i1 < nc; i1 = i2)
         {
           int mx = ex, my = 0;
           for (int i = i1; i < nc; i++, i2++)
           {
-            var gm = (int*)&glyphs[gi + i]; GetGlyphOutlineW(hdc, cc[i], 0, gm, 0, null, m2); if (cc[i] <= ' ') continue;
+            var gm = (int*)&glyphs[gi + i]; GetGlyphOutlineW(wdc, cc[i], 0, gm, 0, null, m2); if (cc[i] <= ' ') continue;
             if (mx + gm[0] + (ex << 1) > 4096 && n > 1) break; //D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION (16384)
             mx += gm[0] + (ex << 1); my = Math.Max(my, gm[1] + (ex << 1));
           }
-
           if (my != 0)
           {
             if (srvs == null || srvn == srvs.Length)
@@ -1960,10 +1968,9 @@ namespace Test
               if (srvs != null) for (int i = 0; i < srvs.Length; i++) a[i] = srvs[i];
               srvs = a; //Array.Resize(ref srvs, srvn == 0 ? 4 : srvn << 1);
             }
-
             byte* pp = null; var bi = m2 + 4; bi[0] = 40; bi[1] = mx; bi[2] = -my; bi[3] = 1 | (32 << 16);
             var dib = CreateDIBSection(null, bi, 0, &pp, null, 0);
-            var ddc = CreateCompatibleDC(hdc);
+            var ddc = CreateCompatibleDC(wdc);
             var obmp = SelectObject(ddc, dib);
             var ofont = SelectObject(ddc, hfont);
             //int old = SetMapMode(ddc, 1); //MM_TEXT
@@ -1976,10 +1983,8 @@ namespace Test
             SelectObject(ddc, ofont);
             SelectObject(ddc, obmp);
             DeleteDC(ddc);
-
             for (int k = 0, nk = mx * my; k < nk; k++)
               pp[k] = (byte)((pp[(k << 2)] * 0x4c + pp[(k << 2) + 1] * 0x95 + pp[(k << 2) + 2] * 0x1e) >> 8);
-
             srvs[srvn++] = CreateTexture(mx, my, mx, FORMAT.A8_UNORM, 1, pp);
             DeleteObject(dib);
           }
@@ -1996,14 +2001,14 @@ namespace Test
               x += gm[0] + (ex << 1);
             }
             else gl->srv = -1;
-            gl->boxx = (gm[0] + (ex << 1)) * scale;
-            gl->boxy = my * scale;
-            gl->orgx = (gm[2] - ex) * scale;
-            gl->orgy = (gm[3] + ex) * scale;
-            gl->incx = (gm[4] & 0xffff) * scale; if (c < ' ') gl->incx *= 0.5f;
+            gl->boxx = gm[0] + (ex << 1);
+            gl->boxy = my;
+            gl->orgx = gm[2] - ex;
+            gl->orgy = gm[3] + ex;
+            gl->incx = gm[4] & 0xffff; if (c < ' ') gl->incx *= 0.5f;
           }
         }
-        SelectObject(hdc, po); ReleaseDC(null, hdc);
+        SelectObject(wdc, po); //ReleaseDC(null, hdc);
       }
     }
 
@@ -2079,6 +2084,99 @@ namespace Test
       }
       return s.Slice(0, s.Length - w.Length).ToString();
     }
+
+    public static void GlyphContour(char* ss, int ns, System.Drawing.Font font, int pixs, Action<int, int, int> act)
+    {
+      if (wdc == null) wdc = GetDC(null); var hfont = font.ToHfont().ToPointer();
+      var po = SelectObject(wdc, hfont);
+      var re = default(GCP_RESULTS); re.lStructSize = sizeof(GCP_RESULTS);
+      re.lpDx = (int*)StackPtr; re.nGlyphs = ns; var pph = (byte*)(re.lpDx + ns);
+      GetCharacterPlacementW(wdc, ss, ns, 0, &re, 0x0008); //GCP_USEKERNING
+      int x = 0; Matrix3x2 gm, ma; var m2 = (int*)&ma; m2[0] = m2[3] = 0x10000; //MAT2
+      for (int i = 0; i < ns; i++)
+      {
+        var ph = pph; //TTPOLYGONHEADER
+        int nc = GetGlyphOutlineW(wdc, ss[i], 2, &gm, maxstack >> 1, ph, m2); // GGO_NATIVE
+        for (; ph - pph < nc; ph = ph + ((int*)ph)[0])
+        {
+          act(0, x, 0); //BeginContour at x
+          act(1, ((int*)ph)[2], ((int*)ph)[3]); //AddVertex
+          var pc = ph + 16; //TTPOLYCURVE
+          for (; pc < ph + ((int*)ph)[0]; pc = pc + 4 + ((ushort*)pc)[1] * 8)
+          {
+            var cpfx = ((ushort*)pc)[1]; var pfx = ((int x,int y)*)(pc + 4);
+            if (((ushort*)pc)[0] == 1) //TT_PRIM_LINE
+            {
+              for (int t = 0; t < cpfx; t++) act(1, pfx[t].x, pfx[t].y); //AddVertex                  
+            }
+            else //if (((ushort*)pc)[0] == 2) //TT_PRIM_QSPLINE
+            {
+              var spline = ((int x, int y)*)(&gm);//[3]
+              spline[0] = *((int x, int y)*)(((byte*)pc) - 8);
+              for (int k = 0; k < cpfx;)
+              {
+                spline[1] = pfx[k++];
+                if (k == cpfx - 1) spline[2] = pfx[k++];
+                else
+                {
+                  spline[2].x = (pfx[k - 1].x + pfx[k].x) >> 1;
+                  spline[2].y = (pfx[k - 1].y + pfx[k].y) >> 1;
+                }
+                qspline(act, spline, 1 << pixs);
+                spline[0] = spline[2];
+              }
+            }
+          }
+          act(2, 0, 0); // EndContour
+        }
+        x += re.lpDx[i];
+      }
+      SelectObject(wdc, po);
+      DeleteObject(hfont);
+      static void qspline(Action<int, int, int> act, (int x, int y)* qs, int pixs)
+      {
+        int ax = qs[0].x >> 10, ay = qs[0].y >> 10;
+        int bx = qs[1].x >> 10, by = qs[1].y >> 10;
+        int cx = qs[2].x >> 10, cy = qs[2].y >> 10;
+        int gx = bx, dx, ddx = (dx = ax - gx) - gx + cx;
+        int gy = by, dy, ddy = (dy = ay - gy) - gy + cy;
+        gx = ddx < 0 ? -ddx : ddx;
+        gy = ddy < 0 ? -ddy : ddy;
+        gx += gx > gy ? gx + gy : gy + gy;
+        for (gy = 1; gx > pixs; gx >>= 2) gy++;
+        if (gy > 8) gy = 8;
+        int i = 1 << gy;
+        if (gy > 5)
+        {
+          ddx = gy - 1;
+          qs[0].x = ax;
+          qs[0].y = ay;
+          qs[1].x = (ax + bx + 1) >> 1;
+          qs[1].y = (ay + by + 1) >> 1;
+          qs[2].x = (ax + bx + bx + cx + 2) >> 2;
+          qs[2].y = (ay + by + by + cy + 2) >> 2; var t = qs[2];
+          qspline(act, qs, pixs);
+          qs[0] = t;
+          qs[1].x = (cx + bx + 1) >> 1;
+          qs[1].y = (cy + by + 1) >> 1;
+          qs[2].x = cx;
+          qs[2].y = cy;
+          qspline(act, qs, pixs);
+          return;
+        }
+        int sq = gy + gy;
+        dx = ddx - (dx << ++gy); ddx += ddx;
+        dy = ddy - (dy << gy); ddy += ddy;
+        gy = ay << sq;
+        gx = ax << sq;
+        for(int t = 1 << (sq - 1); ; )
+        {
+          gx += dx; dx += ddx; gy += dy;
+          act(1, ((gx + t) >> sq) << 10, ((gy + t) >> sq) << 10); //AddVertex
+          if (--i == 0) break;  dy += ddy;
+        }
+      }
+    }
   }
   //shader
   unsafe partial class DX11Ctrl
@@ -2153,6 +2251,20 @@ namespace Test
     static extern bool DeleteDC(void* dc);
     [DllImport("gdi32.dll"), SuppressUnmanagedCodeSecurity]
     static extern void* CreateDIBSection(void* dc, void* pbi, int usage, void* pp, void* sec, int offs);
+    struct GCP_RESULTS
+    {
+      internal int lStructSize; //DWORD lStructSize;
+      internal char* OutString; //LPWSTR lpOutString;
+      internal uint* Order;     //UINT FAR *lpOrder;
+      internal int* lpDx;       //int FAR  *lpDx;
+      internal int* CaretPos;   //int FAR  *lpCaretPos;
+      internal char* Class;     //LPSTR lpClass;
+      internal char* Glyphs;    //LPWSTR lpGlyphs;
+      internal int nGlyphs;     //UINT nGlyphs;
+      internal int MaxFit;      //int nMaxFit;
+    }
+    [DllImport("gdi32.dll")]
+    static extern uint GetCharacterPlacementW(void* hdc, char* s, int n, int maxext, GCP_RESULTS* p, uint flags);
 
     [DllImport("wininet.dll", CharSet = CharSet.Auto), SuppressUnmanagedCodeSecurity]
     static extern bool GetUrlCacheEntryInfo(string url, INTERNET_CACHE_ENTRY_INFO* p, ref int n);

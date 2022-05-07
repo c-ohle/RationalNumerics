@@ -21,11 +21,6 @@ namespace Test
     }
     static void test()
     {
-      //var cpu = rat.task_cpu;
-      //cpu.push(0xffffffff);
-      //cpu.sqr(); cpu.pop();
-      //cpu.push(0x100000000);
-      //cpu.sqr(); cpu.pop();
     }
   }
 }
