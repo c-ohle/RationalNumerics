@@ -68,7 +68,7 @@ namespace Test
     {
       if (state != 1) { state = 0; throw new Exception(); }
       var pro = project(0);
-      ns = nl = nc = this.ni = 0; int ab = 0, np = this.np, shv = 1; worstcase:
+      ns = nl = nc = this.ni = 0; int ab = 0, np = this.np, shv = 1; trim:
       if (shv != 0)
       {
         var t = cpu.mark(); cpu.push(+123);
@@ -87,10 +87,10 @@ namespace Test
         var a = (uint)(i << 3); ref var u = ref pp[i];
         var b = (uint)(u.next * 8);
         //var dx = b.x - a.x; var dy = b.y - a.y;
-        //if ((d = rat.Sign(dy)) == 0) { /*m.end();*/ if (rat.Sign(dx) == 0) continue; shv++; goto worstcase; }
+        //if ((d = rat.Sign(dy)) == 0) { /*m.end();*/ if (rat.Sign(dx) == 0) continue; shv++; goto trim; }
         //a.a = dx / dy; a.f = a.x - a.y * a.a; a.x2 = d > 0 ? a.x : b.x;
         cpu.sub(b + 0, a + 0); cpu.sub(b + 1, a + 1);
-        if ((d = cpu.sign()) == 0) { var t = cpu.sign(1); cpu.pop(2); if (t == 0) continue; shv++; goto worstcase; }
+        if ((d = cpu.sign()) == 0) { var t = cpu.sign(1); cpu.pop(2); if (t == 0) continue; shv++; goto trim; }
         cpu.div(); cpu.norm(); cpu.swp(a + 3); cpu.pop();
         cpu.mul(a + 1, a + 3); cpu.neg();
         cpu.add(a + 0); cpu.norm(); cpu.swp(a + 4); cpu.pop();
@@ -98,7 +98,7 @@ namespace Test
         cpu.swp(a + 6); cpu.pop();
         kk[ni++] = (i, d > 0 ? i : u.next); u.line = -1; add(a + 0, a + 1, i);
       }
-      sort(cmpy, kk, ni);
+      sort(cmpy, kk, ni); if (this.ni == -1) { this.ni = 0; shv++; goto trim; }
       uint y1, y2 = default, tmp = 0; int active = 0, nfl = 0;
       for (int l = 0; l < ni;)
       {
@@ -357,7 +357,17 @@ namespace Test
       ss = new int[n << 1];
       ii = new (int, int)[n];
       dict = new int[hash + n];
-      cmpy = (a, b) => unchecked(cpu.cmp((uint)(a.b * 8 + 1), (uint)(b.b * 8 + 1)));
+      cmpy = (a, b) =>
+      {
+        if (a.b == b.b) return 0;
+        var t = unchecked(cpu.cmp((uint)(a.b * 8 + 1), (uint)(b.b * 8 + 1)));
+        if (t == 0)
+        {
+          var x = unchecked(cpu.cmp((uint)(a.b * 8 + 0), (uint)(b.b * 8 + 0)));
+          if (x != 0) this.ni = -1; //trim
+        }
+        return t;
+      }; 
       cmpx = (a, b) =>
       {
         int t = unchecked(cpu.cmp((uint)(a.a * 8 + 5), (uint)(b.a * 8 + 5))); //x1
