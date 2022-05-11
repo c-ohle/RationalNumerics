@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Profile 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\cohle\\Desktop\\Mini3d\\Mini3d\\bin\\Debug\\net6.0-windows\\Mini3d.exe"
+    }
+  }
+}

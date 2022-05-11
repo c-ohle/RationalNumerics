@@ -13,14 +13,15 @@ namespace Test
   /// </summary>
   public static class PolyhedronR
   {
+    public enum Mode { Union, Difference, Intersection }
     /// <summary>
-    /// Calculates the difference between a polyhedron A and a polyhedron B, both defined by a list of points and indices.<br/>
-    /// Returns the result in the lists of polyhedorn A.
+    /// Calculates the union, difference or intersection of a polyhedron A and a polyhedron B, both defined by a list of points and indices.<br/>
+    /// Returns the result in the lists of polyhedron A.
     /// </summary>
     /// <remarks>
-    /// Difference: <b>A / B</b><br/>
     /// <i>Only works for real polyhedra without openings or self-intersections.</i>
     /// </remarks>
+    /// <param name="mode">Specifies the boolean operation.</param>
     /// <param name="app">Points of polyhedron A.</param>
     /// <param name="aii">Indices of polyhedron A.</param>
     /// <param name="bpp">Points of polyhedron B.</param>
@@ -29,65 +30,74 @@ namespace Test
     /// If not null, returns the source polygon indices of the corresponding result polygons.<br/>
     /// This list can be used to restore material ranges etc.
     /// </param>
-    /// <returns>True if there is an intersection, false otherwise.</returns>
-    public static bool Difference(List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, List<int>? map = null)
+    /// <exception cref=""></exception>
+    public static void Boolean(Mode mode, List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, List<int>? map = null)
     {
       var abox = getbox(app);
-      var bbox = getbox(bpp); if (!intersect(abox, bbox)) return false;
+      var bbox = getbox(bpp);
+      if (mode == Mode.Difference && !intersect(abox, bbox)) return;
+      if (mode == Mode.Intersection && !intersect(abox, bbox)) { app.Clear(); aii.Clear(); return; }
+      //if (mode == Mode.Union && !touch(abox, bbox)) { }
       var aee = getplanes(app, aii);
       var bee = getplanes(bpp, bii);
-
       var iii = Pool.Rent<List<int>>(); iii.Clear(); iii.EnsureCapacity(aii.Count);
       var ppp = Pool.Rent<Dictionary<Vector3R, int>>(); ppp.Clear(); ppp.EnsureCapacity(app.Count);
       var abs = Pool.Rent<Dictionary<int, int>>();
       var abi = Pool.Rent<Dictionary<(int a, int b), int>>();
       var ff = Pool.RentArray<int>(Math.Max(app.Count, bpp.Count));
-
       var tess = Pool.Rent<TesselatorR>();
-      tess.Winding = Winding.AbsGeqTwo;
       tess.Options = TesselatorR.Option.Fill | TesselatorR.Option.Delaunay;
-
+      tess.Winding = mode == Mode.Intersection ? Winding.AbsGeqTwo : Winding.Positive;
+      ////
+      for (int i = 0; i < aee.Length; i++)
+      {
+        var e = aee[i]; var box = getbox(app, e.ii); var nii = -1;
+        if (!touch(bbox, box)) { if (mode == Mode.Intersection) continue; else goto m1; }
+        int q = -1; if (mode == Mode.Union) for (int t = 0; t < bee.Length; t++) if (e.plane.Equals(bee[t].plane)) { q = t; break; }
+        var f = getff(ff, bpp, e.plane);
+        if (mode == Mode.Union) { if (f == 1 || (f == 3 && q == -1)) goto m1; }
+        else if (mode == Mode.Intersection) { if (f == 1) continue; }
+        else if (f == 1 || f == 4) goto m1;
+        var nx = bpp.Count;
+        cutmesh(bpp, ff, bii, e.plane, abs, abi, mode == Mode.Union ? 3 : 0);
+        tess.SetNormal(e.plane.Normal);
+        tess.BeginPolygon();
+        tessel(tess, bpp, abs); bpp.RemoveRange(nx, bpp.Count - nx); abs.Clear();
+        if (q != -1)
+        {
+          var ii = bee[q].ii; for (int t = 0; t < ii.Length; t++) xor(abs, ii[t], ii[mod(t)]);
+          tessel(tess, bpp, abs); abs.Clear(); bee[q] = default;
+        }
+        if (mode == Mode.Intersection) for (int t = 0; t < e.ii.Length; t++) xor(abs, e.ii[mod(t)], e.ii[t]);
+        else for (int t = 0; t < e.ii.Length; t++) xor(abs, e.ii[t], e.ii[mod(t)]);
+        tessel(tess, app, abs);
+        tess.EndPolygon(); nii = iii.Count;
+        add(ppp, iii, tess); m1:
+        if (nii == -1) { nii = iii.Count; add(ppp, iii, app, e.ii); }
+        if (map != null) map.AddRange(Enumerable.Repeat((i << 1) | 0, (iii.Count - nii) / 3));
+      }
+      if (mode == Mode.Difference) tess.Winding = Winding.AbsGeqTwo;
       for (int i = 0; i < bee.Length; i++)
       {
-        var e = bee[i]; var box = getbox(bpp, e.ii);
-        if (!touch(abox, box)) continue;
+        var e = bee[i]; if (e.ii == null) continue; var box = getbox(bpp, e.ii); var nii = -1;
+        if (!touch(abox, box)) if (mode == Mode.Union) goto m1; else continue;
         var f = getff(ff, app, e.plane);
-        if (f == 1 || f == 3) continue;
-        var nx = app.Count; var nii = iii.Count;
-        cutmesh(app, ff, aii, e.plane, abs, abi, 3);
-        if (abs.Count == 0) { Debug.Assert(app.Count == nx); continue; }
-        tess.SetNormal(e.plane.Normal); tess.Options ^= TesselatorR.Option.NormNeg;
+        if (mode == Mode.Union) { if (f == 1) goto m1; } else if (f == 1 || f == 3) continue;
+        var nx = app.Count;
+        cutmesh(app, ff, aii, e.plane, abs, abi, mode == Mode.Union ? 0 : 3);
+        if (mode == Mode.Difference) if (abs.Count == 0) continue;
+        tess.SetNormal(e.plane.Normal); if (mode == Mode.Difference) tess.Options ^= TesselatorR.Option.NormNeg;
         tess.BeginPolygon();
         tessel(tess, app, abs); app.RemoveRange(nx, app.Count - nx);
         abs.Clear();
-        for (int t = 0; t < e.ii.Length; t++) xor(abs, e.ii[mod(t)], e.ii[t]);
+        if (mode == Mode.Union) for (int t = 0; t < e.ii.Length; t++) xor(abs, e.ii[t], e.ii[mod(t)]);
+        else for (int t = 0; t < e.ii.Length; t++) xor(abs, e.ii[mod(t)], e.ii[t]);
         tessel(tess, bpp, abs);
-        tess.EndPolygon();
-        add(ppp, iii, tess); if (map != null) map.AddRange(Enumerable.Repeat((i << 1) | 1, (iii.Count - nii) / 3));
+        tess.EndPolygon(); nii = iii.Count;
+        add(ppp, iii, tess); m1:
+        if (nii == -1) { nii = iii.Count; add(ppp, iii, bpp, e.ii); }
+        if (map != null) map.AddRange(Enumerable.Repeat((i << 1) | 1, (iii.Count - nii) / 3));
       }
-      tess.Winding = Winding.Positive;  
-      for (int i = 0; i < aee.Length; i++)
-      {
-        var e = aee[i]; var box = getbox(app, e.ii); var nii = iii.Count;
-        if (!touch(bbox, box)) { add(ppp, iii, app, e.ii); goto m1; }
-        var f = getff(ff, bpp, e.plane);
-        if (f == 1) { add(ppp, iii, app, e.ii); goto m1; }
-        if (f == 4) { add(ppp, iii, app, e.ii); goto m1; }
-        var nx = bpp.Count;
-        cutmesh(bpp, ff, bii, e.plane, abs, abi, 0);
-        if (abs.Count == 0) { add(ppp, iii, app, e.ii); Debug.Assert(bpp.Count == nx); goto m1; }
-        //bpp.RemoveRange(nx, bpp.Count - nx); continue;
-        tess.SetNormal(e.plane.Normal);
-        tess.BeginPolygon();
-        tessel(tess, bpp, abs);
-        bpp.RemoveRange(nx, bpp.Count - nx);
-        abs.Clear();
-        for (int t = 0; t < e.ii.Length; t++) xor(abs, e.ii[t], e.ii[mod(t)]);
-        tessel(tess, app, abs);
-        tess.EndPolygon();
-        add(ppp, iii, tess); m1: if (map != null) map.AddRange(Enumerable.Repeat((i << 1) | 0, (iii.Count - nii) / 3));
-      }
-
       if (map != null)
       {
         Debug.Assert(map.Count * 3 == iii.Count);
@@ -100,20 +110,17 @@ namespace Test
           Debug.Assert(t < ii.Count); map[i] = (t << 1) | (x & 1);
         }
       }
-
       app.Clear(); app.AddRange(ppp.Keys);
       aii.Clear(); aii.AddRange(iii);
       join(app, aii, abs, map);
-
       ppp.Clear(); Pool.Return(ppp); Pool.Return(iii);
       Pool.Return(ff); Pool.Return(abs); Pool.Return(abi);
       Pool.Return(tess);
-      return true;
     }
     /// <summary>
     /// Calculates the difference between a polyhedron A defined by a list of points and indices,<br/>
     /// and the half-space B defined by a <see cref="PlaneR"/> <paramref name="plane"/>.<br/>
-    /// Returns the result in the lists of polyhedorn A.
+    /// Returns the result in the lists of polyhedron A.
     /// </summary>
     /// <remarks>
     /// Difference: <b>A / B</b><br/>
@@ -128,7 +135,7 @@ namespace Test
     /// This list can be used to restore material ranges etc.
     /// </param>
     /// <returns>True if there is an intersection, false otherwise.</returns>
-    public static bool Difference(List<Vector3R> pp, List<int> ii, PlaneR plane, List<int>? map = null)
+    public static bool Cut(List<Vector3R> pp, List<int> ii, PlaneR plane, List<int>? map = null)
     {
       var ff = Pool.RentArray<int>(pp.Count); var fa = getff(ff, pp, plane);
       if ((fa & 4) == 0) { Pool.Return(ff); return false; }
@@ -198,14 +205,7 @@ namespace Test
       Pool.Return(tess);
       return true;
     }
-    public static bool Union(List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, List<int>? map = null)
-    {
-      throw new NotImplementedException(); //under construction
-    }
-    public static bool Intersect(List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, List<int>? map = null)
-    {
-      throw new NotImplementedException(); //under construction
-    }
+
     static (PlaneR plane, int[] ii)[] getplanes(List<Vector3R> pp, List<int> ii)
     {
       var nk = ii.Count / 3;

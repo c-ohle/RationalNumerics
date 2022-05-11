@@ -68,6 +68,14 @@ namespace System.Numerics.Rational
     {
       return new PlaneR(v.Normal, v.D);
     }
+    public static bool operator ==(in PlaneR a, in PlaneR b)
+    {
+      return a.Equals(b);
+    }
+    public static bool operator !=(in PlaneR a, in PlaneR b)
+    {
+      return !a.Equals(b);
+    }
     public static PlaneR operator -(in PlaneR a) => new PlaneR(-a.Normal, -a.Dist);
     public static PlaneR FromVertices(in Vector3R a, in Vector3R b, in Vector3R c)
     {

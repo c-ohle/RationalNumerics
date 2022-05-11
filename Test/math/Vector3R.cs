@@ -61,11 +61,11 @@ namespace System.Numerics.Rational
     {
       return new Vector3R(v.X, v.Y, v.Z);
     }
-    public static bool operator ==(Vector3R a, Vector3R b)
+    public static bool operator ==(in Vector3R a, in Vector3R b)
     {
       return a.Equals(b);
     }
-    public static bool operator !=(Vector3R a, Vector3R b)
+    public static bool operator !=(in Vector3R a, in Vector3R b)
     {
       return !a.Equals(b);
     }
