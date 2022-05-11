@@ -2141,23 +2141,8 @@ namespace System.Numerics.Rational
       /// <returns>true if the values are equal, otherwise false.</returns>
       public bool equ(NewRational a, NewRational b)
       {
-        if (a.p == b.p) return true;
-        fixed (uint* u = a.p, v = b.p)
-        {
-          if (u == null) return isz(v);
-          if (v == null) return isz(u);
-          if (((u[0] | v[0]) & 0x40000000) == 0)
-          {
-            var n = len(u); // for (uint i = 0; i < n; i++) if (u[i] != v[i]) return false;
-            for (uint i = 0, c = n >> 1; i < c; i++)
-              if (((ulong*)u)[i] != ((ulong*)v)[i])
-                return false;
-            if ((n & 1) != 0) return u[n - 1] == v[n - 1];
-            return true;
-          }
-          return cmp(u, v) == 0;
-        }
-      }
+        return equ(a.p, b.p);
+      }      
       /// <summary>
       /// Compares the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack for equality.
       /// </summary>
@@ -2169,7 +2154,7 @@ namespace System.Numerics.Rational
       /// <returns>true if the values are equal, otherwise false.</returns>
       public bool equ(uint a, uint b)
       {
-        return equ(new NewRational(p[a]), new NewRational(p[b]));
+        return equ(p[a], p[b]);
       }
       /// <summary>
       /// Compares the value at index a as absolute index in the stack with the <see cref="NewRational"/> value b for equality.
@@ -2182,7 +2167,7 @@ namespace System.Numerics.Rational
       /// <returns>true if the values are equal, otherwise false.</returns>
       public bool equ(uint a, NewRational b)
       {
-        return equ(new NewRational(p[a]), b);
+        return equ(p[a], b.p);
       }
       /// <summary>
       /// Normalize the value at the specified index relative to the top of the stack.
@@ -2376,6 +2361,25 @@ namespace System.Numerics.Rational
           mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1) { *(ulong*)(w + 2) = 0x100000001; return; }
           mul(u + t, inv ? v : v + s, w + (w[0] + 1));
           w[0] |= ((u[0] ^ v[0]) & 0x80000000) | 0x40000000;
+        }
+      }
+      bool equ(uint[] a, uint[] b)
+      {
+        if (a == b) return true;
+        fixed (uint* u = a, v = b)
+        {
+          if (u == null) return isz(v);
+          if (v == null) return isz(u);
+          if (((u[0] | v[0]) & 0x40000000) == 0)
+          {
+            var n = len(u); // for (uint i = 0; i < n; i++) if (u[i] != v[i]) return false;
+            for (uint i = 0, c = n >> 1; i < c; i++)
+              if (((ulong*)u)[i] != ((ulong*)v)[i])
+                return false;
+            if ((n & 1) != 0) return u[n - 1] == v[n - 1];
+            return true;
+          }
+          return cmp(u, v) == 0;
         }
       }
       int cmp(uint* a, uint* b)
@@ -2692,56 +2696,7 @@ namespace System.Numerics.Rational
       {
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
       }
-      #region experimental
-      //static void _mul(uint* a, uint* b, uint* r)
-      //{
-      //  uint na = a[0] & 0x3fffffff, nb = b[0] & 0x3fffffff;
-      //  if (na < nb) { var t1 = na; na = nb; nb = t1; var t2 = a; a = b; b = t2; }
-      //  if (nb == 1)
-      //  {
-      //    if (b[1] == 0) { *(ulong*)r = 1; return; }
-      //    if (b[1] == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
-      //  }
-      //  var mx = Vector128.Create(0u, 1, 2, 3);
-      //  for (uint k = 0; k < nb; k++)
-      //  {
-      //    var bl = Avx2.BroadcastScalarToVector256(b + 1 + k);
-      //    uint c = 0;
-      //    for (uint i = 0; i < na; i += 4)
-      //    {
-      //      var ma = Avx2.Subtract(mx, Vector128.Create(na - i));
-      //      var va = Avx2.ConvertToVector256Int64(Avx2.MaskLoad(a + 1 + i, ma));
-      //      var u6 = Avx2.Multiply(Vector256.AsUInt32(va), bl);
-      //      if (k != 0)
-      //      {
-      //        var uc = Avx2.ConvertToVector256Int64(Avx2.MaskLoad(r + 1 + k + i, ma));
-      //        u6 = Avx2.Add(u6, Vector256.AsUInt64(uc));
-      //      }
-      //      if (c != 0) { u6 = Avx2.Add(u6, Vector256.CreateScalar((ulong)c)); c = 0; }
-      //      for (; ; )
-      //      {
-      //        var cm = Avx2.CompareEqual(Vector256.AsUInt32(u6), Vector256.CreateScalar(0u));
-      //        var mm = (uint)Avx2.MoveMask(Vector256.AsByte(cm));
-      //        if ((~mm & 0xf0f0f0f0) == 0) break;
-      //        var t1 = Vector256.AsUInt32(u6);
-      //        var t2 = Avx2.And(t1, Vector256.Create(0u, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff));
-      //        c += Vector256.GetElement(t2, 7);
-      //        t2 = Avx2.PermuteVar8x32(t2, Vector256.Create(0u, 0, 1, 0, 3, 0, 5, 0));
-      //        u6 = Vector256.AsUInt64(Avx2.And(t1, Vector256.Create(0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0, 0xffffffff, 0u)));
-      //        u6 = Avx2.Add(u6, Vector256.AsUInt64(t2));
-      //      }
-      //      var u7 = Avx2.PermuteVar8x32(Vector256.AsUInt32(u6), Vector256.Create(0u, 2, 4, 6, 1, 3, 5, 7));
-      //      var u8 = Avx2.ExtractVector128(u7, 0);
-      //      var mc = Avx2.Subtract(mx, Vector128.Create(na + 1 - i));
-      //      Avx2.MaskStore(r + 1 + k + i, mc, u8);
-      //    }
-      //    if ((na & 3) == 0) r[na + k + 1] = c; else if (c != 0) { }
-      //  }
-      //  for (r[0] = na + nb; r[r[0]] == 0 && r[0] > 1; r[0]--) ;
-      //}
-      #endregion
     }
-
     /// <summary>
     /// Thread static instance of a <see cref="CPU"/> for general use.
     /// </summary>

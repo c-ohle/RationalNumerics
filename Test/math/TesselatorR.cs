@@ -24,7 +24,7 @@ namespace Test
     {
       //Debug.Assert(state != 1 && state != 2);
       if (state == 1 || state == 2) { state = 0; throw new Exception(); }
-      state = 1; np = 0; cpu.pop((int)cpu.mark());
+      state = 1; np = 0; cpu.pop(unchecked((int)cpu.mark()));
     }
     public void BeginContour()
     {
@@ -33,17 +33,22 @@ namespace Test
     }
     public void AddVertex(rat x, rat y, rat z = default)
     {
-      if (state != 2) { state = 0; throw new Exception(); }
-      if (np == pp.Length) resize(0);
-      if (np != fi) pp[np - 1].next = np; pp[np++].next = fi;
-      cpu.push(x); cpu.push(y); cpu.push(z); cpu.push(0, 5);
+      cpu.push(x); cpu.push(y); cpu.push(z); enter();
+      //if (state != 2) { state = 0; throw new Exception(); }
+      //if (np == pp.Length) resize(0);
+      //if (np != fi) pp[np - 1].next = np; pp[np++].next = fi;
+      //cpu.push(x); cpu.push(y); cpu.push(z); cpu.push(0, 5);
+      //if(shv == 0 && np != 0) { var t = cpu.mark(); if (cpu.equ(t - 7, t - 15)) shv = 1;  }
     }
     public void AddVertex(float x, float y, float z = 0)
     {
-      var m = cpu.mark(); AddVertex(default(rat), default(rat), default(rat));
-      cpu.push(x); cpu.norm(); cpu.swp(m + 0); cpu.pop();
-      cpu.push(y); cpu.norm(); cpu.swp(m + 1); cpu.pop();
-      cpu.push(z); cpu.norm(); cpu.swp(m + 2); cpu.pop();
+      cpu.push(x); cpu.norm();
+      cpu.push(y); cpu.norm();
+      cpu.push(z); cpu.norm(); enter();
+      //var m = cpu.mark(); AddVertex(default(rat), default(rat), default(rat));
+      //cpu.push(x); cpu.norm(); cpu.swp(m + 0); cpu.pop();
+      //cpu.push(y); cpu.norm(); cpu.swp(m + 1); cpu.pop();
+      //cpu.push(z); cpu.norm(); cpu.swp(m + 2); cpu.pop();
     }
     public void AddVertex(Vector2 p)
     {
@@ -53,12 +58,10 @@ namespace Test
     {
       AddVertex(p.X, p.Y, p.Z);
     }
-    //public void AddVertex((int x, int y) p)
-    //{
-    //  var m = cpu.mark(); AddVertex(default(rat), default(rat), default(rat));
-    //  cpu.push(p.x); cpu.swp(m + 0); cpu.pop();
-    //  cpu.push(p.y); cpu.swp(m + 1); cpu.pop();
-    //}
+    public void AddVertex(int x, int y)
+    {
+      cpu.push(x); cpu.push(y); cpu.push(); enter();
+    }
     public void EndContour()
     {
       if (state != 2) { state = 0; throw new Exception(); }
@@ -274,7 +277,7 @@ namespace Test
         cpu.pop();
       }
       if ((Options & (Option.Outline | Option.OutlinePrecise)) != 0) outline();
-      if ((Options & (Option.Fill|Option.Delaunay)) == (Option.Fill | Option.Delaunay)) optimize();
+      if ((Options & (Option.Fill | Option.Delaunay)) == (Option.Fill | Option.Delaunay)) optimize();
       if (pro != 0) project(pro << 2);
       if ((Options & Option.Trim) != 0) trim(); state = 3;
     }
@@ -367,7 +370,7 @@ namespace Test
           if (x != 0) this.ni = -1; //trim
         }
         return t;
-      }; 
+      };
       cmpx = (a, b) =>
       {
         int t = unchecked(cpu.cmp((uint)(a.a * 8 + 5), (uint)(b.a * 8 + 5))); //x1
@@ -381,6 +384,13 @@ namespace Test
       cmpab = (a, b) => unchecked(cpu.cmp(
         (uint)((pp[a].fl < 0 ? ii[a].a : ii[a].b) * 8 + 1),
         (uint)((pp[b].fl < 0 ? ii[b].a : ii[b].b) * 8 + 1)));
+    }
+    void enter()
+    {
+      cpu.push(0, 5); if (state != 2) { state = 0; throw new Exception(); }
+      //if (shv == 0 && np != 0) { var t = cpu.mark(); if (cpu.equ(t - 7, t - 15)) shv = 1; }
+      if (np == pp.Length) resize(0);
+      if (np != fi) pp[np - 1].next = np; pp[np++].next = fi;
     }
     void outline()
     {

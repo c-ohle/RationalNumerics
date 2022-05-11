@@ -196,7 +196,7 @@ namespace Test
           for (; i < imax; i++)
           {
             // var u = a * a - b * b + x;
-            cpu.sqr(m + 2); cpu.sqr(m + 3); cpu.sub(); cpu.add(m + 1); cpu.lim((uint)lim); //64
+            cpu.sqr(m + 2); cpu.sqr(m + 3); cpu.sub(); cpu.add(m + 1); cpu.lim((uint)lim);
             // var v = 2 * a * b + y;
             cpu.mul(m + 2, m + 3); cpu.shl(1); cpu.add(m + 0); cpu.lim((uint)lim);
             // if (u * u + v * v > 4) break;

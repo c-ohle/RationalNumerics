@@ -1221,22 +1221,22 @@ namespace Test
       }
       public void DrawArrow(Vector3 p, Vector3 v, float r, int s = 10)
       {
-        var t1 = this.State;// SetMode(Mode.Color3dNoCull);
+        var t1 = this.State; 
         this.VertexShader = VertexShader.Lighting;
-        this.PixelShader = PixelShader.Color3D;// | (DepthStencil.ZWrite << 8) | (Rasterizer.CullNone << 16),
-        this.Rasterizer = Rasterizer.CullNone;
+        this.PixelShader = PixelShader.Color3D;
+        //this.Rasterizer = Rasterizer.CullNone;
         var fa = (2 * MathF.PI) / s++;
-        var rl = 1 / v.Length();// vector.length(v);
+        var rl = 1 / v.Length();
         var r1 = new Vector3(v.Z, v.X, v.Y) * rl;
         var r2 = new Vector3(v.Y, v.Z, v.X) * rl;
         var vv = this.BeginVertices(s << 1);
         for (int i = 0; i < s; i++)
         {
-          var sc = MathF.SinCos(rl = i * fa);
-          var n = r1 * sc.Sin + r2 * sc.Cos;
+          var (sin,cos) = MathF.SinCos(i * fa);
+          var n = r1 * cos + r2 * sin;
           vv[(i << 1) + 0].p = p + n * r;
           vv[(i << 1) + 1].p = p + v;
-          vv[(i << 1) + 0].n = vv[(i << 1) + 1].n = n;
+          vv[(i << 1) + 0].n = vv[(i << 1) + 1].n = -n;
         }
         this.EndVertices(s << 1, Topology.TriangleStrip);
         this.State = t1;
