@@ -68,7 +68,9 @@ namespace Test
     protected uint BkColor { get; set; }
     protected abstract void OnRender(DC dc);
     protected abstract int OnMouse(int id, PC dc);
-
+    public Action<int>? Animations;
+    public Action? Inval;
+    
     VIEWPORT viewport; bool inval;
     ISwapChain? swapchain; void* rtv, dsv; //IRenderTargetView, IDepthStencilView
 
@@ -137,14 +139,15 @@ namespace Test
 
     public override void Refresh()
     {
-      if (!inval) return;
+      Animations?.Invoke(Environment.TickCount); if (!inval) return; 
       if (this.rtv == null) sizebuffers();
-      Begin(rtv, dsv, viewport, BkColor);// root != null ? root.Color : (uint)BackColor.ToArgb());
+      Begin(rtv, dsv, viewport, BkColor); // root != null ? root.Color : (uint)BackColor.ToArgb());
       OnRender(new DC(this)); swapchain.Present(0, 0);
       inval = false; Debug.Assert(StackPtr - BasePtr == 376 + 128);
     }
     public new void Invalidate()
     {
+      if (!inval) Inval?.Invoke();
       inval = true;
     }
     public string Adapter
@@ -651,7 +654,7 @@ namespace Test
         case 0x007B: //WM_CONTEXTMENU 
           if (OnMouse(m.Msg, new PC(this)) != 0) return;
           break;
-        case 0x0005: releasebuffers(false); Invalidate(); base.Invalidate(); break; //WM_SIZE
+        case 0x0005: releasebuffers(false); /*Invalidate();*/ base.Invalidate(); break; //WM_SIZE
         //case 0x0020: m.Result = (IntPtr)1; return; // WM_SETCURSOR
         case 0x0100: //WM_KEYDOWN  
         case 0x0102: //WM_CHAR //case 0x0104: //WM_SYSKEYDOWN
@@ -707,8 +710,7 @@ namespace Test
 
     public int OnDriver(object? test) //single view only!
     {
-      var item = test as ToolStripMenuItem;
-      if (item != null)
+      if (test is ToolStripMenuItem item)
       {
         object unk; CreateDXGIFactory(typeof(IFactory).GUID, out unk); ADAPTER_DESC desc;
         var factory = (IFactory)unk; IAdapter adapter; var current = ((IDXGIDevice)device).Adapter.Desc.DeviceId;
@@ -729,8 +731,7 @@ namespace Test
     public int OnSamples(object? test)
     {
       var current = swapchain.Desc.SampleDesc.Count;
-      var item = test as ToolStripMenuItem;
-      if (item != null)
+      if (test is ToolStripMenuItem item)
       {
         SAMPLE_DESC desc; desc.Count = 1; desc.Quality = 0;
         for (int i = 1, q; i <= 16; i++)
@@ -1432,7 +1433,7 @@ namespace Test
       }
       public void Invalidate()
       {
-        view.inval = true;
+        view.Invalidate();
       }
     }
   }

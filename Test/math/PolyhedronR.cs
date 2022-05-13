@@ -206,6 +206,7 @@ namespace Test
       return true;
     }
 
+    const string err = "Invalid input polyhedron";
     static (PlaneR plane, int[] ii)[] getplanes(List<Vector3R> pp, List<int> ii)
     {
       var nk = ii.Count / 3;
@@ -444,7 +445,7 @@ namespace Test
         for (; ; )
         {
           tess.AddVertex(pp[a]);
-          if (!rem(abs, a, out var b)) throw new Exception();
+          if (!rem(abs, a, out var b)) throw new Exception(err);
           if (b == s) break; a = b;
         }
         tess.EndContour();
@@ -466,7 +467,7 @@ namespace Test
         if (map != null) map.Add(map[u / 3]);
         if (abs.Count == 0) return; e = abs.GetEnumerator();
       }
-      throw new Exception();
+      throw new Exception(err);
     }
 
     public static class Pool
