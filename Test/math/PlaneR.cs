@@ -25,7 +25,7 @@ namespace System.Numerics.Rational
     {
       return $"{Normal.ToString(format, provider)}; {Dist.ToString(format, provider)}";
     }
-    public bool TryFormat(Span<char> sw, out int nw, ReadOnlySpan<char> fmt, IFormatProvider? fp)
+    public readonly bool TryFormat(Span<char> sw, out int nw, ReadOnlySpan<char> fmt, IFormatProvider? fp)
     {
       int n; nw = 0;
       Normal.TryFormat(sw.Slice(nw), out n, fmt, fp); nw += n; sw[nw++] = ' ';
@@ -48,11 +48,11 @@ namespace System.Numerics.Rational
     {
       return new PlaneR(Vector3R.ReadFromBytes(ref rs), rat.ReadFromBytes(ref rs));
     }
-    public override int GetHashCode()
+    public readonly override int GetHashCode()
     {
       return Normal.GetHashCode() ^ Dist.GetHashCode();
     }
-    public override bool Equals(object? p)
+    public readonly override bool Equals(object? p)
     {
       return p is PlaneR b && Equals(b);
     }

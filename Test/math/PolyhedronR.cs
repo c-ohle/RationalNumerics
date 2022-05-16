@@ -26,15 +26,171 @@ namespace Test
     /// <param name="aii">Indices of polyhedron A.</param>
     /// <param name="bpp">Points of polyhedron B.</param>
     /// <param name="bii">Indices of polyhedron B.</param>
+    /// <param name="flags">1: Subdivide coplanar planes.</param>
     /// <param name="map">
     /// If not null, returns the source polygon indices of the corresponding result polygons.<br/>
     /// This list can be used to restore material ranges etc.
     /// </param>
-    public static void Boolean(Mode mode, List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, List<int>? map = null)
+    public static void Boolean(Mode mode, List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, int flags = 0, List<int>? map = null)
     {
-      if (mode == Mode.Union) Union(app, aii, bpp, bii, map);
-      else if (mode == Mode.Intersection) Intersect(app, aii, bpp, bii, map);
-      else Difference(app, aii, bpp, bii, map);
+      var abox = getbox(app);
+      var bbox = getbox(bpp);
+      if (mode == Mode.Difference)
+      {
+        if (!((flags & 1) == 0 ? intersect(abox, bbox) : touch(abox, bbox)))
+        {
+          if (map != null) for (int i = 0; i < aii.Count; i += 3) map.Add(i << 1);
+          return;
+        }
+      }
+      else if (mode == Mode.Union)
+      {
+        //if (!touch(abox, bbox)) { }      
+      }
+      else //Mode.Intersection
+      {
+        if (!touch(abox, bbox)) { app.Clear(); aii.Clear(); return; }
+      }
+      var aee = getplanes(app, aii);
+      var bee = getplanes(bpp, bii);
+      var iii = Pool.Rent<List<int>>(); iii.Clear(); iii.EnsureCapacity(aii.Count + bii.Count);
+      var ppp = Pool.Rent<Dictionary<Vector3R, int>>(); ppp.Clear(); ppp.EnsureCapacity(app.Count + bpp.Count);
+      var abs = Pool.Rent<Dictionary<int, int>>();
+      var abi = Pool.Rent<Dictionary<(int a, int b), int>>();
+      var ff = Pool.RentArray<int>(Math.Max(app.Count, bpp.Count));
+      var tess = Pool.Rent<TesselatorR>();
+      tess.Options = TesselatorR.Option.Fill | TesselatorR.Option.Delaunay;
+      if (mode == Mode.Difference)
+      {
+        tess.Winding = Winding.Positive;
+        for (int i = 0; i < aee.Length; i++)
+        {
+          var e = aee[i]; var nii = -1;
+          if (!touch(bbox, getbox(app, e.ii))) goto m1;
+          var f = getff(ff, bpp, e.plane);
+          int q = (f & 2) != 0 ? qplane(bee, e.plane) : -1;
+          int r = (f & 2) != 0 && (flags & 1) == 0 ? qplane(bee, -e.plane) : -1;
+          if (f < 5 && q == -1) goto m1; // && r == -1
+          var nx = bpp.Count; abs.Clear();
+          if (f >= 5) cutmesh(bpp, ff, bii, e.plane, abs, abi);
+          if (q != -1) xor2(abs, bee[q].ii);
+          if (r != -1) { xor2(abs, bee[r].ii); bee[r] = default; }
+          if (abs.Count == 0) goto m1;
+          tess.SetNormal(e.plane.Normal);
+          tess.BeginPolygon();
+          tessel(tess, bpp, abs); bpp.RemoveRange(nx, bpp.Count - nx); abs.Clear();
+          xor1(abs, e.ii);
+          tessel(tess, app, abs);
+          tess.EndPolygon();
+          nii = iii.Count; add(ppp, iii, tess); m1:
+          if (nii == -1) { nii = iii.Count; add(ppp, iii, app, e.ii); }
+          if (map != null) map.AddRange(Enumerable.Repeat((xmap(aii, e.ii) << 1) | 0, (iii.Count - nii) / 3));
+        }
+        tess.Winding = Winding.AbsGeqTwo;
+        for (int i = 0; i < bee.Length; i++)
+        {
+          var e = bee[i]; if (e.ii == null) continue;
+          if (!touch(abox, getbox(bpp, e.ii))) continue;
+          var f = getff(ff, app, e.plane); if (f < 5) continue;
+          var nx = app.Count; var nii = iii.Count; abs.Clear();
+          cutmesh(app, ff, aii, e.plane, abs, abi); //if (abs.Count == 0) continue;
+          tess.SetNormal(e.plane.Normal); tess.Options ^= TesselatorR.Option.NormNeg;
+          tess.BeginPolygon();
+          tessel(tess, app, abs); app.RemoveRange(nx, app.Count - nx); abs.Clear();
+          xor2(abs, e.ii);
+          tessel(tess, bpp, abs);
+          tess.EndPolygon();
+          add(ppp, iii, tess);
+          if (map != null) map.AddRange(Enumerable.Repeat((xmap(bii, e.ii) << 1) | 1, (iii.Count - nii) / 3));
+        }
+      }
+      else if (mode == Mode.Union)
+      {
+        tess.Winding = Winding.Positive;
+        for (int i = 0; i < aee.Length; i++)
+        {
+          var e = aee[i]; var nii = -1;
+          if (!touch(bbox, getbox(app, e.ii))) goto m1;
+          var f = getff(ff, bpp, e.plane);
+          int q = (f & 2) != 0 && (flags & 1) == 0 ? qplane(bee, e.plane) : -1;
+          if (f < 5 && q == -1) goto m1;
+          var nx = bpp.Count; abs.Clear();
+          if (f >= 5) cutmesh(bpp, ff, bii, e.plane, abs, abi);
+          if (q != -1) { xor1(abs, bee[q].ii); bee[q] = default; }
+          tess.SetNormal(e.plane.Normal);
+          tess.BeginPolygon();
+          tessel(tess, bpp, abs); bpp.RemoveRange(nx, bpp.Count - nx); abs.Clear();
+          xor1(abs, e.ii);
+          tessel(tess, app, abs);
+          tess.EndPolygon();
+          nii = iii.Count; add(ppp, iii, tess); m1:
+          if (nii == -1) { nii = iii.Count; add(ppp, iii, app, e.ii); }
+          if (map != null) map.AddRange(Enumerable.Repeat((xmap(aii, e.ii) << 1) | 0, (iii.Count - nii) / 3));
+        }
+        for (int i = 0; i < bee.Length; i++)
+        {
+          var e = bee[i]; if (e.ii == null) continue; var nii = -1;
+          if (!touch(abox, getbox(bpp, e.ii))) goto m1;
+          var f = getff(ff, app, e.plane);
+          int q = (f & 2) != 0 ? qplane(aee, e.plane) : -1; //if (q != -1 && (flags & 1) != 0) continue;
+          if (f < 5 && q == -1) goto m1;
+          var nx = app.Count; abs.Clear();
+          if (f >= 5) cutmesh(app, ff, aii, e.plane, abs, abi);
+          if (q != -1) xor2(abs, aee[q].ii);
+          tess.SetNormal(e.plane.Normal);
+          tess.BeginPolygon();
+          tessel(tess, app, abs); app.RemoveRange(nx, app.Count - nx); abs.Clear();
+          xor1(abs, e.ii);
+          tessel(tess, bpp, abs);
+          tess.EndPolygon();
+          nii = iii.Count; add(ppp, iii, tess); m1:
+          if (nii == -1) { nii = iii.Count; add(ppp, iii, bpp, e.ii); }
+          if (map != null) map.AddRange(Enumerable.Repeat((xmap(bii, e.ii) << 1) | 1, (iii.Count - nii) / 3));
+        }
+      }
+      else //Mode.Intersection
+      {
+        tess.Winding = Winding.AbsGeqTwo;
+        for (int i = 0; i < aee.Length; i++)
+        {
+          var e = aee[i];
+          if (!touch(bbox, getbox(app, e.ii))) continue;
+          var f = getff(ff, bpp, e.plane);
+          int q = (f & 2) != 0 ? qplane(bee, e.plane) : -1;
+          if (f < 5 && q == -1) continue;
+          var nx = bpp.Count; var nii = iii.Count; abs.Clear();
+          if (f >= 5) cutmesh(bpp, ff, bii, e.plane, abs, abi);
+          if (q != -1) xor2(abs, bee[q].ii); //if (abs.Count == 0) continue;
+          tess.SetNormal(e.plane.Normal);
+          tess.BeginPolygon();
+          tessel(tess, bpp, abs); bpp.RemoveRange(nx, bpp.Count - nx); abs.Clear();
+          xor2(abs, e.ii);
+          tessel(tess, app, abs);
+          tess.EndPolygon();
+          add(ppp, iii, tess); if (map != null) map.AddRange(Enumerable.Repeat((xmap(aii, e.ii) << 1) | 0, (iii.Count - nii) / 3));
+        }
+        for (int i = 0; i < bee.Length; i++)
+        {
+          var e = bee[i];
+          if (!touch(abox, getbox(bpp, e.ii))) continue;
+          var f = getff(ff, app, e.plane); if (f < 5) continue;
+          var nx = app.Count; var nii = iii.Count; abs.Clear();
+          cutmesh(app, ff, aii, e.plane, abs, abi); //if (abs.Count == 0) continue;
+          tess.SetNormal(e.plane.Normal);
+          tess.BeginPolygon();
+          tessel(tess, app, abs); app.RemoveRange(nx, app.Count - nx); abs.Clear();
+          xor2(abs, e.ii);
+          tessel(tess, bpp, abs);
+          tess.EndPolygon();
+          add(ppp, iii, tess); if (map != null) map.AddRange(Enumerable.Repeat((xmap(bii, e.ii) << 1) | 1, (iii.Count - nii) / 3));
+        }
+      }
+      app.Clear(); app.AddRange(ppp.Keys);
+      aii.Clear(); aii.AddRange(iii);
+      join(app, aii, abs, map);
+      ppp.Clear(); Pool.Return(ppp); Pool.Return(iii);
+      Pool.Return(ff); Pool.Return(abs); Pool.Return(abi);
+      Pool.Return(tess);
     }
     /// <summary>
     /// Calculates the difference between a polyhedron A defined by a list of points and indices,<br/>
@@ -109,209 +265,6 @@ namespace Test
 
       ppp.Clear(); Pool.Return(ppp); Pool.Return(iii);
       Pool.Return(abi); Pool.Return(abs); Pool.Return(ff);
-      Pool.Return(tess);
-      return true;
-    }
-
-    public static bool Difference(List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, List<int>? map = null)
-    {
-      var abox = getbox(app);
-      var bbox = getbox(bpp);
-      if (!touch(abox, bbox))//!intersect(abox, bbox))
-      {
-        if (map != null) for (int i = 0; i < aii.Count; i += 3) map.Add(i << 1);
-        return false;
-      }
-      var aee = getplanes(app, aii);
-      var bee = getplanes(bpp, bii);
-
-      var iii = Pool.Rent<List<int>>(); iii.Clear(); iii.EnsureCapacity(aii.Count);
-      var ppp = Pool.Rent<Dictionary<Vector3R, int>>(); ppp.Clear(); ppp.EnsureCapacity(app.Count);
-      var abs = Pool.Rent<Dictionary<int, int>>();
-      var abi = Pool.Rent<Dictionary<(int a, int b), int>>();
-      var ff = Pool.RentArray<int>(Math.Max(app.Count, bpp.Count));
-
-      var tess = Pool.Rent<TesselatorR>();
-      tess.Options = TesselatorR.Option.Fill | TesselatorR.Option.Delaunay;
-
-      tess.Winding = Winding.Positive;
-      for (int i = 0; i < aee.Length; i++)
-      {
-        var e = aee[i]; var box = getbox(app, e.ii); var nii = iii.Count;
-        if (!touch(bbox, box)) { add(ppp, iii, app, e.ii); goto m1; }
-        var f = getff(ff, bpp, e.plane);
-        int q = (f & 2) != 0 ? qplane(bee, e.plane) : -1;
-        if (f < 5 && q == -1) { add(ppp, iii, app, e.ii); goto m1; }
-        var nx = bpp.Count;
-        if (f >= 5) cutmesh(bpp, ff, bii, e.plane, abs, abi);
-        if (q != -1) xor2(abs, bee[q].ii);
-        if (abs.Count == 0) { add(ppp, iii, app, e.ii); goto m1; }
-        tess.SetNormal(e.plane.Normal);
-        tess.BeginPolygon();
-        tessel(tess, bpp, abs);
-        bpp.RemoveRange(nx, bpp.Count - nx);
-        abs.Clear();
-        xor1(abs, e.ii);
-        tessel(tess, app, abs);
-        tess.EndPolygon();
-        add(ppp, iii, tess); m1: if (map != null) map.AddRange(Enumerable.Repeat((xmap(aii, e.ii) << 1) | 0, (iii.Count - nii) / 3));
-      }
-      tess.Winding = Winding.AbsGeqTwo;
-      for (int i = 0; i < bee.Length; i++)
-      {
-        var e = bee[i]; var box = getbox(bpp, e.ii); if (!touch(abox, box)) continue;
-        var f = getff(ff, app, e.plane); if (f < 5) continue;
-        var nx = app.Count; var nii = iii.Count;
-        cutmesh(app, ff, aii, e.plane, abs, abi); if (abs.Count == 0) continue;
-        tess.SetNormal(e.plane.Normal); tess.Options ^= TesselatorR.Option.NormNeg;
-        tess.BeginPolygon();
-        tessel(tess, app, abs); app.RemoveRange(nx, app.Count - nx);
-        abs.Clear();
-        xor2(abs, e.ii);
-        tessel(tess, bpp, abs);
-        tess.EndPolygon();
-        add(ppp, iii, tess);
-        if (map != null) map.AddRange(Enumerable.Repeat((xmap(bii, e.ii) << 1) | 1, (iii.Count - nii) / 3));
-      }
-
-      app.Clear(); app.AddRange(ppp.Keys);
-      aii.Clear(); aii.AddRange(iii);
-      join(app, aii, abs, map);
-
-      ppp.Clear(); Pool.Return(ppp); Pool.Return(iii);
-      Pool.Return(ff); Pool.Return(abs); Pool.Return(abi);
-      Pool.Return(tess);
-      return true;
-    }
-    public static bool Intersect(List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, List<int>? map = null)
-    {
-      var abox = getbox(app);
-      var bbox = getbox(bpp);
-      if (!touch(abox, bbox))//!intersect(abox, bbox)) 
-      {
-        app.Clear(); aii.Clear();
-        return false;
-      }
-      var aee = getplanes(app, aii);
-      var bee = getplanes(bpp, bii);
-
-      var iii = Pool.Rent<List<int>>(); iii.Clear(); iii.EnsureCapacity(aii.Count);
-      var ppp = Pool.Rent<Dictionary<Vector3R, int>>(); ppp.Clear(); ppp.EnsureCapacity(app.Count);
-      var abs = Pool.Rent<Dictionary<int, int>>();
-      var abi = Pool.Rent<Dictionary<(int a, int b), int>>();
-      var ff = Pool.RentArray<int>(Math.Max(app.Count, bpp.Count));
-
-      var tess = Pool.Rent<TesselatorR>();
-      tess.Options = TesselatorR.Option.Fill | TesselatorR.Option.Delaunay;
-      tess.Winding = Winding.AbsGeqTwo;
-      for (int i = 0; i < aee.Length; i++)
-      {
-        var e = aee[i]; var box = getbox(app, e.ii);
-        if (!touch(bbox, box)) continue;
-        var f = getff(ff, bpp, e.plane);
-        int q = (f & 2) != 0 ? qplane(bee, e.plane) : -1;
-        if (f < 5 && q == -1) continue;
-        var nx = bpp.Count; var nii = iii.Count;
-        if (f >= 5) cutmesh(bpp, ff, bii, e.plane, abs, abi);
-        if (q != -1) xor2(abs, bee[q].ii);
-        if (abs.Count == 0) { Debug.Assert(bpp.Count == nx); continue; }
-        tess.SetNormal(e.plane.Normal);
-        tess.BeginPolygon();
-        tessel(tess, bpp, abs); bpp.RemoveRange(nx, bpp.Count - nx);
-        abs.Clear();
-        xor2(abs, e.ii);
-        tessel(tess, app, abs);
-        tess.EndPolygon();
-        add(ppp, iii, tess); if (map != null) map.AddRange(Enumerable.Repeat((xmap(aii, e.ii) << 1) | 0, (iii.Count - nii) / 3));
-      }
-      for (int i = 0; i < bee.Length; i++)
-      {
-        var e = bee[i]; var box = getbox(bpp, e.ii);
-        if (!touch(abox, box)) continue;
-        var f = getff(ff, app, e.plane); if (f < 5) continue;
-        var nx = app.Count; var nii = iii.Count;
-        cutmesh(app, ff, aii, e.plane, abs, abi); if (abs.Count == 0) continue;
-        tess.SetNormal(e.plane.Normal);
-        tess.BeginPolygon();
-        tessel(tess, app, abs); app.RemoveRange(nx, app.Count - nx);
-        abs.Clear();
-        xor2(abs, e.ii);
-        tessel(tess, bpp, abs);
-        tess.EndPolygon();
-        add(ppp, iii, tess); if (map != null) map.AddRange(Enumerable.Repeat((xmap(bii, e.ii) << 1) | 1, (iii.Count - nii) / 3));
-      }
-
-      app.Clear(); app.AddRange(ppp.Keys);
-      aii.Clear(); aii.AddRange(iii);
-      join(app, aii, abs, map);
-
-      ppp.Clear(); Pool.Return(ppp); Pool.Return(iii);
-      Pool.Return(ff); Pool.Return(abs); Pool.Return(abi);
-      Pool.Return(tess);
-      return true;
-    }
-    public static bool Union(List<Vector3R> app, List<int> aii, List<Vector3R> bpp, List<int> bii, List<int>? map = null)
-    {
-      var abox = getbox(app);
-      var bbox = getbox(bpp); //if (!touch(abox, bbox)) { }
-      var aee = getplanes(app, aii);
-      var bee = getplanes(bpp, bii);
-
-      var iii = Pool.Rent<List<int>>(); iii.Clear(); iii.EnsureCapacity(aii.Count);
-      var ppp = Pool.Rent<Dictionary<Vector3R, int>>(); ppp.Clear(); ppp.EnsureCapacity(app.Count);
-      var abs = Pool.Rent<Dictionary<int, int>>();
-      var abi = Pool.Rent<Dictionary<(int a, int b), int>>();
-      var ff = Pool.RentArray<int>(Math.Max(app.Count, bpp.Count));
-
-      var tess = Pool.Rent<TesselatorR>();
-      tess.Options = TesselatorR.Option.Fill | TesselatorR.Option.Delaunay;
-      tess.Winding = Winding.Positive;
-      for (int i = 0; i < aee.Length; i++)
-      {
-        var e = aee[i]; var box = getbox(app, e.ii); var nii = iii.Count;
-        if (!touch(bbox, box)) { add(ppp, iii, app, e.ii); goto m1; }
-        var f = getff(ff, bpp, e.plane);
-        int q = -1;// (f & 2) != 0 ? qplane(bee, e.plane) : -1;
-        if (f < 5 && q == -1) { add(ppp, iii, app, e.ii); goto m1; }
-        var nx = bpp.Count;
-        if (f >= 5) cutmesh(bpp, ff, bii, e.plane, abs, abi);
-        //if (q != -1) xor1(abs, bee[q].ii);
-        if (q != -1) xor2(abs, bee[q].ii);
-        if (abs.Count == 0) { }
-        tess.SetNormal(e.plane.Normal);
-        tess.BeginPolygon();
-        tessel(tess, bpp, abs); bpp.RemoveRange(nx, bpp.Count - nx); abs.Clear();
-        xor1(abs, e.ii);
-        tessel(tess, app, abs);
-        tess.EndPolygon();
-        add(ppp, iii, tess); m1: if (map != null) map.AddRange(Enumerable.Repeat((xmap(aii, e.ii) << 1) | 0, (iii.Count - nii) / 3));
-      }
-      for (int i = 0; i < bee.Length; i++)
-      {
-        var e = bee[i]; if (e.ii == null) continue; var box = getbox(bpp, e.ii); var nii = iii.Count;
-        if (!touch(abox, box)) { add(ppp, iii, bpp, e.ii); goto m1; }
-        var f = getff(ff, app, e.plane);
-        int q = (f & 2) != 0 ? qplane(aee, e.plane) : -1;
-        if (f < 5 && q == -1) { add(ppp, iii, bpp, e.ii); goto m1; }
-        var nx = app.Count;
-        if (f >= 5) cutmesh(app, ff, aii, e.plane, abs, abi);
-        if (q != -1) xor2(abs, aee[q].ii);
-        if (abs.Count == 0) { }
-        tess.SetNormal(e.plane.Normal);
-        tess.BeginPolygon();
-        tessel(tess, app, abs); app.RemoveRange(nx, app.Count - nx);
-        abs.Clear();
-        xor1(abs, e.ii);
-        tessel(tess, bpp, abs);
-        tess.EndPolygon();
-        add(ppp, iii, tess); m1: if (map != null) map.AddRange(Enumerable.Repeat((xmap(bii, e.ii) << 1) | 1, (iii.Count - nii) / 3));
-      }
-      app.Clear(); app.AddRange(ppp.Keys);
-      aii.Clear(); aii.AddRange(iii);
-      join(app, aii, abs, map);
-
-      ppp.Clear(); Pool.Return(ppp); Pool.Return(iii);
-      Pool.Return(ff); Pool.Return(abs); Pool.Return(abi);
       Pool.Return(tess);
       return true;
     }
