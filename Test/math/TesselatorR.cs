@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Test
 {
-  public enum Winding { EvenOdd = 0, NonZero = 1, Positive = 2, Negative = 3, AbsGeqTwo = 4, AbsGeqThree = 5 }
+  public enum Winding { EvenOdd = 0, NonZero = 1, Positive = 2, Negative = 3, AbsGeqTwo = 4 }
 
   /// <summary>
   /// Tesselator based on <see cref="rat"/>.<br/>
@@ -178,10 +178,10 @@ namespace Test
                 if (Math.Abs(old) == 1 && Math.Abs(dir) == 2) { k = i; continue; }
                 if (Math.Abs(old) == 2 && Math.Abs(dir) == 1) break;
                 goto skip;
-              case Winding.AbsGeqThree:
-                if (old == 2 && dir == 3) { k = i; continue; }
-                if (old == 3 && dir == 2) break;
-                goto skip;
+              //case Winding.AbsGeqThree:
+              //  if (old == 2 && dir == 3) { k = i; continue; }
+              //  if (old == 3 && dir == 2) break;
+              //  goto skip;
             }
             var a = (uint)(kk[k].a * 8); ref var u = ref pp[kk[k].a];
             if (cpu.equ(a + 5, b + 5) && cpu.equ(a + 6, b + 6))

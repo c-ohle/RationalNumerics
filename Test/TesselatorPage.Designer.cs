@@ -90,8 +90,7 @@
             "NonZero",
             "Positive",
             "Negative",
-            "AbsGeqTwo",
-            "AbsGeqThree"});
+            "AbsGeqTwo"});
       this.comboBoxWinding.Location = new System.Drawing.Point(16, 56);
       this.comboBoxWinding.Name = "comboBoxWinding";
       this.comboBoxWinding.Size = new System.Drawing.Size(162, 28);
@@ -289,8 +288,6 @@
       // 
       // TesselatorPage
       // 
-      //this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-      //this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.buttonReset);
       this.Controls.Add(this.label3);
       this.Controls.Add(this.labelStatus);
