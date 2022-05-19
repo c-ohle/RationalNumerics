@@ -73,7 +73,7 @@ namespace Test
         {
           var e = aee[i];
           if (!touch(bbox, getbox(app, e.ii))) { fetch(0, e); return; }
-          var t = Tess.get();
+          var t = Tess.GetInstance();
           var f = t.getff(bpp, e.plane, Math.Max(app.Count, bpp.Count));
           int q = (f & 2) != 0 ? qplane(bee, e.plane) : -1;
           int r = (f & 2) != 0 && (flags & 1) == 0 ? qplane(bee, -e.plane) : -1;
@@ -82,22 +82,22 @@ namespace Test
           if (q != -1) t.xor2(bee[q].ii);
           if (r != -1) { t.xor2(bee[r].ii); bee[r] = default; }
           if (t.empty) { fetch(0, e); return; }
-          t.Winding = Winding.Positive;
-          t.SetNormal(e.plane.Normal);
-          t.BeginPolygon(); t.tessel(bpp); t.xor1(e.ii); t.tessel(app);
-          t.EndPolygon(); fetch(0, e, t);
+          t.tess.Winding = Winding.Positive;
+          t.tess.SetNormal(e.plane.Normal);
+          t.tess.BeginPolygon(); t.tessel(bpp); t.xor1(e.ii); t.tessel(app);
+          t.tess.EndPolygon(); fetch(0, e, t.tess);
         });
         Parallel.For(0, bee.Length, i =>
         {
           var e = bee[i]; if (e.ii == null) return;
           if (!touch(abox, getbox(bpp, e.ii))) return;
-          var t = Tess.get();
+          var t = Tess.GetInstance();
           var f = t.getff(app, e.plane, Math.Max(app.Count, bpp.Count)); if (f < 5) return;
           t.cutmesh(app, aii, e.plane);
-          t.Winding = Winding.AbsGeqTwo;
-          t.SetNormal(e.plane.Normal); t.Options ^= TesselatorR.Option.NormNeg;
-          t.BeginPolygon(); t.tessel(app); t.xor2(e.ii); t.tessel(bpp);
-          t.EndPolygon(); fetch(1, e, t);
+          t.tess.Winding = Winding.AbsGeqTwo;
+          t.tess.SetNormal(e.plane.Normal); t.tess.Options ^= TesselatorR.Option.NormNeg;
+          t.tess.BeginPolygon(); t.tessel(app); t.xor2(e.ii); t.tessel(bpp);
+          t.tess.EndPolygon(); fetch(1, e, t.tess);
         });
       }
       else if (mode == Mode.Union)
@@ -106,31 +106,31 @@ namespace Test
         {
           var e = aee[i];
           if (!touch(bbox, getbox(app, e.ii))) { fetch(0, e); return; }
-          var t = Tess.get();
+          var t = Tess.GetInstance();
           var f = t.getff(bpp, e.plane, Math.Max(app.Count, bpp.Count));
           int q = (f & 2) != 0 && (flags & 1) == 0 ? qplane(bee, e.plane) : -1;
           if (f < 5 && q == -1) { fetch(0, e); return; }
           if (f >= 5) t.cutmesh(bpp, bii, e.plane);
           if (q != -1) { t.xor1(bee[q].ii); bee[q] = default; }
-          t.Winding = Winding.Positive;
-          t.SetNormal(e.plane.Normal);
-          t.BeginPolygon(); t.tessel(bpp); t.xor1(e.ii); t.tessel(app);
-          t.EndPolygon(); fetch(0, e, t);
+          t.tess.Winding = Winding.Positive;
+          t.tess.SetNormal(e.plane.Normal);
+          t.tess.BeginPolygon(); t.tessel(bpp); t.xor1(e.ii); t.tessel(app);
+          t.tess.EndPolygon(); fetch(0, e, t.tess);
         });
         Parallel.For(0, bee.Length, i =>
         {
           var e = bee[i]; if (e.ii == null) return;
           if (!touch(abox, getbox(bpp, e.ii))) { fetch(1, e); return; }
-          var t = Tess.get();
+          var t = Tess.GetInstance();
           var f = t.getff(app, e.plane, Math.Max(app.Count, bpp.Count));
           int q = (f & 2) != 0 ? qplane(aee, e.plane) : -1; //if (q != -1 && (flags & 1) != 0) continue;
           if (f < 5 && q == -1) { fetch(1, e); return; }
           if (f >= 5) t.cutmesh(app, aii, e.plane);
           if (q != -1) t.xor2(aee[q].ii);
-          t.Winding = Winding.Positive;
-          t.SetNormal(e.plane.Normal);
-          t.BeginPolygon(); t.tessel(app); t.xor1(e.ii); t.tessel(bpp);
-          t.EndPolygon(); fetch(1, e, t);
+          t.tess.Winding = Winding.Positive;
+          t.tess.SetNormal(e.plane.Normal);
+          t.tess.BeginPolygon(); t.tessel(app); t.xor1(e.ii); t.tessel(bpp);
+          t.tess.EndPolygon(); fetch(1, e, t.tess);
         });
       }
       else //Mode.Intersection
@@ -138,32 +138,32 @@ namespace Test
         Parallel.For(0, aee.Length, i =>
         {
           var e = aee[i]; if (!touch(bbox, getbox(app, e.ii))) return;
-          var t = Tess.get();
+          var t = Tess.GetInstance();
           var f = t.getff(bpp, e.plane, Math.Max(app.Count, bpp.Count));
           int q = (f & 2) != 0 ? qplane(bee, e.plane) : -1;
           if (f < 5 && q == -1) return;
           if (f >= 5) t.cutmesh(bpp, bii, e.plane);
           if (q != -1) t.xor2(bee[q].ii);
-          t.Winding = Winding.AbsGeqTwo;
-          t.SetNormal(e.plane.Normal);
-          t.BeginPolygon(); t.tessel(bpp); t.xor2(e.ii); t.tessel(app);
-          t.EndPolygon(); fetch(0, e, t);
+          t.tess.Winding = Winding.AbsGeqTwo;
+          t.tess.SetNormal(e.plane.Normal);
+          t.tess.BeginPolygon(); t.tessel(bpp); t.xor2(e.ii); t.tessel(app);
+          t.tess.EndPolygon(); fetch(0, e, t.tess);
         });
         Parallel.For(0, bee.Length, i =>
         {
           var e = bee[i]; if (!touch(abox, getbox(bpp, e.ii))) return;
-          var t = Tess.get();
+          var t = Tess.GetInstance();
           var f = t.getff(app, e.plane, Math.Max(app.Count, bpp.Count)); if (f < 5) return;
           t.cutmesh(app, aii, e.plane);
-          t.Winding = Winding.AbsGeqTwo;
-          t.SetNormal(e.plane.Normal);
-          t.BeginPolygon(); t.tessel(app); t.xor2(e.ii); t.tessel(bpp);
-          t.EndPolygon(); fetch(1, e, t);
+          t.tess.Winding = Winding.AbsGeqTwo;
+          t.tess.SetNormal(e.plane.Normal);
+          t.tess.BeginPolygon(); t.tessel(app); t.xor2(e.ii); t.tessel(bpp);
+          t.tess.EndPolygon(); fetch(1, e, t.tess);
         });
       }
       app.Clear(); app.AddRange(ppp.Keys);
       aii.Clear(); aii.AddRange(iii);
-      Tess.get().join(app, aii, bmap ? map : null);
+      Tess.GetInstance().join(app, aii, bmap ? map : null);
     }
     public bool Cut(PlaneR plane, int flags = 0)
     {
@@ -182,22 +182,22 @@ namespace Test
         if (f == 2) return; //todo: check, on plain?        
         if ((f & 4) == 0) { fetch(0, e); return; }
         if ((f & 1) == 0) return;
-        t = Tess.get();
+        t = Tess.GetInstance();
         t.cutface(app, ff, e.ii, plane); //if(t.empty) { }
-        t.Winding = Winding.NonZero;
-        t.SetNormal(e.plane.Normal);
-        t.BeginPolygon(); t.tessel(app);
-        t.EndPolygon(); fetch(0, e, t);
+        t.tess.Winding = Winding.NonZero;
+        t.tess.SetNormal(e.plane.Normal);
+        t.tess.BeginPolygon(); t.tessel(app);
+        t.tess.EndPolygon(); fetch(0, e, t.tess);
       });
-      if (true)
+      //if (true)
       {
-        var t = Tess.get(); var ip = -plane;
-        t.getff(app, ip, app.Count);
-        t.cutmesh(app, aii, ip);
-        t.Winding = Winding.NonZero;
-        t.SetNormal(plane.Normal);
-        t.BeginPolygon(); t.tessel(app);
-        t.EndPolygon(); var n = iii.Count; add(t);
+        var t = Tess.GetInstance();
+        t.getff(app, plane = -plane, app.Count);
+        t.cutmesh(app, aii, plane);
+        t.tess.Winding = Winding.NonZero;
+        t.tess.SetNormal(plane.Normal);
+        t.tess.BeginPolygon(); t.tessel(app);
+        t.tess.EndPolygon(); var n = iii.Count; add(t.tess);
         if (bmap) map.AddRange(Enumerable.Repeat(1, (iii.Count - n) / 3));
       }
       app.Clear(); app.AddRange(ppp.Keys);
@@ -207,10 +207,10 @@ namespace Test
 
     PolyhedronR() { }
     [ThreadStatic] static WeakReference? wr;
-    List<Vector3R> app = new(), bpp = new();
-    List<int> aii = new(), bii = new(), map = new(), iii = new();
-    Dictionary<Vector3R, int> ppp = new();
-    Dictionary<int, int> abs = new();
+    readonly List<Vector3R> app = new(), bpp = new();
+    readonly List<int> aii = new(), bii = new(), map = new(), iii = new();
+    readonly Dictionary<Vector3R, int> ppp = new();
+    readonly Dictionary<int, int> abs = new();
     int[]? ff; PlaneR[]? ee; bool bmap;
     int[] getff(int n)
     {
@@ -239,19 +239,20 @@ namespace Test
         if (bmap) map.AddRange(Enumerable.Repeat(((e.t * 3) << 1) | ab, (iii.Count - n) / 3));
       }
     }
-    sealed class Tess : TesselatorR
+    sealed class Tess
     {
-      internal static Tess get()
+      internal static Tess GetInstance()
       {
         if (wr == null || wr.Target is not Tess p)
           wr = new WeakReference(p = new Tess());
         return p;
       }
       [ThreadStatic] static WeakReference? wr;
+      internal readonly TesselatorR tess = TesselatorR.GetInstance();
       int[] ff = Array.Empty<int>();
-      Dictionary<int, int> abs = new();
-      Dictionary<(int a, int b), int> abi = new();
-      List<Vector3R> pps = new();
+      readonly Dictionary<int, int> abs = new();
+      readonly Dictionary<(int a, int b), int> abi = new();
+      readonly List<Vector3R> pps = new();
       internal bool empty => abs.Count == 0;
       internal int getff(IReadOnlyList<Vector3R> pp, in PlaneR plane, int nx)
       {
@@ -323,15 +324,15 @@ namespace Test
           var t = e.Current;
           var s = t.Key & 0x00ffffff;
           var a = t.Value; rem(s, a);
-          this.BeginContour();
-          this.AddVertex(s < np ? pp[s] : pps[s - np]);
+          tess.BeginContour();
+          tess.AddVertex(s < np ? pp[s] : pps[s - np]);
           for (; ; )
           {
-            this.AddVertex(a < np ? pp[a] : pps[a - np]);
+            tess.AddVertex(a < np ? pp[a] : pps[a - np]);
             if (!rem(a, out var b)) { abs.Clear(); throw new Exception(err); }
             if (b == s) break; a = b;
           }
-          this.EndContour();
+          tess.EndContour();
         }
       }
       internal void xor1(int[] ii)

@@ -10,8 +10,14 @@ namespace Test
   /// Tesselator based on <see cref="rat"/>.<br/>
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
-  public class TesselatorR
+  public sealed class TesselatorR
   {
+    public static TesselatorR GetInstance()
+    {
+      if (wr == null || wr.Target is not TesselatorR p)
+        wr = new WeakReference(p = new TesselatorR());
+      return p;
+    }
     public Winding Winding = Winding.EvenOdd;
     public Option Options = Option.Fill | Option.Delaunay | Option.OutlinePrecise | Option.Trim;
     public void SetNormal(in Vector3R v)
@@ -342,6 +348,7 @@ namespace Test
       Outline = 0x1000, OutlinePrecise = 0x2000, Trim = 0x8000,
       NormX = 0x10000, NormY = 0x20000, NormZ = 0x40000, NormNeg = 0x80000
     }
+    [ThreadStatic] static WeakReference? wr;
     const int hash = 199; //1103
     int state, ns, nl, nc, fi; int[]? ss, ll, lc;
     int np; (int next, int ic, int line, int fl)[] pp;
