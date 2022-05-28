@@ -360,14 +360,14 @@ namespace System.Numerics.Rational
       return task_cpu.cmp(this, b);
     }
     /// <summary>
-    /// Compares this instance to a second <see cref = "System.Int32" /> and returns an
+    /// Compares this instance to a second <see cref = "long" /> and returns an
     /// integer that indicates whether the value of this instance is less than, equal
     /// to, or greater than the value of the specified object.
     /// </summary>
     /// <remarks>
     /// Fast shortcut for the most common comparisons like: <c>x == 0; x &lt;= 1; x != -1;</c> etc.
     /// </remarks>
-    /// <param name="b"><see cref="int"/> value to compare.</param>
+    /// <param name="b"><see cref="long"/> value to compare.</param>
     /// <returns>
     /// A signed integer value that indicates the relationship of this instance to other,
     /// as shown in the following table.<br/>
@@ -1258,7 +1258,7 @@ namespace System.Numerics.Rational
       {
         if (v == 0) { push(); return; }
         var e = unchecked((byte)(*(uint*)&v >> 23) - 126); //Debug.Assert(!float.IsFinite(v) == (e == 0x81));
-        if (e == 0x81) { nan(); return; }
+        if (e == 0x81) { pnan(); return; }
         var p = 6 - ((e * 19728) >> 16);
         var d = MathF.Abs(v) * Math.Pow(10, p); //-32..44
         if (d < 1e6) { d *= 10; p++; }
@@ -1278,7 +1278,7 @@ namespace System.Numerics.Rational
       {
         if (v == 0) { push(); return; }
         var e = unchecked((int)((*(ulong*)&v >> 52) & 0x7FF) - 1022); //Debug.Assert(!double.IsFinite(v) == (e == 0x401));
-        if (e == 0x401) { nan(); return; } //NaN 
+        if (e == 0x401) { pnan(); return; } //NaN 
         var p = 14 - ((e * 19728) >> 16); //-14..43
         var d = Math.Abs(v) * Math.Pow(10, p);
         if (d < 1e14) { d *= 10; p++; }
@@ -1299,7 +1299,7 @@ namespace System.Numerics.Rational
       {
         if (v == 0) { push(); return; }
         int h = ((int*)&v)[1], e = ((h >> 20) & 0x7FF) - 1075; // Debug.Assert(!double.IsFinite(v) == (e == 0x3cc));
-        if (e == 0x3cc) { nan(); return; } //NaN 
+        if (e == 0x3cc) { pnan(); return; } //NaN 
         fixed (uint* p = rent((unchecked((uint)(e < 0 ? -e : e)) >> 5) + 8))
         {
           p[0] = 2; p[1] = *(uint*)&v; p[2] = (unchecked((uint)h) & 0x000FFFFF) | 0x100000;
@@ -1798,7 +1798,7 @@ namespace System.Numerics.Rational
       /// <param name="b">A <see cref="NewRational"/> as second value.</param>
       public void div(NewRational a, NewRational b)
       {
-        if (b.p == null) { nan(); return; }
+        if (b.p == null) { pnan(); return; }
         if (a.p == null) { push(); return; }
         fixed (uint* u = a.p, v = b.p) mul(u, v, true);
       }
@@ -2191,7 +2191,7 @@ namespace System.Numerics.Rational
       /// Calculates a hash value for the value at b as absolute index in the stack.
       /// </summary>
       /// <remarks>
-      /// The function is helpful for comparsions and to build dictionarys without creaton of <see cref="NewRational"/> objects.<br/>
+      /// The function is helpful for comparsions and to build dictionarys without creation of <see cref="NewRational"/> objects.<br/>
       /// To get meaningful hash values the function forces normalizations what can be time critical.<br/>
       /// The hash value returned is identical with the hash value returned from <see cref="NewRational.GetHashCode"/> for same values.<br/>
       /// see: <see cref="mark()"/> for absolute indices. 
@@ -2325,7 +2325,7 @@ namespace System.Numerics.Rational
         }
         return a;
       }
-      void nan()
+      void pnan()
       {
         fixed (uint* p = rent(4)) *(ulong*)p = *(ulong*)(p + 2) = 1;
       }
@@ -2702,11 +2702,11 @@ namespace System.Numerics.Rational
     /// </summary>
     public static CPU task_cpu
     {
-      get { return _cpu ??= new CPU(); }
+      get { return cpu ??= new CPU(); }
     }
 
     #region private 
-    [ThreadStatic] private static CPU? _cpu;
+    [ThreadStatic] private static CPU? cpu;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     NewRational(uint[] p) { this.p = p; }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

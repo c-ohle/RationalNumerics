@@ -37,9 +37,6 @@ namespace Test
       var xp = i == 0 ? app : bpp;
       for (i = 0; i < xp.Count; i++) xp[i] = Vector3R.Transform(xp[i], m);
     }
-    public List<Vector3R> Vertices => app;
-    public List<int> Indices => aii;
-    public List<int> Mapping => map;
     public enum Mode { Union, Difference, Intersection }
     public void Boolean(Mode mode, int flags = 0)
     {
@@ -204,9 +201,10 @@ namespace Test
       aii.Clear(); aii.AddRange(iii);
       return true;
     }
-
-    PolyhedronR() { }
-    [ThreadStatic] static WeakReference? wr;
+    public List<Vector3R> Vertices => app;
+    public List<int> Indices => aii;
+    public List<int> Mapping => map;
+    [ThreadStatic] static WeakReference? wr; PolyhedronR() { }
     readonly List<Vector3R> app = new(), bpp = new();
     readonly List<int> aii = new(), bii = new(), map = new(), iii = new();
     readonly Dictionary<Vector3R, int> ppp = new();
