@@ -28,43 +28,52 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabControl = new System.Windows.Forms.TabControl();
+      this.tabPageMandel = new System.Windows.Forms.TabPage();
       this.mandelbrotPage1 = new Test.MandelbrotPage();
-      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.tabPageBench = new System.Windows.Forms.TabPage();
       this.tesselatorPage1 = new Test.TesselatorPage();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabPagePolyh = new System.Windows.Forms.TabPage();
+      this.label2 = new System.Windows.Forms.Label();
+      this.tabPageCalc = new System.Windows.Forms.TabPage();
+      this.label3 = new System.Windows.Forms.Label();
+      this.calculatorPage1 = new Test.CalculatorPage();
+      this.tabPageTess = new System.Windows.Forms.TabPage();
       this.label1 = new System.Windows.Forms.Label();
       this.labelDebug = new System.Windows.Forms.Label();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
-      this.tabPage3.SuspendLayout();
-      this.tabPage2.SuspendLayout();
+      this.label4 = new System.Windows.Forms.Label();
+      this.tabControl.SuspendLayout();
+      this.tabPageMandel.SuspendLayout();
+      this.tabPageBench.SuspendLayout();
+      this.tabPagePolyh.SuspendLayout();
+      this.tabPageCalc.SuspendLayout();
+      this.tabPageTess.SuspendLayout();
       this.SuspendLayout();
       // 
-      // tabControl1
+      // tabControl
       // 
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.tabPage3);
-      this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.tabControl1.Location = new System.Drawing.Point(0, 32);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(1018, 589);
-      this.tabControl1.TabIndex = 0;
+      this.tabControl.Controls.Add(this.tabPageMandel);
+      this.tabControl.Controls.Add(this.tabPageBench);
+      this.tabControl.Controls.Add(this.tabPagePolyh);
+      this.tabControl.Controls.Add(this.tabPageCalc);
+      this.tabControl.Controls.Add(this.tabPageTess);
+      this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tabControl.Location = new System.Drawing.Point(0, 32);
+      this.tabControl.Name = "tabControl";
+      this.tabControl.SelectedIndex = 0;
+      this.tabControl.Size = new System.Drawing.Size(1018, 589);
+      this.tabControl.TabIndex = 0;
       // 
-      // tabPage1
+      // tabPageMandel
       // 
-      this.tabPage1.Controls.Add(this.mandelbrotPage1);
-      this.tabPage1.Location = new System.Drawing.Point(4, 29);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(1010, 556);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Mandelbrot";
-      this.tabPage1.UseVisualStyleBackColor = true;
+      this.tabPageMandel.Controls.Add(this.mandelbrotPage1);
+      this.tabPageMandel.Location = new System.Drawing.Point(4, 29);
+      this.tabPageMandel.Name = "tabPageMandel";
+      this.tabPageMandel.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageMandel.Size = new System.Drawing.Size(1010, 556);
+      this.tabPageMandel.TabIndex = 0;
+      this.tabPageMandel.Text = "Mandelbrot";
+      this.tabPageMandel.UseVisualStyleBackColor = true;
       // 
       // mandelbrotPage1
       // 
@@ -75,16 +84,16 @@
       this.mandelbrotPage1.Size = new System.Drawing.Size(1004, 550);
       this.mandelbrotPage1.TabIndex = 0;
       // 
-      // tabPage3
+      // tabPageBench
       // 
-      this.tabPage3.Controls.Add(this.tesselatorPage1);
-      this.tabPage3.Location = new System.Drawing.Point(4, 29);
-      this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage3.Size = new System.Drawing.Size(1010, 556);
-      this.tabPage3.TabIndex = 2;
-      this.tabPage3.Text = "Tesselation";
-      this.tabPage3.UseVisualStyleBackColor = true;
+      this.tabPageBench.Controls.Add(this.tesselatorPage1);
+      this.tabPageBench.Location = new System.Drawing.Point(4, 29);
+      this.tabPageBench.Name = "tabPageBench";
+      this.tabPageBench.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageBench.Size = new System.Drawing.Size(1010, 556);
+      this.tabPageBench.TabIndex = 2;
+      this.tabPageBench.Text = "Tesselation";
+      this.tabPageBench.UseVisualStyleBackColor = true;
       // 
       // tesselatorPage1
       // 
@@ -94,16 +103,69 @@
       this.tesselatorPage1.Size = new System.Drawing.Size(1004, 550);
       this.tesselatorPage1.TabIndex = 0;
       // 
-      // tabPage2
+      // tabPagePolyh
       // 
-      this.tabPage2.Controls.Add(this.label1);
-      this.tabPage2.Location = new System.Drawing.Point(4, 29);
-      this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(1010, 556);
-      this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Benchmarks";
-      this.tabPage2.UseVisualStyleBackColor = true;
+      this.tabPagePolyh.Controls.Add(this.label2);
+      this.tabPagePolyh.Location = new System.Drawing.Point(4, 29);
+      this.tabPagePolyh.Name = "tabPagePolyh";
+      this.tabPagePolyh.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPagePolyh.Size = new System.Drawing.Size(1010, 556);
+      this.tabPagePolyh.TabIndex = 4;
+      this.tabPagePolyh.Text = "Polyhedron";
+      this.tabPagePolyh.UseVisualStyleBackColor = true;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+      this.label2.Location = new System.Drawing.Point(14, 7);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(269, 38);
+      this.label2.TabIndex = 1;
+      this.label2.Text = "Under construction";
+      // 
+      // tabPageCalc
+      // 
+      this.tabPageCalc.Controls.Add(this.label4);
+      this.tabPageCalc.Controls.Add(this.label3);
+      this.tabPageCalc.Controls.Add(this.calculatorPage1);
+      this.tabPageCalc.Location = new System.Drawing.Point(4, 29);
+      this.tabPageCalc.Name = "tabPageCalc";
+      this.tabPageCalc.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageCalc.Size = new System.Drawing.Size(1010, 556);
+      this.tabPageCalc.TabIndex = 3;
+      this.tabPageCalc.Text = "Calculator";
+      this.tabPageCalc.UseVisualStyleBackColor = true;
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+      this.label3.Location = new System.Drawing.Point(14, 7);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(325, 38);
+      this.label3.TabIndex = 2;
+      this.label3.Text = "NewRational Calculator";
+      // 
+      // calculatorPage1
+      // 
+      this.calculatorPage1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.calculatorPage1.Location = new System.Drawing.Point(14, 52);
+      this.calculatorPage1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.calculatorPage1.Name = "calculatorPage1";
+      this.calculatorPage1.Size = new System.Drawing.Size(729, 504);
+      this.calculatorPage1.TabIndex = 0;
+      // 
+      // tabPageTess
+      // 
+      this.tabPageTess.Controls.Add(this.label1);
+      this.tabPageTess.Location = new System.Drawing.Point(4, 29);
+      this.tabPageTess.Name = "tabPageTess";
+      this.tabPageTess.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageTess.Size = new System.Drawing.Size(1010, 556);
+      this.tabPageTess.TabIndex = 1;
+      this.tabPageTess.Text = "Benchmarks";
+      this.tabPageTess.UseVisualStyleBackColor = true;
       // 
       // label1
       // 
@@ -129,34 +191,53 @@
     "e not realistic !";
       this.labelDebug.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(345, 21);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(144, 20);
+      this.label4.TabIndex = 3;
+      this.label4.Text = "(Under construction)";
+      // 
       // MainFrame
       // 
-      //this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-      //this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.ClientSize = new System.Drawing.Size(1018, 621);
-      this.Controls.Add(this.tabControl1);
+      this.Controls.Add(this.tabControl);
       this.Controls.Add(this.labelDebug);
       this.MinimumSize = new System.Drawing.Size(800, 600);
       this.Name = "MainFrame";
       this.Text = "NewRational Test";
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage3.ResumeLayout(false);
-      this.tabPage2.ResumeLayout(false);
-      this.tabPage2.PerformLayout();
+      this.tabControl.ResumeLayout(false);
+      this.tabPageMandel.ResumeLayout(false);
+      this.tabPageBench.ResumeLayout(false);
+      this.tabPagePolyh.ResumeLayout(false);
+      this.tabPagePolyh.PerformLayout();
+      this.tabPageCalc.ResumeLayout(false);
+      this.tabPageCalc.PerformLayout();
+      this.tabPageTess.ResumeLayout(false);
+      this.tabPageTess.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private TabControl tabControl1;
-    private TabPage tabPage1;
-    private TabPage tabPage2;
+    private TabControl tabControl;
+    private TabPage tabPageMandel;
+    private TabPage tabPageTess;
+    private TabPage tabPagePolyh;
+    private TabPage tabPageCalc;
+    private TabPage tabPageBench;
     private MandelbrotPage mandelbrotPage1;
     private Label labelDebug;
     private Label label1;
-    private TabPage tabPage3;
     private TesselatorPage tesselatorPage1;
+    private Label label2;
+    private Label label3;
+    private CalculatorPage calculatorPage1;
+    private Label label4;
   }
 }

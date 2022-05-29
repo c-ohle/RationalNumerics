@@ -1123,7 +1123,7 @@ namespace System.Numerics.Rational
     {
       var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.pop_rat();
     }
-
+    
     /// <summary>
     /// Represents a stack machine for rational arithmetics.
     /// </summary>
@@ -2142,7 +2142,7 @@ namespace System.Numerics.Rational
       public bool equ(NewRational a, NewRational b)
       {
         return equ(a.p, b.p);
-      }      
+      }
       /// <summary>
       /// Compares the values at index <paramref name="a"/> and <paramref name="b"/> as absolute indices in the stack for equality.
       /// </summary>
@@ -2236,6 +2236,18 @@ namespace System.Numerics.Rational
         }
       }
       /// <summary>
+      /// Returns whether the value on top of the stack is an integer.
+      /// </summary>
+      /// <returns>true if the value is integer; false otherwise.</returns>
+      public bool isi()
+      {
+        fixed (uint* p = this.p[this.i - 1])
+        {
+          if ((p[0] & 0x40000000) != 0) norm(p);
+          return isint(p);
+        }
+      }
+      /// <summary>
       /// Finds the greatest common divisor (GCD) of the numerators<br/>
       /// of the first two values on top of the stack and replaces them with the result.
       /// </summary>
@@ -2314,7 +2326,7 @@ namespace System.Numerics.Rational
         }
         if (mem != default) Marshal.FreeCoTaskMem(mem);
       }
-
+      
       uint[] rent(uint n)
       {
         var a = p[i++];

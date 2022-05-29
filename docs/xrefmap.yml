@@ -352,6 +352,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.inv
   fullName: System.Numerics.Rational.NewRational.CPU.inv
   nameWithType: NewRational.CPU.inv
+- uid: System.Numerics.Rational.NewRational.CPU.isi
+  name: isi()
+  href: api/System.Numerics.Rational.NewRational.CPU.isi.html#System_Numerics_Rational_NewRational_CPU_isi
+  commentId: M:System.Numerics.Rational.NewRational.CPU.isi
+  fullName: System.Numerics.Rational.NewRational.CPU.isi()
+  nameWithType: NewRational.CPU.isi()
+- uid: System.Numerics.Rational.NewRational.CPU.isi*
+  name: isi
+  href: api/System.Numerics.Rational.NewRational.CPU.isi.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.isi
+  fullName: System.Numerics.Rational.NewRational.CPU.isi
+  nameWithType: NewRational.CPU.isi
 - uid: System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)
   name: lim(UInt32)
   href: api/System.Numerics.Rational.NewRational.CPU.lim.html#System_Numerics_Rational_NewRational_CPU_lim_System_UInt32_

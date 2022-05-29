@@ -21,7 +21,8 @@ namespace Test
       var dbg = System.Diagnostics.Debugger.IsAttached;
 #endif
       labelDebug.Visible = dbg;
-      //tabControl1.SelectedIndex = 1;
+
+      tabControl.SelectedIndex = 3;
     }
   }
 }

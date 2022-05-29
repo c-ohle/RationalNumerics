@@ -5,7 +5,7 @@ namespace System.Numerics.Rational
   /// Implementation of some common mathematical functions for <see cref="rat"/>.<br/>
   /// <i>These are just non-optimal example implementations for testing!</i>
   /// </summary>
-  public class MathR
+  public static class MathR
   {
     /// <summary>
     /// Returns the numerator of the specified number.
@@ -21,13 +21,23 @@ namespace System.Numerics.Rational
     /// <summary>
     /// Returns the denominator of the specified number.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number</param>
+    /// <param name="a">A <see cref="rat"/> number</param>
     /// <returns>Returns the denominator of <paramref name="a"/>.</returns>
     public static rat Denominator(rat a)
     {
       var cpu = rat.task_cpu; cpu.push(a);
       cpu.mod(8); var s = cpu.sign(); cpu.swp(); cpu.pop();
       if (s < 0) cpu.neg(); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Returns whether the specified number is an integer.
+    /// </summary>
+    /// <param name="a">A <see cref="rat"/> number</param>
+    /// <returns>true if the number is an integer; false otherwise.</returns>
+    public static bool IsInteger(rat a)
+    {
+      var cpu = rat.task_cpu; cpu.push(a);
+      var b = cpu.isi(); cpu.pop(); return b;
     }
     /// <summary>
     /// Calculates the factorial of <paramref name="a"/>.
@@ -173,6 +183,5 @@ namespace System.Numerics.Rational
       cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
       return cpu.pop_rat();
     }
-
   }
 }
