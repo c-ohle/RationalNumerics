@@ -50,12 +50,13 @@ namespace Test
         case "(": return parse(a + 1, b - 1);
         case "√": { var t = parse(a + 1, b); t = MathR.Sqrt(t, 20); return t; }
         case "sqr": { var t = parse(a + 1, b); t = t * t; return t; }
-        case "fact": 
-          { 
+        case "fact":
+          {
             var t = parse(a + 1, b);
-            if(MathR.IsInteger(t)) t = MathR.Factorial((int)t); else
-              t = factorial((double)t);
-            return t; 
+            if (t % 1 == 0) { } else { }
+            if (MathR.IsInteger(t)) t = MathR.Factorial((int)t);
+            else t = factorial((double)t);
+            return t;
           }
         case "π": return MathR.PI(20);
         default: return NewRational.Parse(list[a]);

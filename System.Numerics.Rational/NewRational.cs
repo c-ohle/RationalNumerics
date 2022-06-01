@@ -42,6 +42,7 @@ namespace System.Numerics.Rational
     /// Custom formats supported, currently in the range +/- E-308 .. E+308 like "0.#####"<br/>
     /// Standard formats F, E with unlimited many digits like: "F1000" for 1000 decimal digits.<br/>
     /// Special R: behavior like <see cref="double.ToString(string?)"/> with fallback to format Q to ensure the round-trip to an identical number.<br/>
+    /// Additional: Format S for Standard (no rounding, repetion checks, overflow sign) with specific maximum overall digits count.<br/>
     /// Additional: Format Q for Fraction notation returns "1/3" instead of "0.333333…"<br/>
     /// Additional: Format L for Large, like F without trailing zeros: L5 returns 1.5 instead of 1.50000…<br/>
     /// </remarks>
@@ -52,13 +53,15 @@ namespace System.Numerics.Rational
     public readonly string ToString(string? format, IFormatProvider? provider = default)
     {
       provider ??= format?.Length == 0 ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo; //DebuggerDisplay("", null);
-      Span<char> sp = stackalloc char[100]; char[]? a = null;
+      Span<char> sp = stackalloc char[100]; char[]? a = null; string? s = null;
       for (int ns, na = 1024; ; na <<= 1)
       {
-        try { if (TryFormat(sp, out ns, format, provider)) return sp.Slice(0, ns).ToString(); }
-        finally { if (a != null) ArrayPool<char>.Shared.Return(a); }
-        sp = a = ArrayPool<char>.Shared.Rent(Math.Max(ns, na));
+        if (TryFormat(sp, out ns, format, provider)) s = sp.Slice(0, ns).ToString();
+        if (a != null) ArrayPool<char>.Shared.Return(a);
+        if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(Math.Max(ns, na));
       }
+      //if (p != null && (p[0] & 0x40000000) != 0) { var x = p[0] & 0x3fffffff; s = $"{s} [{x}; {p[x + 1]}]"; }
+      return s;
     }
     /// <summary>
     /// Formats this <see cref="NewRational"/> instance into a span of characters.
@@ -74,15 +77,15 @@ namespace System.Numerics.Rational
     public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
     {
       if (isnan(this.p)) return float.NaN.TryFormat(destination, out charsWritten, null, provider);
-      int digs = 32, round = -1, emin = -4, emax = +16; var fc = '\0';
+      int digs = 32, round = -1, emin = -4, emax = +16; char fc = '\0', tc = fc;
       var info = NumberFormatInfo.GetInstance(provider);
       if (format.Length != 0)
       {
-        if (char.IsLetter(format[0]) && (format.Length == 1 || (char.IsNumber(format[1]) && int.TryParse(format.Slice(1), out round))))
-          switch (fc = char.ToUpper(format[0]))
+        if (char.IsLetter(tc = format[0]) && (format.Length == 1 || (char.IsNumber(format[1]) && int.TryParse(format.Slice(1), out round))))
+          switch (fc = char.ToUpper(tc))
           {
             case 'Q': fc = 'R'; digs = 0; round = -1; goto def; // fractions "1/3"
-            case 'R': if (round != -1) digs = round; round = -1; goto def;
+            case 'R': case 'S': if (round != -1) digs = round; round = -1; goto def;
             case 'F':
             case 'L': // like F without trailing zeros
               if (round == -1) round = info.NumberDecimalDigits;
@@ -102,7 +105,6 @@ namespace System.Numerics.Rational
       var pb = digs <= 0x8000 ? null : ArrayPool<char>.Shared.Rent(digs);
       var ts = stackalloc char[pb != null ? 0 : digs];
       var ss = pb != null ? pb.AsSpan().Slice(0, digs) : new Span<char>(ts, digs);
-      //var ss = new char[digs].AsSpan(); var pb = (char[])null;
       var cpu = task_cpu; cpu.push(this);
       if (round >= 0) cpu.rnd(fc == 'E' ? Math.Max(0, round - ILog10(this)) : round);
       cpu.tos(ss, out var ns, out var exp, out var rep, round == -1);
@@ -156,7 +158,7 @@ namespace System.Numerics.Rational
       if (ofl) apc(ref ws, '…', 1);
       if (exp != 0 || fc == 'E')
       {
-        apc(ref ws, fc == 'E' ? format[0] : 'E', 1);
+        apc(ref ws, fc == tc ? 'E' : 'e', 1);
         aps(ref ws, exp >= 0 ? info.PositiveSign : info.NegativeSign);
         if (Math.Abs(exp).TryFormat(ws, out var nw, fc == 'E' ? "000" : "00")) ws = ws.Slice(nw); else ws = default;
       }
@@ -1123,7 +1125,56 @@ namespace System.Numerics.Rational
     {
       var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.pop_rat();
     }
-    
+    /// <summary>
+    /// Returns a specified number raised to the specified power.<br/>
+    /// For fractional exponents, the result is rounded to the specified number of decimal places.
+    /// </summary>
+    /// <param name="x">A <see cref="NewRational"/> number to be raised to a power.</param>
+    /// <param name="y">A <see cref="NewRational"/> number that specifies a power.</param>
+    /// <param name="digits">The number of fractional digits in the return value.</param>
+    /// <returns>The <see cref="NewRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
+    /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
+    public static NewRational Pow(NewRational x, NewRational y, int digits = 20)
+    {
+      //return Exp(y * Log(x, digits), digits);
+      //if(IsInteger(y)) return Pow(x, (int)b); //todo: check
+      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.push(x); cpu.log(c);
+      cpu.push(y); cpu.mul(); cpu.exp(c);
+      cpu.rnd(digits);
+      return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Returns the natural (base e) logarithm of a specified number.
+    /// </summary>
+    /// <param name="x">The number whose logarithm is to be found.</param>
+    /// <param name="digits">The number of fractional digits in the return value.</param>
+    /// <returns>The natural logarithm of <paramref name="x"/>; that is, ln <paramref name="x"/>, or log e <paramref name="x"/>.</returns>
+    /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
+    public static NewRational Log(NewRational x, int digits = 20)
+    {
+      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.push(x); cpu.log(c);
+      cpu.rnd(digits); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Returns e raised to the specified power.
+    /// </summary>
+    /// <param name="x">A number specifying a power.</param>
+    /// <param name="digits">The number of fractional digits in the return value.</param>
+    /// <returns>The number e raised to the power <paramref name="x"/>.</returns>
+    public static NewRational Exp(NewRational x, int digits = 20)
+    {
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.push(x); cpu.exp(c);
+      cpu.rnd(digits); return cpu.pop_rat();
+    }
+
     /// <summary>
     /// Represents a stack machine for rational arithmetics.
     /// </summary>
@@ -1348,6 +1399,7 @@ namespace System.Numerics.Rational
         }
       }
 
+      //static readonly uint[][] cache = new uint[20][]; //todo: check small number cache strategy
       /// <summary>
       /// Converts the value at absolute position i on stack to a 
       /// always normalized <see cref="NewRational"/> number and returns it.
@@ -1364,7 +1416,14 @@ namespace System.Numerics.Rational
         {
           if (isz(p)) { v = default; return; }
           if ((p[0] & 0x40000000) != 0) norm(p);
-          var n = len(p); var a = new uint[n];
+          var n = len(p);
+          //if (n == 4 && p[1] <= 10 && p[3] == 1)
+          //{
+          //  var x = p[1] - 1 + (p[0] != 1 ? 10 : 0);
+          //  if (cache[x] == null) fixed (uint* s = cache[x] = new uint[n]) copy(s, p, n);
+          //  v = new NewRational(cache[x]); return;
+          //}
+          var a = new uint[n];
           fixed (uint* s = a) copy(s, p, n);
           v = new NewRational(a);
         }
@@ -1844,7 +1903,7 @@ namespace System.Numerics.Rational
       /// also called the reciprocal. <c>x = 1 / x;</c> 
       /// </summary>
       /// <remarks>
-      /// It's a fast operation and should be used for 1 / x instead of a equivalent <see cref="div"/> operations.
+      /// It's a fast operation and should be used for <c>1 / x</c> instead of a equivalent <see cref="div"/> operations.
       /// </remarks>
       public void inv()
       {
@@ -1992,18 +2051,38 @@ namespace System.Numerics.Rational
         push(1); for (uint i = 2; i <= c; i++) { push(i); mul(); }
       }
       /// <summary>
+      /// Returns the MSB difference of numerator and denominator for the value at the top of the stack.<br/>
+      /// <c>msb(numerator) - msb(denominator)</c><br/> 
+      /// Mainly intended for break criterias in iterations as fast alternative to comparisons.<br/>
+      /// For example, 1e-24 corresponds to a BDI value of -80 since msb(1e+24) == 80
+      /// </summary>
+      /// <returns>An <see cref="int"/> value that represents the MSB difference.</returns>
+      public int bdi()
+      {
+        fixed (uint* p = this.p[this.i - 1])
+        {
+          if (isz(p)) return -int.MaxValue;
+          var h = p[0]; var a = h & 0x3fffffff; var q = p + a + 1; var b = q[0];
+          var u = (a << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[a]));
+          var v = (b << 5) - unchecked((uint)BitOperations.LeadingZeroCount(q[b]));
+          return unchecked((int)u - (int)v);
+        }
+      }
+      /// <summary>
       /// Limitates the binary digits of the value at the top of the stack to the specified count <paramref name="c"/>.<br/>
       /// If the number of digits in numerator or denominator exceeds this count the bits will shifted right by the difference.
       /// </summary>
       /// <remarks>
       /// This is a fast binary rounding operation that limits precision to increase the performance.<br/>
-      /// Mainly intended for iterations where the successive numeric operations internally produce much more precision than is finally needed.
+      /// Mainly intended for iterations where the successive numeric operations internally produce much more precision than is finally needed.<br/>
+      /// Example: <c>lim(msb(1E+24))</c> to limit the precision to about 24 decimal digits.
       /// </remarks>
       /// <param name="c">A positive number as bit count.</param>
-      public void lim(uint c)
+      /// <param name="i">A relative index of a stack entry.</param>
+      public void lim(uint c, int i = 0)
       {
         Debug.Assert(c > 0);
-        fixed (uint* p = this.p[this.i - 1])
+        fixed (uint* p = this.p[this.i - 1 - i])
         {
           if (isz(p)) return;
           var h = p[0]; var a = h & 0x3fffffff; var q = p + a + 1; var b = q[0];
@@ -2243,9 +2322,11 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = this.p[this.i - 1])
         {
-          if ((p[0] & 0x40000000) != 0) norm(p);
-          return isint(p);
+          if (isint(p)) return true;
+          if ((p[0] & 0x40000000) == 0) return false; //if ((p[0] & 0x40000000) != 0) norm(p);
         }
+        dup(); mod(); if (sign(1) != 0) { pop(2); return false; }
+        swp(0, 2); pop(2); return true; //keep normalized                   
       }
       /// <summary>
       /// Finds the greatest common divisor (GCD) of the numerators<br/>
@@ -2326,7 +2407,59 @@ namespace System.Numerics.Rational
         }
         if (mem != default) Marshal.FreeCoTaskMem(mem);
       }
-      
+      /// <summary>
+      /// Replaces the value on top of the stack with it's natural (base e) logarithm.<b/>
+      /// For non-positive values NaN is returned.
+      /// </summary>
+      /// <remarks>
+      /// The desired precision is controlled by the parameter <paramref name="c"/> 
+      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
+      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
+      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// </remarks>
+      /// <param name="c">The desired precision.</param>
+      public void log(uint c)
+      {
+        if (sign() <= 0) { pop(); pnan(); return; }
+        push(); swp(); // r
+        var t = bdi(); c += (uint)Math.Abs(t) + 16;
+        push(1); sub(); dup(); push(2); add(); div(); // p = (x - 1) / (x + 1)
+        dup(); sqr(); // f = p * p
+        for (uint i = 0, m = mark(); ; i++)
+        {
+          push((i << 1) + 1); div(m - 2, m); swp(); pop();// d = p / ((n << 1) + 1)
+          add(3, 0); // r += d        
+          if (-bdi() >= c) break; // d < 1e-...
+          pop(); mul(1, 0); // p *= f;
+          lim(c, 1); lim(c, 2); // lim p, r
+        }
+        pop(3); shl(1); //r *= 2
+      }
+      /// <summary>
+      /// Replaces the value on top of the stack with e raised to the power of that value.
+      /// </summary>
+      /// <remarks>
+      /// The desired precision is controlled by the parameter <paramref name="c"/> 
+      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
+      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
+      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// </remarks>
+      /// <param name="c">The desired precision.</param>
+      public void exp(uint c)
+      {
+        var s = sign(); if (s < 0) neg(); c += 16;
+        dup(); push(1); add(); // r = x + 1
+        dup(1); // d = x
+        for (uint i = 2, m = mark(); ; i++)
+        {
+          push(i); div(m - 3, m); mul(2, 0); pop(2); // d *= x / i;
+          add(1, 0); lim(c, 1); if (-bdi() >= c) break;
+        }
+        pop(); swp(); pop(); if (s < 0) inv();
+      }
+
       uint[] rent(uint n)
       {
         var a = p[i++];

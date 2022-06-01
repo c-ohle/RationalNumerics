@@ -36,6 +36,7 @@ namespace System.Numerics.Rational
     /// <returns>true if the number is an integer; false otherwise.</returns>
     public static bool IsInteger(rat a)
     {
+      //return a % 1 == 0;
       var cpu = rat.task_cpu; cpu.push(a);
       var b = cpu.isi(); cpu.pop(); return b;
     }
@@ -46,6 +47,7 @@ namespace System.Numerics.Rational
     /// <returns>Returns the factorial of <paramref name="a"/>.</returns>
     public static rat Factorial(int a)
     {
+      if (a < 0) throw new ArgumentException();
       var cpu = rat.task_cpu; cpu.fac((uint)a);
       return cpu.pop_rat();
     }
@@ -89,7 +91,7 @@ namespace System.Numerics.Rational
       for (int n = 0, c = 1 + digits / 3; n < c; n++)
       {
         int a = n << 2, b = 10 * n;
-        cpu.pow(-1, n); cpu.pow(2, b); cpu.div();
+        cpu.pow(-01, n); cpu.pow(2, b); cpu.div();
         cpu.push(-32); cpu.push(a + 1); cpu.div();
         cpu.push(-01); cpu.push(a + 3); cpu.div(); cpu.add();
         cpu.push(256); cpu.push(b + 1); cpu.div(); cpu.add();

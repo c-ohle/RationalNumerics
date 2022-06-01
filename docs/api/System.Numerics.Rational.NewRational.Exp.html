@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Method shl
+    <title>Method Exp
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Method shl
+    <meta name="title" content="Method Exp
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -109,8 +109,8 @@
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.Equals.html" title="Equals" class="">Equals</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.Rational.NewRational.Exp.html" title="Exp" class="">Exp</a>
+                                <li class="active">
+                                  <a href="System.Numerics.Rational.NewRational.Exp.html" title="Exp" class="active">Exp</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.op_Explicit.html" title="Explicit" class="">Explicit</a>
@@ -301,8 +301,8 @@
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.CPU.rnd.html" title="rnd" class="">rnd</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.Rational.NewRational.CPU.shl.html" title="shl" class="active">shl</a>
+                                <li class="">
+                                  <a href="System.Numerics.Rational.NewRational.CPU.shl.html" title="shl" class="">shl</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.Rational.NewRational.CPU.shr.html" title="shr" class="">shr</a>
@@ -331,29 +331,28 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.Rational.NewRational.CPU.shl*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.Rational.NewRational.Exp*">
 
-<h1 id="System_Numerics_Rational_NewRational_CPU_shl_" data-uid="System.Numerics.Rational.NewRational.CPU.shl*">Method shl
+<h1 id="System_Numerics_Rational_NewRational_Exp_" data-uid="System.Numerics.Rational.NewRational.Exp*">Method Exp
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_shl_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.shl(System.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_Exp_System_Numerics_Rational_NewRational_System_Int32_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.Exp(System.Numerics.Rational.NewRational%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1930">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1170">View Source</a>
 </span>
-<a id="System_Numerics_Rational_NewRational_CPU_shl_" data-uid="System.Numerics.Rational.NewRational.CPU.shl*"></a>
-<h4 id="System_Numerics_Rational_NewRational_CPU_shl_System_Int32_System_Int32_" data-uid="System.Numerics.Rational.NewRational.CPU.shl(System.Int32,System.Int32)">shl(Int32, Int32)</h4>
-<div class="markdown level1 summary"><p>Selects the value at index i relative to the top of the stack.<br>
-Shifts the numerator value to the left (in zeros) by the specified number of bits.</p>
+<a id="System_Numerics_Rational_NewRational_Exp_" data-uid="System.Numerics.Rational.NewRational.Exp*"></a>
+<h4 id="System_Numerics_Rational_NewRational_Exp_System_Numerics_Rational_NewRational_System_Int32_" data-uid="System.Numerics.Rational.NewRational.Exp(System.Numerics.Rational.NewRational,System.Int32)">Exp(NewRational, Int32)</h4>
+<div class="markdown level1 summary"><p>Returns e raised to the specified power.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void shl(int c, int i = 0)</code></pre>
+  <pre><code class="lang-csharp hljs">public static NewRational Exp(NewRational x, int digits = 20)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -366,23 +365,35 @@ Shifts the numerator value to the left (in zeros) by the specified number of bit
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><span class="parametername">c</span></td>
-      <td><p>The number of bits to shift.</p>
+      <td><a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a></td>
+      <td><span class="parametername">x</span></td>
+      <td><p>A number specifying a power.</p>
 </td>
     </tr>
     <tr>
       <td><span class="xref">System.Int32</span></td>
-      <td><span class="parametername">i</span></td>
-      <td><p>A relative index of a stack entry.</p>
+      <td><span class="parametername">digits</span></td>
+      <td><p>The number of fractional digits in the return value.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 id="System_Numerics_Rational_NewRational_CPU_shl_System_Int32_System_Int32__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>Shifts the numerator value only, which is a fast alternative to multiplies by powers of two.<br>
-To shift the denominator is possible by calling <a class="xref" href="System.Numerics.Rational.NewRational.CPU.inv.html#System_Numerics_Rational_NewRational_CPU_inv">inv()</a> before and after.</p>
-</div>
+<h5 class="returns">Returns</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a class="xref" href="System.Numerics.Rational.NewRational.html">NewRational</a></td>
+      <td><p>The number e raised to the power <code data-dev-comment-type="paramref" class="paramref">x</code>.</p>
+</td>
+    </tr>
+  </tbody>
+</table>
 </article>
           </div>
           
@@ -391,10 +402,10 @@ To shift the denominator is possible by calling <a class="xref" href="System.Num
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_CPU_shl_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.CPU.shl*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_Rational_NewRational_Exp_.md&amp;value=---%0Auid%3A%20System.Numerics.Rational.NewRational.Exp*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1930" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/NewRational.cs/#L1170" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

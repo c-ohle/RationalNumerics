@@ -145,6 +145,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.add
   fullName: System.Numerics.Rational.NewRational.CPU.add
   nameWithType: NewRational.CPU.add
+- uid: System.Numerics.Rational.NewRational.CPU.bdi
+  name: bdi()
+  href: api/System.Numerics.Rational.NewRational.CPU.bdi.html#System_Numerics_Rational_NewRational_CPU_bdi
+  commentId: M:System.Numerics.Rational.NewRational.CPU.bdi
+  fullName: System.Numerics.Rational.NewRational.CPU.bdi()
+  nameWithType: NewRational.CPU.bdi()
+- uid: System.Numerics.Rational.NewRational.CPU.bdi*
+  name: bdi
+  href: api/System.Numerics.Rational.NewRational.CPU.bdi.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.bdi
+  fullName: System.Numerics.Rational.NewRational.CPU.bdi
+  nameWithType: NewRational.CPU.bdi
 - uid: System.Numerics.Rational.NewRational.CPU.cmp(System.Int32,System.Int32)
   name: cmp(Int32, Int32)
   href: api/System.Numerics.Rational.NewRational.CPU.cmp.html#System_Numerics_Rational_NewRational_CPU_cmp_System_Int32_System_Int32_
@@ -271,6 +283,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.equ
   fullName: System.Numerics.Rational.NewRational.CPU.equ
   nameWithType: NewRational.CPU.equ
+- uid: System.Numerics.Rational.NewRational.CPU.exp(System.UInt32)
+  name: exp(UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.exp.html#System_Numerics_Rational_NewRational_CPU_exp_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.exp(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.exp(System.UInt32)
+  nameWithType: NewRational.CPU.exp(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.exp*
+  name: exp
+  href: api/System.Numerics.Rational.NewRational.CPU.exp.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.exp
+  fullName: System.Numerics.Rational.NewRational.CPU.exp
+  nameWithType: NewRational.CPU.exp
 - uid: System.Numerics.Rational.NewRational.CPU.fac(System.UInt32)
   name: fac(UInt32)
   href: api/System.Numerics.Rational.NewRational.CPU.fac.html#System_Numerics_Rational_NewRational_CPU_fac_System_UInt32_
@@ -364,18 +388,30 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.isi
   fullName: System.Numerics.Rational.NewRational.CPU.isi
   nameWithType: NewRational.CPU.isi
-- uid: System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)
-  name: lim(UInt32)
-  href: api/System.Numerics.Rational.NewRational.CPU.lim.html#System_Numerics_Rational_NewRational_CPU_lim_System_UInt32_
-  commentId: M:System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)
-  fullName: System.Numerics.Rational.NewRational.CPU.lim(System.UInt32)
-  nameWithType: NewRational.CPU.lim(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.lim(System.UInt32,System.Int32)
+  name: lim(UInt32, Int32)
+  href: api/System.Numerics.Rational.NewRational.CPU.lim.html#System_Numerics_Rational_NewRational_CPU_lim_System_UInt32_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.lim(System.UInt32,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.CPU.lim(System.UInt32, System.Int32)
+  nameWithType: NewRational.CPU.lim(UInt32, Int32)
 - uid: System.Numerics.Rational.NewRational.CPU.lim*
   name: lim
   href: api/System.Numerics.Rational.NewRational.CPU.lim.html
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.lim
   fullName: System.Numerics.Rational.NewRational.CPU.lim
   nameWithType: NewRational.CPU.lim
+- uid: System.Numerics.Rational.NewRational.CPU.log(System.UInt32)
+  name: log(UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.log.html#System_Numerics_Rational_NewRational_CPU_log_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.log(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.log(System.UInt32)
+  nameWithType: NewRational.CPU.log(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.log*
+  name: log
+  href: api/System.Numerics.Rational.NewRational.CPU.log.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.log
+  fullName: System.Numerics.Rational.NewRational.CPU.log
+  nameWithType: NewRational.CPU.log
 - uid: System.Numerics.Rational.NewRational.CPU.lsb
   name: lsb()
   href: api/System.Numerics.Rational.NewRational.CPU.lsb.html#System_Numerics_Rational_NewRational_CPU_lsb
@@ -811,6 +847,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.Equals
   fullName: System.Numerics.Rational.NewRational.Equals
   nameWithType: NewRational.Equals
+- uid: System.Numerics.Rational.NewRational.Exp(System.Numerics.Rational.NewRational,System.Int32)
+  name: Exp(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.Exp.html#System_Numerics_Rational_NewRational_Exp_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.Exp(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Exp(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.Exp(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.Exp*
+  name: Exp
+  href: api/System.Numerics.Rational.NewRational.Exp.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Exp
+  fullName: System.Numerics.Rational.NewRational.Exp
+  nameWithType: NewRational.Exp
 - uid: System.Numerics.Rational.NewRational.Floor(System.Numerics.Rational.NewRational)
   name: Floor(NewRational)
   href: api/System.Numerics.Rational.NewRational.Floor.html#System_Numerics_Rational_NewRational_Floor_System_Numerics_Rational_NewRational_
@@ -847,6 +895,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.ILog10
   fullName: System.Numerics.Rational.NewRational.ILog10
   nameWithType: NewRational.ILog10
+- uid: System.Numerics.Rational.NewRational.Log(System.Numerics.Rational.NewRational,System.Int32)
+  name: Log(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.Log.html#System_Numerics_Rational_NewRational_Log_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.Log(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Log(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.Log(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.Log*
+  name: Log
+  href: api/System.Numerics.Rational.NewRational.Log.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Log
+  fullName: System.Numerics.Rational.NewRational.Log
+  nameWithType: NewRational.Log
 - uid: System.Numerics.Rational.NewRational.Max(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational)
   name: Max(NewRational, NewRational)
   href: api/System.Numerics.Rational.NewRational.Max.html#System_Numerics_Rational_NewRational_Max_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_
@@ -1282,6 +1342,12 @@ references:
   commentId: M:System.Numerics.Rational.NewRational.Pow(System.Numerics.Rational.NewRational,System.Int32)
   fullName: System.Numerics.Rational.NewRational.Pow(System.Numerics.Rational.NewRational, System.Int32)
   nameWithType: NewRational.Pow(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.Pow(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational,System.Int32)
+  name: Pow(NewRational, NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.Pow.html#System_Numerics_Rational_NewRational_Pow_System_Numerics_Rational_NewRational_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.Pow(System.Numerics.Rational.NewRational,System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Pow(System.Numerics.Rational.NewRational, System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.Pow(NewRational, NewRational, Int32)
 - uid: System.Numerics.Rational.NewRational.Pow*
   name: Pow
   href: api/System.Numerics.Rational.NewRational.Pow.html

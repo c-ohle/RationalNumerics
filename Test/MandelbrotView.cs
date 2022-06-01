@@ -176,7 +176,7 @@ namespace Test
       calcmap(); if (map == null) return;
       var x1 = mx - scale * dx / dy;
       var y1 = my - scale;
-      var fi = 2 * scale / dy;
+      var fi = 2 * scale / dy; var lim = (uint)this.lim;
       t1 = t2 = Environment.TickCount;
       //for (int py = 0; py < dy; py++)
       Parallel.For(0, dy, (py, po) =>
@@ -196,11 +196,12 @@ namespace Test
           for (; i < imax; i++)
           {
             // var u = a * a - b * b + x;
-            cpu.sqr(m + 2); cpu.sqr(m + 3); cpu.sub(); cpu.add(m + 1); cpu.lim((uint)lim);
+            cpu.sqr(m + 2); cpu.sqr(m + 3); cpu.sub(); cpu.add(m + 1); cpu.lim(lim);
             // var v = 2 * a * b + y;
-            cpu.mul(m + 2, m + 3); cpu.shl(1); cpu.add(m + 0); cpu.lim((uint)lim);
+            cpu.mul(m + 2, m + 3); cpu.shl(1); cpu.add(m + 0); cpu.lim(lim);
             // if (u * u + v * v > 4) break;
             cpu.sqr(m + 4); cpu.sqr(m + 5); cpu.add();
+            //if (cpu.bdi() >= 2) { cpu.pop(3); break; }
             if (cpu.cmp(qmax) > 0) { cpu.pop(3); break; }
             // a = u; b = v;
             cpu.swp(m + 2, m + 4); cpu.swp(m + 3, m + 5); cpu.pop(3);
@@ -217,7 +218,7 @@ namespace Test
 
     void start()
     {
-      stop(); if (manual && !restart) return; restart = false; 
+      stop(); if (manual && !restart) return; restart = false;
       var size = ClientSize;
       if (bmp == null || bmp.Size != size)
       {

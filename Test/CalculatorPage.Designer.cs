@@ -539,32 +539,8 @@
     }
 
     #endregion
-
-    private Button button1;
-    private Button button2;
-    private Button button3;
-    private Button button4;
-    private Button button5;
-    private Button button6;
-    private Button button7;
-    private Button button8;
-    private Button button9;
-    private Button button10;
-    private Button button11;
-    private Button button12;
-    private Button button13;
-    private Button button14;
-    private Button button15;
-    private Button button16;
-    private Button button17;
-    private Button button18;
-    private Button button19;
-    private Button button20;
+                              
     private TextBox textBox1;
-    private Button button21;
-    private Button button22;
-    private Button button23;
-    private Button button24;
     private Label label1;
   }
 }
