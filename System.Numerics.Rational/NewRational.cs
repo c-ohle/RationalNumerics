@@ -51,7 +51,7 @@ namespace System.Numerics.Rational
     /// <returns>The string representation of the current <see cref="NewRational"/> value as
     /// specified by the format and provider parameters.</returns>
     public readonly string ToString(string? format, IFormatProvider? provider = default)
-    {
+    { //todo: improve
       provider ??= format?.Length == 0 ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo; //DebuggerDisplay("", null);
       Span<char> sp = stackalloc char[100]; char[]? a = null; string? s = null;
       for (int ns, na = 1024; ; na <<= 1)
@@ -60,7 +60,11 @@ namespace System.Numerics.Rational
         if (a != null) ArrayPool<char>.Shared.Return(a);
         if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(Math.Max(ns, na));
       }
-      //if (p != null && (p[0] & 0x40000000) != 0) { var x = p[0] & 0x3fffffff; s = $"{s} [{x}; {p[x + 1]}]"; }
+      //if (p != null && (p[0] & 0x40000000) != 0) //⁰₀
+      //{
+      //  var x = p[0] & 0x3fffffff; static string f(uint x) => string.Concat(x.ToString().Select(c => (char)('₀' + (c - '0'))));
+      //  s = $"{s} {f(x)} {f(p[x + 1])}";
+      //}
       return s;
     }
     /// <summary>
@@ -1137,7 +1141,7 @@ namespace System.Numerics.Rational
     public static NewRational Pow(NewRational x, NewRational y, int digits = 20)
     {
       //return Exp(y * Log(x, digits), digits);
-      //if(IsInteger(y)) return Pow(x, (int)b); //todo: check
+      //if(IsInteger(y)) return Pow(x, (int)b); //todo: impl
       if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
@@ -1147,10 +1151,26 @@ namespace System.Numerics.Rational
       return cpu.pop_rat();
     }
     /// <summary>
+    /// Returns the square root of a specified number.
+    /// </summary>
+    /// <param name="a">The number whose square root is to be found.</param>
+    /// <param name="digits">The maximum number of fractional digits in the return value.</param>
+    /// <returns>Zero or positive – The positive square root of <paramref name="a"/>.</returns>
+    /// <exception cref="ArgumentException">For <paramref name="a"/> is less zero.</exception>
+    public static NewRational Sqrt(NewRational a, int digits)
+    {
+      Math.Sqrt(1);
+      if (Sign(a) < 0) throw new ArgumentException(nameof(a));
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.push(a); cpu.sqrt(c); cpu.rnd(digits);
+      return cpu.pop_rat();
+    }
+    /// <summary>
     /// Returns the natural (base e) logarithm of a specified number.
     /// </summary>
     /// <param name="x">The number whose logarithm is to be found.</param>
-    /// <param name="digits">The number of fractional digits in the return value.</param>
+    /// <param name="digits">The maximum number of fractional digits in the return value.</param>
     /// <returns>The natural logarithm of <paramref name="x"/>; that is, ln <paramref name="x"/>, or log e <paramref name="x"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
     public static NewRational Log(NewRational x, int digits = 20)
@@ -1165,7 +1185,7 @@ namespace System.Numerics.Rational
     /// Returns e raised to the specified power.
     /// </summary>
     /// <param name="x">A number specifying a power.</param>
-    /// <param name="digits">The number of fractional digits in the return value.</param>
+    /// <param name="digits">The maximum number of fractional digits in the return value.</param>
     /// <returns>The number e raised to the power <paramref name="x"/>.</returns>
     public static NewRational Exp(NewRational x, int digits = 20)
     {
@@ -2061,7 +2081,7 @@ namespace System.Numerics.Rational
       {
         fixed (uint* p = this.p[this.i - 1])
         {
-          if (isz(p)) return -int.MaxValue;
+          if (isz(p)) return -int.MaxValue; //infinity
           var h = p[0]; var a = h & 0x3fffffff; var q = p + a + 1; var b = q[0];
           var u = (a << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[a]));
           var v = (b << 5) - unchecked((uint)BitOperations.LeadingZeroCount(q[b]));
@@ -2408,8 +2428,35 @@ namespace System.Numerics.Rational
         if (mem != default) Marshal.FreeCoTaskMem(mem);
       }
       /// <summary>
+      /// Replaces the value on top of the stack with it's square root.<b/>
+      /// Negative values result in NaN.
+      /// </summary>
+      /// <remarks>
+      /// The desired precision is controlled by the parameter <paramref name="c"/> 
+      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
+      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
+      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// </remarks>
+      /// <param name="c">The desired precision.</param>
+      public void sqrt(uint c)
+      {
+        var m = mark(); get(m - 1, out double d); // best possible initial est 
+        if (double.IsNormal(d)) push(Math.Sqrt(d));
+        else { dup(); push(2u); div(); } //todo: binary est
+        ///////
+        for (uint i = 0; ; i++)
+        {
+          dup(); sqr(); sub(0, 2);
+          var t = -bdi(); pop(); if (t > c) break;
+          lim(c); div(m - 1, m);
+          add(); push(2u); div();
+        }
+        swp(); pop();
+      }
+      /// <summary>
       /// Replaces the value on top of the stack with it's natural (base e) logarithm.<b/>
-      /// For non-positive values NaN is returned.
+      /// Non-positive values result in NaN.
       /// </summary>
       /// <remarks>
       /// The desired precision is controlled by the parameter <paramref name="c"/> 

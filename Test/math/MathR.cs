@@ -52,32 +52,6 @@ namespace System.Numerics.Rational
       return cpu.pop_rat();
     }
     /// <summary>
-    /// Returns the square root of a specified number.
-    /// </summary>
-    /// <remarks>
-    /// Implemented as a simple Newton iteration.<br/>
-    /// <i>Just to create big numbers with lots of controllable digits.</i>
-    /// </remarks>
-    /// <param name="a">The number whose square root is to be found.</param>
-    /// <param name="digits">The number of decimal digits to calculate.</param>
-    /// <returns>The square root of value <paramref name="a"/>.</returns>
-    /// <exception cref="ArgumentException">For negative <paramref name="a"/>.</exception>
-    public static rat Sqrt(rat a, int digits)
-    {
-      if (rat.Sign(a) < 0) throw new ArgumentException();
-      var cpu = rat.task_cpu;
-      cpu.pow(10, -digits - 1); var m = cpu.mark();
-      cpu.push(Math.Sqrt((double)a)); // cpu.push(a); cpu.push(2); cpu.div();
-      for (int i = 0; ; i++)
-      {
-        cpu.mul(m, m); cpu.push(a); cpu.sub(); cpu.abs(); var x = cpu.cmp(0, 2); cpu.pop();
-        if (x < 0) break; if ((i & 3) == 3) cpu.norm();
-        cpu.div(a, 0); cpu.add(); cpu.push(2); cpu.div();
-      }
-      cpu.swp(); cpu.pop(); cpu.rnd(digits);
-      return cpu.pop_rat();
-    }
-    /// <summary>
     /// PI calculation based on Bellard's formula.<br/>
     /// </summary>
     /// <remarks>

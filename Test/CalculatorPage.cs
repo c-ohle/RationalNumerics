@@ -28,9 +28,11 @@ namespace Test
 
     protected override void OnLoad(EventArgs e)
     {
-      base.OnLoad(e); textBox1.Text = "0"; label1.Text = "";
+      base.OnLoad(e); textBox1.Text = "0"; label1.Text = ""; digits = 32;
     }
-    List<string> list = new(); int state, kl;
+
+    List<string> list = new(); int state, kl, digits;
+
     NewRational parse(int a, int b)
     {
       for (int l = 0; l < 2; l++)
@@ -48,42 +50,12 @@ namespace Test
       switch (list[a])
       {
         case "(": return parse(a + 1, b - 1);
-        case "√": { var t = parse(a + 1, b); t = MathR.Sqrt(t, 20); return t; }
+        case "√": { var t = parse(a + 1, b); t = rat.Sqrt(t, digits); return t; }
         case "sqr": { var t = parse(a + 1, b); t = t * t; return t; }
-        case "fact":
-          {
-            var t = parse(a + 1, b);
-            if (t % 1 == 0) { } else { }
-            if (MathR.IsInteger(t)) t = MathR.Factorial((int)t);
-            else t = factorial((double)t);
-            return t;
-          }
+        case "fact": { var t = parse(a + 1, b); t = factorial(t); return t; }
         case "π": return MathR.PI(20);
         default: return NewRational.Parse(list[a]);
       }
-    }
-
-    static double gamma1(double z)
-    {
-      return Math.Sqrt(2 * Math.PI / z) * Math.Pow((1 / Math.E) * (z + 1 / (12 * z - 1 / (10 * z))), z);
-    }
-    static double gamma(double z)
-    {
-      if (z < 0.5) return Math.PI / (Math.Sin(Math.PI * z) * gamma(1 - z));
-      else
-      {
-        const int g = 7;
-        double[] a = new double[] { 0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7 };
-        z -= 1;
-        var x = a[0];
-        for (var i = 1; i < g + 2; i++) x += a[i] / (z + i);
-        var t = z + g + 0.5;
-        return Math.Sqrt(2 * Math.PI) * Math.Pow(t, (z + 0.5)) * Math.Exp(-t) * x;
-      }
-    }
-    static double factorial(double n)
-    {
-      return gamma(n + 1);
     }
 
     void button11_Click(object sender, EventArgs e)
@@ -167,5 +139,46 @@ namespace Test
       label1.Text = string.Join(' ', list);
       textBox1.Text = s;
     }
+
+    #region gamma
+    rat factorial(rat z, int digits = 32)
+    {
+      //if (z % 1 == 0) { }
+      if (MathR.IsInteger(z))
+      {
+        if (z < 0) throw new ArgumentException();
+        return MathR.Factorial((int)z);
+      }
+      var r = gamma(z + 1, 30, 55); //todo: formula for z, digits => a, d 
+      r = rat.Round(r, digits); return r;
+    }
+    rat gamma(rat z, int a, int d)
+    {
+      var kk = gamma_kk;
+      if (kk == null || kk.Length != a || gamma_d != d)
+      {
+        kk = gamma_kk = calc(a, gamma_d = d);
+        static rat[] calc(int a, int digits)
+        {
+          var kk = new rat[a]; rat fac = 1;
+          kk[0] = rat.Sqrt(MathR.PI(digits) * 2, digits);
+          for (int k = 1; k < a; k++) { kk[k] = fac; fac *= -k; }
+          Parallel.For(1, a, k => kk[k] = rat.Exp(a - k, digits) * rat.Pow(a - k, k - 0.5, digits) / kk[k]);
+          return kk;
+        }
+        //static rat[] calc(int a, int digits)
+        //{
+        //  var kk = new rat[a]; rat fac = 1;
+        //  for (int k = 1; k < a; fac *= -k, k++)
+        //    kk[k] = rat.Exp(a - k, digits) * rat.Pow(a - k, k - 0.5, digits) / fac;
+        //  return kk;
+        //}
+      }
+      var s = kk[0]; for (int k = 1; k < a; k++) s += kk[k] / (z + k);
+      s *= rat.Exp(-(z + a), d) * rat.Pow(z + a, z + 0.5, d);
+      return s / z;
+    }
+    rat[]? gamma_kk; int gamma_d;
+    #endregion
   }
 }

@@ -754,6 +754,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.CPU.sqr
   fullName: System.Numerics.Rational.NewRational.CPU.sqr
   nameWithType: NewRational.CPU.sqr
+- uid: System.Numerics.Rational.NewRational.CPU.sqrt(System.UInt32)
+  name: sqrt(UInt32)
+  href: api/System.Numerics.Rational.NewRational.CPU.sqrt.html#System_Numerics_Rational_NewRational_CPU_sqrt_System_UInt32_
+  commentId: M:System.Numerics.Rational.NewRational.CPU.sqrt(System.UInt32)
+  fullName: System.Numerics.Rational.NewRational.CPU.sqrt(System.UInt32)
+  nameWithType: NewRational.CPU.sqrt(UInt32)
+- uid: System.Numerics.Rational.NewRational.CPU.sqrt*
+  name: sqrt
+  href: api/System.Numerics.Rational.NewRational.CPU.sqrt.html
+  commentId: Overload:System.Numerics.Rational.NewRational.CPU.sqrt
+  fullName: System.Numerics.Rational.NewRational.CPU.sqrt
+  nameWithType: NewRational.CPU.sqrt
 - uid: System.Numerics.Rational.NewRational.CPU.sub
   name: sub()
   href: api/System.Numerics.Rational.NewRational.CPU.sub.html#System_Numerics_Rational_NewRational_CPU_sub
@@ -1405,6 +1417,18 @@ references:
   commentId: Overload:System.Numerics.Rational.NewRational.Sign
   fullName: System.Numerics.Rational.NewRational.Sign
   nameWithType: NewRational.Sign
+- uid: System.Numerics.Rational.NewRational.Sqrt(System.Numerics.Rational.NewRational,System.Int32)
+  name: Sqrt(NewRational, Int32)
+  href: api/System.Numerics.Rational.NewRational.Sqrt.html#System_Numerics_Rational_NewRational_Sqrt_System_Numerics_Rational_NewRational_System_Int32_
+  commentId: M:System.Numerics.Rational.NewRational.Sqrt(System.Numerics.Rational.NewRational,System.Int32)
+  fullName: System.Numerics.Rational.NewRational.Sqrt(System.Numerics.Rational.NewRational, System.Int32)
+  nameWithType: NewRational.Sqrt(NewRational, Int32)
+- uid: System.Numerics.Rational.NewRational.Sqrt*
+  name: Sqrt
+  href: api/System.Numerics.Rational.NewRational.Sqrt.html
+  commentId: Overload:System.Numerics.Rational.NewRational.Sqrt
+  fullName: System.Numerics.Rational.NewRational.Sqrt
+  nameWithType: NewRational.Sqrt
 - uid: System.Numerics.Rational.NewRational.task_cpu
   name: task_cpu
   href: api/System.Numerics.Rational.NewRational.task_cpu.html#System_Numerics_Rational_NewRational_task_cpu
