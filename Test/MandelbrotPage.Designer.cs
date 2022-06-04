@@ -95,11 +95,11 @@
       // label4
       // 
       this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label4.Location = new System.Drawing.Point(239, 14);
+      this.label4.Location = new System.Drawing.Point(232, 14);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(240, 20);
       this.label4.TabIndex = 7;
-      this.label4.Text = "Numeric based on NewRational";
+      this.label4.Text = "Numeric based on BigRational";
       this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // mandelbrotView1
@@ -107,16 +107,16 @@
       this.mandelbrotView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.mandelbrotView1.CenterX = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView1.CenterX")));
-      this.mandelbrotView1.CenterY = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView1.CenterY")));
-      this.mandelbrotView1.Driver = Test.MandelbrotView.MandelDriver.NewRational;
+      this.mandelbrotView1.CenterX = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView1.CenterX")));
+      this.mandelbrotView1.CenterY = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView1.CenterY")));
+      this.mandelbrotView1.Driver = Test.MandelbrotView.MandelDriver.BigRational;
       this.mandelbrotView1.Iterations = 32;
       this.mandelbrotView1.Lim = 64;
       this.mandelbrotView1.Location = new System.Drawing.Point(11, 45);
       this.mandelbrotView1.Manual = false;
       this.mandelbrotView1.Name = "mandelbrotView1";
       this.mandelbrotView1.PropChanged = null;
-      this.mandelbrotView1.Scaling = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView1.Scaling")));
+      this.mandelbrotView1.Scaling = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView1.Scaling")));
       this.mandelbrotView1.Size = new System.Drawing.Size(468, 391);
       this.mandelbrotView1.StateChanged = null;
       this.mandelbrotView1.TabIndex = 3;
@@ -147,18 +147,18 @@
       this.label1.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
       this.label1.Location = new System.Drawing.Point(11, 0);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(185, 38);
+      this.label1.Size = new System.Drawing.Size(169, 38);
       this.label1.TabIndex = 1;
-      this.label1.Text = "NewRational";
+      this.label1.Text = "BigRational";
       // 
       // label6
       // 
       this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label6.Location = new System.Drawing.Point(239, 14);
+      this.label6.Location = new System.Drawing.Point(236, 14);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(219, 20);
       this.label6.TabIndex = 7;
-      this.label6.Text = "Numeric based on BigInteger";
+      this.label6.Text = "Numeric based on BigInteger as OldRational";
       this.label6.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // checkBoxActive2
@@ -167,7 +167,7 @@
       this.checkBoxActive2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxActive2.Checked = true;
       this.checkBoxActive2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxActive2.Location = new System.Drawing.Point(233, 437);
+      this.checkBoxActive2.Location = new System.Drawing.Point(230, 437);
       this.checkBoxActive2.Name = "checkBoxActive2";
       this.checkBoxActive2.Size = new System.Drawing.Size(225, 24);
       this.checkBoxActive2.TabIndex = 7;
@@ -181,8 +181,8 @@
       this.mandelbrotView2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.mandelbrotView2.CenterX = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView2.CenterX")));
-      this.mandelbrotView2.CenterY = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView2.CenterY")));
+      this.mandelbrotView2.CenterX = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.CenterX")));
+      this.mandelbrotView2.CenterY = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.CenterY")));
       this.mandelbrotView2.Driver = Test.MandelbrotView.MandelDriver.BigInteger;
       this.mandelbrotView2.Enabled = false;
       this.mandelbrotView2.Iterations = 32;
@@ -191,8 +191,8 @@
       this.mandelbrotView2.Manual = true;
       this.mandelbrotView2.Name = "mandelbrotView2";
       this.mandelbrotView2.PropChanged = null;
-      this.mandelbrotView2.Scaling = ((System.Numerics.Rational.NewRational)(resources.GetObject("mandelbrotView2.Scaling")));
-      this.mandelbrotView2.Size = new System.Drawing.Size(451, 391);
+      this.mandelbrotView2.Scaling = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.Scaling")));
+      this.mandelbrotView2.Size = new System.Drawing.Size(448, 391);
       this.mandelbrotView2.StateChanged = null;
       this.mandelbrotView2.TabIndex = 3;
       this.mandelbrotView2.TabStop = false;
@@ -213,9 +213,9 @@
       this.label2.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
       this.label2.Location = new System.Drawing.Point(7, 0);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(169, 38);
+      this.label2.Size = new System.Drawing.Size(155, 38);
       this.label2.TabIndex = 1;
-      this.label2.Text = "BigRational";
+      this.label2.Text = "BigInteger";
       // 
       // textBoxScaling
       // 

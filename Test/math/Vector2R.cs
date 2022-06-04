@@ -2,14 +2,14 @@
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// A Vector2 class based on <see cref="rat"/>.<br/>
+  /// A Vector2 class based on <see cref="BigRational"/>.<br/>
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct Vector2R : IEquatable<Vector2R>, IFormattable, ISpanFormattable
   {
-    public readonly rat X, Y;
-    public Vector2R(rat x, rat y)
+    public readonly BigRational X, Y;
+    public Vector2R(BigRational x, BigRational y)
     {
       X = x; Y = y;
     }
@@ -30,7 +30,7 @@ namespace System.Numerics.Rational
     }
     public static Vector2R Parse(ref ReadOnlySpan<char> s)
     {
-      return new Vector2R(rat.Parse(s.token()), rat.Parse(s.token()));
+      return new Vector2R(BigRational.Parse(s.token()), BigRational.Parse(s.token()));
     }
     public readonly void WriteToBytes(ref Span<byte> sp)
     {
@@ -38,7 +38,7 @@ namespace System.Numerics.Rational
     }
     public static Vector2R ReadFromBytes(ref ReadOnlySpan<byte> rs)
     {
-      return new Vector2R(rat.ReadFromBytes(ref rs), rat.ReadFromBytes(ref rs));
+      return new Vector2R(BigRational.ReadFromBytes(ref rs), BigRational.ReadFromBytes(ref rs));
     }
     public override int GetHashCode()
     {
@@ -78,7 +78,7 @@ namespace System.Numerics.Rational
     {
       return new Vector2R(a.Y - b.X, a.Y - b.Y);
     }
-    public static Vector2R operator *(Vector2R a, rat b)
+    public static Vector2R operator *(Vector2R a, BigRational b)
     {
       return new Vector2R(a.X * b, a.Y * b);
     }
@@ -87,37 +87,37 @@ namespace System.Numerics.Rational
       return new Vector2R(a.X * b.X, a.Y * b.Y);
 
     }
-    public static rat Dot(in Vector2R a, in Vector2R b)
+    public static BigRational Dot(in Vector2R a, in Vector2R b)
     {
       //return a.X * b.X + a.Y * b.Y;
-      var cpu = rat.task_cpu; cpu.dot(a, b); return cpu.pop_rat();
+      var cpu = BigRational.task_cpu; cpu.dot(a, b); return cpu.pop_rat();
     }
-    public static rat Cross(in Vector2R a, in Vector2R b)
+    public static BigRational Cross(in Vector2R a, in Vector2R b)
     {
       //return a.X * b.Y - a.Y * b.X;
-      var cpu = rat.task_cpu;
+      var cpu = BigRational.task_cpu;
       cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub();
       return cpu.pop_rat();
     }
-    public static rat LengthSq(in Vector2R a)
+    public static BigRational LengthSq(in Vector2R a)
     {
-      var cpu = rat.task_cpu; cpu.dot(a, a); return cpu.pop_rat();
+      var cpu = BigRational.task_cpu; cpu.dot(a, a); return cpu.pop_rat();
     }
     public static double Length(in Vector2R a)
     {
-      var cpu = rat.task_cpu; cpu.dot(a, a); return Math.Sqrt(cpu.pop_dbl());
+      var cpu = BigRational.task_cpu; cpu.dot(a, a); return Math.Sqrt(cpu.pop_dbl());
     }
     public static Vector2R Min(in Vector2R a, in Vector2R b)
     {
       return new Vector2R(
-        rat.Min(a.X, b.X),
-        rat.Min(a.Y, b.Y));
+        BigRational.Min(a.X, b.X),
+        BigRational.Min(a.Y, b.Y));
     }
     public static Vector2R Max(in Vector2R a, in Vector2R b)
     {
       return new Vector2R(
-        rat.Max(a.X, b.X),
-        rat.Max(a.Y, b.Y));
+        BigRational.Max(a.X, b.X),
+        BigRational.Max(a.Y, b.Y));
     }
   }
 }

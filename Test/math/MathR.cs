@@ -2,7 +2,7 @@
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Implementation of some common mathematical functions for <see cref="rat"/>.<br/>
+  /// Implementation of some common mathematical functions for <see cref="BigRational"/>.<br/>
   /// <i>These are just non-optimal example implementations for testing!</i>
   /// </summary>
   public static class MathR
@@ -10,45 +10,34 @@ namespace System.Numerics.Rational
     /// <summary>
     /// Returns the numerator of the specified number.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number</param>
+    /// <param name="a">A <see cref="BigRational"/> number</param>
     /// <returns>Returns the numerator of <paramref name="a"/>.</returns>
-    public static rat Numerator(rat a)
+    public static BigRational Numerator(BigRational a)
     {
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = BigRational.task_cpu; cpu.push(a);
       cpu.mod(8); var s = cpu.sign(); cpu.pop();
       if (s < 0) cpu.neg(); return cpu.pop_rat();
     }
     /// <summary>
     /// Returns the denominator of the specified number.
     /// </summary>
-    /// <param name="a">A <see cref="rat"/> number</param>
+    /// <param name="a">A <see cref="BigRational"/> number</param>
     /// <returns>Returns the denominator of <paramref name="a"/>.</returns>
-    public static rat Denominator(rat a)
+    public static BigRational Denominator(BigRational a)
     {
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = BigRational.task_cpu; cpu.push(a);
       cpu.mod(8); var s = cpu.sign(); cpu.swp(); cpu.pop();
       if (s < 0) cpu.neg(); return cpu.pop_rat();
-    }
-    /// <summary>
-    /// Returns whether the specified number is an integer.
-    /// </summary>
-    /// <param name="a">A <see cref="rat"/> number</param>
-    /// <returns>true if the number is an integer; false otherwise.</returns>
-    public static bool IsInteger(rat a)
-    {
-      //return a % 1 == 0;
-      var cpu = rat.task_cpu; cpu.push(a);
-      var b = cpu.isi(); cpu.pop(); return b;
     }
     /// <summary>
     /// Calculates the factorial of <paramref name="a"/>.
     /// </summary>
     /// <param name="a">A positive number.</param>
     /// <returns>Returns the factorial of <paramref name="a"/>.</returns>
-    public static rat Factorial(int a)
+    public static BigRational Factorial(int a)
     {
       if (a < 0) throw new ArgumentException();
-      var cpu = rat.task_cpu; cpu.fac((uint)a);
+      var cpu = BigRational.task_cpu; cpu.fac((uint)a);
       return cpu.pop_rat();
     }
     /// <summary>
@@ -59,9 +48,9 @@ namespace System.Numerics.Rational
     /// <i>Just to create big numbers with lots of controllable digits.</i>
     /// </remarks>
     /// <param name="digits">The number of decimal digits to calculate.</param>
-    public static rat PI(int digits)
+    public static BigRational PI(int digits)
     {
-      var cpu = rat.task_cpu; cpu.push();
+      var cpu = BigRational.task_cpu; cpu.push();
       for (int n = 0, c = 1 + digits / 3; n < c; n++)
       {
         int a = n << 2, b = 10 * n;
@@ -79,16 +68,16 @@ namespace System.Numerics.Rational
       return cpu.pop_rat();
     }
     /// <summary>
-    /// Converts a <see cref="rat"/> number to a continued fraction<br/>
+    /// Converts a <see cref="BigRational"/> number to a continued fraction<br/>
     /// to the common string format: "[1;2,3,4,5]"
     /// </summary>
     /// <param name="a">The number to convert.</param>
     /// <returns>A <see cref="string"/> formatted as continued fraction.</returns>
-    public static string GetContinuedFraction(rat a)
+    public static string GetContinuedFraction(BigRational a)
     {
       var wr = new System.Buffers.ArrayBufferWriter<char>(256);
       wr.GetSpan(1)[0] = '['; wr.Advance(1);
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = BigRational.task_cpu; cpu.push(a);
       for (int i = 0, e, ns; ; i++)
       {
         cpu.dup(); cpu.mod(0); cpu.swp(); cpu.pop();
@@ -110,10 +99,10 @@ namespace System.Numerics.Rational
     /// of the common string format: "[1;2,3,4,5]"
     /// </summary>
     /// <param name="s">The value to parse.</param>
-    /// <returns>A <see cref="rat"/> number.</returns>
-    public static rat ParseContinuedFraction(ReadOnlySpan<char> s)
+    /// <returns>A <see cref="BigRational"/> number.</returns>
+    public static BigRational ParseContinuedFraction(ReadOnlySpan<char> s)
     {
-      var cpu = rat.task_cpu; cpu.push();
+      var cpu = BigRational.task_cpu; cpu.push();
       for (; s.Length != 0;)
       {
         var x = s.LastIndexOfAny(",;");
@@ -130,7 +119,7 @@ namespace System.Numerics.Rational
       return cpu.pop_rat();
     }
     /// <summary>
-    /// Finds the greatest common divisor (GCD) of two <see cref="rat"/> integer values.
+    /// Finds the greatest common divisor (GCD) of two <see cref="BigRational"/> integer values.
     /// </summary>
     /// <remarks>
     /// This operation makes only sense for integer values.
@@ -138,13 +127,13 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static rat GreatestCommonDivisor(rat a, rat b)
+    public static BigRational GreatestCommonDivisor(BigRational a, BigRational b)
     {
-      var cpu = rat.task_cpu; cpu.push(a); cpu.push(b);
+      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
       cpu.gcd(); return cpu.pop_rat();
     }
     /// <summary>
-    /// Finds the least common multiple (LCM) of two <see cref="rat"/> integer values.
+    /// Finds the least common multiple (LCM) of two <see cref="BigRational"/> integer values.
     /// </summary>
     /// <remarks>
     /// This operation makes only sense for integer values.
@@ -152,10 +141,10 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <returns>The least common multiple of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static rat LeastCommonMultiple(rat a, rat b)
+    public static BigRational LeastCommonMultiple(BigRational a, BigRational b)
     {
       //|a * b| / gcd(a, b) == |a / gcd(a, b) * b|
-      var cpu = rat.task_cpu; cpu.push(a); cpu.push(b);
+      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
       cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
       return cpu.pop_rat();
     }

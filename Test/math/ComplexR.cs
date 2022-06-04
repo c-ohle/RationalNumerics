@@ -4,14 +4,14 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// A Complex number class based on <see cref="rat"/>.<br/>
+  /// A Complex number class based on <see cref="BigRational"/>.<br/>
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct ComplexR : IEquatable<ComplexR>, IFormattable //, ISpanFormattable
   {
-    public readonly rat Real, Imaginary;
-    public ComplexR(rat real, rat imaginary)
+    public readonly BigRational Real, Imaginary;
+    public ComplexR(BigRational real, BigRational imaginary)
     {
       Real = real; Imaginary = imaginary;
     }
@@ -69,7 +69,7 @@ namespace System.Numerics.Rational
     public static ComplexR operator /(ComplexR a, ComplexR b)
     {
       //todo: optimize
-      if (rat.Abs(b.Imaginary) < rat.Abs(b.Real))
+      if (BigRational.Abs(b.Imaginary) < BigRational.Abs(b.Real))
       {
         var doc = b.Imaginary / b.Real;
         return new ComplexR(

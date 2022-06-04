@@ -60,43 +60,43 @@
   <data name="mandelbrotView1.CenterX" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAD5TeXN0ZW0uTnVtZXJpY3MuUmF0aW9uYWwsIEN1bHR1cmU9bmV1
-        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAJFN5c3RlbS5OdW1lcmljcy5SYXRpb25hbC5OZXdS
-        YXRpb25hbAEAAAABcAcPAgAAAAkDAAAADwMAAAAEAAAADwEAAIAHAAAAAQAAAAoAAAAL
+        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAG1N5c3RlbS5OdW1lcmljcy5CaWdSYXRpb25hbAEA
+        AAABcAcPAgAAAAkDAAAADwMAAAAEAAAADwEAAIAHAAAAAQAAAAoAAAAL
 </value>
   </data>
   <data name="mandelbrotView1.CenterY" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAD5TeXN0ZW0uTnVtZXJpY3MuUmF0aW9uYWwsIEN1bHR1cmU9bmV1
-        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAJFN5c3RlbS5OdW1lcmljcy5SYXRpb25hbC5OZXdS
-        YXRpb25hbAEAAAABcAcPAgAAAAoL
+        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAG1N5c3RlbS5OdW1lcmljcy5CaWdSYXRpb25hbAEA
+        AAABcAcPAgAAAAoL
 </value>
   </data>
   <data name="mandelbrotView1.Scaling" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAD5TeXN0ZW0uTnVtZXJpY3MuUmF0aW9uYWwsIEN1bHR1cmU9bmV1
-        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAJFN5c3RlbS5OdW1lcmljcy5SYXRpb25hbC5OZXdS
-        YXRpb25hbAEAAAABcAcPAgAAAAkDAAAADwMAAAAEAAAADwEAAAAGAAAAAQAAAAUAAAAL
+        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAG1N5c3RlbS5OdW1lcmljcy5CaWdSYXRpb25hbAEA
+        AAABcAcPAgAAAAkDAAAADwMAAAAEAAAADwEAAAAGAAAAAQAAAAUAAAAL
 </value>
   </data>
   <data name="mandelbrotView2.CenterX" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAD5TeXN0ZW0uTnVtZXJpY3MuUmF0aW9uYWwsIEN1bHR1cmU9bmV1
-        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAJFN5c3RlbS5OdW1lcmljcy5SYXRpb25hbC5OZXdS
-        YXRpb25hbAEAAAABcAcPAgAAAAkDAAAADwMAAAAEAAAADwEAAIAHAAAAAQAAAAoAAAAL
+        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAG1N5c3RlbS5OdW1lcmljcy5CaWdSYXRpb25hbAEA
+        AAABcAcPAgAAAAkDAAAADwMAAAAEAAAADwEAAIAHAAAAAQAAAAoAAAAL
 </value>
   </data>
   <data name="mandelbrotView2.CenterY" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAD5TeXN0ZW0uTnVtZXJpY3MuUmF0aW9uYWwsIEN1bHR1cmU9bmV1
-        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAJFN5c3RlbS5OdW1lcmljcy5SYXRpb25hbC5OZXdS
-        YXRpb25hbAEAAAABcAcPAgAAAAoL
+        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAG1N5c3RlbS5OdW1lcmljcy5CaWdSYXRpb25hbAEA
+        AAABcAcPAgAAAAoL
 </value>
   </data>
   <data name="mandelbrotView2.Scaling" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAD5TeXN0ZW0uTnVtZXJpY3MuUmF0aW9uYWwsIEN1bHR1cmU9bmV1
-        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAJFN5c3RlbS5OdW1lcmljcy5SYXRpb25hbC5OZXdS
-        YXRpb25hbAEAAAABcAcPAgAAAAkDAAAADwMAAAAEAAAADwEAAAAGAAAAAQAAAAUAAAAL
+        dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAG1N5c3RlbS5OdW1lcmljcy5CaWdSYXRpb25hbAEA
+        AAABcAcPAgAAAAkDAAAADwMAAAAEAAAADwEAAAAGAAAAAQAAAAUAAAAL
 </value>
   </data>
 </root>

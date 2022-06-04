@@ -7,17 +7,16 @@ using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
-namespace System.Numerics.Rational
+namespace System.Numerics
 {
   /// <summary>
   /// Represents an arbitrarily large rational number.
   /// </summary>
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public unsafe readonly partial struct NewRational : IComparable<NewRational>, IEquatable<NewRational>, IFormattable, ISpanFormattable
+  public unsafe readonly partial struct BigRational : IComparable<BigRational>, IEquatable<BigRational>, IFormattable, ISpanFormattable
   {
-    private readonly uint[] p;
     /// <summary>
-    /// Converts the numeric value of the current <see cref="NewRational"/> instance to its equivalent string representation.
+    /// Converts the numeric value of the current <see cref="BigRational"/> instance to its equivalent string representation.
     /// </summary>
     /// <remarks>
     /// Behavior like <see cref="double.ToString()"/> 
@@ -26,14 +25,14 @@ namespace System.Numerics.Rational
     /// Special: Repetions marked with apostrophe (') like 1/3 as "0.'3" instead of "0.333333…"<br/>
     /// Special: Overflow marked with trailing dots (…) like: "1.234567…"<br/>
     /// </remarks>
-    /// <returns>The string representation of the current <see cref="NewRational"/> value.</returns>
+    /// <returns>The string representation of the current <see cref="BigRational"/> value.</returns>
     public override readonly string ToString()
     {
       Span<char> sp = stackalloc char[64];
       TryFormat(sp, out var ns); return sp.Slice(0, ns).ToString();
     }
     /// <summary>
-    /// Formats this <see cref="NewRational"/> instance to
+    /// Formats this <see cref="BigRational"/> instance to
     /// its string representation by using the specified format and culture-specific
     /// format information.
     /// </summary>
@@ -48,7 +47,7 @@ namespace System.Numerics.Rational
     /// </remarks>
     /// <param name="format">A standard or custom numeric format string.</param>
     /// <param name="provider">An object that supplies culture-specific formatting information.</param>
-    /// <returns>The string representation of the current <see cref="NewRational"/> value as
+    /// <returns>The string representation of the current <see cref="BigRational"/> value as
     /// specified by the format and provider parameters.</returns>
     public readonly string ToString(string? format, IFormatProvider? provider = default)
     { //todo: improve
@@ -60,18 +59,20 @@ namespace System.Numerics.Rational
         if (a != null) ArrayPool<char>.Shared.Return(a);
         if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(Math.Max(ns, na));
       }
-      //if (p != null && (p[0] & 0x40000000) != 0) //⁰₀
-      //{
-      //  var x = p[0] & 0x3fffffff; static string f(uint x) => string.Concat(x.ToString().Select(c => (char)('₀' + (c - '0'))));
-      //  s = $"{s} {f(x)} {f(p[x + 1])}";
-      //}
+      #region debug
+      if (p != null && (p[0] & 0x40000000) != 0) // ⁰₀
+      {
+        var x = p[0] & 0x3fffffff; static string f(uint x) => string.Concat(x.ToString().Select(c => (char)('₀' + (c - '0'))));
+        s = $"{s} {f(x)} {f(p[x + 1])}";
+      }
+      #endregion
       return s;
     }
     /// <summary>
-    /// Formats this <see cref="NewRational"/> instance into a span of characters.
+    /// Formats this <see cref="BigRational"/> instance into a span of characters.
     /// </summary>
     /// <remarks>
-    /// Supported formats see: <see cref="NewRational.ToString(string?, IFormatProvider?)"/>.
+    /// Supported formats see: <see cref="BigRational.ToString(string?, IFormatProvider?)"/>.
     /// </remarks>
     /// <param name="destination">The span of characters into which this instance will be written.</param>
     /// <param name="charsWritten">When the method returns, contains the length of the span in number of characters.</param>
@@ -179,7 +180,7 @@ namespace System.Numerics.Rational
         if (n <= 0) return; if (n > ws.Length) { ws = default; return; }
         ws.Slice(0, n).Fill(c); ws = ws.Slice(n);
       }
-      static void fra(ref Span<char> ws, NewRational.CPU cpu)
+      static void fra(ref Span<char> ws, BigRational.CPU cpu)
       {
         var s = cpu.sign(); int x = 0; cpu.mod(8);
         for (int i = 2; ;)
@@ -203,19 +204,19 @@ namespace System.Numerics.Rational
     }
     /// <summary>
     /// Converts the representation of a number, contained in the specified read-only 
-    /// span of characters to its <see cref="NewRational"/> equivalent.
+    /// span of characters to its <see cref="BigRational"/> equivalent.
     /// </summary>
     /// <remarks>
     /// Like <see cref="double.Parse(string)"/> but with unlimited number of digits.<br/>
     /// Additional: Converts Fraction notation like "1/3" or "-123/456"<br/> 
-    /// Additional: Converts Repetions like "0.'3", see: <see cref="NewRational.ToString(string?, IFormatProvider?)"/>.<br/>
+    /// Additional: Converts Repetions like "0.'3", see: <see cref="BigRational.ToString(string?, IFormatProvider?)"/>.<br/>
     /// Additional: Accepts prefix "0x" for hexadecimal- and "0b" for binary number representations. 
     /// Ignores spaces, underscores (_) leading dots (…)
     /// </remarks>
     /// <param name="value">A read-only span of characters that contains the number to convert.</param>
     /// <param name="provider">An object that provides culture-specific formatting information about value.</param>
     /// <returns>A value that is equivalent to the number specified in the value parameter.</returns>
-    public static NewRational Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
+    public static BigRational Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
     {
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
       int a = 0, ba = 10; for (; a < value.Length - 1;)
@@ -267,7 +268,7 @@ namespace System.Numerics.Rational
       return cpu.pop_rat();
     }
     /// <summary>
-    /// Copies the value of this <see cref="NewRational"/> as little-endian twos-complement bytes.<br/>
+    /// Copies the value of this <see cref="BigRational"/> as little-endian twos-complement bytes.<br/>
     /// If the value is zero, outputs one uint whose element is 0x00000000.
     /// </summary>
     /// <remarks>
@@ -291,16 +292,16 @@ namespace System.Numerics.Rational
       }
     }
     /// <summary>
-    /// Initializes a new instance of the <see cref="NewRational"/> structure using
+    /// Initializes a new instance of the <see cref="BigRational"/> structure using
     /// the values in a read-only span of bytes.
     /// </summary>
     /// <remarks>
-    /// Reverse function of <see cref="NewRational.WriteToBytes"/> 
+    /// Reverse function of <see cref="BigRational.WriteToBytes"/> 
     /// </remarks>
-    /// <param name="value">A read-only span of bytes representing the <see cref="NewRational"/> number.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    /// <param name="value">A read-only span of bytes representing the <see cref="BigRational"/> number.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     /// <exception cref="FormatException">Signals an invalid format.</exception>
-    public static NewRational ReadFromBytes(ref ReadOnlySpan<byte> value)
+    public static BigRational ReadFromBytes(ref ReadOnlySpan<byte> value)
     {
       if (value.Length < 4) throw new FormatException();
       fixed (byte* s = &value.GetPinnableReference())
@@ -309,11 +310,11 @@ namespace System.Numerics.Rational
         if (value.Length < 16) throw new FormatException();
         var n = len((uint*)s); var p = new uint[n];
         fixed (uint* d = p) copy(d, (uint*)s, n);
-        value = value.Slice((int)n << 2); return new NewRational(p);
+        value = value.Slice((int)n << 2); return new BigRational(p);
       }
     }
     /// <summary>
-    /// Returns the hash code for the current <see cref="NewRational"/> number.
+    /// Returns the hash code for the current <see cref="BigRational"/> number.
     /// </summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
     public override readonly int GetHashCode()
@@ -330,25 +331,25 @@ namespace System.Numerics.Rational
     /// </summary>
     /// <param name="obj">The object to compare.</param>
     /// <returns>
-    /// true if the obj argument is a <see cref="NewRational"/> number, 
-    /// and its value is equal to the value of the current <see cref="NewRational"/> instance; 
+    /// true if the obj argument is a <see cref="BigRational"/> number, 
+    /// and its value is equal to the value of the current <see cref="BigRational"/> instance; 
     /// otherwise, false.
     /// </returns>
     public override readonly bool Equals([NotNullWhen(true)] object? obj)
     {
-      return obj is NewRational r && Equals(r);
+      return obj is BigRational r && Equals(r);
     }
     /// <summary>
-    /// Returns a value that indicates whether the current instance and a specified <see cref="NewRational"/> number have the same value.
+    /// Returns a value that indicates whether the current instance and a specified <see cref="BigRational"/> number have the same value.
     /// </summary>
     /// <param name="b">The object to compare.</param>
-    /// <returns>true if this <see cref="NewRational"/> number and other have the same value; otherwise, false.</returns>
-    public readonly bool Equals(NewRational b)
+    /// <returns>true if this <see cref="BigRational"/> number and other have the same value; otherwise, false.</returns>
+    public readonly bool Equals(BigRational b)
     {
       return task_cpu.equ(this, b);
     }
     /// <summary>
-    /// Compares this instance to a second <see cref="NewRational"/> and returns an
+    /// Compares this instance to a second <see cref="BigRational"/> and returns an
     /// integer that indicates whether the value of this instance is less than, equal
     /// to, or greater than the value of the specified object.
     /// </summary>
@@ -361,7 +362,7 @@ namespace System.Numerics.Rational
     /// Zero – The current instance equals other.<br/>
     /// Greater than zero – The current instance is greater than other.<br/>
     /// </returns>
-    public readonly int CompareTo(NewRational b)
+    public readonly int CompareTo(BigRational b)
     {
       return task_cpu.cmp(this, b);
     }
@@ -390,162 +391,162 @@ namespace System.Numerics.Rational
     }
 
     /// <summary>
-    /// Defines an explicit bit-exact conversion of a <see cref="float"/> value to a <see cref="NewRational"/> value.
+    /// Defines an explicit bit-exact conversion of a <see cref="float"/> value to a <see cref="BigRational"/> value.
     /// </summary>
     /// <remarks>
     /// This as alternative to the explicit <see cref="float"/> conversion.<br/>
-    /// <c>var x = new <see cref="NewRational"/>(0.1f);</c><br/>
+    /// <c>var x = new <see cref="BigRational"/>(0.1f);</c><br/>
     /// results in <c>0.100000001490116119384765625</c> as bit-exact interpretation.<br/>
     /// where the more common explicit conversion:<br/>
-    /// <c>var x = (<see cref="NewRational"/>)0.1f;</c><br/>
+    /// <c>var x = (<see cref="BigRational"/>)0.1f;</c><br/>
     /// results in <c>0.1</c> as this function implicitly rounds to the precision of significant bits of <see cref="float"/>.
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public NewRational(float value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public BigRational(float value)
     {
       var cpu = task_cpu; cpu.push(value, true); p = cpu.pop_rat().p;
     }
     /// <summary>
-    /// Defines an explicit bit-exact conversion of a <see cref="double"/> value to a <see cref="NewRational"/> value.
+    /// Defines an explicit bit-exact conversion of a <see cref="double"/> value to a <see cref="BigRational"/> value.
     /// </summary>
     /// <remarks>
     /// This as alternative to the explicit <see cref="double"/> conversion.<br/>
-    /// <c>var x = new <see cref="NewRational"/>(0.1);</c><br/>
+    /// <c>var x = new <see cref="BigRational"/>(0.1);</c><br/>
     /// results in <c>0.10000000000000000555111512312578…</c> as bit-exact interpretation.<br/>
     /// where the more common explicit conversion:<br/>
-    /// <c>var x = (<see cref="NewRational"/>)0.1;</c><br/>
+    /// <c>var x = (<see cref="BigRational"/>)0.1;</c><br/>
     /// results in <c>0.1</c> as this function implicitly rounds to the precision of significant bits of <see cref="double"/>.
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public NewRational(double v)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public BigRational(double v)
     {
       var cpu = task_cpu; cpu.push(v, true); p = cpu.pop_rat().p;
     }
 
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="int"/> object to a <see cref="NewRational"/> value.
+    /// Defines an implicit conversion of a <see cref="int"/> object to a <see cref="BigRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(int value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational(int value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="uint"/> object to a <see cref="NewRational"/> value.
+    /// Defines an implicit conversion of a <see cref="uint"/> object to a <see cref="BigRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(uint value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational(uint value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="long"/> object to a <see cref="NewRational"/> value.
+    /// Defines an implicit conversion of a <see cref="long"/> object to a <see cref="BigRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(long value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational(long value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="ulong"/> object to a <see cref="NewRational"/> value.
+    /// Defines an implicit conversion of a <see cref="ulong"/> object to a <see cref="BigRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(ulong value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational(ulong value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="float"/> object to a <see cref="NewRational"/> value.
+    /// Defines an implicit conversion of a <see cref="float"/> object to a <see cref="BigRational"/> value.
     /// </summary>
     /// <remarks>
     /// This function implicitly rounds to the precision of significant bits of <see cref="float"/>.<br/>
     /// This rounding is identical to the <see cref="decimal"/> rounding of <see cref="float"/> values during conversion.
-    /// For a bit-exact conversion see: <see cref="NewRational(float)"/>
+    /// For a bit-exact conversion see: <see cref="BigRational(float)"/>
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is rounded to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(float value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is rounded to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational(float value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="double"/> object to a <see cref="NewRational"/> value.
+    /// Defines an implicit conversion of a <see cref="double"/> object to a <see cref="BigRational"/> value.
     /// </summary>
     /// <remarks>
     /// This function implicitly rounds to the precision of significant bits of <see cref="double"/>.<br/>
     /// This rounding is identical to the <see cref="decimal"/> rounding of <see cref="double"/> values during conversion.
-    /// For a bit-exact conversion see: <see cref="NewRational(System.Double)"/>
+    /// For a bit-exact conversion see: <see cref="BigRational(System.Double)"/>
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is rounded to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(double value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is rounded to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational(double value)
     {
       if (value == 0) return default;
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="decimal"/> object to a <see cref="NewRational"/> value.
+    /// Defines an implicit conversion of a <see cref="decimal"/> object to a <see cref="BigRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(decimal value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational(decimal value)
     {
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
     /// <summary>
-    /// Defines an implicit conversion of a <see cref="BigInteger"/> object to a <see cref="NewRational"/> value.
+    /// Defines an implicit conversion of a <see cref="BigInteger"/> object to a <see cref="BigRational"/> value.
     /// </summary>
-    /// <param name="value">The value to convert to a <see cref="NewRational"/>.</param>
-    /// <returns>A <see cref="NewRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public static implicit operator NewRational(BigInteger value)
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational(BigInteger value)
     {
       var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
     }
 
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="int"/> value.
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="int"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="int"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="int"/>.</returns>
-    public static explicit operator int(NewRational value)
+    public static explicit operator int(BigRational value)
     {
       return (int)(double)value;
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="long"/> value.
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="long"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="long"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="long"/>.</returns>
-    public static explicit operator long(NewRational value)
+    public static explicit operator long(BigRational value)
     {
       return (long)(decimal)value;
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="float"/> value.
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="float"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="float"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="float"/>.</returns>
-    public static explicit operator float(NewRational value)
+    public static explicit operator float(BigRational value)
     {
       return (float)(double)value; //todo: fast float convert
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="double"/> value.
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="double"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="double"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="double"/>.</returns>
-    public static explicit operator double(NewRational value)
+    public static explicit operator double(BigRational value)
     {
       if (value.p == null) return 0;
       fixed (uint* a = value.p)
@@ -565,11 +566,11 @@ namespace System.Numerics.Rational
       }
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="decimal"/> value.
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="decimal"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="decimal"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="decimal"/>.</returns>
-    public static explicit operator decimal(NewRational value)
+    public static explicit operator decimal(BigRational value)
     {
       if (value.p == null) return default;
       fixed (uint* p = value.p)
@@ -587,15 +588,15 @@ namespace System.Numerics.Rational
       }
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="NewRational"/> number to a <see cref="BigInteger"/> value.
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="BigInteger"/> value.
     /// </summary>
     /// <remarks>
     /// The result is truncated to integer by default.<br/>
-    /// Consider rounding the value before using one of the <see cref="NewRational.Round"/> methods.
+    /// Consider rounding the value before using one of the <see cref="BigRational.Round"/> methods.
     /// </remarks>
     /// <param name="value">The value to convert to a <see cref="BigInteger"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="BigInteger"/>.</returns>
-    public static explicit operator BigInteger(NewRational value)
+    public static explicit operator BigInteger(BigRational value)
     {
       if (value.p == null) return default;
       fixed (uint* p = value.p)
@@ -608,67 +609,67 @@ namespace System.Numerics.Rational
     }
 
     /// <summary>
-    /// Returns the value of the <see cref="NewRational"/> operand. (The sign of the operand is unchanged.)
+    /// Returns the value of the <see cref="BigRational"/> operand. (The sign of the operand is unchanged.)
     /// </summary>
-    /// <param name="a">An <see cref="NewRational"/> value.</param>
+    /// <param name="a">An <see cref="BigRational"/> value.</param>
     /// <returns>The value of the value operand.</returns>
-    public static NewRational operator +(NewRational a)
+    public static BigRational operator +(BigRational a)
     {
       return a;
     }
     /// <summary>
-    /// Negates a specified <see cref="NewRational"/> value.
+    /// Negates a specified <see cref="BigRational"/> value.
     /// </summary>
     /// <param name="a">The value to negate.</param>
     /// <returns>The result of the value parameter multiplied by negative one (-1).</returns>
-    public static NewRational operator -(NewRational a)
+    public static BigRational operator -(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a); cpu.neg(); return cpu.pop_rat();
     }
     /// <summary>
-    /// Adds the values of two specified <see cref="NewRational"/> numbers.
+    /// Adds the values of two specified <see cref="BigRational"/> numbers.
     /// </summary>
     /// <param name="a">The first value to add.</param>
     /// <param name="b">The second value to add.</param>
     /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static NewRational operator +(NewRational a, NewRational b)
+    public static BigRational operator +(BigRational a, BigRational b)
     {
       var cpu = task_cpu; cpu.add(a, b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Subtracts a <see cref="NewRational"/> value from another <see cref="NewRational"/> value.
+    /// Subtracts a <see cref="BigRational"/> value from another <see cref="BigRational"/> value.
     /// </summary>
     /// <param name="a">The value to subtract from (the minuend).</param>
     /// <param name="b">The value to subtract (the subtrahend).</param>
     /// <returns>The result of subtracting b from a.</returns>
-    public static NewRational operator -(NewRational a, NewRational b)
+    public static BigRational operator -(BigRational a, BigRational b)
     {
       var cpu = task_cpu; cpu.sub(a, b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Multiplies two specified <see cref="NewRational"/> values.
+    /// Multiplies two specified <see cref="BigRational"/> values.
     /// </summary>
     /// <param name="a">The first value to multiply.</param>
     /// <param name="b">The second value to multiply.</param>
     /// <returns>The product of left and right.</returns>
-    public static NewRational operator *(NewRational a, NewRational b)
+    public static BigRational operator *(BigRational a, BigRational b)
     {
       var cpu = task_cpu; cpu.mul(a, b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Divides a specified <see cref="NewRational"/> value by another specified <see cref="NewRational"/> value.
+    /// Divides a specified <see cref="BigRational"/> value by another specified <see cref="BigRational"/> value.
     /// </summary>
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
     /// <returns>The result of the division.</returns>
     /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
-    public static NewRational operator /(NewRational a, NewRational b)
+    public static BigRational operator /(BigRational a, BigRational b)
     {
       if (b.p == null) throw new DivideByZeroException(nameof(b));
       var cpu = task_cpu; cpu.div(a, b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Returns the remainder that results from division with two specified <see cref="NewRational"/> values.
+    /// Returns the remainder that results from division with two specified <see cref="BigRational"/> values.
     /// </summary>
     /// <remarks>
     /// For fractions, the same rules apply to modulus as to floating point types such as <see cref="double"/><br/>
@@ -677,7 +678,7 @@ namespace System.Numerics.Rational
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (divisor)</param>
     /// <returns>The remainder that results from the division.</returns>
-    public static NewRational operator %(NewRational a, NewRational b)
+    public static BigRational operator %(BigRational a, BigRational b)
     {
       //return a - Truncate(a / b) * b;
       if (b.p == null) throw new DivideByZeroException(nameof(b));
@@ -688,73 +689,73 @@ namespace System.Numerics.Rational
     }
 
     /// <summary>
-    /// Returns a value that indicates whether the values of two <see cref="NewRational"/> numbers are equal.
+    /// Returns a value that indicates whether the values of two <see cref="BigRational"/> numbers are equal.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if the left and right parameters have the same value; otherwise, false.</returns>
-    public static bool operator ==(NewRational a, NewRational b)
+    public static bool operator ==(BigRational a, BigRational b)
     {
       return a.Equals(b);
     }
     /// <summary>
-    /// Returns a value that indicates whether two <see cref="NewRational"/> numbers have different values.
+    /// Returns a value that indicates whether two <see cref="BigRational"/> numbers have different values.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left and right are not equal; otherwise, false.</returns>
-    public static bool operator !=(NewRational a, NewRational b)
+    public static bool operator !=(BigRational a, BigRational b)
     {
       return !a.Equals(b);
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
-    /// less than or equal to another <see cref="NewRational"/> value.
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value is
+    /// less than or equal to another <see cref="BigRational"/> value.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than or equal to right; otherwise, false.</returns>
-    public static bool operator <=(NewRational a, NewRational b)
+    public static bool operator <=(BigRational a, BigRational b)
     {
       return a.CompareTo(b) <= 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
-    /// greater than or equal to another <see cref="NewRational"/> value.
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value is
+    /// greater than or equal to another <see cref="BigRational"/> value.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than or equal to right; otherwise, false.</returns>
-    public static bool operator >=(NewRational a, NewRational b)
+    public static bool operator >=(BigRational a, BigRational b)
     {
       return a.CompareTo(b) >= 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
-    /// less than another <see cref="NewRational"/> value.
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value is
+    /// less than another <see cref="BigRational"/> value.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than right; otherwise, false.</returns>
-    public static bool operator <(NewRational a, NewRational b)
+    public static bool operator <(BigRational a, BigRational b)
     {
       return a.CompareTo(b) < 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
-    /// greater than another <see cref="NewRational"/> value.
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value is
+    /// greater than another <see cref="BigRational"/> value.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than right; otherwise, false.</returns>
-    public static bool operator >(NewRational a, NewRational b)
+    public static bool operator >(BigRational a, BigRational b)
     {
       return a.CompareTo(b) > 0;
     }
 
     #region integer operator
     /// <summary>
-    /// Adds the values of a specified <see cref="NewRational"/> and a <see cref="long"/> number.
+    /// Adds the values of a specified <see cref="BigRational"/> and a <see cref="long"/> number.
     /// </summary>
     /// <remarks>
     /// Fast addition of common cases like: <c>x + 1</c>.<br/>
@@ -763,12 +764,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to add.</param>
     /// <param name="b">The second value to add.</param>
     /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static NewRational operator +(NewRational a, long b)
+    public static BigRational operator +(BigRational a, long b)
     {
       var cpu = task_cpu; cpu.push(b); cpu.add(a); return cpu.pop_rat();
     }
     /// <summary>
-    /// Subtracts the values of a specified <see cref="NewRational"/> from another <see cref="long"/> value.
+    /// Subtracts the values of a specified <see cref="BigRational"/> from another <see cref="long"/> value.
     /// </summary>
     /// <remarks>
     /// Fast subtraction of common cases like: <c>x - 1</c>.<br/>
@@ -777,12 +778,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The value to subtract from (the minuend).</param>
     /// <param name="b">The value to subtract (the subtrahend).</param>
     /// <returns>The result of subtracting b from a.</returns>
-    public static NewRational operator -(NewRational a, long b)
+    public static BigRational operator -(BigRational a, long b)
     {
       return a + -b; // var cpu = task_cpu; cpu.push(-b); cpu.add(a); return cpu.pop_rat();
     }
     /// <summary>
-    /// Multiplies the values of a specified <see cref="NewRational"/> and a <see cref="long"/> number.
+    /// Multiplies the values of a specified <see cref="BigRational"/> and a <see cref="long"/> number.
     /// </summary>
     /// <remarks>
     /// Fast multiplication of common cases like: <c>x * 2</c>.<br/>
@@ -791,12 +792,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to multiply.</param>
     /// <param name="b">The second value to multiply.</param>
     /// <returns>The product of left and right.</returns>
-    public static NewRational operator *(NewRational a, long b)
+    public static BigRational operator *(BigRational a, long b)
     {
       var cpu = task_cpu; cpu.push(b); cpu.mul(a); return cpu.pop_rat();
     }
     /// <summary>
-    /// Divides the values of a specified <see cref="NewRational"/> and a <see cref="long"/> number.
+    /// Divides the values of a specified <see cref="BigRational"/> and a <see cref="long"/> number.
     /// </summary>
     /// <remarks>
     /// Fast divison of common cases like: <c>x / 2</c>.<br/>
@@ -806,13 +807,13 @@ namespace System.Numerics.Rational
     /// <param name="b">The value to divide by. (devisor)</param>
     /// <returns>The result of the division.</returns>
     /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
-    public static NewRational operator /(NewRational a, long b)
+    public static BigRational operator /(BigRational a, long b)
     {
       if (b == 0) throw new DivideByZeroException(nameof(b));
       var cpu = task_cpu; cpu.push(b); cpu.div(a, 0); cpu.swp(); cpu.pop(); return cpu.pop_rat();
     }
     /// <summary>
-    /// Adds the values of a specified <see cref="long"/> and a <see cref="NewRational"/> number.
+    /// Adds the values of a specified <see cref="long"/> and a <see cref="BigRational"/> number.
     /// </summary>
     /// <remarks>
     /// Fast addition of common cases like: <c>1 + x</c>.<br/>
@@ -821,12 +822,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to add.</param>
     /// <param name="b">The second value to add.</param>
     /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static NewRational operator +(long a, NewRational b)
+    public static BigRational operator +(long a, BigRational b)
     {
       return b + a; // var cpu = task_cpu; cpu.push(a); cpu.add(b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Subtracts the values of a specified <see cref="long"/> from another <see cref="NewRational"/> value.
+    /// Subtracts the values of a specified <see cref="long"/> from another <see cref="BigRational"/> value.
     /// </summary>
     /// <remarks>
     /// Fast subtraction of common cases like: <c>1 - x</c>.<br/>
@@ -835,12 +836,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The value to subtract from (the minuend).</param>
     /// <param name="b">The value to subtract (the subtrahend).</param>
     /// <returns>The result of subtracting b from a.</returns>
-    public static NewRational operator -(long a, NewRational b)
+    public static BigRational operator -(long a, BigRational b)
     {
       var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.sub(); return cpu.pop_rat();
     }
     /// <summary>
-    /// Multiplies the values of a specified <see cref="long"/> and a <see cref="NewRational"/> number.
+    /// Multiplies the values of a specified <see cref="long"/> and a <see cref="BigRational"/> number.
     /// </summary>
     /// <remarks>
     /// Fast multiplication of common cases like: <c>2 * x</c>.<br/>
@@ -849,12 +850,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to multiply.</param>
     /// <param name="b">The second value to multiply.</param>
     /// <returns>The product of left and right.</returns>
-    public static NewRational operator *(long a, NewRational b)
+    public static BigRational operator *(long a, BigRational b)
     {
       return b * a; //var cpu = task_cpu; cpu.push(a); cpu.mul(b); return cpu.pop_rat();
     }
     /// <summary>
-    /// Divides the values of a specified <see cref="long"/> and a <see cref="NewRational"/> number.
+    /// Divides the values of a specified <see cref="long"/> and a <see cref="BigRational"/> number.
     /// </summary>
     /// <remarks>
     /// Fast divison of common cases like: <c>2 / x</c>.<br/>
@@ -864,13 +865,13 @@ namespace System.Numerics.Rational
     /// <param name="b">The value to divide by. (devisor)</param>
     /// <returns>The result of the division.</returns>
     /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
-    public static NewRational operator /(long a, NewRational b)
+    public static BigRational operator /(long a, BigRational b)
     {
       if (b.p == null) throw new DivideByZeroException(nameof(b));
       var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.div(); return cpu.pop_rat();
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value and
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value and
     /// an <see cref="long"/> value are equal.
     /// </summary>
     /// <remarks>
@@ -880,12 +881,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if the left and right parameters have the same value; otherwise, false.</returns>
-    public static bool operator ==(NewRational a, long b)
+    public static bool operator ==(BigRational a, long b)
     {
       return a.CompareTo(b) == 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value and
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value and
     /// an <see cref="long"/> value are not equal.
     /// </summary>
     /// <remarks>
@@ -895,12 +896,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left and right are not equal; otherwise, false.</returns>
-    public static bool operator !=(NewRational a, long b)
+    public static bool operator !=(BigRational a, long b)
     {
       return a.CompareTo(b) != 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value is
     /// less than or equal to an <see cref="long"/> value.
     /// </summary>
     /// <remarks>
@@ -910,12 +911,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than or equal to right; otherwise, false.</returns>
-    public static bool operator <=(NewRational a, long b)
+    public static bool operator <=(BigRational a, long b)
     {
       return a.CompareTo(b) <= 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value is
     /// greater than or equal to an <see cref="long"/> value.
     /// </summary>
     /// <remarks>
@@ -925,12 +926,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than or equal to right; otherwise, false.</returns>
-    public static bool operator >=(NewRational a, long b)
+    public static bool operator >=(BigRational a, long b)
     {
       return a.CompareTo(b) >= 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value is
     /// less than an <see cref="long"/> value.
     /// </summary>
     /// <remarks>
@@ -940,12 +941,12 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is less than right; otherwise, false.</returns>
-    public static bool operator <(NewRational a, long b)
+    public static bool operator <(BigRational a, long b)
     {
       return a.CompareTo(b) < 0;
     }
     /// <summary>
-    /// Returns a value that indicates whether a <see cref="NewRational"/> value is
+    /// Returns a value that indicates whether a <see cref="BigRational"/> value is
     /// greater than an <see cref="long"/> value.
     /// </summary>
     /// <remarks>
@@ -955,7 +956,7 @@ namespace System.Numerics.Rational
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>true if left is greater than right; otherwise, false.</returns>
-    public static bool operator >(NewRational a, long b)
+    public static bool operator >(BigRational a, long b)
     {
       return a.CompareTo(b) > 0;
     }
@@ -963,89 +964,111 @@ namespace System.Numerics.Rational
 
     /// <summary>
     /// Gets a <see cref="int"/> number that indicates the sign 
-    /// (negative, positive, or zero) of a <see cref="NewRational"/> number.
+    /// (negative, positive, or zero) of a <see cref="BigRational"/> number.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number.</param>
+    /// <param name="a">A <see cref="BigRational"/> number.</param>
     /// <returns>
-    /// A <see cref="int"/> that indicates the sign of the <see cref="NewRational"/> number, as
+    /// A <see cref="int"/> that indicates the sign of the <see cref="BigRational"/> number, as
     /// shown in the following table.<br/>
     /// Number – Description<br/>
     /// -1 – The value of the object is negative.<br/>
     ///  0 – The value of the object is 0 (zero).<br/>
     /// +1 – The value of the object is positive.<br/>
     /// </returns>
-    public static int Sign(NewRational a)
+    public static int Sign(BigRational a)
     {
       return a.p == null ? 0 :
         (a.p[0] & 0x80000000) != 0 ? -1 :
         (a.p[0] & 0x3fffffff) == 1 && a.p[1] == 0 ? 0 : +1; //debug view 
     }
     /// <summary>
-    /// Gets the integer base 10 logarithm of a <see cref="NewRational"/> number.
+    /// Returns a value indicating whether the specified number is an integer. 
+    /// </summary>
+    /// <param name="a">A <see cref="BigRational"/> number.</param>
+    /// <returns>True if <paramref name="a"/> is integer; otherwise, false.</returns>
+    public static bool IsInt(BigRational a)
+    {
+      if (a.p == null) return true; //since BigRational is always normalized:
+      fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000001;
+      // or: return a % 1 == 0;
+      // or: var cpu = task_cpu; cpu.push(a); var b = cpu.isi(); cpu.pop(); return b;
+    }
+    /// <summary>
+    /// Returns a value indicating whether the specified number is not a number. 
+    /// </summary>
+    /// <param name="a">A <see cref="BigRational"/> number.</param>
+    /// <returns>True if <paramref name="a"/> is not a number; otherwise, false.</returns>
+    public static bool IsNan(BigRational a)
+    {
+      if (a.p == null) return false;
+      fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
+    }
+    /// <summary>
+    /// Gets the integer base 10 logarithm of a <see cref="BigRational"/> number.
     /// </summary>
     /// <remarks>
     /// The integer base 10 logarithm is identical with the exponent in the scientific notation of the number.<br/> 
     /// eg. <b>3</b> for 1000 (1E+<b>03</b>) or <b>-3</b> for 0.00123 (1.23E-<b>03</b>)
     /// </remarks>
-    /// <param name="a">A <see cref="NewRational"/> number as value.</param>
-    /// <returns>The integer base 10 logarithm of the <see cref="NewRational"/> number.</returns>
-    public static int ILog10(NewRational a)
+    /// <param name="a">A <see cref="BigRational"/> number as value.</param>
+    /// <returns>The integer base 10 logarithm of the <see cref="BigRational"/> number.</returns>
+    public static int ILog10(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
       cpu.tos(default, out _, out var e, out _, false); return e;
     }
     /// <summary>
-    /// Gets the absolute value of a <see cref="NewRational"/> number.
+    /// Gets the absolute value of a <see cref="BigRational"/> number.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number as value.</param>
-    /// <returns>The absolute value of the <see cref="NewRational"/> number.</returns>
-    public static NewRational Abs(NewRational a)
+    /// <param name="a">A <see cref="BigRational"/> number as value.</param>
+    /// <returns>The absolute value of the <see cref="BigRational"/> number.</returns>
+    public static BigRational Abs(BigRational a)
     {
       return Sign(a) >= 0 ? a : -a;
     }
     /// <summary>
-    /// Returns the larger of two <see cref="NewRational"/> numbers.
+    /// Returns the larger of two <see cref="BigRational"/> numbers.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>The a or b parameter, whichever is larger.</returns>
-    public static NewRational Min(NewRational a, NewRational b)
+    public static BigRational Min(BigRational a, BigRational b)
     {
       return a.CompareTo(b) <= 0 ? a : b;
     }
     /// <summary>
-    /// Returns the smaller of two <see cref="NewRational"/> numbers.
+    /// Returns the smaller of two <see cref="BigRational"/> numbers.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>The a or b parameter, whichever is smaller.</returns>
-    public static NewRational Max(NewRational a, NewRational b)
+    public static BigRational Max(BigRational a, BigRational b)
     {
       return a.CompareTo(b) >= 0 ? a : b;
     }
     /// <summary>
-    /// Calculates the integral part of the <see cref="NewRational"/> number.
+    /// Calculates the integral part of the <see cref="BigRational"/> number.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number as value to truncate.</param>
+    /// <param name="a">A <see cref="BigRational"/> number as value to truncate.</param>
     /// <returns>
-    /// The integral part of the <see cref="NewRational"/> number.<br/> 
+    /// The integral part of the <see cref="BigRational"/> number.<br/> 
     /// This is the number that remains after any fractional digits have been discarded.
     /// </returns>
-    public static NewRational Truncate(NewRational a)
+    public static BigRational Truncate(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0, 0); return cpu.pop_rat();
     }
     /// <summary>
-    /// Rounds a specified <see cref="NewRational"/> number to the closest integer toward negative infinity.
+    /// Rounds a specified <see cref="BigRational"/> number to the closest integer toward negative infinity.
     /// </summary>
-    /// The <see cref="NewRational"/> number to round.
+    /// The <see cref="BigRational"/> number to round.
     /// <returns>
     /// If <paramref name="a"/> has a fractional part, the next whole number toward negative
     /// infinity that is less than <paramref name="a"/>.<br/>
     /// or if <paramref name="a"/> doesn't have a fractional part, <paramref name="a"/> is returned unchanged.<br/>
     /// </returns>
-    public static NewRational Floor(NewRational a)
+    public static BigRational Floor(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0, cpu.sign() >= 0 ? 0 : 4); return cpu.pop_rat();
@@ -1053,51 +1076,51 @@ namespace System.Numerics.Rational
     /// <summary>
     /// Returns the smallest integral value that is greater than or equal to the specified number.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number.</param>
+    /// <param name="a">A <see cref="BigRational"/> number.</param>
     /// <returns>
     /// The smallest integral value that is greater than or equal to the <paramref name="a"/> parameter.
     /// </returns>
-    public static NewRational Ceiling(NewRational a)
+    public static BigRational Ceiling(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0, cpu.sign() < 0 ? 0 : 4); return cpu.pop_rat();
     }
     /// <summary>
-    /// Rounds a <see cref="NewRational"/> number to the nearest integral value
+    /// Rounds a <see cref="BigRational"/> number to the nearest integral value
     /// and rounds midpoint values to the nearest even number.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number to be rounded.</param>
+    /// <param name="a">A <see cref="BigRational"/> number to be rounded.</param>
     /// <returns></returns>
-    public static NewRational Round(NewRational a)
+    public static BigRational Round(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0, 1); return cpu.pop_rat();
     }
     /// <summary>
-    /// Rounds a <see cref="NewRational"/> number to a specified number of fractional
+    /// Rounds a <see cref="BigRational"/> number to a specified number of fractional
     /// digits, and rounds midpoint values to the nearest even number. 
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number to be rounded.</param>
+    /// <param name="a">A <see cref="BigRational"/> number to be rounded.</param>
     /// <param name="digits">The number of fractional digits in the return value.</param>
-    /// <returns>The <see cref="NewRational"/> number nearest to value that contains a number of fractional digits equal to digits.</returns>
-    public static NewRational Round(NewRational a, int digits)
+    /// <returns>The <see cref="BigRational"/> number nearest to value that contains a number of fractional digits equal to digits.</returns>
+    public static BigRational Round(BigRational a, int digits)
     {
       //var e = Pow10(digits); return Round(a * e) / e;
       var cpu = task_cpu; cpu.push(a);
       cpu.rnd(digits); return cpu.pop_rat();
     }
     /// <summary>
-    /// Rounds a <see cref="NewRational"/> number to a specified number of fractional digits 
+    /// Rounds a <see cref="BigRational"/> number to a specified number of fractional digits 
     /// using the specified rounding convention.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational"/> number to be rounded.</param>
+    /// <param name="a">A <see cref="BigRational"/> number to be rounded.</param>
     /// <param name="digits">The number of decimal places in the return value.</param>
     /// <param name="mode">One of the enumeration values that specifies which rounding strategy to use.</param>
     /// <returns>
-    /// The <see cref="NewRational"/> number with decimals fractional digits that the value is rounded to.<br/> 
+    /// The <see cref="BigRational"/> number with decimals fractional digits that the value is rounded to.<br/> 
     /// If the number has fewer fractional digits than decimals, the number is returned unchanged.
     /// </returns>
-    public static NewRational Round(NewRational a, int digits, MidpointRounding mode)
+    public static BigRational Round(BigRational a, int digits, MidpointRounding mode)
     {
       int f = 1;
       switch (mode)
@@ -1114,18 +1137,18 @@ namespace System.Numerics.Rational
     /// </summary>
     /// <param name="a">A <see cref="int"/> number to be raised to a power.</param>
     /// <param name="b">A <see cref="int"/> number that specifies a power.</param>
-    /// <returns>The <see cref="NewRational"/> number a raised to the power b.</returns>
-    public static NewRational Pow(int a, int b)
+    /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
+    public static BigRational Pow(int a, int b)
     {
       var cpu = task_cpu; cpu.pow(a, b); return cpu.pop_rat();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.
     /// </summary>
-    /// <param name="a">A <see cref="NewRational "/> number to be raised to a power.</param>
+    /// <param name="a">A <see cref="BigRational "/> number to be raised to a power.</param>
     /// <param name="b">A <see cref="int"/> number that specifies a power.</param>
-    /// <returns>The <see cref="NewRational"/> number a raised to the power b.</returns>
-    public static NewRational Pow(NewRational a, int b)
+    /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
+    public static BigRational Pow(BigRational a, int b)
     {
       var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.pop_rat();
     }
@@ -1133,12 +1156,12 @@ namespace System.Numerics.Rational
     /// Returns a specified number raised to the specified power.<br/>
     /// For fractional exponents, the result is rounded to the specified number of decimal places.
     /// </summary>
-    /// <param name="x">A <see cref="NewRational"/> number to be raised to a power.</param>
-    /// <param name="y">A <see cref="NewRational"/> number that specifies a power.</param>
-    /// <param name="digits">The number of fractional digits in the return value.</param>
-    /// <returns>The <see cref="NewRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
+    /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
+    /// <param name="y">A <see cref="BigRational"/> number that specifies a power.</param>
+    /// <param name="digits">The number of fractional decimal digits in the return value.</param>
+    /// <returns>The <see cref="BigRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static NewRational Pow(NewRational x, NewRational y, int digits = 20)
+    public static BigRational Pow(BigRational x, BigRational y, int digits)
     {
       //return Exp(y * Log(x, digits), digits);
       //if(IsInteger(y)) return Pow(x, (int)b); //todo: impl
@@ -1157,23 +1180,37 @@ namespace System.Numerics.Rational
     /// <param name="digits">The maximum number of fractional digits in the return value.</param>
     /// <returns>Zero or positive – The positive square root of <paramref name="a"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="a"/> is less zero.</exception>
-    public static NewRational Sqrt(NewRational a, int digits)
+    public static BigRational Sqrt(BigRational a, int digits)
     {
-      Math.Sqrt(1);
       if (Sign(a) < 0) throw new ArgumentException(nameof(a));
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      var cpu = task_cpu; //var x = Math.ILogB(Math.Pow(10, digits)) + 1;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop(); //if (x != c) { }
       cpu.push(a); cpu.sqrt(c); cpu.rnd(digits);
       return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Returns the natural base 2 logarithm of a specified number.
+    /// </summary>
+    /// <param name="x">The number whose logarithm is to be found.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The base 2 logarithm of <paramref name="x"/>.</returns>
+    /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
+    public static BigRational Log2(BigRational x, int digits)
+    {
+      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.push(x); cpu.log2(c);
+      cpu.rnd(digits); return cpu.pop_rat();
     }
     /// <summary>
     /// Returns the natural (base e) logarithm of a specified number.
     /// </summary>
     /// <param name="x">The number whose logarithm is to be found.</param>
-    /// <param name="digits">The maximum number of fractional digits in the return value.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
     /// <returns>The natural logarithm of <paramref name="x"/>; that is, ln <paramref name="x"/>, or log e <paramref name="x"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static NewRational Log(NewRational x, int digits = 20)
+    public static BigRational Log(BigRational x, int digits)
     {
       if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
       var cpu = task_cpu;
@@ -1185,9 +1222,9 @@ namespace System.Numerics.Rational
     /// Returns e raised to the specified power.
     /// </summary>
     /// <param name="x">A number specifying a power.</param>
-    /// <param name="digits">The maximum number of fractional digits in the return value.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
     /// <returns>The number e raised to the power <paramref name="x"/>.</returns>
-    public static NewRational Exp(NewRational x, int digits = 20)
+    public static BigRational Exp(BigRational x, int digits)
     {
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
@@ -1243,10 +1280,10 @@ namespace System.Numerics.Rational
         }
       }
       /// <summary>
-      /// Pushes the supplied <see cref="NewRational"/> value onto the stack.
+      /// Pushes the supplied <see cref="BigRational"/> value onto the stack.
       /// </summary>
       /// <param name="v">The value to push.</param>
-      public void push(NewRational v)
+      public void push(BigRational v)
       {
         if (v.p == null) { push(); return; }
         fixed (uint* a = v.p)
@@ -1322,7 +1359,7 @@ namespace System.Numerics.Rational
       /// <remarks>
       /// Rounds the value implicit to 7 digits as the <see cref="float"/> format has
       /// only 7 digits of precision.<br/> 
-      /// see: <see cref="NewRational(float)"/>
+      /// see: <see cref="BigRational(float)"/>
       /// </remarks>
       /// <param name="v">The value to push.</param>
       public void push(float v)
@@ -1342,7 +1379,7 @@ namespace System.Numerics.Rational
       /// <remarks>
       /// Rounds the value implicit to 15 digits as the <see cref="double"/> format has
       /// only 15 digits of precision.<br/> 
-      /// see: <see cref="NewRational.NewRational(double)"/>
+      /// see: <see cref="BigRational.BigRational(double)"/>
       /// </remarks>
       /// <param name="v">The value to push.</param>
       public void push(double v)
@@ -1361,7 +1398,7 @@ namespace System.Numerics.Rational
       /// using a bit-exact conversion without rounding.
       /// </summary>                                    
       /// <remarks>
-      /// see: <see cref="NewRational.NewRational(double)"/>
+      /// see: <see cref="BigRational.BigRational(double)"/>
       /// </remarks>
       /// <param name="v">The value to push.</param>
       /// <param name="exact">Should be true.</param>
@@ -1422,7 +1459,7 @@ namespace System.Numerics.Rational
       //static readonly uint[][] cache = new uint[20][]; //todo: check small number cache strategy
       /// <summary>
       /// Converts the value at absolute position i on stack to a 
-      /// always normalized <see cref="NewRational"/> number and returns it.
+      /// always normalized <see cref="BigRational"/> number and returns it.
       /// </summary>
       /// <remarks>
       /// This function is helpful to read out vectors and matrices efficently.<br/>
@@ -1430,7 +1467,7 @@ namespace System.Numerics.Rational
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
       /// <param name="v">Returns the value.</param>
-      public void get(uint i, out NewRational v)
+      public void get(uint i, out BigRational v)
       {
         fixed (uint* p = this.p[i])
         {
@@ -1441,11 +1478,11 @@ namespace System.Numerics.Rational
           //{
           //  var x = p[1] - 1 + (p[0] != 1 ? 10 : 0);
           //  if (cache[x] == null) fixed (uint* s = cache[x] = new uint[n]) copy(s, p, n);
-          //  v = new NewRational(cache[x]); return;
+          //  v = new BigRational(cache[x]); return;
           //}
           var a = new uint[n];
           fixed (uint* s = a) copy(s, p, n);
-          v = new NewRational(a);
+          v = new BigRational(a);
         }
       }
       /// <summary>
@@ -1460,7 +1497,7 @@ namespace System.Numerics.Rational
       /// <param name="v">Returns the value.</param>
       public void get(uint i, out double v)
       {
-        v = (double)new NewRational(p[i]);
+        v = (double)new BigRational(p[i]);
       }
       /// <summary>
       /// Converts the value at absolute position i on stack to a 
@@ -1474,17 +1511,17 @@ namespace System.Numerics.Rational
       /// <param name="v">Returns the value.</param>
       public void get(uint i, out float v)
       {
-        v = (float)new NewRational(p[i]);
+        v = (float)new BigRational(p[i]);
       }
 
       /// <summary>
       /// Removes the value currently on top of the stack, 
-      /// convert and returns it as always normalized <see cref="NewRational"/> number.<br/>
+      /// convert and returns it as always normalized <see cref="BigRational"/> number.<br/>
       /// </summary>
-      /// <returns>A always normalized <see cref="NewRational"/> number.</returns>
-      public NewRational pop_rat()
+      /// <returns>A always normalized <see cref="BigRational"/> number.</returns>
+      public BigRational pop_rat()
       {
-        get(unchecked((uint)(i - 1)), out NewRational t); pop(); return t;
+        get(unchecked((uint)(i - 1)), out BigRational t); pop(); return t;
       }
       /// <summary>
       /// Removes the value currently on top of the stack, 
@@ -1684,8 +1721,8 @@ namespace System.Numerics.Rational
       /// Adds value <paramref name="a"/> and the value on top of the stack.<br/>
       /// Replaces the value on top of the stack with the result.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> value.</param>
-      public void add(NewRational a)
+      /// <param name="a">A <see cref="BigRational"/> value.</param>
+      public void add(BigRational a)
       {
         if (a.p == null) return;
         fixed (uint* u = p[i - 1], v = a.p) add(u, v, false);
@@ -1694,9 +1731,9 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Adds the values <paramref name="a"/> and <paramref name="b"/> and pushes the result on the stack.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
-      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
-      public void add(NewRational a, NewRational b)
+      /// <param name="a">A <see cref="BigRational"/> as first value.</param>
+      /// <param name="b">A <see cref="BigRational"/> as second value.</param>
+      public void add(BigRational a, BigRational b)
       {
         if (a.p == null) { push(b); return; }
         if (b.p == null) { push(a); return; }
@@ -1742,9 +1779,9 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Subtracts the values <paramref name="a"/> and <paramref name="b"/> and pushes the result on the stack.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
-      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
-      public void sub(NewRational a, NewRational b)
+      /// <param name="a">A <see cref="BigRational"/> as first value.</param>
+      /// <param name="b">A <see cref="BigRational"/> as second value.</param>
+      public void sub(BigRational a, BigRational b)
       {
         if (a.p == null) { push(b); neg(); return; }
         if (b.p == null) { push(a); return; }
@@ -1802,8 +1839,8 @@ namespace System.Numerics.Rational
       /// Multiplies value <paramref name="a"/> and the value on top of the stack.<br/>
       /// Replaces the value on top of the stack with the result.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> value.</param>
-      public void mul(NewRational a)
+      /// <param name="a">A <see cref="BigRational"/> value.</param>
+      public void mul(BigRational a)
       {
         if (a.p == null) push();
         else fixed (uint* u = p[i - 1], v = a.p) mul(u, v, false);
@@ -1816,9 +1853,9 @@ namespace System.Numerics.Rational
       /// <remarks>
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
-      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
+      /// <param name="a">A <see cref="BigRational"/> as first value.</param>
       /// <param name="b">Absolute index of a stack entry as second value.</param>
-      public void mul(NewRational a, uint b)
+      public void mul(BigRational a, uint b)
       {
         if (a.p == null) { push(); return; }
         fixed (uint* u = a.p, v = p[b]) mul(u, v, false);
@@ -1826,9 +1863,9 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Multiplies the values <paramref name="a"/> and <paramref name="b"/> and pushes the result on the stack.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
-      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
-      public void mul(NewRational a, NewRational b)
+      /// <param name="a">A <see cref="BigRational"/> as first value.</param>
+      /// <param name="b">A <see cref="BigRational"/> as second value.</param>
+      public void mul(BigRational a, BigRational b)
       {
         if (a.p == null) { push(); return; }
         if (b.p == null) { push(); return; }
@@ -1873,9 +1910,9 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Divides the values <paramref name="a"/> and <paramref name="b"/> and pushes the result on the stack.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
-      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
-      public void div(NewRational a, NewRational b)
+      /// <param name="a">A <see cref="BigRational"/> as first value.</param>
+      /// <param name="b">A <see cref="BigRational"/> as second value.</param>
+      public void div(BigRational a, BigRational b)
       {
         if (b.p == null) { pnan(); return; }
         if (a.p == null) { push(); return; }
@@ -1885,9 +1922,9 @@ namespace System.Numerics.Rational
       /// Divides the value <paramref name="a"/> and the value at index <paramref name="b"/> relative to the top of the stack.<br/>
       /// Pushes the result on top of the stack.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
+      /// <param name="a">A <see cref="BigRational"/> as first value.</param>
       /// <param name="b">A relative index of a stack entry.</param>
-      public void div(NewRational a, int b)
+      public void div(BigRational a, int b)
       {
         if (a.p == null) { push(); return; }
         fixed (uint* u = a.p, v = p[this.i - 1 - b]) mul(u, v, true);
@@ -2073,9 +2110,12 @@ namespace System.Numerics.Rational
       /// <summary>
       /// Returns the MSB difference of numerator and denominator for the value at the top of the stack.<br/>
       /// <c>msb(numerator) - msb(denominator)</c><br/> 
-      /// Mainly intended for break criterias in iterations as fast alternative to comparisons.<br/>
+      /// Mainly intended for fast break criterias in iterations as alternative to relatively slow comparisons.<br/>
       /// For example, 1e-24 corresponds to a BDI value of -80 since msb(1e+24) == 80
       /// </summary>
+      /// <remarks>
+      /// The result equals to an <c>ILog2</c> with a maximum difference of 1 since fractional bits are not tested. 
+      /// </remarks>
       /// <returns>An <see cref="int"/> value that represents the MSB difference.</returns>
       public int bdi()
       {
@@ -2149,6 +2189,22 @@ namespace System.Numerics.Rational
         }
       }
       /// <summary>
+      /// Compares the values at index <paramref name="a"/> relative to the top of the stack 
+      /// with the <see cref="int"/> value <paramref name="b"/>.<br/>
+      /// </summary>
+      /// <param name="a">Relative index of the first stack entry.</param>
+      /// <param name="b">An <see cref="int"/> value to compare to.</param>
+      /// <returns>
+      /// -1 – value at a is less than value b.<br/>
+      /// 0 – value at a is equal to value b.<br/>
+      /// 1 – value at a is greater than value b.<br/>
+      /// </returns>
+      public int cmpi(int a, int b)
+      {
+        //todo: stack inline 
+        push(b); a = cmp(a + 1, 0); pop(); return a;
+      }
+      /// <summary>
       /// Compares the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack.<br/>
       /// </summary>
       /// <param name="a">Relative index of the first stack entry.</param>
@@ -2199,16 +2255,16 @@ namespace System.Numerics.Rational
         return cmp((uint)(this.i - 1), b);
       }
       /// <summary>
-      /// Compares the <see cref="NewRational"/> value <paramref name="a"/> with the <see cref="NewRational"/> value b.
+      /// Compares the <see cref="BigRational"/> value <paramref name="a"/> with the <see cref="BigRational"/> value b.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> as first value.</param>
-      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
+      /// <param name="a">A <see cref="BigRational"/> as first value.</param>
+      /// <param name="b">A <see cref="BigRational"/> as second value.</param>
       /// <returns>
       /// -1 – a is less than b.<br/>
       /// 0 – a is equal b.<br/>
       /// 1 – a is greater than b.<br/>
       /// </returns>
-      public int cmp(NewRational a, NewRational b)
+      public int cmp(BigRational a, BigRational b)
       {
         if (a.p == b.p) return 0; //sort's
         fixed (uint* u = a.p, v = b.p)
@@ -2219,26 +2275,26 @@ namespace System.Numerics.Rational
         }
       }
       /// <summary>
-      /// Compares the value on top of the stack a with the <see cref="NewRational"/> value b.
+      /// Compares the value on top of the stack a with the <see cref="BigRational"/> value b.
       /// </summary>
-      /// <param name="b">A <see cref="NewRational"/> as second value.</param>
+      /// <param name="b">A <see cref="BigRational"/> as second value.</param>
       /// <returns>
       /// -1 – the value on top of the stack is less than b.<br/>
       /// 0 – the value on top of the stack is equal b.<br/>
       /// 1 – the value on top of the stack is greater than b.<br/>
       /// </returns>
-      public int cmp(NewRational b)
+      public int cmp(BigRational b)
       {
         if (b.p == null) return sign();
         fixed (uint* u = p[this.i - 1], v = b.p) return cmp(u, v);
       }
       /// <summary>
-      /// Compares the <see cref="NewRational"/> value <paramref name="a"/> with the <see cref="NewRational"/> value b for equality.
+      /// Compares the <see cref="BigRational"/> value <paramref name="a"/> with the <see cref="BigRational"/> value b for equality.
       /// </summary>
-      /// <param name="a">A <see cref="NewRational"/> value as first value.</param>
-      /// <param name="b">A <see cref="NewRational"/> value as second value.</param>
+      /// <param name="a">A <see cref="BigRational"/> value as first value.</param>
+      /// <param name="b">A <see cref="BigRational"/> value as second value.</param>
       /// <returns>true if the values are equal, otherwise false.</returns>
-      public bool equ(NewRational a, NewRational b)
+      public bool equ(BigRational a, BigRational b)
       {
         return equ(a.p, b.p);
       }
@@ -2256,15 +2312,15 @@ namespace System.Numerics.Rational
         return equ(p[a], p[b]);
       }
       /// <summary>
-      /// Compares the value at index a as absolute index in the stack with the <see cref="NewRational"/> value b for equality.
+      /// Compares the value at index a as absolute index in the stack with the <see cref="BigRational"/> value b for equality.
       /// </summary>
       /// <remarks>
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
       /// <param name="a">Absolute index of a stack entry.</param>
-      /// <param name="b">A <see cref="NewRational"/> value as second value.</param>
+      /// <param name="b">A <see cref="BigRational"/> value as second value.</param>
       /// <returns>true if the values are equal, otherwise false.</returns>
-      public bool equ(uint a, NewRational b)
+      public bool equ(uint a, BigRational b)
       {
         return equ(p[a], b.p);
       }
@@ -2273,7 +2329,7 @@ namespace System.Numerics.Rational
       /// </summary>
       /// <remarks>
       /// Normalization works automatically, 
-      /// on demand or for the final results returning as <see cref="NewRational"/>.<br/>
+      /// on demand or for the final results returning as <see cref="BigRational"/>.<br/>
       /// In the case of complex calculations on stack, 
       /// it makes sense to normalize intermediate results manually,
       /// as this can speed up further calculations.<br/>
@@ -2290,9 +2346,9 @@ namespace System.Numerics.Rational
       /// Calculates a hash value for the value at b as absolute index in the stack.
       /// </summary>
       /// <remarks>
-      /// The function is helpful for comparsions and to build dictionarys without creation of <see cref="NewRational"/> objects.<br/>
+      /// The function is helpful for comparsions and to build dictionarys without creation of <see cref="BigRational"/> objects.<br/>
       /// To get meaningful hash values the function forces normalizations what can be time critical.<br/>
-      /// The hash value returned is identical with the hash value returned from <see cref="NewRational.GetHashCode"/> for same values.<br/>
+      /// The hash value returned is identical with the hash value returned from <see cref="BigRational.GetHashCode"/> for same values.<br/>
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
       /// <param name="b">Absolute index of a stack entry.</param>
@@ -2300,7 +2356,7 @@ namespace System.Numerics.Rational
       public uint hash(uint i)
       {
         var p = this.p[i]; if ((p[0] & 0x40000000) != 0) fixed (uint* u = p) norm(u);
-        return unchecked((uint)new NewRational(p).GetHashCode());
+        return unchecked((uint)new BigRational(p).GetHashCode());
       }
       /// <summary>
       /// Returns the MSB (most significant bit) of the numerator of the value on top of the stack.
@@ -2453,6 +2509,39 @@ namespace System.Numerics.Rational
           add(); push(2u); div();
         }
         swp(); pop();
+      }
+      /// <summary>
+      /// Replaces the value on top of the stack with it's base 2 logarithm.<b/>
+      /// Non-positive values result in NaN.
+      /// </summary>
+      /// <remarks>
+      /// The desired precision is controlled by the parameter <paramref name="c"/> 
+      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
+      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
+      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// </remarks>
+      /// <param name="c">The desired precision.</param>
+      public void log2(uint c)
+      {
+        if (sign() <= 0) { pop(); pnan(); return; } // NaN
+        var a = bdi(); // var c = _shl(1, a); x = x / c;
+        if (a != 0) { push(1u); if (a > 0) { shl(a); div(); } else { shl(-a); mul(); } }
+        var e = cmpi(0, 1); // push(1u); var e = cmp(1, 0); pop();
+        if (e == 0) { pop(); push(a); return; } //if (x == 1) return a;
+        if (e < 0) { shl(1); a--; } // adjust bdi
+        Debug.Assert(cmpi(0, 1) > 0); // if (x <= 1) { } // ???
+        Debug.Assert(cmpi(0, 2) < 0); // if (x >= 2) { } // ???
+        push(); // b
+        for (uint i = 1; i < c; i++)
+        {
+          sqr(1); lim(c, 1); // x = x * x; x = lim(x, c);
+          if (cmpi(1, 2) <= 0) continue; // if (x < 2) continue;        
+          push(2u); div(2, 0); pop(); // x = x / 2;        
+          push(1u); shl((int)i); inv(); // var p = rat.Pow(2, -i); //todo: check fast shl den ?
+          add(); // b += p;
+        }
+        swp(); pop(); if (a != 0) { push(a); add(); } // return a + b;
       }
       /// <summary>
       /// Replaces the value on top of the stack with it's natural (base e) logarithm.<b/>
@@ -2898,9 +2987,10 @@ namespace System.Numerics.Rational
     }
 
     #region private 
+    private readonly uint[] p;
     [ThreadStatic] private static CPU? cpu;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    NewRational(uint[] p) { this.p = p; }
+    BigRational(uint[] p) { this.p = p; }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static uint len(uint* p)
     {
@@ -2921,13 +3011,13 @@ namespace System.Numerics.Rational
       {
         CPU p; public DebugView(CPU p) { this.p = p; }
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-        public NewRational[] Items
+        public BigRational[] Items
         {
           get
           {
-            var a = new NewRational[p.i];
+            var a = new BigRational[p.i];
             for (int i = 0; i < p.i; i++)
-              a[i] = new NewRational(p.p[p.i - 1 - i]);
+              a[i] = new BigRational(p.p[p.i - 1 - i]);
             return a;
           }
         }

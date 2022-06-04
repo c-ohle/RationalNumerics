@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing.Drawing2D;
-using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security;
 #pragma warning disable CS0649, CS8618, CS8600, CS8602
@@ -61,7 +59,7 @@ namespace Test
     }
 
     static long drvsettings;
-    const int maxstack = 10000000; //10 MB
+    const int maxstack = 10_000_000;
     static byte* BasePtr; static byte* StackPtr;
     static void* wdc;
 

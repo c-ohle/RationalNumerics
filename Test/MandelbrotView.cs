@@ -29,7 +29,7 @@ namespace Test
       get => manual;
       set { if (manual == value) return; stop(); manual = value; delaystart(); }
     }
-    public enum MandelDriver { NewRational = 2, BigInteger = 1, Double = 0 }
+    public enum MandelDriver { BigRational = 2, BigInteger = 1, Double = 0 }
     public MandelDriver Driver
     {
       get => (MandelDriver)driver;
@@ -53,7 +53,7 @@ namespace Test
         stop(); lim = value; delaystart();
       }
     }
-    public rat Scaling
+    public BigRational Scaling
     {
       get => scale;
       set
@@ -62,7 +62,7 @@ namespace Test
         stop(); scale = value; delaystart();
       }
     }
-    public rat CenterX
+    public BigRational CenterX
     {
       get => mx;
       set
@@ -71,7 +71,7 @@ namespace Test
         stop(); mx = value; delaystart();
       }
     }
-    public rat CenterY
+    public BigRational CenterY
     {
       get => my;
       set
@@ -109,9 +109,9 @@ namespace Test
     Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2;
     Task? task; bool cancel, dostart, restart, manual; long t1, t2;
     System.Windows.Forms.Timer timer = new() { Interval = 100 };
-    rat mx = -0.7, my = 0, scale = 1.2, qmax = 4; int imax = 32, lim = 64;
+    BigRational mx = -0.7, my = 0, scale = 1.2, qmax = 4; int imax = 32, lim = 64;
 
-    void mandel_dbl()
+    void mandel_double()
     {
       calcmap(); if (map == null) return;
       var x1 = (double)(mx - scale * dx / dy);
@@ -141,12 +141,12 @@ namespace Test
       );
       t2 = Environment.TickCount;
     }
-    void mandel_big()
+    void mandel_BigInteger()
     {
       calcmap(); if (map == null) return;
-      var x1 = (BigRational)(mx - scale * dx / dy);
-      var y1 = (BigRational)(my - scale);
-      var fi = (BigRational)(2 * scale / dy); var qmax = (BigRational)this.qmax;
+      var x1 = (OldRational)(mx - scale * dx / dy);
+      var y1 = (OldRational)(my - scale);
+      var fi = (OldRational)(2 * scale / dy); var qmax = (OldRational)this.qmax;
       t1 = t2 = Environment.TickCount;
       //for (int py = 0; py < dy; py++)
       Parallel.For(0, dy, (py, po) =>
@@ -160,8 +160,8 @@ namespace Test
           int i = 0; var a = x; var b = y;
           for (; i < imax; i++)
           {
-            var u = a * a - b * b + x; u = BigRational.Round(u, 8);
-            var v = 2 * a * b + y; v = BigRational.Round(v, 8);
+            var u = a * a - b * b + x; u = OldRational.Round(u, 8);
+            var v = 2 * a * b + y; v = OldRational.Round(v, 8);
             if (u * u + v * v > qmax) break;
             a = u; b = v;
           }
@@ -171,7 +171,7 @@ namespace Test
       );
       t2 = Environment.TickCount;
     }
-    void mandel_rat()
+    void mandel_BigRational()
     {
       calcmap(); if (map == null) return;
       var x1 = mx - scale * dx / dy;
@@ -183,7 +183,7 @@ namespace Test
       {
         if (cancel) { po.Break(); return; }
         var p = scan + py * (stride >> 2);
-        var cpu = rat.task_cpu; var m = cpu.mark();
+        var cpu = BigRational.task_cpu; var m = cpu.mark();
         //var y = y1 + py * f1;
         cpu.push(y1); cpu.push(fi); cpu.push(py); cpu.mul(); cpu.add(); cpu.norm();
         cpu.push(x1); //var x = xmin;
@@ -202,7 +202,7 @@ namespace Test
             // if (u * u + v * v > 4) break;
             cpu.sqr(m + 4); cpu.sqr(m + 5); cpu.add();
             //if (cpu.bdi() >= 2) { cpu.pop(3); break; }
-            if (cpu.cmp(qmax) > 0) { cpu.pop(3); break; }
+            if (cpu.cmp(qmax) > 0) { cpu.pop(3); break; } //todo: cmpi
             // a = u; b = v;
             cpu.swp(m + 2, m + 4); cpu.swp(m + 3, m + 5); cpu.pop(3);
           }
@@ -228,7 +228,7 @@ namespace Test
         scan = (uint*)lb.Scan0.ToPointer(); stride = lb.Stride; bmp.UnlockBits(lb);
       }
       t1 = t2 = 0;
-      task = new Task(driver == 0 ? mandel_dbl : driver == 1 ? mandel_big : mandel_rat);
+      task = new Task(driver == 0 ? mandel_double : driver == 1 ? mandel_BigInteger : mandel_BigRational);
       cancel = dostart = false; task.Start(); timer.Start(); StateChanged?.Invoke(this, EventArgs.Empty);
     }
     void delaystart()
@@ -297,9 +297,9 @@ namespace Test
           var p2 = Cursor.Position;
           mx = x1 - (2 * (p2.X - p1.X)) * scale / dy;
           my = y1 - (2 * (p2.Y - p1.Y)) * scale / dy;
-          var l = rat.ILog10(scale);
-          mx = rat.Round(mx, 4 - l);
-          my = rat.Round(my, 4 - l);
+          var l = BigRational.ILog10(scale);
+          mx = BigRational.Round(mx, 4 - l);
+          my = BigRational.Round(my, 4 - l);
           if (bmp != null)
             using (var g = Graphics.FromImage(bmp))
             {
@@ -344,11 +344,11 @@ namespace Test
       var p = e.Location;
       var d = 1 - e.Delta * (0.1f / 120);
       var t = scale; scale *= d;
-      var l = rat.ILog10(scale);
-      scale = rat.Round(scale, 5 - l);
+      var l = BigRational.ILog10(scale);
+      scale = BigRational.Round(scale, 5 - l);
       t = (scale - t) / dy;
-      mx += t * (dx - p.X * 2); mx = rat.Round(mx, 4 - l);
-      my += t * (dy - p.Y * 2); my = rat.Round(my, 4 - l);
+      mx += t * (dx - p.X * 2); mx = BigRational.Round(mx, 4 - l);
+      my += t * (dy - p.Y * 2); my = BigRational.Round(my, 4 - l);
       if (bmp != null)
         using (var g = Graphics.FromImage(bmp))
         {

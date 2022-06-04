@@ -2,18 +2,18 @@
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// A Plane class based on <see cref="rat"/>.<br/>
+  /// A Plane class based on <see cref="BigRational"/>.<br/>
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct PlaneR : IEquatable<PlaneR>, IFormattable, ISpanFormattable
   {
-    public readonly Vector3R Normal; public readonly rat Dist;
-    public PlaneR(rat x, rat y, rat z, rat d)
+    public readonly Vector3R Normal; public readonly BigRational Dist;
+    public PlaneR(BigRational x, BigRational y, BigRational z, BigRational d)
     {
       Normal = new Vector3R(x, y, z); Dist = d;
     }
-    public PlaneR(Vector3R n, rat d)
+    public PlaneR(Vector3R n, BigRational d)
     {
       Normal = n; Dist = d;
     }
@@ -35,10 +35,10 @@ namespace System.Numerics.Rational
     public static PlaneR Parse(ref ReadOnlySpan<char> s)
     {
       return new PlaneR(
-        rat.Parse(s.token()),
-        rat.Parse(s.token()),
-        rat.Parse(s.token()),
-        rat.Parse(s.token()));
+        BigRational.Parse(s.token()),
+        BigRational.Parse(s.token()),
+        BigRational.Parse(s.token()),
+        BigRational.Parse(s.token()));
     }
     public readonly void WriteToBytes(ref Span<byte> ws)
     {
@@ -46,7 +46,7 @@ namespace System.Numerics.Rational
     }
     public static PlaneR ReadFromBytes(ref ReadOnlySpan<byte> rs)
     {
-      return new PlaneR(Vector3R.ReadFromBytes(ref rs), rat.ReadFromBytes(ref rs));
+      return new PlaneR(Vector3R.ReadFromBytes(ref rs), BigRational.ReadFromBytes(ref rs));
     }
     public readonly override int GetHashCode()
     {
@@ -83,7 +83,7 @@ namespace System.Numerics.Rational
       //n = Vector3R.Normalize(n);
       //var d = -Vector3R.Dot(n, a);
       //return new PlaneR(n, d);
-      var cpu = rat.task_cpu;
+      var cpu = BigRational.task_cpu;
       cpu.cross(a, b, c); // n = cross(b - a, c - a)
       cpu.norm3(); // n = norm(n)
       cpu.dot(a); cpu.neg(); // d = -dot(n, a)
@@ -92,16 +92,16 @@ namespace System.Numerics.Rational
       var p = new PlaneR(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
       cpu.pop(6); return p;
     }
-    public static rat DotCoord(in PlaneR a, in Vector3R b)
+    public static BigRational DotCoord(in PlaneR a, in Vector3R b)
     {
       //return Vector3R.Dot(a.N, b) + a.D;
-      var cpu = rat.task_cpu; cpu.dot(a.Normal, b); cpu.add(a.Dist);
+      var cpu = BigRational.task_cpu; cpu.dot(a.Normal, b); cpu.add(a.Dist);
       return cpu.pop_rat();
     }
     public static int DotCoordSign(in PlaneR a, in Vector3R b)
     {
       //return Vector3R.Dot(a.N, b) + a.D;
-      var cpu = rat.task_cpu; cpu.dot(a.Normal, b); cpu.add(a.Dist);
+      var cpu = BigRational.task_cpu; cpu.dot(a.Normal, b); cpu.add(a.Dist);
       var s = cpu.sign(); cpu.pop(); return s;
     }
     public static Vector3R Intersect(in PlaneR e, in Vector3R a, in Vector3R b)
@@ -110,7 +110,7 @@ namespace System.Numerics.Rational
       //var v = Vector3R.Dot(e.Normal, b);
       //var w = (u + e.Dist) / (u - v);
       //return a + (b - a) * w;
-      var cpu = rat.task_cpu; var m = cpu.mark();
+      var cpu = BigRational.task_cpu; var m = cpu.mark();
       cpu.dot(e.Normal, a);
       cpu.dot(e.Normal, b);
       //w = (u + e.D) / (u - v)
@@ -130,7 +130,7 @@ namespace System.Numerics.Rational
       //  x * m.M21 + y * m.M22 + z * m.M23,
       //  x * m.M31 + y * m.M32 + z * m.M33,
       //  x * m.M41 + y * m.M42 + z * m.M43 + w);
-      var cpu = rat.task_cpu; var m = !b;
+      var cpu = BigRational.task_cpu; var m = !b;
       cpu.dot(a.Normal.X, m.M41, a.Normal.Y, m.M42, a.Normal.Z, m.M43, a.Dist);
       cpu.dot(a.Normal.X, m.M31, a.Normal.Y, m.M32, a.Normal.Z, m.M33);
       cpu.dot(a.Normal.X, m.M21, a.Normal.Y, m.M22, a.Normal.Z, m.M23);

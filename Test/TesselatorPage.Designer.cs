@@ -59,9 +59,9 @@
       this.label1.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
       this.label1.Location = new System.Drawing.Point(11, 3);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(322, 38);
+      this.label1.Size = new System.Drawing.Size(306, 38);
       this.label1.TabIndex = 0;
-      this.label1.Text = "NewRational Tesselator";
+      this.label1.Text = "BigRational Tesselator";
       // 
       // tesselatorView1
       // 
@@ -79,7 +79,7 @@
       this.tesselatorView1.Size = new System.Drawing.Size(728, 511);
       this.tesselatorView1.TabIndex = 0;
       this.tesselatorView1.TabStop = false;
-      this.tesselatorView1.Winding = Test.Winding.EvenOdd;
+      this.tesselatorView1.Winding = System.Numerics.Rational.Winding.EvenOdd;
       // 
       // comboBoxWinding
       // 
@@ -262,9 +262,9 @@
       this.labelStatus.AutoSize = true;
       this.labelStatus.Location = new System.Drawing.Point(11, 565);
       this.labelStatus.Name = "labelStatus";
-      this.labelStatus.Size = new System.Drawing.Size(214, 20);
+      this.labelStatus.Size = new System.Drawing.Size(414, 20);
       this.labelStatus.TabIndex = 0;
-      this.labelStatus.Text = "(Wheel to zoom, click to scroll)";
+      this.labelStatus.Text = "(Wheel to zoom, click to scroll, click outline / points to move)";
       // 
       // label3
       // 

@@ -55,17 +55,17 @@ namespace Test
     {
       if (sender == textBoxScaling)
       {
-        var v = rat.Parse(textBoxScaling.Text);
+        var v = BigRational.Parse(textBoxScaling.Text);
         mandelbrotView1.Scaling = v; update();
       }
       else if (sender == textBoxCenterX)
       {
-        var v = rat.Parse(textBoxCenterX.Text);
+        var v = BigRational.Parse(textBoxCenterX.Text);
         mandelbrotView1.CenterX = v; update();
       }
       else if (sender == textBoxCenterY)
       {
-        var v = rat.Parse(textBoxCenterY.Text);
+        var v = BigRational.Parse(textBoxCenterY.Text);
         mandelbrotView1.CenterY = v; update();
       }
 

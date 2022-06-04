@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>NewRational for .NET 6.0 </title>
+    <title>BigRational for .NET 6.0 </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="NewRational for .NET 6.0 ">
+    <meta name="title" content="BigRational for .NET 6.0 ">
     <meta name="generator" content="docfx 2.59.1.0">
     
     <link rel="shortcut icon" href="favicon.ico">
@@ -47,7 +47,7 @@
                 
                 <ul class="nav level1 navbar-nav">
                       <li>
-                          <a href="api/System.Numerics.Rational.html" title="Api Documentation">Api Documentation</a>
+                          <a href="api/System.Numerics.html" title="Api Documentation">Api Documentation</a>
                       </li>
                 </ul>    </div>
           </div>
@@ -65,11 +65,11 @@
         <div class="article row grid">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-<h2 id="newrational-for-net-60">NewRational for .NET 6.0</h2>
+<h2 id="bigrational-for-net-60">BigRational for .NET 6.0</h2>
 
 <h3 id="introduction">Introduction</h3>
-<p>NewRational - a novel rational number class.</p>
-<p>There are already many implementations of rational number classes called Rational, BigRational, Fraction etc.<br>
+<p>BigRational - a novel rational number class.</p>
+<p>There are already many implementations of rational number classes called Rational, BigRat, BigRational, Fraction etc.<br>
 For C# the useful ones are based on a combination of System.Numerics.BigInteger for numerator and denominator,<br>
 which in fact has the benefit of a really simple implementation.<br>
 It works well, but in practice has several disadvantages:</p>
@@ -80,7 +80,7 @@ It works well, but in practice has several disadvantages:</p>
 <li>The system requires a lot of internal memory copies bad for the overall performance.</li>
 <li>There is no way to benefit from the performance improvements in .NET Core, like using Spans, Buffers and Intrinsics.</li>
 </ul>
-<p>NewRational is based on a completely new system to achieve better efficiency and performance.<br>
+<p>BigRational is based on a completely new system to achieve better efficiency and performance.<br>
 The interface itself is of course the same as for all other numeric types, supporting the
 basic arithmetic operations via operators, conversions from and to the numeric system types,
 string formatting and parsing, binary serialization, etc.<br>
@@ -88,7 +88,7 @@ As an immutable, readonly struct with only one array field, the layout is as sma
 Internal the class has its own big-integer calculation core, highly optimized for the purposes of rational arithmetics, encapsulated in a stack machine.<br>
 This stack machine is public and offers a second interface layer with a machine language like instruction set.<br>
 Using this interface allows optimization on function level with performance improvements by factor 4 to 10.</p>
-<p><em>Example: Classic cross product for a Vector3 type, this one with:</em> <code>NewRational X, Y, Z;</code></p>
+<p><em>Example: Classic cross product for a Vector3 type, this one with:</em> <code>BigRational X, Y, Z;</code></p>
 <pre><code class="lang-c#">public static Vector3R Cross(Vector3R a, Vector3R b)
 { 
   var x = a.Y * b.Z - a.Z * b.Y; 
@@ -100,7 +100,7 @@ Using this interface allows optimization on function level with performance impr
 <p><em>The same function can be optimized using the stack machine (cpu):</em></p>
 <pre><code class="lang-c#">public static Vector3R Cross(Vector3R a, Vector3R b)
 {
-  var cpu = NewRational.task_cpu;
+  var cpu = BigRational.task_cpu;
   cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub();
   cpu.mul(a.Z, b.X); cpu.mul(a.X, b.Z); cpu.sub();
   cpu.mul(a.Y, b.Z); cpu.mul(a.Z, b.Y); cpu.sub();
@@ -109,11 +109,11 @@ Using this interface allows optimization on function level with performance impr
 </code></pre>
 <p><em>The optimized version performs 4 x faster, only 3 final normalizations and memory allocs are necessary (instead of 9 for the first version).</em></p>
 <p>As the example shows, using the stack machine directly is not much more difficult or less readable.<br>
-Furthermore, this design separates the NewRational struct from the calculation core, the final number object is always normalized what makes the handling, comparsions etc. much easier and doesn't impact the performance of the calculations.</p>
+Furthermore, this design separates the BigRational struct from the calculation core, the final number object is always normalized what makes the handling, comparsions etc. much easier and doesn't impact the performance of the calculations.</p>
 <h3 id="data-layout">Data Layout</h3>
 <p>All data, numerator and denominator, is stored in a single variable-length uint array.<br>
-This gives the NewRational struct itself a machine word size and therefore can be passed around internal as fast as possible.</p>
-<pre><code class="lang-c#">public readonly struct NewRational
+This gives the BigRational struct itself a machine word size and therefore can be passed around internal as fast as possible.</p>
+<pre><code class="lang-c#">public readonly struct BigRational
 {
   private readonly uint[] p; // the one and only field
 </code></pre>
@@ -131,9 +131,9 @@ A null array, as default value of the struct, represents the number 0 (zero).</p
 <p>The disadvantage is that small numbers require an array even if they would fit in a machine word.<br>
 This is the price for a optimal throughput and less code as there are no special cases to handle.</p>
 <h2 id="stack-machine">Stack machine</h2>
-<p>The stack machine, named CPU, is implemented as nested class in NewRational to get access to the private member.<br>
+<p>The stack machine, named CPU, is implemented as nested class in BigRational to get access to the private member.<br>
 The class has only two private fields: An array of arrays of uint (uint[][] p) and an index (int i) that marks the current stack top.</p>
-<pre><code class="lang-c#">public struct NewRational 
+<pre><code class="lang-c#">public struct BigRational 
 {  
   public class CPU
   {
@@ -141,11 +141,11 @@ The class has only two private fields: An array of arrays of uint (uint[][] p) a
 </code></pre>
 <p>A push operation increases the index and can use the buffer at p[i], which mostly already has the required size.<br>
 A pop operation does nothing else than decrement the index.<br>
-Each uint[] buffer in the stack represents a rational number with the same data layout as in struct NewRational.</p>
+Each uint[] buffer in the stack represents a rational number with the same data layout as in struct BigRational.</p>
 <p>Internally the stack is used excessively for all basic arithmetic operations
 and so no further memory management is necessary.<br>
-However, in consequence, for every single calculation step with NewRational numbers it needs a instance of
-such stack-machine object what is only efficient when it is as shared object always available. There is a thread-local static instance called <code>task_cpu</code> for this, which is exposed as a static property in NewRational.</p>
+However, in consequence, for every single calculation step with BigRational numbers it needs a instance of
+such stack-machine object what is only efficient when it is as shared object always available. There is a thread-local static instance called <code>task_cpu</code> for this, which is exposed as a static property in BigRational.</p>
 <pre><code class="lang-c#">public static CPU task_cpu
 {
   get { return _cpu ??= new CPU(); }
@@ -155,7 +155,7 @@ such stack-machine object what is only efficient when it is as shared object alw
 <p>Thread static means that each thread has its own instance of a task_cpu when needed, ensuring thread safety.</p>
 <p>This simple system has the advantage that it is also easy to debug:</p>
 <img src="images/debug_pi2.png" width="400">  
-<p>The system implies that the stack machine exposes an <a href="api/System.Numerics.Rational.NewRational.CPU.html">instruction set</a>.<br>
+<p>The system implies that the stack machine exposes an <a href="api/System.Numerics.BigRational.CPU.html">instruction set</a>.<br>
 These instructions, for readability as short words, are self explaining basic commands like add(), sub(), mul(), div(), different push() and pop(), bit level operations like shl(), shr(), but also higher level commands like pow(), mod(), rnd() etc.</p>
 <p>Since the rational numbers can have arbitrary size, it is important for the performance to avoid unnecessary memory copies.<br>
 This explains several versions of same instructions, for example:</p>
@@ -182,14 +182,14 @@ Selfexplaining, with the difference that the specified number of decimal digits 
 <p>The default ToString already shows differences.<br>
 First there is the automatic detection of repeating decimals that allow a exact string representation when possible.<br>
 The position where the repetition starts is marked bei a <code>'</code> (aphostrop):</p>
-<pre><code class="lang-c#">  x = (NewRational)1 / 3;
+<pre><code class="lang-c#">  x = (BigRational)1 / 3;
   s = x.ToString();       // &quot;0,'3&quot;    instead of &quot;0.3333333333333...&quot;	
-  x = (NewRational)3227 / 555;
+  x = (BigRational)3227 / 555;
   s = x.ToString();       // &quot;5.8'144&quot; instead of &quot;5.8144144144144...&quot;       
 </code></pre>
 <p>The adequate parse function supports the extended syntax completely:</p>
-<pre><code class="lang-c#">  x = NewRational.Parse(&quot;0.'3&quot;);
-  x = NewRational.Parse(&quot;123.456'789&quot;);
+<pre><code class="lang-c#">  x = BigRational.Parse(&quot;0.'3&quot;);
+  x = BigRational.Parse(&quot;123.456'789&quot;);
 </code></pre>
 <p>For standard ToString the number of decimal places is limited to 32 by default
 since there must be some limit.<br>
@@ -199,11 +199,11 @@ If the number has a higher precision than will fit in this range,
   s = x.ToString();         // &quot;3.14159265358979323846&quot;      
   x = MathR.PI(digits: 40);
   s = x.ToString();         // &quot;3.1415926535897932384626433832795…&quot;
-  x = MathR.PI(digits: 1000) * NewRational.Pow(10, 1000);
+  x = MathR.PI(digits: 1000) * BigRational.Pow(10, 1000);
   s = x.ToString();         // &quot;3.1415926535897932384626433832795…E+1000&quot;      
 </code></pre>
 <p>This is necessary to distinguish between exact number representations and reduced ones.<br>
-eg. &quot;0.3333&quot; for NewRational is exactly 0.3333 and not 1/3 or &quot;0.'3&quot;.<br>
+eg. &quot;0.3333&quot; for BigRational is exactly 0.3333 and not 1/3 or &quot;0.'3&quot;.<br>
 So the trailing ellipsis <code>…</code> makes it absolutely clear that the string representation doesn't exactly match the original numeric value.<br>
 <strong>NOTE:</strong> In this reduced form the digits are not rounded.</p>
 <p>For compatibility, no decimal repetition marks <code>'</code> or trailing ellipsis <code>…</code> are inserted when using standard formats.<br>
@@ -232,7 +232,7 @@ Format <code>L</code> is identic to standard format <code>F</code> but without t
   s = x.ToString(&quot;L5000&quot;);  // &quot;3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387528865875332083814206171776691473035982534904287554687311595628638823537875937519577818577805321712268066130019278766111959092164201989&quot;
 </code></pre>
 <p>Format <code>Q</code> as a non-standard format for an exact representation as fraction:</p>
-<pre><code class="lang-c#">  x = (NewRational)8 / 7; 
+<pre><code class="lang-c#">  x = (BigRational)8 / 7; 
   s = x.ToString();         // &quot;1.'142857&quot;      
   s = x.ToString(&quot;Q&quot;);      // &quot;8/7&quot;
   x = MathR.Sqrt(2, 30);
@@ -240,11 +240,11 @@ Format <code>L</code> is identic to standard format <code>F</code> but without t
   s = x.ToString(&quot;Q&quot;);      // &quot;141421356237309504880168872421/100000000000000000000000000000&quot;      
 </code></pre>
 <h2 id="exceptions">Exceptions</h2>
-<p>Division and modulo with NewRational throws a System.DivideByZeroException if the dividend is 0 (zero).<br>
+<p>Division and modulo with BigRational throws a System.DivideByZeroException if the dividend is 0 (zero).<br>
 No other type of numeric exception is thrown, since overflows are not inherent.<br>
 However, there is a possibility to get a System.OverflowException when a number with its digits is too big to fit in a C# array.<br>
 Currently, the maximum size of an array for .NET is 2GB,
-which corresponds to a theoretical maximum NewRational integer value of: 2<sup>34359738240</sup> - 1.</p>
+which corresponds to a theoretical maximum BigRational integer value of: 2<sup>34359738240</sup> - 1.</p>
 <p>No arithmetic exceptions are thrown when using the stack machine.
 Division by zero gives a NaN value as for floating point arithmetic.<br>
 Therefore, no try-catch handling is required at this interface layer to keep the stack in track.<br>
@@ -255,7 +255,7 @@ In general, the performance increases by at least a factor of 2, by using the st
 This applies to geometric algorithms where precision is important and not so much calculating with gigantic numbers.<br>
 For really huge numbers, with kBytes of digit data, the bottleneck is the integer multiplication as O(n<sup>2</sup>) operation (with simple algorithm).<br>
 Then, the performance of both systems equalizes again.</p>
-<p>For <strong>pure integer arithmetic</strong>, NewRational is barely faster than BigInteger.<br>
+<p>For <strong>pure integer arithmetic</strong>, BigRational is barely faster than BigInteger.<br>
 However, the performance of integer arithmetic procedures can also be significantly increased by using the stacking machine.</p>
 <hr>
 <p>Project URL: <a href="https://github.com/c-ohle/RationalNumerics">https://github.com/c-ohle/RationalNumerics</a></p>

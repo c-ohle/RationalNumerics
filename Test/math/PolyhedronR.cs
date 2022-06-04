@@ -1,8 +1,8 @@
 ﻿
-namespace Test
+namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Intersections and boolean operations on arbitrary polyhedral meshes based on <see cref="rat"/>.<br/>
+  /// Intersections and boolean operations on arbitrary polyhedral meshes based on <see cref="BigRational"/>.<br/>
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   public sealed class PolyhedronR

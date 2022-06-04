@@ -17,7 +17,21 @@ namespace Test
     public CalculatorPage()
     {
       InitializeComponent();
+      //this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
     }
+    protected override CreateParams CreateParams
+    {
+      get { var t = base.CreateParams; t.ExStyle |= 0x02000000; return t; } // WS_EX_COMPOSITED
+    }
+    protected override void OnLoad(EventArgs e)
+    {
+      base.OnLoad(e); if (DesignMode) return;
+      textBox1.Text = "0"; label1.Text = ""; digits = 32;
+      numericUpDownDigits.Value = digits;
+      sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator[0];
+    }
+
+    List<string> list = new(); int state, kl, digits; char sep; Font? font;
 
     protected override bool ProcessDialogChar(char charCode)
     {
@@ -26,14 +40,7 @@ namespace Test
       return base.ProcessDialogChar(charCode);
     }
 
-    protected override void OnLoad(EventArgs e)
-    {
-      base.OnLoad(e); textBox1.Text = "0"; label1.Text = ""; digits = 32;
-    }
-
-    List<string> list = new(); int state, kl, digits;
-
-    NewRational parse(int a, int b)
+    BigRational parse(int a, int b)
     {
       for (int l = 0; l < 2; l++)
         for (int k = 0, i = b; i >= a; i--)
@@ -50,15 +57,26 @@ namespace Test
       switch (list[a])
       {
         case "(": return parse(a + 1, b - 1);
-        case "√": { var t = parse(a + 1, b); t = rat.Sqrt(t, digits); return t; }
+        case "√": { var t = parse(a + 1, b); t = BigRational.Sqrt(t, digits); return t; }
         case "sqr": { var t = parse(a + 1, b); t = t * t; return t; }
+        case "ln": { var t = parse(a + 1, b); t = BigRational.Log(t, digits); return t; }
+        case "log":
+          {
+            var t = parse(a + 1, b); //var x = Math.Log2((double)t) / Math.Log2(10);            
+            t = BigRational.Log2(t, digits) / BigRational.Log2(10, digits);
+            //t = BigRational.Log(t, digits) / BigRational.Log(10, digits);
+            return t;
+          }
         case "fact": { var t = parse(a + 1, b); t = factorial(t); return t; }
-        case "π": return MathR.PI(20);
-        default: return NewRational.Parse(list[a]);
+        case "sin": { var t = parse(a + 1, b); t = Math.Sin((double)t); return t; }
+        case "cos": { var t = parse(a + 1, b); t = Math.Cos((double)t); return t; }
+        case "π": return MathR.PI(digits);
+        case "℮": return BigRational.Exp(1, digits);
+        default: return BigRational.Parse(list[a]);
       }
     }
 
-    void button11_Click(object sender, EventArgs e)
+    void button_Click(object sender, EventArgs e)
     {
       var s = textBox1.Text;
       var c = ((string)((Button)sender).Tag)[0];
@@ -71,8 +89,9 @@ namespace Test
           break;
         case '.':
           if (state == 2 || state == 3) { list.Clear(); state = kl = 0; s = "0"; }
-          if (s.Contains('.')) return; s += NumberFormatInfo.CurrentInfo.NumberDecimalSeparator[0];// c;
-          break;
+          if (!s.Contains(sep)) { s += sep; break; }
+          if (!s.Contains('\'')) { s += '\''; break; }
+          return;
         case '±':
           if (state == 2 || state == 3) { list.Clear(); state = kl = 0; }
           if (state != 0 || s == "0") return;
@@ -105,17 +124,24 @@ namespace Test
           s = "0"; list.Clear(); state = kl = 0;
           break;
         case 'π':
+        case '℮':
           if (state == 3) { s = "0"; list.Clear(); state = kl = 0; }
           if (state == 0 && s != "0") { list.Add(s); state = 2; }
           if (state == 2) list.Add("*");
-          list.Add("π"); state = 2;
+          list.Add(c.ToString()); state = 2;
           break;
-        case '℮': break;
         case '!':
         case '√':
         case '²':
+        case 's':
+        case 'c':
+        case 'l':
+        case 'L':
           {
-            var f = c == '!' ? "fact" : c == '√' ? "√" : "sqr";
+            var f =
+              c == '!' ? "fact" : c == '√' ? "√" :
+              c == '²' ? "sqr" : c == 'l' ? "ln" : c == 'L' ? "log" :
+              c == 's' ? "sin" : "cos";
             if (state == 3) { list.Clear(); state = kl = 0; state = 0; }
             if (state == 0) { list.Add(f); list.Add("("); list.Add(s); list.Add(")"); state = 2; break; }
             if (state == 2)
@@ -127,43 +153,47 @@ namespace Test
           }
           return;
       }
+      label1.Text = string.Join(' ', list);
+      textBox1.Text = calcs() ?? s;
+      if (state == 0) { textBox1.Select(textBox1.TextLength, 0); textBox1.ScrollToCaret(); }
+    }
+    string? calcs()
+    {
       if (state != 0 && kl == 0 && (state == 2 || list.Count >= 3))
       {
         try
         {
           var r = parse(0, state == 2 ? list.Count - 1 : list.Count - 2);
-          s = r.ToString();
+          return r.ToString("S" + (digits + 2));
         }
-        catch (Exception) { s = "NaN"; }
+        catch (Exception) { return "NaN"; }
       }
-      label1.Text = string.Join(' ', list);
-      textBox1.Text = s;
+      return null;
     }
 
     #region gamma
-    rat factorial(rat z, int digits = 32)
+    BigRational factorial(BigRational z, int digits = 32)
     {
-      //if (z % 1 == 0) { }
-      if (MathR.IsInteger(z))
+      if (rat.IsInt(z))
       {
         if (z < 0) throw new ArgumentException();
         return MathR.Factorial((int)z);
       }
       var r = gamma(z + 1, 30, 55); //todo: formula for z, digits => a, d 
-      r = rat.Round(r, digits); return r;
+      r = BigRational.Round(r, digits); return r;
     }
-    rat gamma(rat z, int a, int d)
+    BigRational gamma(BigRational z, int a, int d)
     {
       var kk = gamma_kk;
       if (kk == null || kk.Length != a || gamma_d != d)
       {
         kk = gamma_kk = calc(a, gamma_d = d);
-        static rat[] calc(int a, int digits)
+        static BigRational[] calc(int a, int digits)
         {
-          var kk = new rat[a]; rat fac = 1;
-          kk[0] = rat.Sqrt(MathR.PI(digits) * 2, digits);
+          var kk = new BigRational[a]; BigRational fac = 1;
+          kk[0] = BigRational.Sqrt(MathR.PI(digits) * 2, digits);
           for (int k = 1; k < a; k++) { kk[k] = fac; fac *= -k; }
-          Parallel.For(1, a, k => kk[k] = rat.Exp(a - k, digits) * rat.Pow(a - k, k - 0.5, digits) / kk[k]);
+          Parallel.For(1, a, k => kk[k] = BigRational.Exp(a - k, digits) * BigRational.Pow(a - k, k - 0.5, digits) / kk[k]);
           return kk;
         }
         //static rat[] calc(int a, int digits)
@@ -175,10 +205,53 @@ namespace Test
         //}
       }
       var s = kk[0]; for (int k = 1; k < a; k++) s += kk[k] / (z + k);
-      s *= rat.Exp(-(z + a), d) * rat.Pow(z + a, z + 0.5, d);
+      s *= BigRational.Exp(-(z + a), d) * BigRational.Pow(z + a, z + 0.5, d);
       return s / z;
     }
-    rat[]? gamma_kk; int gamma_d;
+    BigRational[]? gamma_kk; int gamma_d;
+    #endregion
+
+    #region handler 
+    private void numericUpDownRound_ValueChanged(object sender, EventArgs e)
+    {
+      digits = (int)numericUpDownDigits.Value;
+      var s = calcs(); if (s == null) return;
+      textBox1.Text = s; // tbadjust(s);
+    }
+    void numericUpDownRound_KeyDown(object sender, KeyEventArgs e)
+    {
+      e.SuppressKeyPress = e.KeyCode == Keys.Enter;
+    }
+    bool checkresize;
+    private void textBox1_TextChanged(object sender, EventArgs e)
+    {
+      checkresize = false;
+      if (font != null)
+      {
+        textBox1.Font = font;
+        textBox1.TextAlign = HorizontalAlignment.Right;
+        textBox1.ScrollBars = ScrollBars.None;
+      }
+      var s = textBox1.Text;
+      var i = textBox1.GetLineFromCharIndex(s.Length - 1);
+      if (i != 0)
+      {
+        font ??= textBox1.Font;
+        textBox1.Font = new Font(font.FontFamily, font.SizeInPoints * 0.7f);
+        i = textBox1.GetLineFromCharIndex(s.Length - 1);
+        if (i != 0)
+        {
+          textBox1.TextAlign = HorizontalAlignment.Left;
+          textBox1.ScrollBars = ScrollBars.Horizontal;
+        }
+      }
+      checkresize = true;
+    }
+    private void textBox1_Resize(object sender, EventArgs e)
+    {
+      if (!checkresize) return;
+      textBox1_TextChanged(sender, e);
+    }
     #endregion
   }
 }

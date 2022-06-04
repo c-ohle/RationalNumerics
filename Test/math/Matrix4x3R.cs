@@ -2,16 +2,16 @@
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// A Matrix4x3 class based on <see cref="rat"/>.<br/>
+  /// A Matrix4x3 class based on <see cref="BigRational"/>.<br/>
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   [Serializable]
   public struct Matrix4x3R : IEquatable<Matrix4x3R>
   {
-    public rat M11, M12, M13;
-    public rat M21, M22, M23;
-    public rat M31, M32, M33;
-    public rat M41, M42, M43;
+    public BigRational M11, M12, M13;
+    public BigRational M21, M22, M23;
+    public BigRational M31, M32, M33;
+    public BigRational M41, M42, M43;
     public readonly void WriteToBytes(ref Span<byte> ws)
     {
       M11.WriteToBytes(ref ws); M12.WriteToBytes(ref ws); M12.WriteToBytes(ref ws);
@@ -22,10 +22,10 @@ namespace System.Numerics.Rational
     public static Matrix4x3R ReadFromBytes(ref ReadOnlySpan<byte> rs)
     {
       var m = new Matrix4x3R();
-      m.M11 = rat.ReadFromBytes(ref rs); m.M12 = rat.ReadFromBytes(ref rs); m.M12 = rat.ReadFromBytes(ref rs);
-      m.M21 = rat.ReadFromBytes(ref rs); m.M22 = rat.ReadFromBytes(ref rs); m.M22 = rat.ReadFromBytes(ref rs);
-      m.M31 = rat.ReadFromBytes(ref rs); m.M32 = rat.ReadFromBytes(ref rs); m.M32 = rat.ReadFromBytes(ref rs);
-      m.M41 = rat.ReadFromBytes(ref rs); m.M42 = rat.ReadFromBytes(ref rs); m.M42 = rat.ReadFromBytes(ref rs);
+      m.M11 = BigRational.ReadFromBytes(ref rs); m.M12 = BigRational.ReadFromBytes(ref rs); m.M12 = BigRational.ReadFromBytes(ref rs);
+      m.M21 = BigRational.ReadFromBytes(ref rs); m.M22 = BigRational.ReadFromBytes(ref rs); m.M22 = BigRational.ReadFromBytes(ref rs);
+      m.M31 = BigRational.ReadFromBytes(ref rs); m.M32 = BigRational.ReadFromBytes(ref rs); m.M32 = BigRational.ReadFromBytes(ref rs);
+      m.M41 = BigRational.ReadFromBytes(ref rs); m.M42 = BigRational.ReadFromBytes(ref rs); m.M42 = BigRational.ReadFromBytes(ref rs);
       return m;
     }
     public override int GetHashCode()
@@ -99,7 +99,7 @@ namespace System.Numerics.Rational
       //m.M42 = a.M41 * b.M12 + a.M42 * b.M22 + a.M43 * b.M32 + b.M42;
       //m.M43 = a.M41 * b.M13 + a.M42 * b.M23 + a.M43 * b.M33 + b.M43;
       //return m;
-      var cpu = rat.task_cpu; Matrix4x3R c;
+      var cpu = BigRational.task_cpu; Matrix4x3R c;
       cpu.dot(a.M11, b.M11, a.M12, b.M21, a.M13, b.M31); c.M11 = cpu.pop_rat();
       cpu.dot(a.M11, b.M12, a.M12, b.M22, a.M13, b.M32); c.M12 = cpu.pop_rat();
       cpu.dot(a.M11, b.M13, a.M12, b.M23, a.M13, b.M33); c.M13 = cpu.pop_rat();
@@ -147,7 +147,7 @@ namespace System.Numerics.Rational
       r.M43 = -(x * fo_gn - b * eo_gm + c * en_fm) / det;
       return r;
 #else
-      var cpu = rat.task_cpu; var m = cpu.mark();
+      var cpu = BigRational.task_cpu; var m = cpu.mark();
       cpu.cross(a.M31, a.M42, a.M32, a.M41);
       cpu.cross(a.M31, a.M43, a.M33, a.M41);
       cpu.cross(a.M32, a.M43, a.M33, a.M42);

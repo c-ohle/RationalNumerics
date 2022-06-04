@@ -2,42 +2,42 @@
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Extensions for <see cref="rat.CPU"/>.
+  /// Extensions for <see cref="BigRational.CPU"/>.
   /// </summary>
   static class Extensions
   {
     /// <summary>
     /// a * b + c * d + e * f
     /// </summary>
-    internal static void dot(this rat.CPU cpu, rat a, rat b, rat c, rat d, rat e, rat f)
+    internal static void dot(this BigRational.CPU cpu, BigRational a, BigRational b, BigRational c, BigRational d, BigRational e, BigRational f)
     {
       cpu.mul(a, b); cpu.mul(c, d); cpu.add(); cpu.mul(e, f); cpu.add();
     }
     /// <summary>
     /// a * b + c * d + e * f + g
     /// </summary>
-    internal static void dot(this rat.CPU cpu, rat a, rat b, rat c, rat d, rat e, rat f, rat g)
+    internal static void dot(this BigRational.CPU cpu, BigRational a, BigRational b, BigRational c, BigRational d, BigRational e, BigRational f, BigRational g)
     {
       cpu.mul(a, b); cpu.mul(c, d); cpu.add(); cpu.mul(e, f); cpu.add(); cpu.add(g);
     }
     /// <summary>
     /// a.X * b.X + a.Y * b.Y 
     /// </summary>
-    internal static void dot(this rat.CPU cpu, in Vector2R a, in Vector2R b)
+    internal static void dot(this BigRational.CPU cpu, in Vector2R a, in Vector2R b)
     {
       cpu.mul(a.X, b.X); cpu.mul(a.Y, b.Y); cpu.add();
     }
     /// <summary>
     /// a.X * b.X + a.Y * b.Y + a.Z * b.Z
     /// </summary>
-    internal static void dot(this rat.CPU cpu, in Vector3R a, in Vector3R b)
+    internal static void dot(this BigRational.CPU cpu, in Vector3R a, in Vector3R b)
     {
       cpu.mul(a.X, b.X); cpu.mul(a.Y, b.Y); cpu.add(); cpu.mul(a.Z, b.Z); cpu.add();
     }
     /// <summary>
     /// a.X * b.X + a.Y * b.Y + a.Z * b.Z where a is on stack
     /// </summary>
-    internal static void dot(this rat.CPU cpu, in Vector3R b)
+    internal static void dot(this BigRational.CPU cpu, in Vector3R b)
     {
       var m = cpu.mark() - 3;
       cpu.mul(b.X, m + 0);
@@ -47,7 +47,7 @@ namespace System.Numerics.Rational
     /// <summary>
     /// box normalization, last 3 entries on stack
     /// </summary>
-    internal static void norm3(this rat.CPU cpu)
+    internal static void norm3(this BigRational.CPU cpu)
     {
       int l; if (cpu.cmpa(2, l = cpu.cmpa(1, 0) > 0 ? 1 : 0) > 0) l = 2; if (cpu.sign(l) == 0) return;
       cpu.dup(l); cpu.abs(); cpu.div(1 + (l + 1) % 3, 0); cpu.div(1 + (l + 2) % 3, 0); cpu.pop();
@@ -56,21 +56,21 @@ namespace System.Numerics.Rational
     /// <summary>
     /// a * b - c * d
     /// </summary>
-    internal static void cross(this rat.CPU cpu, rat a, rat b, rat c, rat d)
+    internal static void cross(this BigRational.CPU cpu, BigRational a, BigRational b, BigRational c, BigRational d)
     {
       cpu.mul(a, b); cpu.mul(c, d); cpu.sub();
     }
     /// <summary>
     /// a * [b] - c * [d] + e * [f] 
     /// </summary>
-    internal static void crdot(this rat.CPU cpu, rat a, uint b, rat c, uint d, rat e, uint f)
+    internal static void crdot(this BigRational.CPU cpu, BigRational a, uint b, BigRational c, uint d, BigRational e, uint f)
     {
       cpu.mul(a, b); cpu.mul(c, d); cpu.sub(); cpu.mul(e, f); cpu.add();
     }
     /// <summary>
     /// cross(b - a, c - a)
     /// </summary>
-    internal static void cross(this rat.CPU cpu, in Vector3R a, in Vector3R b, in Vector3R c)
+    internal static void cross(this BigRational.CPU cpu, in Vector3R a, in Vector3R b, in Vector3R c)
     {
       var m = cpu.mark();
       cpu.sub(b.X, a.X); cpu.sub(b.Y, a.Y); cpu.sub(b.Z, a.Z); // u = b - a

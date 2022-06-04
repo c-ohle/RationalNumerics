@@ -15,8 +15,4 @@
     <ProjectReference Include="..\System.Numerics.Rational\System.Numerics.Rational.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
 </Project>

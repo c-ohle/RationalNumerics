@@ -2,12 +2,12 @@
 using System.Numerics;
 #pragma warning disable CS8602
 
-namespace Test
+namespace System.Numerics.Rational
 {
   public enum Winding { EvenOdd = 0, NonZero = 1, Positive = 2, Negative = 3, AbsGeqTwo = 4 }
 
   /// <summary>
-  /// Tesselator based on <see cref="rat"/>.<br/>
+  /// Tesselator based on <see cref="BigRational"/>.<br/>
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   public sealed class TesselatorR
@@ -23,7 +23,7 @@ namespace Test
     public void SetNormal(in Vector3R v)
     {
       var i = Vector3R.LongAxis(v);
-      var s = rat.Sign(i == 0 ? v.X : i == 1 ? v.Y : v.Z);
+      var s = BigRational.Sign(i == 0 ? v.X : i == 1 ? v.Y : v.Z);
       Options = (Options & (Option)0xffff) | (Option)((int)Option.NormX << i) | (Option)(s & (int)Option.NormNeg);
     }
     public void BeginPolygon()
@@ -37,7 +37,7 @@ namespace Test
       if (state != 1) { state = 0; throw new Exception(); }
       state = 2; fi = np;
     }
-    public void AddVertex(rat x, rat y, rat z = default)
+    public void AddVertex(BigRational x, BigRational y, BigRational z = default)
     {
       cpu.push(x); cpu.push(y); cpu.push(z); enter();
       //if (state != 2) { state = 0; throw new Exception(); }
@@ -299,9 +299,9 @@ namespace Test
           if (rp == null || rp.Length < np) rp = new Vector3R[np]; //ensure(ref rp, Math.Max(4, this.np));
           for (int i = 0; i < np; i++)
           {
-            cpu.get((uint)(i * 8 + 0), out rat x);
-            cpu.get((uint)(i * 8 + 1), out rat y);
-            cpu.get((uint)(i * 8 + 2), out rat z);
+            cpu.get((uint)(i * 8 + 0), out BigRational x);
+            cpu.get((uint)(i * 8 + 1), out BigRational y);
+            cpu.get((uint)(i * 8 + 2), out BigRational z);
             rp[i] = new Vector3R(x, y, z);
           }
         }
@@ -355,13 +355,13 @@ namespace Test
     int mi; int[] dict;
     int ni; (int a, int b)[] ii, kk;
     Vector3R[]? rp; Vector3[]? fp;
-    readonly rat.CPU cpu;
+    readonly BigRational.CPU cpu;
     readonly Comparison<(int a, int b)> cmpy, cmpx, cmpya;
     readonly Comparison<int> cmpab;
     public TesselatorR()
     {
       const int n = 32;
-      cpu = new rat.CPU(n << 3);
+      cpu = new BigRational.CPU(n << 3);
       pp = new (int, int, int, int)[n];
       kk = new (int, int)[n << 1];
       ss = new int[n << 1];
