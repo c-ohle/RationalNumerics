@@ -40,7 +40,7 @@ namespace Test
       get => imax;
       set
       {
-        value = Math.Max(4, Math.Min(1000, value));
+        //value = Math.Max(4, Math.Min(1000, value));
         if (imax == value) return; stop(); imax = value; delaystart();
       }
     }
@@ -109,14 +109,14 @@ namespace Test
     Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2;
     Task? task; bool cancel, dostart, restart, manual; long t1, t2;
     System.Windows.Forms.Timer timer = new() { Interval = 100 };
-    BigRational mx = -0.7, my = 0, scale = 1.2, qmax = 4; int imax = 32, lim = 64;
+    BigRational mx = -0.7, my = 0, scale = 1.2; int imax = 32, lim = 64;
 
     void mandel_double()
     {
       calcmap(); if (map == null) return;
       var x1 = (double)(mx - scale * dx / dy);
       var y1 = (double)(my - scale);
-      var fi = (double)(2 * scale / dy); var qmax = (double)this.qmax;
+      var fi = (double)(2 * scale / dy);
       t1 = t2 = Environment.TickCount;
       //for (int py = 0; py < dy; py++)
       Parallel.For(0, dy, (py, po) =>
@@ -132,7 +132,7 @@ namespace Test
           {
             var u = a * a - b * b + x;
             var v = 2 * a * b + y;
-            if (u * u + v * v > qmax) break;
+            if (u * u + v * v > 4) break;
             a = u; b = v;
           }
           p[px] = i < imax ? map[i] : 0;
@@ -146,8 +146,8 @@ namespace Test
       calcmap(); if (map == null) return;
       var x1 = (OldRational)(mx - scale * dx / dy);
       var y1 = (OldRational)(my - scale);
-      var fi = (OldRational)(2 * scale / dy); var qmax = (OldRational)this.qmax;
-      t1 = t2 = Environment.TickCount;
+      var fi = (OldRational)(2 * scale / dy); var qmax = (OldRational)4;
+      t1 = t2 = Environment.TickCount; var digits = 10 * lim / 64; // actually about 15 * lim / 64
       //for (int py = 0; py < dy; py++)
       Parallel.For(0, dy, (py, po) =>
       {
@@ -160,8 +160,8 @@ namespace Test
           int i = 0; var a = x; var b = y;
           for (; i < imax; i++)
           {
-            var u = a * a - b * b + x; u = OldRational.Round(u, 8);
-            var v = 2 * a * b + y; v = OldRational.Round(v, 8);
+            var u = a * a - b * b + x; u = OldRational.Round(u, digits);
+            var v = 2 * a * b + y; v = OldRational.Round(v, digits);
             if (u * u + v * v > qmax) break;
             a = u; b = v;
           }
@@ -202,7 +202,8 @@ namespace Test
             // if (u * u + v * v > 4) break;
             cpu.sqr(m + 4); cpu.sqr(m + 5); cpu.add();
             //if (cpu.bdi() >= 2) { cpu.pop(3); break; }
-            if (cpu.cmp(qmax) > 0) { cpu.pop(3); break; } //todo: cmpi
+            //if (cpu.bdi() > 1)
+            if (cpu.cmpi(0, 4) > 0) { cpu.pop(3); break; }
             // a = u; b = v;
             cpu.swp(m + 2, m + 4); cpu.swp(m + 3, m + 5); cpu.pop(3);
           }

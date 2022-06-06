@@ -186,7 +186,7 @@ namespace System.Numerics
         for (int i = 2; ;)
         {
           if (x + 3 > ws.Length) { cpu.pop(i); ws = default; return; }
-          cpu.push(10); cpu.div(); cpu.mod(); cpu.swp();
+          cpu.push(10u); cpu.div(); cpu.mod(); cpu.swp();
           ws[x++] = (char)('0' + cpu.pop_int());
           if (cpu.sign() != 0) continue;
           cpu.pop(); if (--i == 0) break; ws[x++] = '/';
@@ -228,14 +228,14 @@ namespace System.Numerics
         break;
       }
       var cpu = task_cpu;
-      cpu.push(); cpu.push(); cpu.push(); cpu.push(1); // rat p = 0, a = 0, b = 0, e = 1;
+      cpu.push(); cpu.push(); cpu.push(); cpu.push(1u); // rat p = 0, a = 0, b = 0, e = 1;
       for (int i = value.Length - 1; i >= a; i--)
       {
         var c = value[i];
         if (c >= '0' && c <= '9' || (ba == 16 && (c | 0x20) >= 'a' && (c | 0x20) <= 'f'))
         {
           if (c > '9') c = (char)((c | 0x20) + ('9' + 1 - 'a'));
-          if (c != '0') { cpu.push(c - '0'); cpu.mul(0, 1); cpu.add(3, 0); cpu.pop(); } // a += (c - '0') * e;
+          if (c != '0') { cpu.push(unchecked((uint)(c - '0'))); cpu.mul(0, 1); cpu.add(3, 0); cpu.pop(); } // a += (c - '0') * e;
           if (i > a) { cpu.push(ba); cpu.mul(); }
           continue; // e *= ba;
         }
@@ -249,17 +249,17 @@ namespace System.Numerics
         if ((c | 0x20) == 'e')
         {
           cpu.pop(2); cpu.pow(10, cpu.pop_int()); cpu.swp(); // p = pow10(a); 
-          cpu.push(); cpu.push(1); continue; // b = 0; e = 1;
+          cpu.push(); cpu.push(1u); continue; // b = 0; e = 1;
         }
         if (c == '\'')
         {
-          cpu.dup(); cpu.dup(); cpu.push(1); cpu.sub(); // a *= e / (e - 1);
+          cpu.dup(); cpu.dup(); cpu.push(1u); cpu.sub(); // a *= e / (e - 1);
           cpu.div(); cpu.mul(3, 0); cpu.pop(); continue;
         }
         if (c == '/') // 1 / 3    
         {
           //if (cpu.sig(1) != 0) throw new FormatException();
-          cpu.swp(1, 2); cpu.pop(); cpu.push(1); continue;
+          cpu.swp(1, 2); cpu.pop(); cpu.push(1u); continue;
         }
         continue;
       }
@@ -1231,6 +1231,46 @@ namespace System.Numerics
       cpu.push(x); cpu.exp(c);
       cpu.rnd(digits); return cpu.pop_rat();
     }
+    /// <summary>
+    /// Calculates π rounded to the specified number of decimal digits.<br/>
+    /// </summary>
+    /// <remarks>
+    /// Represents the ratio of the circumference of a circle to its diameter, specified by the constant, π.
+    /// </remarks>
+    /// <param name="digits">The number of decimal digits to calculate.</param>
+    /// <returns>π rounded to the specified number of decimal digits.</returns>
+    public static BigRational Pi(int digits)
+    {
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.pi(c); cpu.rnd(digits); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="x">An angle, measured in radians.</param>
+    /// <param name="digits">The number of decimal digits to calculate.</param>
+    /// <returns>The sine of <paramref name="x"/>.</returns>
+    public static BigRational Sin(BigRational x, int digits)
+    { 
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.push(x); cpu.sin(c, false); 
+      cpu.rnd(digits); return cpu.pop_rat();
+    }
+    /// <summary>
+    /// Returns the cosine of the specified angle.
+    /// </summary>
+    /// <param name="x">An angle, measured in radians.</param>
+    /// <param name="digits">The number of decimal digits to calculate.</param>
+    /// <returns>The cosine of <paramref name="x"/>.</returns>
+    public static BigRational Cos(BigRational x, int digits)
+    {
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.push(x); cpu.sin(c, true);
+      cpu.rnd(digits); return cpu.pop_rat();
+    }
 
     /// <summary>
     /// Represents a stack machine for rational arithmetics.
@@ -2071,7 +2111,7 @@ namespace System.Numerics
       {
         uint e = unchecked((uint)(y < 0 ? -y : y)), z;
         if (x == 10) { push(unchecked((ulong)Math.Pow(x, z = e < 19 ? e : 19))); e -= z; }
-        else push(1);
+        else push(1u);
         if (e != 0)
         {
           push(x);
@@ -2091,7 +2131,7 @@ namespace System.Numerics
       /// <param name="y">A <see cref="int"/> value that specifies a power.</param>
       public void pow(int y)
       {
-        push(1); swp();
+        push(1u); swp();
         for (var e = unchecked((uint)(y < 0 ? -y : y)); ; e >>= 1)
         {
           if ((e & 1) != 0) mul(1, 0);
@@ -2105,7 +2145,7 @@ namespace System.Numerics
       /// <param name="c">The <see cref="int"/> value from which the factorial is calculated.</param>
       public void fac(uint c)
       {
-        push(1); for (uint i = 2; i <= c; i++) { push(i); mul(); }
+        push(1u); for (uint i = 2; i <= c; i++) { push(i); mul(); }
       }
       /// <summary>
       /// Returns the MSB difference of numerator and denominator for the value at the top of the stack.<br/>
@@ -2201,8 +2241,9 @@ namespace System.Numerics
       /// </returns>
       public int cmpi(int a, int b)
       {
-        //todo: stack inline 
-        push(b); a = cmp(a + 1, 0); pop(); return a;
+        //push(b); a = cmp(a + 1, 0); pop(); return a;
+        var v = stackalloc uint[] { unchecked((uint)b & 0x8000000) | 1, unchecked((uint)(b < 0 ? -b : b)), 0, 1 };
+        fixed (uint* u = p[this.i - 1 - a]) return cmp(u, v);
       }
       /// <summary>
       /// Compares the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack.<br/>
@@ -2449,7 +2490,7 @@ namespace System.Numerics
         for (; ; )
         {
           dup(); mod(); var d = this.p[this.i - 1][1]; if (d != 0 && d < 10) break;
-          pop(2); push(10); if (d == 0) { mul(); exp--; } else { div(); exp++; }
+          pop(2); push(10u); if (d == 0) { mul(); exp--; } else { div(); exp++; }
         }
         int nr = 0; uint* rr = null; IntPtr mem = default;
         if (reps)
@@ -2479,7 +2520,7 @@ namespace System.Numerics
           }
           sp[i] = c; swp(); pop();
           sub(); if (sign() == 0) { pop(); ns = i + 1; break; }
-          push(10); mul(); dup(); mod();
+          push(10u); mul(); dup(); mod();
         }
         if (mem != default) Marshal.FreeCoTaskMem(mem);
       }
@@ -2560,7 +2601,7 @@ namespace System.Numerics
         if (sign() <= 0) { pop(); pnan(); return; }
         push(); swp(); // r
         var t = bdi(); c += (uint)Math.Abs(t) + 16;
-        push(1); sub(); dup(); push(2); add(); div(); // p = (x - 1) / (x + 1)
+        push(1u); sub(); dup(); push(2u); add(); div(); // p = (x - 1) / (x + 1)
         dup(); sqr(); // f = p * p
         for (uint i = 0, m = mark(); ; i++)
         {
@@ -2586,7 +2627,7 @@ namespace System.Numerics
       public void exp(uint c)
       {
         var s = sign(); if (s < 0) neg(); c += 16;
-        dup(); push(1); add(); // r = x + 1
+        dup(); push(1u); add(); // r = x + 1
         dup(1); // d = x
         for (uint i = 2, m = mark(); ; i++)
         {
@@ -2594,6 +2635,69 @@ namespace System.Numerics
           add(1, 0); lim(c, 1); if (-bdi() >= c) break;
         }
         pop(); swp(); pop(); if (s < 0) inv();
+      }
+      /// <summary>
+      /// Calculates PI to the desired precision and push it to the stack.<br/>
+      /// </summary>
+      /// <remarks>
+      /// The desired precision is controlled by the parameter <paramref name="c"/> 
+      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
+      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
+      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// </remarks>
+      /// <param name="c">The desired precision.</param>
+      public void pi(uint c)
+      {
+        push(); // https://en.wikipedia.org/wiki/Bellard%27s_formula
+        for (uint n = 0; ; n++)
+        {
+          uint a = n << 2, b = n * 10;
+          pow(-1, unchecked((int)n)); pow(2, unchecked((int)b)); div(); //todo: opt inline pow, shifts
+          push(-32);  /**/ push(a + 1); div();
+          push(-1);   /**/ push(a + 3); div(); add();
+          push(256u); /**/ push(b + 1); div(); add();
+          push(-64);  /**/ push(b + 3); div(); add();
+          push(-4);   /**/ push(b + 5); div(); add();
+          push(-4);   /**/ push(b + 7); div(); add();
+          push(1u);   /**/ push(b + 9); div(); add();
+          mul(); var t = -bdi();
+          add(); lim(c + 64); if (t > c + 32) break; //todo: check
+        }
+        push(64); div(); //todo: shift
+      }
+      /// <summary>
+      /// Replaces the value on top of the stack with the sine or cosine of that value.<br/>
+      /// The value interpreted as an angle is measured in radians.
+      /// </summary>
+      /// <remarks>
+      /// The desired precision is controlled by the parameter <paramref name="c"/> 
+      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
+      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
+      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// </remarks>
+      /// <param name="c">The desired precision.</param>
+      /// <param name="cos">If true, the cosine is calculated, otherwise the sine.</param>
+      public void sin(uint c, bool cos)
+      {
+        var e = bdi() << 2; c += 16; if (e > c) { } // bdi x
+        var m = mark(); pi(e > c ? unchecked((uint)e) : c); shr(1); // push PI2
+        if (cos) add(1, 0); // x += PI2 
+        div(m - 1, m); mod(); swp(); pop(); // push divmod(x, PI2)
+        var s = this.p[this.i - 1][1]; // dup(); var s = pop_int(); // seg
+        mul(0, 1); neg(); add(2, 0); pop(); // x - trunc(x / PI2) * PI2
+        if ((s & 1) != 0) { swp(); sub(); } else pop(); // x = PI2 - x, pop PI2
+        if ((s & 2) != 0) neg(); lim(c); // x = -x, lim x
+        push(6u); dup(1); dup(); sqr(); lim(c); swp(); // 3!, x^2, x
+        for (uint i = 1, k = 4; ; i++, k += 2)
+        {
+          mul(1, 0); lim(c, 1); dup(1); div(0, 3); // x +/-= x^n / n!, n = 3, 5, 7, ...
+          var b = -bdi(); if (b > c) break; lim(c);
+          if ((i & 1) != 0) neg(); add(4, 0); pop(); lim(c, 3); // x += 
+          push(k * (k + 1)); mul(3, 0); pop(); mul(1, 0); // n! *=, x^n *=
+        }
+        pop(4);
       }
 
       uint[] rent(uint n)
@@ -2965,7 +3069,7 @@ namespace System.Numerics
       static bool isz(uint* p)
       {
         Debug.Assert((*(ulong*)p & ~(ulong)(0x40000000 | 0x80000000)) != 1 || *(ulong*)p == 1);
-        return *(ulong*)p == 1; //return (*(ulong*)p & ~(ulong)0x40000000) == 1;
+        return ((ulong*)p)[0] == 1 && ((ulong*)p)[1] != 1; // && !NaN 
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static bool isint(uint* p)
@@ -2988,7 +3092,8 @@ namespace System.Numerics
 
     #region private 
     private readonly uint[] p;
-    [ThreadStatic] private static CPU? cpu;
+    [ThreadStatic, DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private static CPU? cpu;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     BigRational(uint[] p) { this.p = p; }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

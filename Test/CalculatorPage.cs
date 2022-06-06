@@ -30,51 +30,7 @@ namespace Test
       numericUpDownDigits.Value = digits;
       sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator[0];
     }
-
-    List<string> list = new(); int state, kl, digits; char sep; Font? font;
-
-    protected override bool ProcessDialogChar(char charCode)
-    {
-      var btn = Controls.OfType<Button>().FirstOrDefault(p => p.Tag is string s && s[0] == charCode);
-      if (btn != null) { btn.Focus(); btn.PerformClick(); return true; }
-      return base.ProcessDialogChar(charCode);
-    }
-
-    BigRational parse(int a, int b)
-    {
-      for (int l = 0; l < 2; l++)
-        for (int k = 0, i = b; i >= a; i--)
-        {
-          var s = list[i]; if (s.Length != 1) continue; var c = s[0];
-          if (c == ')') { k++; continue; }
-          if (c == '(') { k--; continue; }
-          if (k != 0) continue;
-          if (c == '+' && l == 0) return parse(a, i - 1) + parse(i + 1, b);
-          if (c == '-' && l == 0) return parse(a, i - 1) - parse(i + 1, b);
-          if (c == '*' && l == 1) return parse(a, i - 1) * parse(i + 1, b);
-          if (c == '/' && l == 1) return parse(a, i - 1) / parse(i + 1, b);
-        }
-      switch (list[a])
-      {
-        case "(": return parse(a + 1, b - 1);
-        case "√": { var t = parse(a + 1, b); t = BigRational.Sqrt(t, digits); return t; }
-        case "sqr": { var t = parse(a + 1, b); t = t * t; return t; }
-        case "ln": { var t = parse(a + 1, b); t = BigRational.Log(t, digits); return t; }
-        case "log":
-          {
-            var t = parse(a + 1, b); //var x = Math.Log2((double)t) / Math.Log2(10);            
-            t = BigRational.Log2(t, digits) / BigRational.Log2(10, digits);
-            //t = BigRational.Log(t, digits) / BigRational.Log(10, digits);
-            return t;
-          }
-        case "fact": { var t = parse(a + 1, b); t = factorial(t); return t; }
-        case "sin": { var t = parse(a + 1, b); t = Math.Sin((double)t); return t; }
-        case "cos": { var t = parse(a + 1, b); t = Math.Cos((double)t); return t; }
-        case "π": return MathR.PI(digits);
-        case "℮": return BigRational.Exp(1, digits);
-        default: return BigRational.Parse(list[a]);
-      }
-    }
+    List<string> list = new(); int state, kl, digits, exp; char sep; Font? font;
 
     void button_Click(object sender, EventArgs e)
     {
@@ -83,66 +39,81 @@ namespace Test
       switch (c)
       {
         case >= '0' and <= '9':
-          if (state == 2 || state == 3) { s = "0"; list.Clear(); state = kl = 0; }
+          if (state == 2 || state == 3) { s = "0"; list.Clear(); state = kl = exp = 0; }
           if (state != 0 || s == "0") s = "";
+          if (exp != 0)
+          {
+            if (s.Length == exp + 2 && s[exp + 1] == '0') s = s.Substring(0, exp + 1);
+          }
           s += c; state = 0;
           break;
         case '.':
-          if (state == 2 || state == 3) { list.Clear(); state = kl = 0; s = "0"; }
+          if (state == 2 || state == 3) { list.Clear(); state = kl = exp = 0; s = "0"; }
+          if (exp != 0) return;
           if (!s.Contains(sep)) { s += sep; break; }
           if (!s.Contains('\'')) { s += '\''; break; }
           return;
         case '±':
           if (state == 2 || state == 3) { list.Clear(); state = kl = 0; }
           if (state != 0 || s == "0") return;
+          if (exp != 0) { s = s.Substring(0, exp) + (s[exp] == '+' ? '-' : '+') + s.Substring(exp + 1); break; }
           s = s[0] == '-' ? s.Substring(1) : '-' + s;
           break;
         case '(':
-          if (state == 3) { s = "0"; list.Clear(); state = kl = 0; }
+          if (state == 3) { s = "0"; list.Clear(); state = kl = exp = 0; }
           if (state == 0 && s != "0") { list.Add(s); state = 2; }
           if (state == 2) list.Add("*");
           list.Add("("); kl++; state = 1;
           break;
         case ')':
-          if (kl == 0) return;
+          if (kl == 0) return; //if (list.Count != 0 && list[list.Count - 1] == "(") return;
+          if (state == 1) return; // (
           if (state == 0) list.Add(s);
           list.Add(c.ToString()); state = 2; kl--;
           break;
-        case '+' or '-' or '*' or '/' or '=':
+        case '+' or '-' or '*' or '/' or '%' or '=':
           if (state == 3) { if (c == '=') return; list.Clear(); state = kl = 0; }
           if (state == 0) list.Add(s);
-          if (state == 1) { var t = list.Count - 1; if (list[t] == "(") return; list.RemoveAt(t); }
+          if (state == 1)
+          {
+            var t = list.Count - 1; if (list[t] == "(") return;
+            if (c == '=')
+            {
+              //var u = t; for (; u >= 0 && list[u][0])); u--) ; 
+            }
+            list.RemoveAt(t);
+          }
           if (c == '=') for (; kl != 0; kl--, list.Add(")")) ;
           list.Add(c.ToString()); state = c == '=' ? 3 : 1;
           break;
         case '«':
           if (state != 0) return;
-          s = s.Substring(0, s.Length - 1); if (s.Length == 0 || s.Length == 1 && s[0] == '-') s = "0";
+          s = s.Substring(0, s.Length - 1);
+          if (exp != 0) { if(s.Length == exp + 1) s += '0'; break; }
+          if (s.Length == 0 || s.Length == 1 && s[0] == '-') s = "0";
+          break;
+        case 'E':
+          if (state != 0 || exp != 0) return;
+          exp = s.Length + 1; s += "E+0";
           break;
         case 'C':
-          if (state == 0 && s != "0") { s = "0"; break; }
-          s = "0"; list.Clear(); state = kl = 0;
+          if (state == 0 && s != "0") { s = "0"; exp = 0; break; }
+          s = "0"; list.Clear(); state = kl = exp = 0;
           break;
         case 'π':
         case '℮':
-          if (state == 3) { s = "0"; list.Clear(); state = kl = 0; }
+          if (state == 3) { s = "0"; list.Clear(); state = kl = exp = 0; }
           if (state == 0 && s != "0") { list.Add(s); state = 2; }
           if (state == 2) list.Add("*");
           list.Add(c.ToString()); state = 2;
           break;
-        case '!':
-        case '√':
-        case '²':
-        case 's':
-        case 'c':
-        case 'l':
-        case 'L':
+        case '!' or '√' or '²' or 's' or 'c' or 'l' or 'L' or '|' or '⅟':
           {
             var f =
-              c == '!' ? "fact" : c == '√' ? "√" :
+              c == '!' ? "fact" : c == '√' ? "√" : c == '|' ? "abs" : c == '⅟' ? "1 /" :
               c == '²' ? "sqr" : c == 'l' ? "ln" : c == 'L' ? "log" :
               c == 's' ? "sin" : "cos";
-            if (state == 3) { list.Clear(); state = kl = 0; state = 0; }
+            if (state == 3) { list.Clear(); state = kl = exp = 0; }
             if (state == 0) { list.Add(f); list.Add("("); list.Add(s); list.Add(")"); state = 2; break; }
             if (state == 2)
             {
@@ -154,25 +125,122 @@ namespace Test
           return;
       }
       label1.Text = string.Join(' ', list);
-      textBox1.Text = calcs() ?? s;
+      textBox1.Text = parse() ?? s;
       if (state == 0) { textBox1.Select(textBox1.TextLength, 0); textBox1.ScrollToCaret(); }
     }
-    string? calcs()
+
+    string? parse()
     {
       if (state != 0 && kl == 0 && (state == 2 || list.Count >= 3))
       {
         try
         {
-          var r = parse(0, state == 2 ? list.Count - 1 : list.Count - 2);
+          var a = 0; var b = state == 2 ? list.Count - 1 : list.Count - 2;
+          var r = button_rat.Text == "d" ? rnd(parsed(a, b)) : parse(a, b);
           return r.ToString("S" + (digits + 2));
+          double rnd(double t) { if (digits <= 15) t = Math.Round(t, digits); return t; }
         }
         catch (Exception) { return "NaN"; }
       }
       return null;
     }
+    rat parse(int a, int b)
+    {
+      var h = list[a];
+      if (a == b)
+        switch (h)
+        {
+          case "π": return MathR.PI(digits);
+          case "℮": return rat.Exp(1, digits);
+          default: return rat.Parse(h);
+        }
+      for (int l = 0; l < 2; l++)
+        for (int k = 0, i = b; i >= a; i--)
+        {
+          var s = list[i]; if (s.Length != 1) continue; var c = s[0];
+          if (c == ')') { k++; continue; }
+          if (c == '(') { k--; continue; }
+          if (k != 0) continue;
+          if (l == 0)
+          {
+            if (c == '+') return parse(a, i - 1) + parse(i + 1, b);
+            if (c == '-') return parse(a, i - 1) - parse(i + 1, b);
+          }
+          else
+          {
+            if (c == '*') return parse(a, i - 1) * parse(i + 1, b);
+            if (c == '/') return parse(a, i - 1) / parse(i + 1, b);
+            if (c == '%') return parse(a, i - 1) % parse(i + 1, b);
+          }
+        }
+      if (h == "(") return parse(a + 1, b - 1);
+      var t = parse(a + 1, b);
+      switch (h)
+      {
+        case "√": t = rat.Sqrt(t, digits); break;
+        case "sqr": t = t * t; break;
+        case "ln": t = rat.Log(t, digits); break;
+        case "log":
+          // Math.Log2((double)t) / Math.Log2(10);            
+          t = rat.Log2(t, digits) / rat.Log2(10, digits);
+          //t = rat.Log(t, digits) / rat.Log(10, digits);
+          break;
+        case "fact": t = fact(t); break;
+        case "sin": t = rat.Sin(t, digits); break;
+        case "cos": t = rat.Cos(t, digits); break;
+        case "abs": t = rat.Abs(t); break;
+        case "1 /": t = 1 / t; break;
+      }
+      return t;
+    }
+    double parsed(int a, int b)
+    {
+      var h = list[a];
+      if (a == b)
+        switch (h)
+        {
+          case "π": return Math.PI;
+          case "℮": return Math.E;
+          default: return (double)rat.Parse(h);
+        }
+      for (int l = 0; l < 2; l++)
+        for (int k = 0, i = b; i >= a; i--)
+        {
+          var s = list[i]; if (s.Length != 1) continue; var c = s[0];
+          if (c == ')') { k++; continue; }
+          if (c == '(') { k--; continue; }
+          if (k != 0) continue;
+          if (l == 0)
+          {
+            if (c == '+') return parsed(a, i - 1) + parsed(i + 1, b);
+            if (c == '-') return parsed(a, i - 1) - parsed(i + 1, b);
+          }
+          else
+          {
+            if (c == '*') return parsed(a, i - 1) * parsed(i + 1, b);
+            if (c == '/') return parsed(a, i - 1) / parsed(i + 1, b);
+            if (c == '%') return parsed(a, i - 1) % parsed(i + 1, b);
+          }
+        }
+      if (h == "(") return parsed(a + 1, b - 1);
+      var t = parsed(a + 1, b);
+      switch (h)
+      {
+        case "√": t = Math.Sqrt(t); break;
+        case "sqr": t = t * t; break;
+        case "ln": t = Math.Log(t); break;
+        case "log": t = Math.Log2((double)t) / Math.Log2(10); break;
+        case "fact": t = factd(t); break;
+        case "sin": t = Math.Sin(t); break;
+        case "cos": t = Math.Cos(t); break;
+        case "abs": t = Math.Abs(t); break;
+        case "1 /": t = 1 / t; break;
+      }
+      return t;
+    }
 
     #region gamma
-    BigRational factorial(BigRational z, int digits = 32)
+    rat fact(rat z, int digits = 32)
     {
       if (rat.IsInt(z))
       {
@@ -180,20 +248,20 @@ namespace Test
         return MathR.Factorial((int)z);
       }
       var r = gamma(z + 1, 30, 55); //todo: formula for z, digits => a, d 
-      r = BigRational.Round(r, digits); return r;
+      r = rat.Round(r, digits); return r;
     }
-    BigRational gamma(BigRational z, int a, int d)
+    rat gamma(rat z, int a, int d)
     {
       var kk = gamma_kk;
       if (kk == null || kk.Length != a || gamma_d != d)
       {
         kk = gamma_kk = calc(a, gamma_d = d);
-        static BigRational[] calc(int a, int digits)
+        static rat[] calc(int a, int digits)
         {
-          var kk = new BigRational[a]; BigRational fac = 1;
-          kk[0] = BigRational.Sqrt(MathR.PI(digits) * 2, digits);
+          var kk = new rat[a]; rat fac = 1;
+          kk[0] = rat.Sqrt(MathR.PI(digits) * 2, digits);
           for (int k = 1; k < a; k++) { kk[k] = fac; fac *= -k; }
-          Parallel.For(1, a, k => kk[k] = BigRational.Exp(a - k, digits) * BigRational.Pow(a - k, k - 0.5, digits) / kk[k]);
+          Parallel.For(1, a, k => kk[k] = rat.Exp(a - k, digits) * rat.Pow(a - k, k - 0.5, digits) / kk[k]);
           return kk;
         }
         //static rat[] calc(int a, int digits)
@@ -205,25 +273,39 @@ namespace Test
         //}
       }
       var s = kk[0]; for (int k = 1; k < a; k++) s += kk[k] / (z + k);
-      s *= BigRational.Exp(-(z + a), d) * BigRational.Pow(z + a, z + 0.5, d);
+      s *= rat.Exp(-(z + a), d) * rat.Pow(z + a, z + 0.5, d);
       return s / z;
     }
-    BigRational[]? gamma_kk; int gamma_d;
+    rat[]? gamma_kk; int gamma_d;
+
+    static double factd(double d)
+    {
+      return gammad(d + 1);
+    }
+    static double gammad(double z)
+    {
+      if (z < 0.5) return Math.PI / (Math.Sin(Math.PI * z) * gammad(1 - z));
+      z -= 1;
+      double x = gamma_dd[0];
+      for (var i = 1; i < 7 + 2; i++) x += gamma_dd[i] / (z + i);
+      double t = z + 7 + 0.5;
+      return Math.Sqrt(2 * Math.PI) * (Math.Pow(t, z + 0.5)) * Math.Exp(-t) * x;
+    }
+    static double[] gamma_dd = { 0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7 };
     #endregion
 
     #region handler 
-    private void numericUpDownRound_ValueChanged(object sender, EventArgs e)
+    void numericUpDownRound_ValueChanged(object sender, EventArgs e)
     {
-      digits = (int)numericUpDownDigits.Value;
-      var s = calcs(); if (s == null) return;
-      textBox1.Text = s; // tbadjust(s);
+      digits = (int)numericUpDownDigits.Value; numericUpDownDigits.Update();
+      var s = parse(); if (s != null) textBox1.Text = s;
     }
     void numericUpDownRound_KeyDown(object sender, KeyEventArgs e)
     {
       e.SuppressKeyPress = e.KeyCode == Keys.Enter;
     }
     bool checkresize;
-    private void textBox1_TextChanged(object sender, EventArgs e)
+    void textBox1_TextChanged(object sender, EventArgs e)
     {
       checkresize = false;
       if (font != null)
@@ -247,10 +329,43 @@ namespace Test
       }
       checkresize = true;
     }
-    private void textBox1_Resize(object sender, EventArgs e)
+    void textBox1_Resize(object sender, EventArgs e)
     {
       if (!checkresize) return;
       textBox1_TextChanged(sender, e);
+    }
+    void button_rat_Click(object sender, EventArgs e)
+    {
+      button_rat.Text = button_rat.Text == "ℚ" ? "d" : "ℚ";
+      numericUpDownRound_ValueChanged(sender, e);
+    }
+    protected override bool ProcessDialogKey(Keys k)
+    {
+      if ((k & Keys.Control) != 0 && !numericUpDownDigits.Focused)
+      {
+        switch ((Keys)((int)k & 0xff))
+        {
+          case Keys.C: Clipboard.SetText(textBox1.Text); break;
+          case Keys.V:
+            if (!Clipboard.ContainsText()) break;
+            if (state != 0 || list.Count != 0) break;
+            try
+            {
+              var s = Clipboard.GetText(); var t = rat.Parse(s);
+              textBox1.Text = t.ToString("S" + (digits + 2)); textBox1.Select(textBox1.TextLength, 0); textBox1.ScrollToCaret();
+              return true;
+            }
+            catch { }
+            break;
+        }
+      }
+      return base.ProcessDialogKey(k);
+    }
+    protected override bool ProcessDialogChar(char charCode)
+    {
+      var btn = Controls.OfType<Button>().FirstOrDefault(p => p.Tag is string s && s[0] == charCode);
+      if (btn != null) { btn.Focus(); btn.PerformClick(); return true; }
+      return base.ProcessDialogChar(charCode);
     }
     #endregion
   }

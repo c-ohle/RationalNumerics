@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Operator Modulus
+    <title>Method sin
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Operator Modulus
+    <meta name="title" content="Method sin
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -166,8 +166,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.Min.html" title="Min" class="">Min</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.op_Modulus.html" title="Modulus" class="active">Modulus</a>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.op_Modulus.html" title="Modulus" class="">Modulus</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.op_Multiply.html" title="Multiply" class="">Multiply</a>
@@ -340,8 +340,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.sign.html" title="sign" class="">sign</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.BigRational.CPU.sin.html" title="sin" class="">sin</a>
+                                <li class="active">
+                                  <a href="System.Numerics.BigRational.CPU.sin.html" title="sin" class="active">sin</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.sqr.html" title="sqr" class="">sqr</a>
@@ -367,28 +367,29 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.op_Modulus*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.sin*">
 
-<h1 id="System_Numerics_BigRational_op_Modulus_" data-uid="System.Numerics.BigRational.op_Modulus*">Operator Modulus
+<h1 id="System_Numerics_BigRational_CPU_sin_" data-uid="System.Numerics.BigRational.CPU.sin*">Method sin
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_op_Modulus_System_Numerics_BigRational_System_Numerics_BigRational_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.op_Modulus(System.Numerics.BigRational%2CSystem.Numerics.BigRational)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_sin_System_UInt32_System_Boolean_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.sin(System.UInt32%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L681">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2682">View Source</a>
 </span>
-<a id="System_Numerics_BigRational_op_Modulus_" data-uid="System.Numerics.BigRational.op_Modulus*"></a>
-<h4 id="System_Numerics_BigRational_op_Modulus_System_Numerics_BigRational_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.op_Modulus(System.Numerics.BigRational,System.Numerics.BigRational)">Modulus(BigRational, BigRational)</h4>
-<div class="markdown level1 summary"><p>Returns the remainder that results from division with two specified <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> values.</p>
+<a id="System_Numerics_BigRational_CPU_sin_" data-uid="System.Numerics.BigRational.CPU.sin*"></a>
+<h4 id="System_Numerics_BigRational_CPU_sin_System_UInt32_System_Boolean_" data-uid="System.Numerics.BigRational.CPU.sin(System.UInt32,System.Boolean)">sin(UInt32, Boolean)</h4>
+<div class="markdown level1 summary"><p>Replaces the value on top of the stack with the sine or cosine of that value.<br>
+The value interpreted as an angle is measured in radians.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static BigRational operator %(BigRational a, BigRational b)</code></pre>
+  <pre><code class="lang-csharp hljs">public void sin(uint c, bool cos)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -401,38 +402,25 @@
   </thead>
   <tbody>
     <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">a</span></td>
-      <td><p>The value to be divided. (dividend)</p>
+      <td><span class="xref">System.UInt32</span></td>
+      <td><span class="parametername">c</span></td>
+      <td><p>The desired precision.</p>
 </td>
     </tr>
     <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>The value to divide by. (divisor)</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><p>The remainder that results from the division.</p>
+      <td><span class="xref">System.Boolean</span></td>
+      <td><span class="parametername">cos</span></td>
+      <td><p>If true, the cosine is calculated, otherwise the sine.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 id="System_Numerics_BigRational_op_Modulus_System_Numerics_BigRational_System_Numerics_BigRational__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>For fractions, the same rules apply to modulus as to floating point types such as <span class="xref">System.Double</span><br>
-where <code>a % b</code> is defined as: <code>a - Truncate(a / b) * b</code></p>
+<h5 id="System_Numerics_BigRational_CPU_sin_System_UInt32_System_Boolean__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>The desired precision is controlled by the parameter <code data-dev-comment-type="paramref" class="paramref">c</code>
+where <code data-dev-comment-type="paramref" class="paramref">c</code> represents a break criteria of the internal iteration.<br>
+For a desired precesission of decimal digits <code data-dev-comment-type="paramref" class="paramref">c</code> can be calculated as:<br>
+<code>msb(pow(10, digits))</code>.<br>
+The result however has to be rounded explicitely to get an exact decimal representation.</p>
 </div>
 </article>
           </div>
@@ -442,10 +430,10 @@ where <code>a % b</code> is defined as: <code>a - Truncate(a / b) * b</code></p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_op_Modulus_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.op_Modulus*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_sin_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.sin*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L681" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2682" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

@@ -54,14 +54,14 @@ namespace System.Numerics.Rational
       for (int n = 0, c = 1 + digits / 3; n < c; n++)
       {
         int a = n << 2, b = 10 * n;
-        cpu.pow(-01, n); cpu.pow(2, b); cpu.div();
-        cpu.push(-32); cpu.push(a + 1); cpu.div();
-        cpu.push(-01); cpu.push(a + 3); cpu.div(); cpu.add();
-        cpu.push(256); cpu.push(b + 1); cpu.div(); cpu.add();
-        cpu.push(-64); cpu.push(b + 3); cpu.div(); cpu.add();
-        cpu.push(-04); cpu.push(b + 5); cpu.div(); cpu.add();
-        cpu.push(-04); cpu.push(b + 7); cpu.div(); cpu.add();
-        cpu.push(+01); cpu.push(b + 9); cpu.div(); cpu.add();
+        cpu.pow(-1, n); cpu.pow(2, b); cpu.div();
+        cpu.push(-32);  /**/ cpu.push(a + 1); cpu.div();
+        cpu.push(-1);   /**/ cpu.push(a + 3); cpu.div(); cpu.add();
+        cpu.push(256u); /**/ cpu.push(b + 1); cpu.div(); cpu.add();
+        cpu.push(-64);  /**/ cpu.push(b + 3); cpu.div(); cpu.add();
+        cpu.push(-4);   /**/ cpu.push(b + 5); cpu.div(); cpu.add();
+        cpu.push(-4);   /**/ cpu.push(b + 7); cpu.div(); cpu.add();
+        cpu.push(1u);   /**/ cpu.push(b + 9); cpu.div(); cpu.add();
         cpu.mul(); cpu.add(); if ((n & 0x3) == 0x3) cpu.norm();
       }
       cpu.push(64); cpu.div(); cpu.rnd(digits);

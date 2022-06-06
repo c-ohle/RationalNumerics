@@ -8,11 +8,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.sqrt.html",
-          "hash": "n3TomyrV1XH8W1U1ijqLofkEWVpYVa5MItwFGNINzN4="
+          "relative_path": "api/System.Numerics.BigRational.CPU.pi.html",
+          "hash": "EPXAjueVUUXtCAHszgYeO+R9AR9alNk9AtdFm9q6NUY="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -20,35 +20,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.log2.html",
-          "hash": "z9LM46DV553EwD+xamd9h5X3iboxS36RifbfxLyGmLg="
+          "relative_path": "api/System.Numerics.BigRational.CPU.sin.html",
+          "hash": "MfTxT2+YFG7fvYxt6hKVBVMHFnGHDqkreWmioDgMu1E="
         }
       },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.log.html",
-          "hash": "YVWLEFFxyfUaoxhh+iHZe4lLJwWzfRnz18ciJBr06tg="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.exp.html",
-          "hash": "s+QdjGKWFfXQxSNWD2Id5p0Tq4VqlddV9qQgTHTM3kk="
-        }
-      },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -57,334 +33,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.CPU.html",
-          "hash": "WsHyFkbjQXIW8e9mlamnn7wxIj9SyG2tYGNsKnH/X3s="
+          "hash": "CS5CqD792sb1EDBSY1kmrfFtZKa85si4I50tC5XK4o4="
         }
       },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.abs.html",
-          "hash": "gemDGK4TYQgZBVt7lQll2ABkpVjKu/yNftmRc5zWb7k="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.add.html",
-          "hash": "VLQIF+P1i/jqivz9ZwJPxz6WDu8nkePd024l+Z6APuE="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.sub.html",
-          "hash": "ebAQYlQZJMbWVt85y4KDeh/WLS/8Jqewq7d+kf3Fnq8="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.mul.html",
-          "hash": "zt5huJ/6/lkOqIHrkX6wy9532V8nKbWPNGOVlpq6scQ="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.div.html",
-          "hash": "l+rbEGAJxxHn/24oILcoRagO9sLEu0WzuD/bAitNrjs="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.sqr.html",
-          "hash": "y/8AxMsCBzIpQul9ZYBpUqmLQRyNV30Tpt+FBOp+gXQ="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.inv.html",
-          "hash": "dyjrpMy5Ojj6tLbwtaSqF5Fy+Ct9GDdhD6m0sPdeuVs="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.fac.html",
-          "hash": "qiKXkYnAfJJCLcEwZab7SIiLcYt6s6fcrM62yvLBh7c="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.bdi.html",
-          "hash": "oefpOFLEZafFSiaiK9l3j8JMQCHr5svhzltlj0+He1k="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.lim.html",
-          "hash": "IxzYIo4Q6pJBhM4QqvGhYdBV4ehcHuZpXm7Z+JnqSqE="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.sign.html",
-          "hash": "xSd3UofDJpB8zYS/W6t9TI0xd6N+Fw+HaySjWUpi68c="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.cmpa.html",
-          "hash": "DFaeeu1I6ZLVJtaLLWMHvuInfu6bZGMMtKGV5JliOnA="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.cmpi.html",
-          "hash": "rt+YnCahJHtf3hdjPOfGx6MSxL48beltWe34V951m/w="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.cmp.html",
-          "hash": "R51OnIpeONFtQU6LEkn3Rir2YxxP+witcIrCgUjr5T8="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.equ.html",
-          "hash": "18reDOeu6TDi7axkQa9nfb2cW5CneRpnjE1lMwBDMVE="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.norm.html",
-          "hash": "O03wpAr4hVbqVkkhkohW1JlLIQC74Xm4bN4rHs/xHlA="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.hash.html",
-          "hash": "NqcDWg6VWDLBUjfBgbVAjyiBklcmjYI/p+BnqfgIVKY="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.msb.html",
-          "hash": "hEuftcyIq4NA1PyA7p8fz0Yu59tUjQ8uQR6RBvYlUG0="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.lsb.html",
-          "hash": "ex2iBhEtKtjbTyAzqOFE2rbbZ/SzD5dkSrNaUDWPfAo="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.pop_int.html",
-          "hash": "bDcC9FXmqR5xLaYyrtWKqWG4LwHC1QhUSAgMU4HC6w4="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.pop.html",
-          "hash": "5uC7V9tzq8XnXM3VufVoWgvJGuNbRX0Pa4ZUY60qx+s="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.swp.html",
-          "hash": "7bMi8usUMFGhtdGpCUE7LZcMfL7T8XdQY3FzecL3AoM="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.dup.html",
-          "hash": "IIg8Zen8L3vKph0fWx/NVyXlEM65jjEf/qeQ6T7YdnM="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.neg.html",
-          "hash": "QU57DUc1X58wIvj2PPqNtr0ZFfyHvi+0H4O0hGxfghk="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.isi.html",
-          "hash": "8owGIRa6fmWgSF9GCc1izeEbETxWAfmWADijH3w8tvM="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.gcd.html",
-          "hash": "0/y3Y2KIQ5HgxOuccIzjwjMVzp+NF/G4ruPcZArb2VU="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.tos.html",
-          "hash": "OKiYeclaZPQRSfwE6KQVABKS1T1xuNUbgbV38MMOmK8="
-        }
-      },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -393,10 +45,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.CPU.-ctor.html",
-          "hash": "x//JCRQumDqf5Nw/qVQoTLmjqD0+GpluUddCujvloFk="
+          "hash": "4XDVRRYxEilgqqJ7As6kADDbFQevQRpvxWwT5b/tqW0="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -404,11 +56,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.mark.html",
-          "hash": "ES1kCg1ntM2jhBkfHI1XH705cdsPMtVlD2mMGjryZRk="
+          "relative_path": "api/System.Numerics.BigRational.CPU.sqr.html",
+          "hash": "LAQgkANk45sVg1JWYlK/g3d0rqpcPY8VoH0VgHEyr+E="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -416,47 +68,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.push.html",
-          "hash": "kAGtYw/gRkc07F6kGkDt/7SgQXJBx/pRUHN+gzlyLrM="
+          "relative_path": "api/System.Numerics.BigRational.CPU.inv.html",
+          "hash": "fVFfk1pH39eayCSMrX4aB/1hWdWIRWehWtVR0GFWDL4="
         }
       },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.get.html",
-          "hash": "WjnmNBfay5yt4uLuNsDQ59dso4GGYovgWdxIletzHco="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.pop_rat.html",
-          "hash": "6ZCYeeO6D7njS4UQ1+CvMPhHKYiDAdS1ELU1o9ol9hs="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CPU.pop_dbl.html",
-          "hash": "JM1Z1NVURm5X/KDv76CRKeyoz7/DUuIJ2NWhRIQZ2GY="
-        }
-      },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -465,10 +81,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.CPU.shl.html",
-          "hash": "5epjCaSkv7gZWCXIKuxNXUdR68bsyt22JOdQmq/XPR4="
+          "hash": "ETXA7/YFL+IeuE8N/hIctGUSBO2U9a0tsq6KwYqOd0E="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -477,10 +93,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.CPU.shr.html",
-          "hash": "k0a4AD8Zj+ABi9QwjMxSyJgwPayhBwFAjMnhCpIQF3Y="
+          "hash": "14EVjrUMILzgp4WE99iTYp2sKjz9jsCGp/TEb9bmtco="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -489,10 +105,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.CPU.mod.html",
-          "hash": "CIohvH1tgPFsDIAUaInztWp5uiqq+BdJNHmrSeZZiAU="
+          "hash": "tnwXIdf4g4461L0yd5ncRCXlvoRg0hqb0j4Q/rWxSkg="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -501,10 +117,166 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.CPU.rnd.html",
-          "hash": "Y4rI2rbrCi8GdAm3ypDahZeqgH+DTt3Bocs8iV625E0="
+          "hash": "024tT7tZYdONeB/XZHay3rIAc0Y2Vie6bsvYWS+1GMM="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.sign.html",
+          "hash": "wdxhxPBxJgK8PYgbuRtk77wxYNRwUHgg6xUDFqgU1zc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.cmpa.html",
+          "hash": "UBADT0iGAc9j4goqaMATfOe7dBK2+Y80/dvako1SgmI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.cmpi.html",
+          "hash": "HM1abWGkvM43r/FFo6NljBH3IUdBvTeQjnjB0gg1yL0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.cmp.html",
+          "hash": "K11/B0T6tXCOFxsf23d2Edv6N7kB9UEVG0X5XuUnY6M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.equ.html",
+          "hash": "VlwFTNN5w7NCLPR/Pe65ioVpFTjadFzNZHrpZa+ut4c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.norm.html",
+          "hash": "l1byRyzy1J30BNz0YpVd2vO3yXqPF1zFoyNHUNJ4d8Q="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.hash.html",
+          "hash": "Hvi5EO2PV5B8kbDtr60D5hM6Adro8BtzxbIyaU8SOhc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.log2.html",
+          "hash": "E/PsoR5oWZLPLC8rMZCNWpyOSH0IEapNeBpESB7oCEE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.log.html",
+          "hash": "vY0iyyTxG3kdoavWLQbSlJAb1q00gwqp7vW167t+eP4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.exp.html",
+          "hash": "A14ro7mPcmP230M+0PLpLfnY4H1oGb/CsL3o1r/qBF0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.sub.html",
+          "hash": "ABAsa4hiTHXbcW4oJEdTzl3V/3oZ7jgbz+CBTzu/h7U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.mul.html",
+          "hash": "/0A2Qf9p+xA6h1/PIcaliZJnwlosioq6g8fXjtdUXG0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.div.html",
+          "hash": "lopt8BFkBhFRC1NqDhmjC5xZ0pWycDpFiNwgPS5/VQc="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -513,22 +285,262 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.CPU.pow.html",
-          "hash": "u/xZfxIo06x+u2H0xjEKeNsVOS3EMuJ8pcUOoXQ2VGE="
+          "hash": "v7ei5RCWgh4mFU2bSwoSnAVQNAuPwzpGrXji1jR9su0="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.ToString.html",
-          "hash": "qmLLjO+3plcroVNf9arTLmPM5vSRe9yYMI2wWu1JicM="
+          "relative_path": "api/System.Numerics.BigRational.CPU.fac.html",
+          "hash": "4PA3/Z0DgYvj/xlYBIPMfovesig28FFtC6adqQUr4sc="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.bdi.html",
+          "hash": "CI1v5ny6z4pt7+T2VQBlkfvzYzNL8EAm7QcZuNT8Y5M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.lim.html",
+          "hash": "BZXaQv27vbDZ8CAV/v/5FZ4QqHRKlFKUyDlW7vJMg6U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.msb.html",
+          "hash": "f4v52ghmNZS3k7lF8p1O1M1jcj7nnMJMeWxUb1/ymTU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.lsb.html",
+          "hash": "RanZkEWvMrU8lgjlllPmw/Eu4xYfMYsIXuGz7T3qtL4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.isi.html",
+          "hash": "Bl2lpVC/kI82LPE18mftjFpH4d1RgLOwdTF0OhScupI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.gcd.html",
+          "hash": "8C6AtRIfqYBDrRpP3k6xy3/N7dcW07gL8NljHckVe7w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.tos.html",
+          "hash": "fZOjjW4P9ThH+mciHH3IajvMFqXR+0KzVNl4tByj7J0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.sqrt.html",
+          "hash": "oSewexwlP2XzfAdVpY065IwnccAZ/Y8iWa/QtVMQLeM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.mark.html",
+          "hash": "AXdfFwBUA3RXdrH0NMCPhbESti4Tcp5ZQrdBHZKElyk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.push.html",
+          "hash": "lDQVV9q6d+sS0OaVjIvTtb2+8oADb+KdvaOdYaleerM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.get.html",
+          "hash": "0QQKrW1SmaqY5DChjUCJMeeBhn3op+iC6XUPzzJBTV4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.pop_rat.html",
+          "hash": "BnR5NyN0aamGEw0iBnraxOXaM1Jklq4HQP2JF43WC2w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.pop_dbl.html",
+          "hash": "HbdKqGGYvI+tZnvRzcINEXNzkQ0krS7slnPUoZd3iDc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.pop_int.html",
+          "hash": "77BFS8zQe630LhKJqNO6JU5fs8N62IzLoXwooq0JULM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.pop.html",
+          "hash": "4xoMCAuY/TbsSTNNW8rcydhY+Bsd4dU+jwTb86o5Eiw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.swp.html",
+          "hash": "InclT8FSpnS3Um8tgNMDAs3XprYiCGxKC76WGFgF+CQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.dup.html",
+          "hash": "4CA6DeEs+pBx2aTmU3LM3Nh4CtaVYN3mBSSsiCX06R4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.neg.html",
+          "hash": "cr59xjSVzLQe8zhD5M+lLu+TlqLR9kDHKpqJMD7CC18="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.abs.html",
+          "hash": "w/aTGIBO/04I/dTQUI1hQ05S8hyszYlnmsqRRatGYMA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.CPU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CPU.add.html",
+          "hash": "yzwEpEYkNCjDbCY1GK0koQivFZUi75qk0l04bgFsJAQ="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -537,10 +549,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.TryFormat.html",
-          "hash": "GJ/OSheja87FzzFTUEedDUY4iNteUG79TNQNEaEuoVk="
+          "hash": "eED3CijwclDQgi80IZoyyKkLlru563eZzl0q1/kKfsc="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -549,10 +561,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.Parse.html",
-          "hash": "U2dfK+biAjs7+Dn1tuWFGIF5mpS0Byb6IMT7yrtmlyU="
+          "hash": "luxA4vZaLaUHHnWfxOvZGdjQjR4+mouYxKwJgIJ4D4g="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -561,250 +573,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.WriteToBytes.html",
-          "hash": "LEEC3XFzGoVOMTe/P6lozLFLeSmaSHT01adoazI9zqw="
+          "hash": "X14Ek77aykMyMKYB2c4NupfqgcnjG/OHXUVEFVVMeKU="
         }
       },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Abs.html",
-          "hash": "zRZ5ayTqIdeSHdt+TbKXtr//SSno+Ea3HYtThNovHPA="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Min.html",
-          "hash": "CkOxbdzQSIl4RZtuWegb1ehPwMxKrOvaj0kjK4fWaPY="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Max.html",
-          "hash": "DEIJTJy5UWgcur4pzrGJxQuo/GHTEhmxWgBj10W+7vw="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Truncate.html",
-          "hash": "SPf5KCLBtCq91E00ay0H47tOtd+49UjJim/mDSdcxa0="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Floor.html",
-          "hash": "KPHmN2MQ4yeoXQmM/0MTd9GlBYV4pvVIrP05R4L352Q="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Ceiling.html",
-          "hash": "0w2OrtpHv4C36Fmc4rc9AtOXtnZlxkIh4S2nnw7Yvo0="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Round.html",
-          "hash": "l2Wv8Q0ezbZYmOBI/l4KAI/p+Ou03b58CrbldMm4448="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Pow.html",
-          "hash": "t/RnKEHSIPDbgjozf7qWDo/Z1/7N899RYQVvvKu1ibk="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Sqrt.html",
-          "hash": "/Lq5TuxIgNWfna15NKHcApr7WhjVecW7oRyxHA3869E="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Log2.html",
-          "hash": "IsSR3ZJfZLwFzLz8u95JXubrr8far5ZeIH1aGdsPiMM="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Log.html",
-          "hash": "6AThQS7tTizO1p/KTKEfEWAMxQoax6JnFY01mLxnnjc="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.Exp.html",
-          "hash": "Tewev4BPPN/MLNCLYmxkFwUofnHh77/9t85wQZrQKug="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_Division.html",
-          "hash": "3Ia6PhsktlYkyqftNjAE/yB8GaQcKiyRi9m+9hiab2c="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_Modulus.html",
-          "hash": "Zdet+a7Le9neSmYlizL6T94kcOl3AyPS4LO32dpBhV8="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_Equality.html",
-          "hash": "7f7CcDtK+DCqAo1Oo6e7rFO05SprzzwvTf/ZJeAIMzY="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_UnaryPlus.html",
-          "hash": "L1beuEOGjuMdNrEgFsuT+SE3SuhpZvk33oGzcfPkQ+w="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_UnaryNegation.html",
-          "hash": "XNyO98dVQkHsU6s+HFp2ibretMbQSi2JN+te4ki5Wd0="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_Addition.html",
-          "hash": "2HxmIZj0grVfiSaTvjw9TbOzJhkOspac0HmkGWOq/2U="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_Subtraction.html",
-          "hash": "ey01thVZOOQA9cIcpIj8nqANsQUdbBGPMYRajOP3hWs="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/System.Numerics.BigRational.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_Multiply.html",
-          "hash": "Iit8xIF9h+YdkjcMwoCcgKPJS6n8Y8Ir+ehsfqGu9R8="
-        }
-      },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -813,10 +585,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.ReadFromBytes.html",
-          "hash": "hpImUxSJMbL7O0Nyuy0bbtuPDY0Ih2cQqA4JKZ8ISDQ="
+          "hash": "EfiIB249tvdXH95XiRKkZvz9Tg6EXPx4Mch3DgFzimg="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -825,10 +597,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.GetHashCode.html",
-          "hash": "zxcBWj+/tu8rkp7X7yMF0nDqdM/asU3L0QMPcdjwbwc="
+          "hash": "nKj3VuTaAHiOujvwQWICcDlJdDKkeKYA19Qma/gEg0s="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -837,10 +609,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.Equals.html",
-          "hash": "JlSsTAEeZ9E7SKoAN3pQQr626OaCL0QWq5jWCOish2g="
+          "hash": "VhEYu59t04eXwCMvlZf4oHC8oGD/OY07cKTq2saz/As="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -848,11 +620,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.CompareTo.html",
-          "hash": "lvydwZgQPKjKw2E44GNpfhN/ZCbrUu5Nu2ql0VHgIaw="
+          "relative_path": "api/System.Numerics.BigRational.ToString.html",
+          "hash": "96Vb3sTjWTLTzIvpBQyZBoqdTB6bKt2jNYUFdUO4QEY="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -860,11 +632,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.-ctor.html",
-          "hash": "i5Vf01aFFxXfX4wzMITWT1CXrOEBQ7JwttsFUT1LyYE="
+          "relative_path": "api/System.Numerics.BigRational.op_Subtraction.html",
+          "hash": "eHdWVrO7prkmlrwlKD9N9R6fFgybLitgI94pKnOW56o="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -872,11 +644,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_Implicit.html",
-          "hash": "UYP5gcSPjQ7Wqeqjq7sNPVsw15owJwcLQ/Rz17tf1Gk="
+          "relative_path": "api/System.Numerics.BigRational.op_Multiply.html",
+          "hash": "UGLKdd3Xj6cne2s6kngxjmRl6Ysu0qvfIP5IFYP9hAQ="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -884,11 +656,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.op_Explicit.html",
-          "hash": "pkMLFcsamIDymifzjSK/EjQKR6MKP7XTDrJdkOWYyyY="
+          "relative_path": "api/System.Numerics.BigRational.op_Division.html",
+          "hash": "pbaXp4GFltf2zgrWT9VMtwFbk0IgEGz9ZXnyOo55daY="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -896,11 +668,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.task_cpu.html",
-          "hash": "bjxmVq8iEOKGc93QW87JtsloY99h7+hcbwH+5nHvsBQ="
+          "relative_path": "api/System.Numerics.BigRational.op_Modulus.html",
+          "hash": "CeOVK4kjkpuTK/8P7ENqoyx6Ak9IUvnlAX/iYJKJqWc="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -908,11 +680,11 @@
       "source_relative_path": "api/System.Numerics.BigRational.yml",
       "output": {
         ".html": {
-          "relative_path": "api/System.Numerics.BigRational.html",
-          "hash": "Zu4g9HLbgsbtcbRWXTpnQVXLudh9VdBt+DeeSGtDCcM="
+          "relative_path": "api/System.Numerics.BigRational.op_Equality.html",
+          "hash": "Z06v0vQNZt/ttQCbGgSpAZJJ1z8auhG5UoRzMnpcibg="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -921,10 +693,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.op_Inequality.html",
-          "hash": "fhA6DunKO+4kbPVHhjAzD5Iw179cYw3ubKsIfLjKsY0="
+          "hash": "vxDUPtcM3SOL7/Ezz3dzWvSpaCen3u1I0FqzQEmGe7Q="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -933,10 +705,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.op_LessThanOrEqual.html",
-          "hash": "2kT5t4F+89pElFK/tANXtrg2ZAlQmt7yNF97xu5+cTw="
+          "hash": "Kw5sY+LYs0R4OgtZyIS/O44yI7Bofc/AqWww8t8fxVI="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -945,10 +717,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.op_GreaterThanOrEqual.html",
-          "hash": "vI9sQr1IaRFVOfyn/lXsWvZlzJ/6OOGHtFxpjbkfEDA="
+          "hash": "n1rLqhOIQdTJqlsgmUseI8S/BRXP61xvr2KOEqrQDW4="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -957,10 +729,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.op_LessThan.html",
-          "hash": "vLxTvln2QFRHoJGC9jdjC0hcu6ynDf+pmLmEBWKHbcM="
+          "hash": "Ii4EEk/VM1OqtupR2yrqSYmwhEdQiG1asIEIfowZL7Y="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -969,10 +741,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.op_GreaterThan.html",
-          "hash": "H/5VZ2O1wwUY5hGlK5fLhG5dGk+7DMK0a91Fv91IM0A="
+          "hash": "6lrJ3hEtf3lGk9GvwN+ZbxsAURL9kKpzB6LHn2RIOKw="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -981,10 +753,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.Sign.html",
-          "hash": "m1iKllLeDZykBAU+r/FvxxEqD5pREJuir4P07kzeMNs="
+          "hash": "DN+jGDLmzvXvJiC6cmvGrZxX7i8TfSKq6poPZiZLftg="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -993,10 +765,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.IsInt.html",
-          "hash": "NY36EjXkabccoQLMBUNf+QwdU4JpZ+STWLbSpF/v8ak="
+          "hash": "5Lp+gVTZdC5l8GAEr1b66ZYdvdrYh2x4VSDFOsd4U9k="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1005,10 +777,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.IsNan.html",
-          "hash": "3qdXe+bNPwTB0VUrrIwsWsCQm+EAOop79WFhccFDRsI="
+          "hash": "Us5hp6Dt0OGM75cntw3jj2Z+P/5EkdwC+M/PSbr7z+A="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1017,10 +789,298 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.BigRational.ILog10.html",
-          "hash": "eR9epzZjD74HZ9kgfFcmEUBJSXVPlgUTOyKsSENA0Dc="
+          "hash": "YA9UUKZsFcWaY519UVYmvYmrw95IWEl0LL92MoKt6eI="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Abs.html",
+          "hash": "bdatbrR4GPKHdafifKRP5VLP/d+oAFBwa6ejnMU5c8M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Min.html",
+          "hash": "tqhHF+J2SMrDbtAYNzXjdEYNwwFE2+Gzkqt4JouaXEU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Max.html",
+          "hash": "H7qFjOIi1A5Coc+bgCzWEoeAif7A01gyzl92Zbem1s8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Truncate.html",
+          "hash": "s/otX5BJF0WgfQdwB9uqr7aa+UDQLM+/VP/ddB31JZA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Floor.html",
+          "hash": "UJTtCeNejdfgw/GgOzH1JniWHUY4AJIVI3h3RDa4PeA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Ceiling.html",
+          "hash": "N9iecWkZhRcQiLVbL3LdiwALGduEWe4UNlvRaYCHtm8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Round.html",
+          "hash": "fZNR4m5fKDPiPmK/DMu7S/B4lBkrb3Sa8q6MmZerojk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Pow.html",
+          "hash": "MDpCuXbm3MHiEzila4Le+RtlWzIZT3j90SCcZJldOew="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Sqrt.html",
+          "hash": "GCjda7rEiYiCM3oOnxNmCxVFje7oEwg51uQhRvNONc0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Log2.html",
+          "hash": "ehqOGatbOzKuvRr1WqGes6SDXiT8SPLP0kx/f+Fy2QM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Log.html",
+          "hash": "aFlks/a+ZAvATKRVRszvqzbCCL3KIOr8tqSXpWqFnUU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Exp.html",
+          "hash": "b/aKZk99FaiFYdNfhZRkzFSp1b1nq6NG8X6D9KDlyFc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Pi.html",
+          "hash": "m8ZwJEUcf5QJyvZvefd+PqsmkRaJ9vKQuYCvsFfxDmA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Sin.html",
+          "hash": "qQ5lQaUQ6S2egMXoXydjDZieS49cJicyMlMI8Gi0WBc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.Cos.html",
+          "hash": "Dch1ADUlapuRrK+m3pO/d5kK+1WL01KU4a1qPyhdBdg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.task_cpu.html",
+          "hash": "BC1lqMyj+XOFitPAmyOmm9pT3yGpIpg81Yp5G2d0FQY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.html",
+          "hash": "1DCSGC+/WFHVnQKblSiYG1EdarBLHfJ9C+0ZgmFbzZ8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.CompareTo.html",
+          "hash": "frG+WuSvKB9rMDsZFgzpKmwj6VugqsBfSoaYLiJDLz0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.-ctor.html",
+          "hash": "0/6zFl1y0WJwXWFMxJ6eWChC7A3xHix5/4nGtsB4YYY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.op_Implicit.html",
+          "hash": "cxPjoOHI/O3J2YKKYwu2kwzr3+fMLWaHulH71C2ZfEw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.op_Explicit.html",
+          "hash": "foU9EUlJqVgBoXJ/ipWKjAEyo5zU9puCmYrLEYHlJGs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.op_UnaryPlus.html",
+          "hash": "BDajY1PB9HOBAePV/BLMNopNXmUq5VfoeJxFpZ5jgwY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.op_UnaryNegation.html",
+          "hash": "oT5Rk6TUDkausRNoEQbuio2cHzVle6XWJudEOWqAwSM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Numerics.BigRational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Numerics.BigRational.op_Addition.html",
+          "hash": "GUEmkPhRF7an7sFnHWI4dZhetT17cuq7ffR+sRterk0="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1029,10 +1089,10 @@
       "output": {
         ".html": {
           "relative_path": "api/System.Numerics.html",
-          "hash": "H3qO9IdAfjhvdzpJbcBA5nQN0yKfg6wH79/WQe3L7Hw="
+          "hash": "IBDZLtpvAOgXruLSGWrlpmNNmViHflZNS/u/HtUPFOY="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1041,7 +1101,7 @@
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "7dzjuuhSVdJjhdCVR+hlzpXdft5JXEgjSl2q1gzXLFY="
+          "hash": "mPLXiOnEERgDeR/ofCgSLw9jDSG8oLbi7Yq2AZZUoLU="
         }
       },
       "is_incremental": true,
@@ -1053,7 +1113,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/intro.html",
-          "hash": "pYMFASaeAUFrFEXrhYn1BCbjncjSj97pMgpnow9+TDk="
+          "hash": "iQfc9AyO3O6m5xUj2LTx0wcmi3hlhPgqI/HS3Y8kYwg="
         }
       },
       "is_incremental": true,
@@ -1190,7 +1250,7 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 3,
-          "skipped_file_count": 3
+          "skipped_file_count": 1
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,

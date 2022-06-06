@@ -11,16 +11,10 @@ namespace Test
     static void Main()
     {
       ApplicationConfiguration.Initialize(); test();
-      //Application.EnableVisualStyles();
-      //Application.SetCompatibleTextRenderingDefault(false);
-      //Application.SetHighDpiMode(HighDpiMode.SystemAware);
       Application.Run(new MainFrame());
     }
-    
-    static void test() 
+    static void test()
     {
-      //var a = rat.Parse("1.4142135623730950488016887242097");
-      //var b = rat.Pow(2, (rat)1 / 2, 30);
     }
   }
 }

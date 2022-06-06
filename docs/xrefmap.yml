@@ -73,6 +73,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CompareTo
   fullName: System.Numerics.BigRational.CompareTo
   nameWithType: BigRational.CompareTo
+- uid: System.Numerics.BigRational.Cos(System.Numerics.BigRational,System.Int32)
+  name: Cos(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Cos.html#System_Numerics_BigRational_Cos_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Cos(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Cos(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Cos(BigRational, Int32)
+- uid: System.Numerics.BigRational.Cos*
+  name: Cos
+  href: api/System.Numerics.BigRational.Cos.html
+  commentId: Overload:System.Numerics.BigRational.Cos
+  fullName: System.Numerics.BigRational.Cos
+  nameWithType: BigRational.Cos
 - uid: System.Numerics.BigRational.CPU
   name: BigRational.CPU
   href: api/System.Numerics.BigRational.CPU.html
@@ -562,6 +574,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.norm
   fullName: System.Numerics.BigRational.CPU.norm
   nameWithType: BigRational.CPU.norm
+- uid: System.Numerics.BigRational.CPU.pi(System.UInt32)
+  name: pi(UInt32)
+  href: api/System.Numerics.BigRational.CPU.pi.html#System_Numerics_BigRational_CPU_pi_System_UInt32_
+  commentId: M:System.Numerics.BigRational.CPU.pi(System.UInt32)
+  fullName: System.Numerics.BigRational.CPU.pi(System.UInt32)
+  nameWithType: BigRational.CPU.pi(UInt32)
+- uid: System.Numerics.BigRational.CPU.pi*
+  name: pi
+  href: api/System.Numerics.BigRational.CPU.pi.html
+  commentId: Overload:System.Numerics.BigRational.CPU.pi
+  fullName: System.Numerics.BigRational.CPU.pi
+  nameWithType: BigRational.CPU.pi
 - uid: System.Numerics.BigRational.CPU.pop
   name: pop()
   href: api/System.Numerics.BigRational.CPU.pop.html#System_Numerics_BigRational_CPU_pop
@@ -760,6 +784,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.sign
   fullName: System.Numerics.BigRational.CPU.sign
   nameWithType: BigRational.CPU.sign
+- uid: System.Numerics.BigRational.CPU.sin(System.UInt32,System.Boolean)
+  name: sin(UInt32, Boolean)
+  href: api/System.Numerics.BigRational.CPU.sin.html#System_Numerics_BigRational_CPU_sin_System_UInt32_System_Boolean_
+  commentId: M:System.Numerics.BigRational.CPU.sin(System.UInt32,System.Boolean)
+  fullName: System.Numerics.BigRational.CPU.sin(System.UInt32, System.Boolean)
+  nameWithType: BigRational.CPU.sin(UInt32, Boolean)
+- uid: System.Numerics.BigRational.CPU.sin*
+  name: sin
+  href: api/System.Numerics.BigRational.CPU.sin.html
+  commentId: Overload:System.Numerics.BigRational.CPU.sin
+  fullName: System.Numerics.BigRational.CPU.sin
+  nameWithType: BigRational.CPU.sin
 - uid: System.Numerics.BigRational.CPU.sqr(System.Int32)
   name: sqr(Int32)
   href: api/System.Numerics.BigRational.CPU.sqr.html#System_Numerics_BigRational_CPU_sqr_System_Int32_
@@ -1402,6 +1438,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.Parse
   fullName: System.Numerics.BigRational.Parse
   nameWithType: BigRational.Parse
+- uid: System.Numerics.BigRational.Pi(System.Int32)
+  name: Pi(Int32)
+  href: api/System.Numerics.BigRational.Pi.html#System_Numerics_BigRational_Pi_System_Int32_
+  commentId: M:System.Numerics.BigRational.Pi(System.Int32)
+  fullName: System.Numerics.BigRational.Pi(System.Int32)
+  nameWithType: BigRational.Pi(Int32)
+- uid: System.Numerics.BigRational.Pi*
+  name: Pi
+  href: api/System.Numerics.BigRational.Pi.html
+  commentId: Overload:System.Numerics.BigRational.Pi
+  fullName: System.Numerics.BigRational.Pi
+  nameWithType: BigRational.Pi
 - uid: System.Numerics.BigRational.Pow(System.Int32,System.Int32)
   name: Pow(Int32, Int32)
   href: api/System.Numerics.BigRational.Pow.html#System_Numerics_BigRational_Pow_System_Int32_System_Int32_
@@ -1477,6 +1525,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.Sign
   fullName: System.Numerics.BigRational.Sign
   nameWithType: BigRational.Sign
+- uid: System.Numerics.BigRational.Sin(System.Numerics.BigRational,System.Int32)
+  name: Sin(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Sin.html#System_Numerics_BigRational_Sin_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Sin(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Sin(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Sin(BigRational, Int32)
+- uid: System.Numerics.BigRational.Sin*
+  name: Sin
+  href: api/System.Numerics.BigRational.Sin.html
+  commentId: Overload:System.Numerics.BigRational.Sin
+  fullName: System.Numerics.BigRational.Sin
+  nameWithType: BigRational.Sin
 - uid: System.Numerics.BigRational.Sqrt(System.Numerics.BigRational,System.Int32)
   name: Sqrt(BigRational, Int32)
   href: api/System.Numerics.BigRational.Sqrt.html#System_Numerics_BigRational_Sqrt_System_Numerics_BigRational_System_Int32_

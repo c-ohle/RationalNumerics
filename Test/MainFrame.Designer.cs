@@ -38,8 +38,8 @@
       this.tabPageCalc = new System.Windows.Forms.TabPage();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.button1 = new System.Windows.Forms.Button();
       this.tabPage2 = new System.Windows.Forms.TabPage();
-      this.label5 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.calculatorPage1 = new Test.CalculatorPage();
@@ -52,6 +52,7 @@
       this.tabPagePolyh.SuspendLayout();
       this.tabPageCalc.SuspendLayout();
       this.tabControl1.SuspendLayout();
+      this.tabPage1.SuspendLayout();
       this.tabPageTess.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -132,7 +133,6 @@
       // tabPageCalc
       // 
       this.tabPageCalc.Controls.Add(this.tabControl1);
-      this.tabPageCalc.Controls.Add(this.label5);
       this.tabPageCalc.Controls.Add(this.label4);
       this.tabPageCalc.Controls.Add(this.label3);
       this.tabPageCalc.Controls.Add(this.calculatorPage1);
@@ -158,6 +158,8 @@
       // 
       // tabPage1
       // 
+      this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+      this.tabPage1.Controls.Add(this.button1);
       this.tabPage1.Location = new System.Drawing.Point(4, 29);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -165,6 +167,18 @@
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "History";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // button1
+      // 
+      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button1.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      this.button1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.button1.Location = new System.Drawing.Point(228, 424);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(40, 37);
+      this.button1.TabIndex = 0;
+      this.button1.Text = "";
+      this.button1.UseVisualStyleBackColor = false;
       // 
       // tabPage2
       // 
@@ -175,18 +189,6 @@
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Memory";
       this.tabPage2.UseVisualStyleBackColor = true;
-      // 
-      // label5
-      // 
-      this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label5.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
-      this.label5.Location = new System.Drawing.Point(672, 21);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(321, 24);
-      this.label5.TabIndex = 3;
-      this.label5.Text = "A must for people with much money.";
-      this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.label5.Visible = false;
       // 
       // label4
       // 
@@ -272,6 +274,7 @@
       this.tabPageCalc.ResumeLayout(false);
       this.tabPageCalc.PerformLayout();
       this.tabControl1.ResumeLayout(false);
+      this.tabPage1.ResumeLayout(false);
       this.tabPageTess.ResumeLayout(false);
       this.tabPageTess.PerformLayout();
       this.ResumeLayout(false);
@@ -294,9 +297,9 @@
     private CalculatorPage calculatorPage1;
     private Label label4;
     private MandelbrotPage mandelbrotPage1;
-    private Label label5;
     private TabControl tabControl1;
     private TabPage tabPage1;
     private TabPage tabPage2;
+    private Button button1;
   }
 }

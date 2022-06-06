@@ -38,6 +38,7 @@ namespace Test
           mandelbrotView2.CenterY = mandelbrotView1.CenterY;
           mandelbrotView2.Scaling = mandelbrotView1.Scaling;
           mandelbrotView2.Iterations = mandelbrotView1.Iterations;
+          mandelbrotView2.Lim = mandelbrotView1.Lim;
           if (checkBoxActive2.Checked)
             mandelbrotView2.Start();
         }
