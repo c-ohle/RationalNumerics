@@ -5,8 +5,8 @@ There are no practical limits to the precision except the ones implied by the av
 In difference to the usual implementations of such a class, the new system offers 
 a significantly better performance and better memory usage.  
 This is mainly due to the advantages of a stack machine, which minimizes the need for memory allocations and copies, 
-and which allows to apply more efficient numerical algorithms.  
-The way it works and the [Api Documentation](https://c-ohle.github.io/RationalNumerics/api/System.Numerics.Rational.html)
+and which allows to apply more efficient numerical algorithms.
+The way it works and the [Api Documentation](https://c-ohle.github.io/RationalNumerics/api/System.Numerics.html)
 is available on [github-pages](https://c-ohle.github.io/RationalNumerics/).
 
 As ultimate speed test compared to an ordinary BigRational class based on BigInteger, here the Mandelbrot set.   

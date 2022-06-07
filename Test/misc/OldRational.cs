@@ -78,7 +78,7 @@ namespace Test
     {
       var cpu = BigRational.task_cpu; cpu.push(v); cpu.mod(8);
       if (cpu.sign() < 0) { cpu.neg(0); cpu.neg(1); }
-      return new OldRational { den = (BigInteger)cpu.pop_rat(), num = (BigInteger)cpu.pop_rat() };
+      return new OldRational { den = (BigInteger)cpu.popr(), num = (BigInteger)cpu.popr() };
     }
     public static OldRational operator +(OldRational a)
     {

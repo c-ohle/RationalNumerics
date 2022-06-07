@@ -16,7 +16,7 @@ namespace System.Numerics.Rational
     {
       var cpu = BigRational.task_cpu; cpu.push(a);
       cpu.mod(8); var s = cpu.sign(); cpu.pop();
-      if (s < 0) cpu.neg(); return cpu.pop_rat();
+      if (s < 0) cpu.neg(); return cpu.popr();
     }
     /// <summary>
     /// Returns the denominator of the specified number.
@@ -27,7 +27,7 @@ namespace System.Numerics.Rational
     {
       var cpu = BigRational.task_cpu; cpu.push(a);
       cpu.mod(8); var s = cpu.sign(); cpu.swp(); cpu.pop();
-      if (s < 0) cpu.neg(); return cpu.pop_rat();
+      if (s < 0) cpu.neg(); return cpu.popr();
     }
     /// <summary>
     /// Calculates the factorial of <paramref name="a"/>.
@@ -38,7 +38,7 @@ namespace System.Numerics.Rational
     {
       if (a < 0) throw new ArgumentException();
       var cpu = BigRational.task_cpu; cpu.fac((uint)a);
-      return cpu.pop_rat();
+      return cpu.popr();
     }
     /// <summary>
     /// PI calculation based on Bellard's formula.<br/>
@@ -65,7 +65,7 @@ namespace System.Numerics.Rational
         cpu.mul(); cpu.add(); if ((n & 0x3) == 0x3) cpu.norm();
       }
       cpu.push(64); cpu.div(); cpu.rnd(digits);
-      return cpu.pop_rat();
+      return cpu.popr();
     }
     /// <summary>
     /// Converts a <see cref="BigRational"/> number to a continued fraction<br/>
@@ -116,7 +116,7 @@ namespace System.Numerics.Rational
         }
         cpu.add();
       }
-      return cpu.pop_rat();
+      return cpu.popr();
     }
     /// <summary>
     /// Finds the greatest common divisor (GCD) of two <see cref="BigRational"/> integer values.
@@ -130,7 +130,7 @@ namespace System.Numerics.Rational
     public static BigRational GreatestCommonDivisor(BigRational a, BigRational b)
     {
       var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
-      cpu.gcd(); return cpu.pop_rat();
+      cpu.gcd(); return cpu.popr();
     }
     /// <summary>
     /// Finds the least common multiple (LCM) of two <see cref="BigRational"/> integer values.
@@ -146,7 +146,7 @@ namespace System.Numerics.Rational
       //|a * b| / gcd(a, b) == |a / gcd(a, b) * b|
       var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
       cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
-      return cpu.pop_rat();
+      return cpu.popr();
     }
   }
 }

@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Method pop_int
+    <title>Method popr
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Method pop_int
+    <meta name="title" content="Method popr
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -314,13 +314,13 @@
                                   <a href="System.Numerics.BigRational.CPU.pop.html" title="pop" class="">pop</a>
                                 </li>
                                 <li class="">
-                                  <a href="System.Numerics.BigRational.CPU.pop_dbl.html" title="pop_dbl" class="">pop_dbl</a>
-                                </li>
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.CPU.pop_int.html" title="pop_int" class="active">pop_int</a>
+                                  <a href="System.Numerics.BigRational.CPU.popd.html" title="popd" class="">popd</a>
                                 </li>
                                 <li class="">
-                                  <a href="System.Numerics.BigRational.CPU.pop_rat.html" title="pop_rat" class="">pop_rat</a>
+                                  <a href="System.Numerics.BigRational.CPU.popi.html" title="popi" class="">popi</a>
+                                </li>
+                                <li class="active">
+                                  <a href="System.Numerics.BigRational.CPU.popr.html" title="popr" class="active">popr</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.pow.html" title="pow" class="">pow</a>
@@ -367,29 +367,29 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.pop_int*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.popr*">
 
-<h1 id="System_Numerics_BigRational_CPU_pop_int_" data-uid="System.Numerics.BigRational.CPU.pop_int*">Method pop_int
+<h1 id="System_Numerics_BigRational_CPU_popr_" data-uid="System.Numerics.BigRational.CPU.popr*">Method popr
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_pop_int.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.pop_int%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_popr.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.popr%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1593">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1566">View Source</a>
 </span>
-<a id="System_Numerics_BigRational_CPU_pop_int_" data-uid="System.Numerics.BigRational.CPU.pop_int*"></a>
-<h4 id="System_Numerics_BigRational_CPU_pop_int" data-uid="System.Numerics.BigRational.CPU.pop_int">pop_int()</h4>
+<a id="System_Numerics_BigRational_CPU_popr_" data-uid="System.Numerics.BigRational.CPU.popr*"></a>
+<h4 id="System_Numerics_BigRational_CPU_popr" data-uid="System.Numerics.BigRational.CPU.popr">popr()</h4>
 <div class="markdown level1 summary"><p>Removes the value currently on top of the stack,
-convert the numerator and returns it as <span class="xref">System.Int32</span> value.<br></p>
+convert and returns it as always normalized <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number.<br></p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public int pop_int()</code></pre>
+  <pre><code class="lang-csharp hljs">public BigRational popr()</code></pre>
 </div>
 <h5 class="returns">Returns</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -401,17 +401,12 @@ convert the numerator and returns it as <span class="xref">System.Int32</span> v
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><p>A <span class="xref">System.Int32</span> value.</p>
+      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
+      <td><p>A always normalized <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 id="System_Numerics_BigRational_CPU_pop_int_remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>Only the first 32-bit of the numerator are interpreted and retuned as <span class="xref">System.Int32</span>.<br>
-It conforms to the convention of integer casts like the cast from <span class="xref">System.Int64</span> to <span class="xref">System.Int32</span>.<br>
-The function is intended for the fastest possible access to integer results in the range of <span class="xref">System.Int32</span>.<br></p>
-</div>
 </article>
           </div>
           
@@ -420,10 +415,10 @@ The function is intended for the fastest possible access to integer results in t
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_pop_int_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.pop_int*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_popr_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.popr*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1593" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1566" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

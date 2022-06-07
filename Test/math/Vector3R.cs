@@ -90,16 +90,16 @@ namespace System.Numerics.Rational
     public static Vector3R operator ^(in Vector3R a, in Vector3R b) => Cross(a, b);
     public static BigRational LengthSq(in Vector3R a)
     {
-      var cpu = BigRational.task_cpu; cpu.dot(a, a); return cpu.pop_rat();
+      var cpu = BigRational.task_cpu; cpu.dot(a, a); return cpu.popr();
     }
     public static double Length(in Vector3R a)
     {
-      var cpu = BigRational.task_cpu; cpu.dot(a, a); return Math.Sqrt(cpu.pop_dbl());
+      var cpu = BigRational.task_cpu; cpu.dot(a, a); return Math.Sqrt(cpu.popd());
     }
     public static BigRational Dot(in Vector3R a, in Vector3R b)
     {
       //return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
-      var cpu = BigRational.task_cpu; cpu.dot(a, b); return cpu.pop_rat();
+      var cpu = BigRational.task_cpu; cpu.dot(a, b); return cpu.popr();
     }
     public static Vector3R Cross(in Vector3R a, in Vector3R b)
     {
@@ -111,7 +111,7 @@ namespace System.Numerics.Rational
       cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub();
       cpu.mul(a.Z, b.X); cpu.mul(a.X, b.Z); cpu.sub();
       cpu.mul(a.Y, b.Z); cpu.mul(a.Z, b.Y); cpu.sub();
-      return new Vector3R(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
+      return new Vector3R(cpu.popr(), cpu.popr(), cpu.popr());
     }
     public static Vector3R Normalize(in Vector3R v)
     {
@@ -119,7 +119,7 @@ namespace System.Numerics.Rational
       //var s = BigRational.Sign(l); if (s < 0) l = -l;
       //return new Vector3R(i == 0 ? s : v.X / l, i == 1 ? s : v.Y / l, i == 2 ? s : v.Z / l);      
       var cpu = BigRational.task_cpu; cpu.push(v.Z); cpu.push(v.Y); cpu.push(v.X);
-      cpu.norm3(); return new Vector3R(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
+      cpu.norm3(); return new Vector3R(cpu.popr(), cpu.popr(), cpu.popr());
     }
     public static int LongAxis(in Vector3R a)
     {
@@ -154,7 +154,7 @@ namespace System.Numerics.Rational
       cpu.dot(a.X, b.M13, a.Y, b.M23, a.Z, b.M33, b.M43);
       cpu.dot(a.X, b.M12, a.Y, b.M22, a.Z, b.M32, b.M42);
       cpu.dot(a.X, b.M11, a.Y, b.M21, a.Z, b.M31, b.M41);
-      return new Vector3R(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
+      return new Vector3R(cpu.popr(), cpu.popr(), cpu.popr());
     }
     public static int PtInline(in Vector3R a, in Vector3R b, in Vector3R c)
     {

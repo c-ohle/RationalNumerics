@@ -90,22 +90,22 @@ namespace System.Numerics.Rational
     public static BigRational Dot(in Vector2R a, in Vector2R b)
     {
       //return a.X * b.X + a.Y * b.Y;
-      var cpu = BigRational.task_cpu; cpu.dot(a, b); return cpu.pop_rat();
+      var cpu = BigRational.task_cpu; cpu.dot(a, b); return cpu.popr();
     }
     public static BigRational Cross(in Vector2R a, in Vector2R b)
     {
       //return a.X * b.Y - a.Y * b.X;
       var cpu = BigRational.task_cpu;
       cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub();
-      return cpu.pop_rat();
+      return cpu.popr();
     }
     public static BigRational LengthSq(in Vector2R a)
     {
-      var cpu = BigRational.task_cpu; cpu.dot(a, a); return cpu.pop_rat();
+      var cpu = BigRational.task_cpu; cpu.dot(a, a); return cpu.popr();
     }
     public static double Length(in Vector2R a)
     {
-      var cpu = BigRational.task_cpu; cpu.dot(a, a); return Math.Sqrt(cpu.pop_dbl());
+      var cpu = BigRational.task_cpu; cpu.dot(a, a); return Math.Sqrt(cpu.popd());
     }
     public static Vector2R Min(in Vector2R a, in Vector2R b)
     {

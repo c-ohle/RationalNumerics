@@ -187,7 +187,7 @@ namespace System.Numerics
         {
           if (x + 3 > ws.Length) { cpu.pop(i); ws = default; return; }
           cpu.push(10u); cpu.div(); cpu.mod(); cpu.swp();
-          ws[x++] = (char)('0' + cpu.pop_int());
+          ws[x++] = (char)('0' + cpu.popi());
           if (cpu.sign() != 0) continue;
           cpu.pop(); if (--i == 0) break; ws[x++] = '/';
         }
@@ -248,7 +248,7 @@ namespace System.Numerics
         if (c == '-') { cpu.neg(2); continue; } // a = -a;
         if ((c | 0x20) == 'e')
         {
-          cpu.pop(2); cpu.pow(10, cpu.pop_int()); cpu.swp(); // p = pow10(a); 
+          cpu.pop(2); cpu.pow(10, cpu.popi()); cpu.swp(); // p = pow10(a); 
           cpu.push(); cpu.push(1u); continue; // b = 0; e = 1;
         }
         if (c == '\'')
@@ -265,7 +265,7 @@ namespace System.Numerics
       }
       cpu.pop(); if (cpu.sign() != 0) cpu.div(); else cpu.pop(); // if (b.sign != 0) a /= b;
       cpu.swp(); if (cpu.sign() != 0) cpu.mul(); else cpu.pop(); // if (p.sign != 0) a *= p; 
-      return cpu.pop_rat();
+      return cpu.popr();
     }
     /// <summary>
     /// Copies the value of this <see cref="BigRational"/> as little-endian twos-complement bytes.<br/>
@@ -405,7 +405,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public BigRational(float value)
     {
-      var cpu = task_cpu; cpu.push(value, true); p = cpu.pop_rat().p;
+      var cpu = task_cpu; cpu.push(value, true); p = cpu.popr().p;
     }
     /// <summary>
     /// Defines an explicit bit-exact conversion of a <see cref="double"/> value to a <see cref="BigRational"/> value.
@@ -422,7 +422,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public BigRational(double v)
     {
-      var cpu = task_cpu; cpu.push(v, true); p = cpu.pop_rat().p;
+      var cpu = task_cpu; cpu.push(v, true); p = cpu.popr().p;
     }
 
     /// <summary>
@@ -433,7 +433,7 @@ namespace System.Numerics
     public static implicit operator BigRational(int value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="uint"/> object to a <see cref="BigRational"/> value.
@@ -443,7 +443,7 @@ namespace System.Numerics
     public static implicit operator BigRational(uint value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="long"/> object to a <see cref="BigRational"/> value.
@@ -453,7 +453,7 @@ namespace System.Numerics
     public static implicit operator BigRational(long value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="ulong"/> object to a <see cref="BigRational"/> value.
@@ -463,7 +463,7 @@ namespace System.Numerics
     public static implicit operator BigRational(ulong value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="float"/> object to a <see cref="BigRational"/> value.
@@ -478,7 +478,7 @@ namespace System.Numerics
     public static implicit operator BigRational(float value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="double"/> object to a <see cref="BigRational"/> value.
@@ -493,7 +493,7 @@ namespace System.Numerics
     public static implicit operator BigRational(double value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="decimal"/> object to a <see cref="BigRational"/> value.
@@ -502,7 +502,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public static implicit operator BigRational(decimal value)
     {
-      var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="BigInteger"/> object to a <see cref="BigRational"/> value.
@@ -511,7 +511,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public static implicit operator BigRational(BigInteger value)
     {
-      var cpu = task_cpu; cpu.push(value); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
 
     /// <summary>
@@ -624,7 +624,7 @@ namespace System.Numerics
     /// <returns>The result of the value parameter multiplied by negative one (-1).</returns>
     public static BigRational operator -(BigRational a)
     {
-      var cpu = task_cpu; cpu.push(a); cpu.neg(); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(a); cpu.neg(); return cpu.popr();
     }
     /// <summary>
     /// Adds the values of two specified <see cref="BigRational"/> numbers.
@@ -634,7 +634,7 @@ namespace System.Numerics
     /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
     public static BigRational operator +(BigRational a, BigRational b)
     {
-      var cpu = task_cpu; cpu.add(a, b); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.add(a, b); return cpu.popr();
     }
     /// <summary>
     /// Subtracts a <see cref="BigRational"/> value from another <see cref="BigRational"/> value.
@@ -644,7 +644,7 @@ namespace System.Numerics
     /// <returns>The result of subtracting b from a.</returns>
     public static BigRational operator -(BigRational a, BigRational b)
     {
-      var cpu = task_cpu; cpu.sub(a, b); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.sub(a, b); return cpu.popr();
     }
     /// <summary>
     /// Multiplies two specified <see cref="BigRational"/> values.
@@ -654,7 +654,7 @@ namespace System.Numerics
     /// <returns>The product of left and right.</returns>
     public static BigRational operator *(BigRational a, BigRational b)
     {
-      var cpu = task_cpu; cpu.mul(a, b); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.mul(a, b); return cpu.popr();
     }
     /// <summary>
     /// Divides a specified <see cref="BigRational"/> value by another specified <see cref="BigRational"/> value.
@@ -666,7 +666,7 @@ namespace System.Numerics
     public static BigRational operator /(BigRational a, BigRational b)
     {
       if (b.p == null) throw new DivideByZeroException(nameof(b));
-      var cpu = task_cpu; cpu.div(a, b); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.div(a, b); return cpu.popr();
     }
     /// <summary>
     /// Returns the remainder that results from division with two specified <see cref="BigRational"/> values.
@@ -685,7 +685,7 @@ namespace System.Numerics
       var cpu = task_cpu; //todo: % optimization for integers
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
       cpu.mul(b); cpu.neg(); cpu.add(a);
-      return cpu.pop_rat();
+      return cpu.popr();
     }
 
     /// <summary>
@@ -766,7 +766,7 @@ namespace System.Numerics
     /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
     public static BigRational operator +(BigRational a, long b)
     {
-      var cpu = task_cpu; cpu.push(b); cpu.add(a); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(b); cpu.add(a); return cpu.popr();
     }
     /// <summary>
     /// Subtracts the values of a specified <see cref="BigRational"/> from another <see cref="long"/> value.
@@ -794,7 +794,7 @@ namespace System.Numerics
     /// <returns>The product of left and right.</returns>
     public static BigRational operator *(BigRational a, long b)
     {
-      var cpu = task_cpu; cpu.push(b); cpu.mul(a); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(b); cpu.mul(a); return cpu.popr();
     }
     /// <summary>
     /// Divides the values of a specified <see cref="BigRational"/> and a <see cref="long"/> number.
@@ -810,7 +810,7 @@ namespace System.Numerics
     public static BigRational operator /(BigRational a, long b)
     {
       if (b == 0) throw new DivideByZeroException(nameof(b));
-      var cpu = task_cpu; cpu.push(b); cpu.div(a, 0); cpu.swp(); cpu.pop(); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(b); cpu.div(a, 0); cpu.swp(); cpu.pop(); return cpu.popr();
     }
     /// <summary>
     /// Adds the values of a specified <see cref="long"/> and a <see cref="BigRational"/> number.
@@ -838,7 +838,7 @@ namespace System.Numerics
     /// <returns>The result of subtracting b from a.</returns>
     public static BigRational operator -(long a, BigRational b)
     {
-      var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.sub(); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.sub(); return cpu.popr();
     }
     /// <summary>
     /// Multiplies the values of a specified <see cref="long"/> and a <see cref="BigRational"/> number.
@@ -868,7 +868,7 @@ namespace System.Numerics
     public static BigRational operator /(long a, BigRational b)
     {
       if (b.p == null) throw new DivideByZeroException(nameof(b));
-      var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.div(); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.div(); return cpu.popr();
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="BigRational"/> value and
@@ -1057,7 +1057,7 @@ namespace System.Numerics
     public static BigRational Truncate(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0, 0); return cpu.pop_rat();
+      cpu.rnd(0, 0); return cpu.popr();
     }
     /// <summary>
     /// Rounds a specified <see cref="BigRational"/> number to the closest integer toward negative infinity.
@@ -1071,7 +1071,7 @@ namespace System.Numerics
     public static BigRational Floor(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0, cpu.sign() >= 0 ? 0 : 4); return cpu.pop_rat();
+      cpu.rnd(0, cpu.sign() >= 0 ? 0 : 4); return cpu.popr();
     }
     /// <summary>
     /// Returns the smallest integral value that is greater than or equal to the specified number.
@@ -1083,7 +1083,7 @@ namespace System.Numerics
     public static BigRational Ceiling(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0, cpu.sign() < 0 ? 0 : 4); return cpu.pop_rat();
+      cpu.rnd(0, cpu.sign() < 0 ? 0 : 4); return cpu.popr();
     }
     /// <summary>
     /// Rounds a <see cref="BigRational"/> number to the nearest integral value
@@ -1094,7 +1094,7 @@ namespace System.Numerics
     public static BigRational Round(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0, 1); return cpu.pop_rat();
+      cpu.rnd(0, 1); return cpu.popr();
     }
     /// <summary>
     /// Rounds a <see cref="BigRational"/> number to a specified number of fractional
@@ -1107,7 +1107,7 @@ namespace System.Numerics
     {
       //var e = Pow10(digits); return Round(a * e) / e;
       var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(digits); return cpu.pop_rat();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Rounds a <see cref="BigRational"/> number to a specified number of fractional digits 
@@ -1130,7 +1130,7 @@ namespace System.Numerics
         case MidpointRounding.ToNegativeInfinity: if (Sign(a) > 0) f = 0; else f = 4; break;
       }
       var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(digits, f); return cpu.pop_rat();
+      cpu.rnd(digits, f); return cpu.popr();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.
@@ -1140,7 +1140,7 @@ namespace System.Numerics
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
     public static BigRational Pow(int a, int b)
     {
-      var cpu = task_cpu; cpu.pow(a, b); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.pow(a, b); return cpu.popr();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.
@@ -1150,7 +1150,7 @@ namespace System.Numerics
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
     public static BigRational Pow(BigRational a, int b)
     {
-      var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.pop_rat();
+      var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.popr();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.<br/>
@@ -1171,7 +1171,7 @@ namespace System.Numerics
       cpu.push(x); cpu.log(c);
       cpu.push(y); cpu.mul(); cpu.exp(c);
       cpu.rnd(digits);
-      return cpu.pop_rat();
+      return cpu.popr();
     }
     /// <summary>
     /// Returns the square root of a specified number.
@@ -1189,7 +1189,7 @@ namespace System.Numerics
       var cpu = task_cpu; //var x = Math.ILogB(Math.Pow(10, digits)) + 1;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop(); //if (x != c) { }
       cpu.push(a); cpu.sqrt(c); cpu.rnd(digits);
-      return cpu.pop_rat();
+      return cpu.popr();
     }
     /// <summary>
     /// Returns the natural base 2 logarithm of a specified number.
@@ -1204,7 +1204,7 @@ namespace System.Numerics
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
       cpu.push(x); cpu.log2(c);
-      cpu.rnd(digits); return cpu.pop_rat();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the natural (base e) logarithm of a specified number.
@@ -1219,7 +1219,7 @@ namespace System.Numerics
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
       cpu.push(x); cpu.log(c);
-      cpu.rnd(digits); return cpu.pop_rat();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns e raised to the specified power.
@@ -1232,7 +1232,7 @@ namespace System.Numerics
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
       cpu.push(x); cpu.exp(c);
-      cpu.rnd(digits); return cpu.pop_rat();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Calculates π rounded to the specified number of decimal digits.<br/>
@@ -1246,7 +1246,7 @@ namespace System.Numerics
     {
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.pi(c); cpu.rnd(digits); return cpu.pop_rat();
+      cpu.pi(c); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// 
@@ -1259,7 +1259,7 @@ namespace System.Numerics
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
       cpu.push(x); cpu.sin(c, false);
-      cpu.rnd(digits); return cpu.pop_rat();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the cosine of the specified angle.
@@ -1272,7 +1272,7 @@ namespace System.Numerics
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
       cpu.push(x); cpu.sin(c, true);
-      cpu.rnd(digits); return cpu.pop_rat();
+      cpu.rnd(digits); return cpu.popr();
     }
 
     /// <summary>
@@ -1563,7 +1563,7 @@ namespace System.Numerics
       /// convert and returns it as always normalized <see cref="BigRational"/> number.<br/>
       /// </summary>
       /// <returns>A always normalized <see cref="BigRational"/> number.</returns>
-      public BigRational pop_rat()
+      public BigRational popr()
       {
         get(unchecked((uint)(i - 1)), out BigRational t); pop(); return t;
       }
@@ -1576,7 +1576,7 @@ namespace System.Numerics
       /// is returned in case of out of range as the <see cref="double"/> precision is limited. 
       /// </remarks>
       /// <returns>A <see cref="double"/> value.</returns>
-      public double pop_dbl()
+      public double popd()
       {
         get(unchecked((uint)(i - 1)), out double t); pop(); return t;
       }
@@ -1590,7 +1590,7 @@ namespace System.Numerics
       /// The function is intended for the fastest possible access to integer results in the range of <see cref="int"/>.<br/>
       /// </remarks>
       /// <returns>A <see cref="int"/> value.</returns>
-      public int pop_int()
+      public int popi()
       {
         fixed (uint* u = p[i - 1])
         {

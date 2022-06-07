@@ -100,18 +100,18 @@ namespace System.Numerics.Rational
       //m.M43 = a.M41 * b.M13 + a.M42 * b.M23 + a.M43 * b.M33 + b.M43;
       //return m;
       var cpu = BigRational.task_cpu; Matrix4x3R c;
-      cpu.dot(a.M11, b.M11, a.M12, b.M21, a.M13, b.M31); c.M11 = cpu.pop_rat();
-      cpu.dot(a.M11, b.M12, a.M12, b.M22, a.M13, b.M32); c.M12 = cpu.pop_rat();
-      cpu.dot(a.M11, b.M13, a.M12, b.M23, a.M13, b.M33); c.M13 = cpu.pop_rat();
-      cpu.dot(a.M21, b.M11, a.M22, b.M21, a.M23, b.M31); c.M21 = cpu.pop_rat();
-      cpu.dot(a.M21, b.M12, a.M22, b.M22, a.M23, b.M32); c.M22 = cpu.pop_rat();
-      cpu.dot(a.M21, b.M13, a.M22, b.M23, a.M23, b.M33); c.M23 = cpu.pop_rat();
-      cpu.dot(a.M31, b.M11, a.M32, b.M21, a.M33, b.M31); c.M31 = cpu.pop_rat();
-      cpu.dot(a.M31, b.M12, a.M32, b.M22, a.M33, b.M32); c.M32 = cpu.pop_rat();
-      cpu.dot(a.M31, b.M13, a.M32, b.M23, a.M33, b.M33); c.M33 = cpu.pop_rat();
-      cpu.dot(a.M41, b.M11, a.M42, b.M21, a.M43, b.M31, b.M41); c.M41 = cpu.pop_rat();
-      cpu.dot(a.M41, b.M12, a.M42, b.M22, a.M43, b.M32, b.M42); c.M42 = cpu.pop_rat();
-      cpu.dot(a.M41, b.M13, a.M42, b.M23, a.M43, b.M33, b.M43); c.M43 = cpu.pop_rat();
+      cpu.dot(a.M11, b.M11, a.M12, b.M21, a.M13, b.M31); c.M11 = cpu.popr();
+      cpu.dot(a.M11, b.M12, a.M12, b.M22, a.M13, b.M32); c.M12 = cpu.popr();
+      cpu.dot(a.M11, b.M13, a.M12, b.M23, a.M13, b.M33); c.M13 = cpu.popr();
+      cpu.dot(a.M21, b.M11, a.M22, b.M21, a.M23, b.M31); c.M21 = cpu.popr();
+      cpu.dot(a.M21, b.M12, a.M22, b.M22, a.M23, b.M32); c.M22 = cpu.popr();
+      cpu.dot(a.M21, b.M13, a.M22, b.M23, a.M23, b.M33); c.M23 = cpu.popr();
+      cpu.dot(a.M31, b.M11, a.M32, b.M21, a.M33, b.M31); c.M31 = cpu.popr();
+      cpu.dot(a.M31, b.M12, a.M32, b.M22, a.M33, b.M32); c.M32 = cpu.popr();
+      cpu.dot(a.M31, b.M13, a.M32, b.M23, a.M33, b.M33); c.M33 = cpu.popr();
+      cpu.dot(a.M41, b.M11, a.M42, b.M21, a.M43, b.M31, b.M41); c.M41 = cpu.popr();
+      cpu.dot(a.M41, b.M12, a.M42, b.M22, a.M43, b.M32, b.M42); c.M42 = cpu.popr();
+      cpu.dot(a.M41, b.M13, a.M42, b.M23, a.M43, b.M33, b.M43); c.M43 = cpu.popr();
       return c;
     }
     public static Matrix4x3R operator !(in Matrix4x3R a)
@@ -166,12 +166,12 @@ namespace System.Numerics.Rational
       cpu.crdot(a.M11, m + 02, a.M12, m + 01, a.M13, m + 00);
       cpu.crdot(a.M41, m + 10, a.M42, m + 09, a.M43, m + 08);
       Matrix4x3R b;
-      cpu.div(m + 03, m + 7); b.M11 = cpu.pop_rat(); cpu.div(m + 11, m + 7); cpu.neg(); b.M12 = cpu.pop_rat();
-      cpu.div(m + 10, m + 7); b.M13 = cpu.pop_rat(); cpu.div(m + 04, m + 7); cpu.neg(); b.M21 = cpu.pop_rat();
-      cpu.div(m + 12, m + 7); b.M22 = cpu.pop_rat(); cpu.div(m + 09, m + 7); cpu.neg(); b.M23 = cpu.pop_rat();
-      cpu.div(m + 05, m + 7); b.M31 = cpu.pop_rat(); cpu.div(m + 13, m + 7); cpu.neg(); b.M32 = cpu.pop_rat();
-      cpu.div(m + 08, m + 7); b.M33 = cpu.pop_rat(); cpu.div(m + 06, m + 7); cpu.neg(); b.M41 = cpu.pop_rat();
-      cpu.div(m + 14, m + 7); b.M42 = cpu.pop_rat(); cpu.div(m + 15, m + 7); cpu.neg(); b.M43 = cpu.pop_rat();
+      cpu.div(m + 03, m + 7); b.M11 = cpu.popr(); cpu.div(m + 11, m + 7); cpu.neg(); b.M12 = cpu.popr();
+      cpu.div(m + 10, m + 7); b.M13 = cpu.popr(); cpu.div(m + 04, m + 7); cpu.neg(); b.M21 = cpu.popr();
+      cpu.div(m + 12, m + 7); b.M22 = cpu.popr(); cpu.div(m + 09, m + 7); cpu.neg(); b.M23 = cpu.popr();
+      cpu.div(m + 05, m + 7); b.M31 = cpu.popr(); cpu.div(m + 13, m + 7); cpu.neg(); b.M32 = cpu.popr();
+      cpu.div(m + 08, m + 7); b.M33 = cpu.popr(); cpu.div(m + 06, m + 7); cpu.neg(); b.M41 = cpu.popr();
+      cpu.div(m + 14, m + 7); b.M42 = cpu.popr(); cpu.div(m + 15, m + 7); cpu.neg(); b.M43 = cpu.popr();
       cpu.pop(16); return b;
 #endif
     }

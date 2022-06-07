@@ -89,14 +89,14 @@ namespace System.Numerics.Rational
       cpu.dot(a); cpu.neg(); // d = -dot(n, a)
       //fetch
       cpu.swp(0, 3); cpu.swp(1, 2);
-      var p = new PlaneR(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
+      var p = new PlaneR(cpu.popr(), cpu.popr(), cpu.popr(), cpu.popr());
       cpu.pop(6); return p;
     }
     public static BigRational DotCoord(in PlaneR a, in Vector3R b)
     {
       //return Vector3R.Dot(a.N, b) + a.D;
       var cpu = BigRational.task_cpu; cpu.dot(a.Normal, b); cpu.add(a.Dist);
-      return cpu.pop_rat();
+      return cpu.popr();
     }
     public static int DotCoordSign(in PlaneR a, in Vector3R b)
     {
@@ -119,7 +119,7 @@ namespace System.Numerics.Rational
       cpu.sub(b.Z, a.Z); cpu.mul(0, 1); cpu.add(a.Z);
       cpu.sub(b.Y, a.Y); cpu.mul(0, 2); cpu.add(a.Y);
       cpu.sub(b.X, a.X); cpu.mul(0, 3); cpu.add(a.X);
-      var p = new Vector3R(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
+      var p = new Vector3R(cpu.popr(), cpu.popr(), cpu.popr());
       cpu.pop(3); return p;
     }
     public static PlaneR Transform(in PlaneR a, in Matrix4x3R b)
@@ -135,7 +135,7 @@ namespace System.Numerics.Rational
       cpu.dot(a.Normal.X, m.M31, a.Normal.Y, m.M32, a.Normal.Z, m.M33);
       cpu.dot(a.Normal.X, m.M21, a.Normal.Y, m.M22, a.Normal.Z, m.M23);
       cpu.dot(a.Normal.X, m.M11, a.Normal.Y, m.M12, a.Normal.Z, m.M13);
-      return new PlaneR(cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat(), cpu.pop_rat());
+      return new PlaneR(cpu.popr(), cpu.popr(), cpu.popr(), cpu.popr());
     }
   }
 }
