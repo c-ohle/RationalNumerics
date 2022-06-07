@@ -56,20 +56,25 @@
       System.Windows.Forms.Button button25;
       System.Windows.Forms.Button button26;
       System.Windows.Forms.Button button27;
-      System.Windows.Forms.Button button28;
-      System.Windows.Forms.Button button29;
+      System.Windows.Forms.Button btn_sin;
+      System.Windows.Forms.Button btn_cos;
       System.Windows.Forms.Button button30;
       System.Windows.Forms.Button button33;
       System.Windows.Forms.Button button34;
       System.Windows.Forms.Button button35;
       System.Windows.Forms.Button button36;
       System.Windows.Forms.Button button37;
+      System.Windows.Forms.Button button38;
+      System.Windows.Forms.Button btn_tan;
+      System.Windows.Forms.Button btn_cot;
+      System.Windows.Forms.Button button28;
+      System.Windows.Forms.Button button29;
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.numericUpDownDigits = new System.Windows.Forms.NumericUpDown();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.button_rat = new System.Windows.Forms.Button();
-      this.button31 = new System.Windows.Forms.Button();
+      this.btn_rad = new System.Windows.Forms.Button();
       this.button32 = new System.Windows.Forms.Button();
       this.label2 = new System.Windows.Forms.Label();
       button1 = new System.Windows.Forms.Button();
@@ -99,14 +104,19 @@
       button25 = new System.Windows.Forms.Button();
       button26 = new System.Windows.Forms.Button();
       button27 = new System.Windows.Forms.Button();
-      button28 = new System.Windows.Forms.Button();
-      button29 = new System.Windows.Forms.Button();
+      btn_sin = new System.Windows.Forms.Button();
+      btn_cos = new System.Windows.Forms.Button();
       button30 = new System.Windows.Forms.Button();
       button33 = new System.Windows.Forms.Button();
       button34 = new System.Windows.Forms.Button();
       button35 = new System.Windows.Forms.Button();
       button36 = new System.Windows.Forms.Button();
       button37 = new System.Windows.Forms.Button();
+      button38 = new System.Windows.Forms.Button();
+      btn_tan = new System.Windows.Forms.Button();
+      btn_cot = new System.Windows.Forms.Button();
+      button28 = new System.Windows.Forms.Button();
+      button29 = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDigits)).BeginInit();
       this.SuspendLayout();
       // 
@@ -117,7 +127,7 @@
       button1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button1.Name = "button1";
       button1.Size = new System.Drawing.Size(106, 45);
-      button1.TabIndex = 0;
+      button1.TabIndex = 23;
       button1.Tag = "7";
       button1.Text = "7";
       button1.UseVisualStyleBackColor = true;
@@ -130,7 +140,7 @@
       button2.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button2.Name = "button2";
       button2.Size = new System.Drawing.Size(106, 45);
-      button2.TabIndex = 0;
+      button2.TabIndex = 24;
       button2.Tag = "8";
       button2.Text = "8";
       button2.UseVisualStyleBackColor = true;
@@ -143,7 +153,7 @@
       button3.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button3.Name = "button3";
       button3.Size = new System.Drawing.Size(106, 45);
-      button3.TabIndex = 0;
+      button3.TabIndex = 25;
       button3.Tag = "9";
       button3.Text = "9";
       button3.UseVisualStyleBackColor = true;
@@ -156,7 +166,7 @@
       button4.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button4.Name = "button4";
       button4.Size = new System.Drawing.Size(106, 45);
-      button4.TabIndex = 0;
+      button4.TabIndex = 28;
       button4.Tag = "4";
       button4.Text = "4";
       button4.UseVisualStyleBackColor = true;
@@ -169,7 +179,7 @@
       button5.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button5.Name = "button5";
       button5.Size = new System.Drawing.Size(106, 45);
-      button5.TabIndex = 0;
+      button5.TabIndex = 29;
       button5.Tag = "5";
       button5.Text = "5";
       button5.UseVisualStyleBackColor = true;
@@ -182,7 +192,7 @@
       button6.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button6.Name = "button6";
       button6.Size = new System.Drawing.Size(106, 45);
-      button6.TabIndex = 0;
+      button6.TabIndex = 30;
       button6.Tag = "6";
       button6.Text = "6";
       button6.UseVisualStyleBackColor = true;
@@ -195,7 +205,7 @@
       button7.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button7.Name = "button7";
       button7.Size = new System.Drawing.Size(106, 45);
-      button7.TabIndex = 0;
+      button7.TabIndex = 33;
       button7.Tag = "3";
       button7.Text = "3";
       button7.UseVisualStyleBackColor = true;
@@ -208,7 +218,7 @@
       button8.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button8.Name = "button8";
       button8.Size = new System.Drawing.Size(106, 45);
-      button8.TabIndex = 0;
+      button8.TabIndex = 34;
       button8.Tag = "2";
       button8.Text = "2";
       button8.UseVisualStyleBackColor = true;
@@ -221,7 +231,7 @@
       button9.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button9.Name = "button9";
       button9.Size = new System.Drawing.Size(106, 45);
-      button9.TabIndex = 0;
+      button9.TabIndex = 35;
       button9.Tag = "1";
       button9.Text = "1";
       button9.UseVisualStyleBackColor = true;
@@ -235,7 +245,7 @@
       button10.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button10.Name = "button10";
       button10.Size = new System.Drawing.Size(106, 45);
-      button10.TabIndex = 0;
+      button10.TabIndex = 38;
       button10.Tag = "±";
       button10.Text = "⁺∕₋";
       button10.UseVisualStyleBackColor = false;
@@ -248,7 +258,7 @@
       button11.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button11.Name = "button11";
       button11.Size = new System.Drawing.Size(106, 45);
-      button11.TabIndex = 0;
+      button11.TabIndex = 39;
       button11.Tag = "0";
       button11.Text = "0";
       button11.UseVisualStyleBackColor = true;
@@ -261,8 +271,8 @@
       button12.Location = new System.Drawing.Point(511, 442);
       button12.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button12.Name = "button12";
-      button12.Size = new System.Drawing.Size(106, 45);
-      button12.TabIndex = 0;
+      button12.Size = new System.Drawing.Size(79, 45);
+      button12.TabIndex = 40;
       button12.Tag = ".";
       button12.Text = ".";
       button12.UseVisualStyleBackColor = false;
@@ -276,7 +286,7 @@
       button13.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button13.Name = "button13";
       button13.Size = new System.Drawing.Size(106, 45);
-      button13.TabIndex = 0;
+      button13.TabIndex = 26;
       button13.Tag = "*";
       button13.Text = "×";
       button13.UseVisualStyleBackColor = false;
@@ -290,7 +300,7 @@
       button14.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button14.Name = "button14";
       button14.Size = new System.Drawing.Size(106, 45);
-      button14.TabIndex = 0;
+      button14.TabIndex = 31;
       button14.Tag = "-";
       button14.Text = "-";
       button14.UseVisualStyleBackColor = false;
@@ -304,7 +314,7 @@
       button15.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button15.Name = "button15";
       button15.Size = new System.Drawing.Size(106, 45);
-      button15.TabIndex = 0;
+      button15.TabIndex = 36;
       button15.Tag = "+";
       button15.Text = "+";
       button15.UseVisualStyleBackColor = false;
@@ -318,7 +328,7 @@
       button16.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button16.Name = "button16";
       button16.Size = new System.Drawing.Size(106, 45);
-      button16.TabIndex = 0;
+      button16.TabIndex = 42;
       button16.Tag = "=";
       button16.Text = "=";
       button16.UseVisualStyleBackColor = false;
@@ -332,7 +342,7 @@
       button17.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button17.Name = "button17";
       button17.Size = new System.Drawing.Size(106, 45);
-      button17.TabIndex = 0;
+      button17.TabIndex = 21;
       button17.Tag = "/";
       button17.Text = "÷";
       button17.UseVisualStyleBackColor = false;
@@ -346,7 +356,7 @@
       button18.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button18.Name = "button18";
       button18.Size = new System.Drawing.Size(106, 45);
-      button18.TabIndex = 0;
+      button18.TabIndex = 18;
       button18.Tag = "(";
       button18.Text = "(";
       button18.UseVisualStyleBackColor = false;
@@ -360,7 +370,7 @@
       button19.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button19.Name = "button19";
       button19.Size = new System.Drawing.Size(106, 45);
-      button19.TabIndex = 0;
+      button19.TabIndex = 19;
       button19.Tag = ")";
       button19.Text = ")";
       button19.UseVisualStyleBackColor = false;
@@ -374,8 +384,8 @@
       button20.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button20.Name = "button20";
       button20.Size = new System.Drawing.Size(106, 45);
-      button20.TabIndex = 0;
-      button20.Tag = "!";
+      button20.TabIndex = 20;
+      button20.Tag = "fact";
       button20.Text = "n!";
       button20.UseVisualStyleBackColor = false;
       button20.Click += new System.EventHandler(this.button_Click);
@@ -388,7 +398,7 @@
       button21.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button21.Name = "button21";
       button21.Size = new System.Drawing.Size(106, 45);
-      button21.TabIndex = 0;
+      button21.TabIndex = 11;
       button21.Tag = "«";
       button21.Text = "";
       button21.UseVisualStyleBackColor = false;
@@ -402,7 +412,7 @@
       button22.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button22.Name = "button22";
       button22.Size = new System.Drawing.Size(106, 45);
-      button22.TabIndex = 0;
+      button22.TabIndex = 8;
       button22.Tag = "π";
       button22.Text = "π";
       button22.UseVisualStyleBackColor = false;
@@ -416,7 +426,7 @@
       button23.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button23.Name = "button23";
       button23.Size = new System.Drawing.Size(106, 45);
-      button23.TabIndex = 0;
+      button23.TabIndex = 9;
       button23.Tag = "℮";
       button23.Text = "℮";
       button23.UseVisualStyleBackColor = false;
@@ -430,7 +440,7 @@
       button24.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button24.Name = "button24";
       button24.Size = new System.Drawing.Size(106, 45);
-      button24.TabIndex = 0;
+      button24.TabIndex = 10;
       button24.Tag = "CE";
       button24.Text = "CE";
       button24.UseVisualStyleBackColor = false;
@@ -444,8 +454,8 @@
       button25.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button25.Name = "button25";
       button25.Size = new System.Drawing.Size(106, 45);
-      button25.TabIndex = 0;
-      button25.Tag = "√";
+      button25.TabIndex = 17;
+      button25.Tag = "sqrt";
       button25.Text = "√";
       button25.UseVisualStyleBackColor = false;
       button25.Click += new System.EventHandler(this.button_Click);
@@ -458,8 +468,8 @@
       button26.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button26.Name = "button26";
       button26.Size = new System.Drawing.Size(106, 45);
-      button26.TabIndex = 0;
-      button26.Tag = "²";
+      button26.TabIndex = 12;
+      button26.Tag = "sqr";
       button26.Text = "x²";
       button26.UseVisualStyleBackColor = false;
       button26.Click += new System.EventHandler(this.button_Click);
@@ -472,50 +482,50 @@
       button27.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button27.Name = "button27";
       button27.Size = new System.Drawing.Size(106, 45);
-      button27.TabIndex = 0;
-      button27.Tag = "log";
+      button27.TabIndex = 27;
+      button27.Tag = "ln";
       button27.Text = "ln";
       button27.UseVisualStyleBackColor = false;
       button27.Click += new System.EventHandler(this.button_Click);
       // 
-      // button28
+      // btn_sin
       // 
-      button28.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      button28.BackColor = System.Drawing.SystemColors.InactiveBorder;
-      button28.Location = new System.Drawing.Point(164, 388);
-      button28.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-      button28.Name = "button28";
-      button28.Size = new System.Drawing.Size(106, 45);
-      button28.TabIndex = 0;
-      button28.Tag = "sin";
-      button28.Text = "sin";
-      button28.UseVisualStyleBackColor = false;
-      button28.Click += new System.EventHandler(this.button_Click);
+      btn_sin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      btn_sin.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      btn_sin.Location = new System.Drawing.Point(164, 388);
+      btn_sin.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      btn_sin.Name = "btn_sin";
+      btn_sin.Size = new System.Drawing.Size(106, 45);
+      btn_sin.TabIndex = 32;
+      btn_sin.Tag = "sin";
+      btn_sin.Text = "sin";
+      btn_sin.UseVisualStyleBackColor = false;
+      btn_sin.Click += new System.EventHandler(this.button_Click);
       // 
-      // button29
+      // btn_cos
       // 
-      button29.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      button29.BackColor = System.Drawing.SystemColors.InactiveBorder;
-      button29.Location = new System.Drawing.Point(164, 440);
-      button29.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-      button29.Name = "button29";
-      button29.Size = new System.Drawing.Size(106, 45);
-      button29.TabIndex = 0;
-      button29.Tag = "cos";
-      button29.Text = "cos";
-      button29.UseVisualStyleBackColor = false;
-      button29.Click += new System.EventHandler(this.button_Click);
+      btn_cos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      btn_cos.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      btn_cos.Location = new System.Drawing.Point(164, 440);
+      btn_cos.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      btn_cos.Name = "btn_cos";
+      btn_cos.Size = new System.Drawing.Size(106, 45);
+      btn_cos.TabIndex = 37;
+      btn_cos.Tag = "cos";
+      btn_cos.Text = "cos";
+      btn_cos.UseVisualStyleBackColor = false;
+      btn_cos.Click += new System.EventHandler(this.button_Click);
       // 
       // button30
       // 
       button30.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       button30.BackColor = System.Drawing.SystemColors.InactiveBorder;
-      button30.Location = new System.Drawing.Point(163, 289);
+      button30.Location = new System.Drawing.Point(164, 286);
       button30.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button30.Name = "button30";
       button30.Size = new System.Drawing.Size(106, 45);
-      button30.TabIndex = 0;
-      button30.Tag = "Log";
+      button30.TabIndex = 22;
+      button30.Tag = "log";
       button30.Text = "log";
       button30.UseVisualStyleBackColor = false;
       button30.Click += new System.EventHandler(this.button_Click);
@@ -528,7 +538,7 @@
       button33.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button33.Name = "button33";
       button33.Size = new System.Drawing.Size(106, 45);
-      button33.TabIndex = 0;
+      button33.TabIndex = 16;
       button33.Tag = "%";
       button33.Text = "mod";
       button33.UseVisualStyleBackColor = false;
@@ -542,7 +552,7 @@
       button34.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button34.Name = "button34";
       button34.Size = new System.Drawing.Size(106, 45);
-      button34.TabIndex = 0;
+      button34.TabIndex = 15;
       button34.Tag = "E";
       button34.Text = "exp";
       button34.UseVisualStyleBackColor = false;
@@ -556,7 +566,7 @@
       button35.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button35.Name = "button35";
       button35.Size = new System.Drawing.Size(106, 45);
-      button35.TabIndex = 0;
+      button35.TabIndex = 7;
       button35.Tag = "?";
       button35.Text = "2  ";
       button35.UseVisualStyleBackColor = false;
@@ -570,8 +580,8 @@
       button36.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button36.Name = "button36";
       button36.Size = new System.Drawing.Size(106, 45);
-      button36.TabIndex = 0;
-      button36.Tag = "⅟";
+      button36.TabIndex = 13;
+      button36.Tag = "inv";
       button36.Text = "⅟ₓ";
       button36.UseVisualStyleBackColor = false;
       button36.Click += new System.EventHandler(this.button_Click);
@@ -585,11 +595,82 @@
       button37.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       button37.Name = "button37";
       button37.Size = new System.Drawing.Size(106, 45);
-      button37.TabIndex = 0;
-      button37.Tag = "|";
+      button37.TabIndex = 14;
+      button37.Tag = "abs";
       button37.Text = "│x│";
       button37.UseVisualStyleBackColor = false;
       button37.Click += new System.EventHandler(this.button_Click);
+      // 
+      // button38
+      // 
+      button38.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      button38.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      button38.Location = new System.Drawing.Point(588, 442);
+      button38.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      button38.Name = "button38";
+      button38.Size = new System.Drawing.Size(29, 45);
+      button38.TabIndex = 41;
+      button38.Tag = "\'";
+      button38.Text = "\'";
+      this.toolTip1.SetToolTip(button38, "repetition");
+      button38.UseVisualStyleBackColor = false;
+      button38.Click += new System.EventHandler(this.button_Click);
+      // 
+      // btn_tan
+      // 
+      btn_tan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      btn_tan.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      btn_tan.Location = new System.Drawing.Point(48, 286);
+      btn_tan.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      btn_tan.Name = "btn_tan";
+      btn_tan.Size = new System.Drawing.Size(106, 45);
+      btn_tan.TabIndex = 0;
+      btn_tan.Tag = "tan";
+      btn_tan.Text = "tan";
+      btn_tan.UseVisualStyleBackColor = false;
+      btn_tan.Click += new System.EventHandler(this.button_Click);
+      // 
+      // btn_cot
+      // 
+      btn_cot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      btn_cot.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      btn_cot.Location = new System.Drawing.Point(48, 337);
+      btn_cot.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      btn_cot.Name = "btn_cot";
+      btn_cot.Size = new System.Drawing.Size(106, 45);
+      btn_cot.TabIndex = 0;
+      btn_cot.Tag = "cot";
+      btn_cot.Text = "cot";
+      btn_cot.UseVisualStyleBackColor = false;
+      btn_cot.Click += new System.EventHandler(this.button_Click);
+      // 
+      // button28
+      // 
+      button28.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      button28.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      button28.Location = new System.Drawing.Point(48, 439);
+      button28.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      button28.Name = "button28";
+      button28.Size = new System.Drawing.Size(106, 45);
+      button28.TabIndex = 0;
+      button28.Tag = "atan";
+      button28.Text = "atan";
+      button28.UseVisualStyleBackColor = false;
+      button28.Click += new System.EventHandler(this.button_Click);
+      // 
+      // button29
+      // 
+      button29.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      button29.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      button29.Location = new System.Drawing.Point(48, 388);
+      button29.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      button29.Name = "button29";
+      button29.Size = new System.Drawing.Size(106, 45);
+      button29.TabIndex = 0;
+      button29.Tag = "asin";
+      button29.Text = "asin";
+      button29.UseVisualStyleBackColor = false;
+      button29.Click += new System.EventHandler(this.button_Click);
       // 
       // textBox1
       // 
@@ -606,7 +687,7 @@
       this.textBox1.ReadOnly = true;
       this.textBox1.ShortcutsEnabled = false;
       this.textBox1.Size = new System.Drawing.Size(733, 55);
-      this.textBox1.TabIndex = 1;
+      this.textBox1.TabIndex = 2;
       this.textBox1.Text = "0";
       this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       this.textBox1.WordWrap = false;
@@ -622,9 +703,10 @@
       this.label1.Location = new System.Drawing.Point(0, 0);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(733, 28);
-      this.label1.TabIndex = 2;
-      this.label1.Text = "1 + 1";
+      this.label1.TabIndex = 0;
+      this.label1.Text = "0";
       this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.label1.UseCompatibleTextRendering = true;
       // 
       // numericUpDownDigits
       // 
@@ -645,7 +727,7 @@
             0});
       this.numericUpDownDigits.Name = "numericUpDownDigits";
       this.numericUpDownDigits.Size = new System.Drawing.Size(75, 26);
-      this.numericUpDownDigits.TabIndex = 7;
+      this.numericUpDownDigits.TabIndex = 6;
       this.numericUpDownDigits.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.toolTip1.SetToolTip(this.numericUpDownDigits, "decimal digits");
       this.numericUpDownDigits.Value = new decimal(new int[] {
@@ -664,23 +746,25 @@
       this.button_rat.Location = new System.Drawing.Point(627, 96);
       this.button_rat.Name = "button_rat";
       this.button_rat.Size = new System.Drawing.Size(33, 29);
-      this.button_rat.TabIndex = 9;
+      this.button_rat.TabIndex = 5;
       this.button_rat.Text = "ℚ";
       this.toolTip1.SetToolTip(this.button_rat, "ℚ rational / d: double arithmetics");
       this.button_rat.UseVisualStyleBackColor = false;
       this.button_rat.Click += new System.EventHandler(this.button_rat_Click);
       // 
-      // button31
+      // btn_rad
       // 
-      this.button31.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.button31.BackColor = System.Drawing.SystemColors.Control;
-      this.button31.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-      this.button31.Location = new System.Drawing.Point(164, 96);
-      this.button31.Name = "button31";
-      this.button31.Size = new System.Drawing.Size(106, 29);
-      this.button31.TabIndex = 9;
-      this.button31.Text = "RAD";
-      this.button31.UseVisualStyleBackColor = false;
+      this.btn_rad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btn_rad.BackColor = System.Drawing.SystemColors.Control;
+      this.btn_rad.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.btn_rad.Location = new System.Drawing.Point(164, 96);
+      this.btn_rad.Name = "btn_rad";
+      this.btn_rad.Size = new System.Drawing.Size(106, 29);
+      this.btn_rad.TabIndex = 3;
+      this.btn_rad.Tag = "R";
+      this.btn_rad.Text = "Rad";
+      this.btn_rad.UseVisualStyleBackColor = false;
+      this.btn_rad.Click += new System.EventHandler(this.button_Click);
       // 
       // button32
       // 
@@ -690,9 +774,10 @@
       this.button32.Location = new System.Drawing.Point(276, 96);
       this.button32.Name = "button32";
       this.button32.Size = new System.Drawing.Size(106, 29);
-      this.button32.TabIndex = 9;
+      this.button32.TabIndex = 4;
       this.button32.Text = "F-E";
       this.button32.UseVisualStyleBackColor = false;
+      this.button32.Click += new System.EventHandler(this.button32_Click);
       // 
       // label2
       // 
@@ -703,7 +788,7 @@
       this.label2.Location = new System.Drawing.Point(215, 141);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(23, 17);
-      this.label2.TabIndex = 10;
+      this.label2.TabIndex = 0;
       this.label2.Text = "nd";
       // 
       // CalculatorPage
@@ -712,12 +797,13 @@
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.label2);
       this.Controls.Add(this.button32);
-      this.Controls.Add(this.button31);
+      this.Controls.Add(this.btn_rad);
       this.Controls.Add(this.button_rat);
       this.Controls.Add(this.numericUpDownDigits);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.textBox1);
       this.Controls.Add(button16);
+      this.Controls.Add(button38);
       this.Controls.Add(button12);
       this.Controls.Add(button15);
       this.Controls.Add(button9);
@@ -737,9 +823,13 @@
       this.Controls.Add(button30);
       this.Controls.Add(button35);
       this.Controls.Add(button34);
-      this.Controls.Add(button29);
+      this.Controls.Add(btn_cot);
+      this.Controls.Add(btn_cos);
       this.Controls.Add(button33);
+      this.Controls.Add(button29);
       this.Controls.Add(button28);
+      this.Controls.Add(btn_tan);
+      this.Controls.Add(btn_sin);
       this.Controls.Add(button27);
       this.Controls.Add(button37);
       this.Controls.Add(button36);
@@ -769,7 +859,7 @@
     private NumericUpDown numericUpDownDigits;
     private ToolTip toolTip1;
     private Button button_rat;
-    private Button button31;
+    private Button btn_rad;
     private Button button32;
     private Label label2;
   }

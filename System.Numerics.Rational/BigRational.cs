@@ -60,10 +60,10 @@ namespace System.Numerics
         if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(Math.Max(ns, na));
       }
       #region debug
-      if (p != null && (p[0] & 0x40000000) != 0) // ⁰₀
+      if (p != null && (p[0] & 0x40000000) != 0) // ⁰₀ 
       {
-        var x = p[0] & 0x3fffffff; static string f(uint x) => string.Concat(x.ToString().Select(c => (char)('₀' + (c - '0'))));
-        s = $"{s} {f(x)} {f(p[x + 1])}";
+        var x = p[0] & 0x3fffffff; var i = s.Length; s += ' ' + x.ToString() + ' ' + p[x + 1].ToString();
+        fixed (char* p = s) for (int n = s.Length; i < n; i++) { var c = s[i]; if (c != ' ') p[i] = (char)('₀' + (c - '0')); }
       }
       #endregion
       return s;
@@ -1176,6 +1176,9 @@ namespace System.Numerics
     /// <summary>
     /// Returns the square root of a specified number.
     /// </summary>
+    /// <remarks>
+    /// For fractional roots, the result is rounded to the specified number of decimal places.
+    /// </remarks>
     /// <param name="a">The number whose square root is to be found.</param>
     /// <param name="digits">The maximum number of fractional digits in the return value.</param>
     /// <returns>Zero or positive – The positive square root of <paramref name="a"/>.</returns>
@@ -1252,10 +1255,10 @@ namespace System.Numerics
     /// <param name="digits">The number of decimal digits to calculate.</param>
     /// <returns>The sine of <paramref name="x"/>.</returns>
     public static BigRational Sin(BigRational x, int digits)
-    { 
+    {
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.push(x); cpu.sin(c, false); 
+      cpu.push(x); cpu.sin(c, false);
       cpu.rnd(digits); return cpu.pop_rat();
     }
     /// <summary>
@@ -1426,12 +1429,13 @@ namespace System.Numerics
       {
         if (v == 0) { push(); return; }
         var e = unchecked((int)((*(ulong*)&v >> 52) & 0x7FF) - 1022); //Debug.Assert(!double.IsFinite(v) == (e == 0x401));
-        if (e == 0x401) { pnan(); return; } //NaN 
-        var p = 14 - ((e * 19728) >> 16); //-14..43
-        var d = Math.Abs(v) * Math.Pow(10, p);
-        if (d < 1e14) { d *= 10; p++; }
+        if (e == 0x401) { pnan(); return; } // NaN 
+        int p = 14 - ((e * 19728) >> 16), t = p; if (p > 308) p = 308; // v < 1E-294
+        var d = Math.Abs(v) * Math.Pow(10, p); // Debug.Assert(double.IsNormal(d));
+        if (t != p) { d *= Math.Pow(10, t = t - p); p += t; if (d < 1e14) { d *= 10; p++; } }
+        //if (d < 1e14) { d *= 10; p++; }
         var m = (ulong)Math.Round(d);
-        push(m); pow(10, p); div(); if (v < 0) neg(); //norm();        
+        push(m); pow(10, p); div(); if (v < 0) neg(); // norm();        
       }
       /// <summary>
       /// Pushes the supplied <see cref="double"/> value onto the stack
@@ -2538,18 +2542,23 @@ namespace System.Numerics
       /// <param name="c">The desired precision.</param>
       public void sqrt(uint c)
       {
-        var m = mark(); get(m - 1, out double d); // best possible initial est 
-        if (double.IsNormal(d)) push(Math.Sqrt(d));
-        else { dup(); push(2u); div(); } //todo: binary est
-        ///////
-        for (uint i = 0; ; i++)
+        var e = bdi(); if (e == -int.MaxValue) return; // 0
+        e = Math.Abs(e); if (e > c) c = unchecked((uint)e);
+        uint m = mark(), s; //get(m - 1, out double d); // best possible initial est: 
+        //if (double.IsNormal(d)) push(Math.Sqrt(d));   // todo: enable afte checks
+        //else
         {
-          dup(); sqr(); sub(0, 2);
-          var t = -bdi(); pop(); if (t > c) break;
-          lim(c); div(m - 1, m);
-          add(); push(2u); div();
+          dup(); if ((s = msb()) > 1) shr(unchecked((int)s) >> 1); // est
+          inv(); if ((s = msb()) > 1) shr(unchecked((int)s) >> 1); inv();
         }
-        swp(); pop();
+        //uint i = 0;
+        for (; ; )
+        {
+          dup(); sqr(); sub(0, 2); var t = -bdi();
+          pop(); if (t > c) break; //i++;
+          lim(c); div(m - 1, m); add(); push(2u); div();
+        }
+        swp(); pop(); //Debug.WriteLine("it " + i);
       }
       /// <summary>
       /// Replaces the value on top of the stack with it's base 2 logarithm.<b/>

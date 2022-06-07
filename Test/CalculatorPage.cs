@@ -30,12 +30,11 @@ namespace Test
       numericUpDownDigits.Value = digits;
       sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator[0];
     }
-    List<string> list = new(); int state, kl, digits, exp; char sep; Font? font;
+    List<string> list = new(); int state, kl, digits, exp; char sep; Font? font; bool deg;
 
     void button_Click(object sender, EventArgs e)
     {
-      var s = textBox1.Text;
-      var c = ((string)((Button)sender).Tag)[0];
+      var s = textBox1.Text; var st = (string)((Button)sender).Tag; var c = st[0];
       switch (c)
       {
         case >= '0' and <= '9':
@@ -48,10 +47,11 @@ namespace Test
           s += c; state = 0;
           break;
         case '.':
+        case '\'':
           if (state == 2 || state == 3) { list.Clear(); state = kl = exp = 0; s = "0"; }
           if (exp != 0) return;
           if (!s.Contains(sep)) { s += sep; break; }
-          if (!s.Contains('\'')) { s += '\''; break; }
+          if (c == '\'' && !s.Contains('\'')) { s += '\''; break; }
           return;
         case '±':
           if (state == 2 || state == 3) { list.Clear(); state = kl = 0; }
@@ -89,7 +89,7 @@ namespace Test
         case '«':
           if (state != 0) return;
           s = s.Substring(0, s.Length - 1);
-          if (exp != 0) { if(s.Length == exp + 1) s += '0'; break; }
+          if (exp != 0) { if (s.Length == exp + 1) s += '0'; break; }
           if (s.Length == 0 || s.Length == 1 && s[0] == '-') s = "0";
           break;
         case 'E':
@@ -100,6 +100,7 @@ namespace Test
           if (state == 0 && s != "0") { s = "0"; exp = 0; break; }
           s = "0"; list.Clear(); state = kl = exp = 0;
           break;
+        case 'R': deg = !deg; btn_rad.Text = deg ? "Deg" : "Rad"; break;
         case 'π':
         case '℮':
           if (state == 3) { s = "0"; list.Clear(); state = kl = exp = 0; }
@@ -107,20 +108,19 @@ namespace Test
           if (state == 2) list.Add("*");
           list.Add(c.ToString()); state = 2;
           break;
-        case '!' or '√' or '²' or 's' or 'c' or 'l' or 'L' or '|' or '⅟':
+        default:
+          if (st == "inv") st = "1 /";
+          if (state == 3) { list.Clear(); state = kl = exp = 0; }
+          if (state == 0) { list.Add(st); list.Add("("); list.Add(s); list.Add(")"); state = 2; break; }
+          if (state == 2) // )
           {
-            var f =
-              c == '!' ? "fact" : c == '√' ? "√" : c == '|' ? "abs" : c == '⅟' ? "1 /" :
-              c == '²' ? "sqr" : c == 'l' ? "ln" : c == 'L' ? "log" :
-              c == 's' ? "sin" : "cos";
-            if (state == 3) { list.Clear(); state = kl = exp = 0; }
-            if (state == 0) { list.Add(f); list.Add("("); list.Add(s); list.Add(")"); state = 2; break; }
-            if (state == 2)
-            {
-              int k = list.Count - 1; for (int l = 0; k != 0; k--) if (list[k] == ")") l++; else if (list[k] == "(") l--; else if (l == 0) break;
-              list.Insert(k, f); if (list[k + 1] != "(") { list.Insert(k + 1, "("); list.Add(")"); }
-              state = 2; break;
-            }
+            int k = list.Count - 1;
+            for (int l = 0; k != 0; k--)
+              if (list[k] == ")") l++;
+              else if (list[k] == "(") l--;
+              else if (l == 0) { if (char.IsLetter(list[k][0])) continue; k++; break; }
+            list.Insert(k, st); if (list[k + 1] != "(") { list.Insert(k + 1, "("); list.Add(")"); }
+            state = 2; break;
           }
           return;
       }
@@ -131,18 +131,17 @@ namespace Test
 
     string? parse()
     {
-      if (state != 0 && kl == 0 && (state == 2 || list.Count >= 3))
+      if (state == 0) return null;
+      if (kl != 0) return null;
+      //if (state != 0 && kl == 0 && (state == 2 || list.Count >= 3))
+      try
       {
-        try
-        {
-          var a = 0; var b = state == 2 ? list.Count - 1 : list.Count - 2;
-          var r = button_rat.Text == "d" ? rnd(parsed(a, b)) : parse(a, b);
-          return r.ToString("S" + (digits + 2));
-          double rnd(double t) { if (digits <= 15) t = Math.Round(t, digits); return t; }
-        }
-        catch (Exception) { return "NaN"; }
+        var a = 0; var b = state == 2 ? list.Count - 1 : list.Count - 2;
+        var r = button_rat.Text == "d" ? rnd(parsed(a, b)) : parse(a, b);
+        return r.ToString("S" + (digits + 2));
+        double rnd(double t) { if (digits <= 15) t = Math.Round(t, digits); return t; }
       }
-      return null;
+      catch (Exception) { return "NaN"; }
     }
     rat parse(int a, int b)
     {
@@ -177,7 +176,9 @@ namespace Test
       var t = parse(a + 1, b);
       switch (h)
       {
-        case "√": t = rat.Sqrt(t, digits); break;
+        case "abs": t = rat.Abs(t); break;
+        case "1 /": t = 1 / t; break;
+        case "sqrt": t = rat.Sqrt(t, digits); break;
         case "sqr": t = t * t; break;
         case "ln": t = rat.Log(t, digits); break;
         case "log":
@@ -186,10 +187,18 @@ namespace Test
           //t = rat.Log(t, digits) / rat.Log(10, digits);
           break;
         case "fact": t = fact(t); break;
-        case "sin": t = rat.Sin(t, digits); break;
-        case "cos": t = rat.Cos(t, digits); break;
-        case "abs": t = rat.Abs(t); break;
-        case "1 /": t = 1 / t; break;
+        //case "sin": t = rat.Sin(deg ? t : t * (rat.Pi(digits) / 180), digits); break;
+        //case "cos": t = rat.Cos(deg ? t : t * (rat.Pi(digits) / 180), digits); break;
+        //case "tan": t = rat.Sin(deg ? t : t * (rat.Pi(digits) / 180), digits) / rat.Cos(deg ? t : t * (rat.Pi(digits) / 180), digits); break;
+        //case "cot": t = rat.Cos(deg ? t : t * (rat.Pi(digits) / 180), digits) / rat.Sin(deg ? t : t * (rat.Pi(digits) / 180), digits); break;
+
+        case "sin": if (deg) t = t * (Math.PI / 180); t = rat.Sin(t, digits); break;
+        case "cos": if (deg) t = t * (Math.PI / 180); t = rat.Cos(t, digits); break;
+        case "tan": if (deg) t = t * (Math.PI / 180); t = rat.Sin(t, digits) / rat.Cos(t, digits); break;
+        case "cot": if (deg) t = t * (Math.PI / 180); t = rat.Cos(t, digits) / rat.Sin(t, digits); break;
+        case "asin": t = Math.Asin((double)t); if (deg) t = t * (180 / Math.PI); break;
+        case "atan": t = Math.Atan((double)t); if (deg) t = t * (180 / Math.PI); break;
+        default: break;
       }
       return t;
     }
@@ -226,15 +235,19 @@ namespace Test
       var t = parsed(a + 1, b);
       switch (h)
       {
-        case "√": t = Math.Sqrt(t); break;
+        case "abs": t = Math.Abs(t); break;
+        case "1 /": t = 1 / t; break;
+        case "sqrt": t = Math.Sqrt(t); break;
         case "sqr": t = t * t; break;
         case "ln": t = Math.Log(t); break;
         case "log": t = Math.Log2((double)t) / Math.Log2(10); break;
         case "fact": t = factd(t); break;
-        case "sin": t = Math.Sin(t); break;
-        case "cos": t = Math.Cos(t); break;
-        case "abs": t = Math.Abs(t); break;
-        case "1 /": t = 1 / t; break;
+        case "sin": if (deg) t = t * (Math.PI / 180); t = Math.Sin(t); break;
+        case "cos": if (deg) t = t * (Math.PI / 180); t = Math.Cos(t); break;
+        case "tan": if (deg) t = t * (Math.PI / 180); t = Math.Tan(t); break;
+        case "cot": if (deg) t = t * (Math.PI / 180); t = 1 / Math.Tan(t); break;
+        case "asin": t = Math.Asin(t); if (deg) t = t * (180 / Math.PI); break;
+        case "atan": t = Math.Atan(t); if (deg) t = t * (180 / Math.PI); break;
       }
       return t;
     }
@@ -334,6 +347,12 @@ namespace Test
       if (!checkresize) return;
       textBox1_TextChanged(sender, e);
     }
+
+    private void button32_Click(object sender, EventArgs e)
+    {
+
+    }
+
     void button_rat_Click(object sender, EventArgs e)
     {
       button_rat.Text = button_rat.Text == "ℚ" ? "d" : "ℚ";
