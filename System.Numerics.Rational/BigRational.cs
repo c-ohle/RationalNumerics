@@ -513,7 +513,11 @@ namespace System.Numerics
     {
       var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
-
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="string"/> object to a <see cref="BigRational"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public static explicit operator BigRational(string value)
     {
       return Parse(value);
@@ -2777,7 +2781,7 @@ namespace System.Numerics
       public void atan(uint c)
       {
         var s = sign(); if (s == 0) return; // atan(0) = 0        
-        if (s < 0) neg(); // atan(-x) = -atan(x        
+        if (s < 0) neg(); // atan(-x) = -atan(x)        
         var td = cmpi(0, 1) > 0; if (td) inv(); // atan(1/x) = pi/2 - atan(x)
         int sh = 0; // atan(x) = atan(c) + atan((x - c) / (1 + c * x)) -> c == (x - c) / (1 + c * x) -> c <= 0.1 
         push(1u); push(10u); div(); // push 0.1
@@ -2787,7 +2791,7 @@ namespace System.Numerics
           sqrt(c); sub(0, 1); swp(0, 3); pop(2); // z = sqrt(y) - z
           lim(c, 1); sh++;
         }
-        pop(); // euler tailer:
+        pop(); // euler taylor:
         dup(); sqr(); lim(c); // zsqr = z * z
         dup(); push(1u); add(); // zsqr1 = zsqr + 1
         push(1u); dup(); // a = 1, m = 1
