@@ -40,7 +40,6 @@
       System.Windows.Forms.Button button9;
       System.Windows.Forms.Button button10;
       System.Windows.Forms.Button button11;
-      System.Windows.Forms.Button button12;
       System.Windows.Forms.Button button13;
       System.Windows.Forms.Button button14;
       System.Windows.Forms.Button button15;
@@ -69,6 +68,7 @@
       System.Windows.Forms.Button btn_cot;
       System.Windows.Forms.Button button28;
       System.Windows.Forms.Button button29;
+      this.button12 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.numericUpDownDigits = new System.Windows.Forms.NumericUpDown();
@@ -88,7 +88,6 @@
       button9 = new System.Windows.Forms.Button();
       button10 = new System.Windows.Forms.Button();
       button11 = new System.Windows.Forms.Button();
-      button12 = new System.Windows.Forms.Button();
       button13 = new System.Windows.Forms.Button();
       button14 = new System.Windows.Forms.Button();
       button15 = new System.Windows.Forms.Button();
@@ -266,17 +265,17 @@
       // 
       // button12
       // 
-      button12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      button12.BackColor = System.Drawing.SystemColors.InactiveBorder;
-      button12.Location = new System.Drawing.Point(511, 442);
-      button12.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-      button12.Name = "button12";
-      button12.Size = new System.Drawing.Size(79, 45);
-      button12.TabIndex = 40;
-      button12.Tag = ".";
-      button12.Text = ".";
-      button12.UseVisualStyleBackColor = false;
-      button12.Click += new System.EventHandler(this.button_Click);
+      this.button12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.button12.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      this.button12.Location = new System.Drawing.Point(511, 442);
+      this.button12.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      this.button12.Name = "button12";
+      this.button12.Size = new System.Drawing.Size(79, 45);
+      this.button12.TabIndex = 40;
+      this.button12.Tag = ".";
+      this.button12.Text = ".";
+      this.button12.UseVisualStyleBackColor = false;
+      this.button12.Click += new System.EventHandler(this.button_Click);
       // 
       // button13
       // 
@@ -748,7 +747,7 @@
       this.button_rat.Size = new System.Drawing.Size(33, 29);
       this.button_rat.TabIndex = 5;
       this.button_rat.Text = "ℚ";
-      this.toolTip1.SetToolTip(this.button_rat, "ℚ rational / d: double arithmetics");
+      this.toolTip1.SetToolTip(this.button_rat, "ℚ rational arithmetics\r\nd: double arithmetics");
       this.button_rat.UseVisualStyleBackColor = false;
       this.button_rat.Click += new System.EventHandler(this.button_rat_Click);
       // 
@@ -804,7 +803,7 @@
       this.Controls.Add(this.textBox1);
       this.Controls.Add(button16);
       this.Controls.Add(button38);
-      this.Controls.Add(button12);
+      this.Controls.Add(this.button12);
       this.Controls.Add(button15);
       this.Controls.Add(button9);
       this.Controls.Add(button11);
@@ -862,5 +861,6 @@
     private Button btn_rad;
     private Button button32;
     private Label label2;
+    private Button button12;
   }
 }

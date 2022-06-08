@@ -514,6 +514,11 @@ namespace System.Numerics
       var cpu = task_cpu; cpu.push(value); return cpu.popr();
     }
 
+    public static explicit operator BigRational(string value)
+    {
+      return Parse(value);
+    }
+
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="int"/> value.
     /// </summary>
@@ -1274,7 +1279,56 @@ namespace System.Numerics
       cpu.push(x); cpu.sin(c, true);
       cpu.rnd(digits); return cpu.popr();
     }
-
+    /// <summary>
+    /// Returns the tangent of the specified angle.
+    /// </summary>
+    /// <param name="x">An angle, measured in radians.</param>
+    /// <param name="digits">The number of decimal digits to calculate.</param>
+    /// <returns>The tangent of <paramref name="x"/>.</returns>
+    public static BigRational Tan(BigRational x, int digits)
+    {
+      return Sin(x, digits) / Cos(x, digits); //todo: inline
+    }
+    /// <summary>
+    /// Returns the angle whose sine is the specified number.
+    /// </summary>
+    /// <param name="x">A number representing a sine, where d must be greater than or equal to -1, but less than or equal to 1.</param>
+    /// <param name="digits">The number of decimal digits to calculate.</param>
+    /// <returns>
+    /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
+    /// -or- NaN if <paramref name="x"/> &lt; -1 or <paramref name="x"/> &gt; 1.
+    /// </returns>
+    public static BigRational Asin(BigRational x, int digits)
+    { 
+      return Atan(x / Sqrt(1 - x * x, digits), digits); //todo: inline
+    }
+    /// <summary>
+    /// Returns the angle whose cosine is the specified number.
+    /// </summary>
+    /// <param name="x">A number representing a cosine, where d must be greater than or equal to -1, but less than or equal to 1.</param>
+    /// <param name="digits">The number of decimal digits to calculate.</param>
+    /// <returns>
+    /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
+    /// -or- NaN if <paramref name="x"/> &lt; -1 or <paramref name="x"/> &gt; 1.
+    /// </returns>
+    public static BigRational Acos(BigRational x, int digits)
+    { 
+      return Atan(Sqrt(1 - x * x, digits) / x, digits); //todo: inline
+    }
+    /// <summary>
+    /// Returns the angle whose tangent is the specified number.
+    /// </summary>
+    /// <param name="x">A number representing a tangent.</param>
+    /// <param name="digits">The number of decimal digits to calculate.</param>
+    /// <returns>An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2.</returns>
+    public static BigRational Atan(BigRational x, int digits)
+    {
+      var cpu = task_cpu;
+      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+      cpu.push(x); cpu.atan(c);
+      cpu.rnd(digits); return cpu.popr();
+    }
+ 
     /// <summary>
     /// Represents a stack machine for rational arithmetics.
     /// </summary>
@@ -2707,6 +2761,60 @@ namespace System.Numerics
           push(k * (k + 1)); mul(3, 0); pop(); mul(1, 0); // n! *=, x^n *=
         }
         pop(4);
+      }
+      /// <summary>
+      /// Replaces the value on top of the stack with the atan of that value.<br/>
+      /// The value interpreted as an angle is measured in radians.
+      /// </summary>
+      /// <remarks>
+      /// The desired precision is controlled by the parameter <paramref name="c"/> 
+      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
+      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
+      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// </remarks>
+      /// <param name="c">The desired precision.</param>
+      public void atan(uint c)
+      {
+        var s = sign(); if (s == 0) return; // atan(0) = 0        
+        if (s < 0) neg(); // atan(-x) = -atan(x        
+        var td = cmpi(0, 1) > 0; if (td) inv(); // atan(1/x) = pi/2 - atan(x)
+        int sh = 0; // atan(x) = atan(c) + atan((x - c) / (1 + c * x)) -> c == (x - c) / (1 + c * x) -> c <= 0.1 
+        push(1u); push(10u); div(); // push 0.1
+        while (cmp(1, 0) > 0) // z > 0.1
+        {
+          dup(1); inv(); dup(); sqr(); push(1u); add(); // y = 1 / z; y = y * y; y += 1;
+          sqrt(c); sub(0, 1); swp(0, 3); pop(2); // z = sqrt(y) - z
+          lim(c, 1); sh++;
+        }
+        pop(); // euler tailer:
+        dup(); sqr(); lim(c); // zsqr = z * z
+        dup(); push(1u); add(); // zsqr1 = zsqr + 1
+        push(1u); dup(); // a = 1, m = 1
+        for (int n = 1; n < 20; n++) //todo: c
+        {
+          dup(3); push(n << 1); mul(); // (2 * k) * zsqr
+          dup(3); push((n << 1) + 1); mul(); // (2 * k + 1) * zsqr1
+          div(); mul(); // m *= (2 * n) * zsqr / ((2 * n + 1) * zsqr1)
+          add(1, 0); lim(c, 1); // a += m
+        }
+        mul(1, 4); div(1, 2); //z *= z / zsqr1;
+        swp(1, 4); pop(4);        
+        if (sh != 0) shl(sh); // z *= pow(2, sh); 
+        if (td) { neg(); pi(c); shr(1); add(); } // z = pi / 2 - z;
+        if (s < 0) neg();
+      }
+      /// <summary>
+      /// Frees the current thread static instance of the <see cref="CPU"/> and associated buffers.<br/>
+      /// A new <see cref="CPU"/> is then automatically created for subsequent calculations.
+      /// </summary>
+      /// <remarks>
+      /// After calculating with large numbers, the <see cref="CPU"/> naturally keeps large buffers that can be safely released in this way.<br/>
+      /// More precisely, the operation does not destroy anything. The current CPU instance can continue to be used. But the GC can collect them later when there are no more references to them.
+      /// </remarks>
+      public void free() // todo: free() ?
+      {
+        cpu = null;
       }
 
       uint[] rent(uint n)

@@ -43,6 +43,42 @@ references:
   commentId: Overload:System.Numerics.BigRational.Abs
   fullName: System.Numerics.BigRational.Abs
   nameWithType: BigRational.Abs
+- uid: System.Numerics.BigRational.Acos(System.Numerics.BigRational,System.Int32)
+  name: Acos(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Acos.html#System_Numerics_BigRational_Acos_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Acos(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Acos(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Acos(BigRational, Int32)
+- uid: System.Numerics.BigRational.Acos*
+  name: Acos
+  href: api/System.Numerics.BigRational.Acos.html
+  commentId: Overload:System.Numerics.BigRational.Acos
+  fullName: System.Numerics.BigRational.Acos
+  nameWithType: BigRational.Acos
+- uid: System.Numerics.BigRational.Asin(System.Numerics.BigRational,System.Int32)
+  name: Asin(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Asin.html#System_Numerics_BigRational_Asin_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Asin(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Asin(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Asin(BigRational, Int32)
+- uid: System.Numerics.BigRational.Asin*
+  name: Asin
+  href: api/System.Numerics.BigRational.Asin.html
+  commentId: Overload:System.Numerics.BigRational.Asin
+  fullName: System.Numerics.BigRational.Asin
+  nameWithType: BigRational.Asin
+- uid: System.Numerics.BigRational.Atan(System.Numerics.BigRational,System.Int32)
+  name: Atan(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Atan.html#System_Numerics_BigRational_Atan_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Atan(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Atan(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Atan(BigRational, Int32)
+- uid: System.Numerics.BigRational.Atan*
+  name: Atan
+  href: api/System.Numerics.BigRational.Atan.html
+  commentId: Overload:System.Numerics.BigRational.Atan
+  fullName: System.Numerics.BigRational.Atan
+  nameWithType: BigRational.Atan
 - uid: System.Numerics.BigRational.Ceiling(System.Numerics.BigRational)
   name: Ceiling(BigRational)
   href: api/System.Numerics.BigRational.Ceiling.html#System_Numerics_BigRational_Ceiling_System_Numerics_BigRational_
@@ -157,6 +193,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.add
   fullName: System.Numerics.BigRational.CPU.add
   nameWithType: BigRational.CPU.add
+- uid: System.Numerics.BigRational.CPU.atan(System.UInt32)
+  name: atan(UInt32)
+  href: api/System.Numerics.BigRational.CPU.atan.html#System_Numerics_BigRational_CPU_atan_System_UInt32_
+  commentId: M:System.Numerics.BigRational.CPU.atan(System.UInt32)
+  fullName: System.Numerics.BigRational.CPU.atan(System.UInt32)
+  nameWithType: BigRational.CPU.atan(UInt32)
+- uid: System.Numerics.BigRational.CPU.atan*
+  name: atan
+  href: api/System.Numerics.BigRational.CPU.atan.html
+  commentId: Overload:System.Numerics.BigRational.CPU.atan
+  fullName: System.Numerics.BigRational.CPU.atan
+  nameWithType: BigRational.CPU.atan
 - uid: System.Numerics.BigRational.CPU.bdi
   name: bdi()
   href: api/System.Numerics.BigRational.CPU.bdi.html#System_Numerics_BigRational_CPU_bdi
@@ -331,6 +379,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.fac
   fullName: System.Numerics.BigRational.CPU.fac
   nameWithType: BigRational.CPU.fac
+- uid: System.Numerics.BigRational.CPU.free
+  name: free()
+  href: api/System.Numerics.BigRational.CPU.free.html#System_Numerics_BigRational_CPU_free
+  commentId: M:System.Numerics.BigRational.CPU.free
+  fullName: System.Numerics.BigRational.CPU.free()
+  nameWithType: BigRational.CPU.free()
+- uid: System.Numerics.BigRational.CPU.free*
+  name: free
+  href: api/System.Numerics.BigRational.CPU.free.html
+  commentId: Overload:System.Numerics.BigRational.CPU.free
+  fullName: System.Numerics.BigRational.CPU.free
+  nameWithType: BigRational.CPU.free
 - uid: System.Numerics.BigRational.CPU.gcd
   name: gcd()
   href: api/System.Numerics.BigRational.CPU.gcd.html#System_Numerics_BigRational_CPU_gcd
@@ -1159,6 +1219,15 @@ references:
   fullName.vb: System.Numerics.BigRational.Narrowing(System.Numerics.BigRational to System.Single)
   nameWithType: BigRational.Explicit(BigRational to Single)
   nameWithType.vb: BigRational.Narrowing(BigRational to Single)
+- uid: System.Numerics.BigRational.op_Explicit(System.String)~System.Numerics.BigRational
+  name: Explicit(String to BigRational)
+  href: api/System.Numerics.BigRational.op_Explicit.html#System_Numerics_BigRational_op_Explicit_System_String__System_Numerics_BigRational
+  commentId: M:System.Numerics.BigRational.op_Explicit(System.String)~System.Numerics.BigRational
+  name.vb: Narrowing(String to BigRational)
+  fullName: System.Numerics.BigRational.Explicit(System.String to System.Numerics.BigRational)
+  fullName.vb: System.Numerics.BigRational.Narrowing(System.String to System.Numerics.BigRational)
+  nameWithType: BigRational.Explicit(String to BigRational)
+  nameWithType.vb: BigRational.Narrowing(String to BigRational)
 - uid: System.Numerics.BigRational.op_Explicit*
   name: Explicit
   href: api/System.Numerics.BigRational.op_Explicit.html
@@ -1549,6 +1618,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.Sqrt
   fullName: System.Numerics.BigRational.Sqrt
   nameWithType: BigRational.Sqrt
+- uid: System.Numerics.BigRational.Tan(System.Numerics.BigRational,System.Int32)
+  name: Tan(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Tan.html#System_Numerics_BigRational_Tan_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Tan(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Tan(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Tan(BigRational, Int32)
+- uid: System.Numerics.BigRational.Tan*
+  name: Tan
+  href: api/System.Numerics.BigRational.Tan.html
+  commentId: Overload:System.Numerics.BigRational.Tan
+  fullName: System.Numerics.BigRational.Tan
+  nameWithType: BigRational.Tan
 - uid: System.Numerics.BigRational.task_cpu
   name: task_cpu
   href: api/System.Numerics.BigRational.task_cpu.html#System_Numerics_BigRational_task_cpu

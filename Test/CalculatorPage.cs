@@ -108,6 +108,7 @@ namespace Test
           if (state == 2) list.Add("*");
           list.Add(c.ToString()); state = 2;
           break;
+        case '?': return;
         default:
           if (st == "inv") st = "1 /";
           if (state == 3) { list.Clear(); state = kl = exp = 0; }
@@ -133,7 +134,6 @@ namespace Test
     {
       if (state == 0) return null;
       if (kl != 0) return null;
-      //if (state != 0 && kl == 0 && (state == 2 || list.Count >= 3))
       try
       {
         var a = 0; var b = state == 2 ? list.Count - 1 : list.Count - 2;
@@ -187,17 +187,12 @@ namespace Test
           //t = rat.Log(t, digits) / rat.Log(10, digits);
           break;
         case "fact": t = fact(t); break;
-        //case "sin": t = rat.Sin(deg ? t : t * (rat.Pi(digits) / 180), digits); break;
-        //case "cos": t = rat.Cos(deg ? t : t * (rat.Pi(digits) / 180), digits); break;
-        //case "tan": t = rat.Sin(deg ? t : t * (rat.Pi(digits) / 180), digits) / rat.Cos(deg ? t : t * (rat.Pi(digits) / 180), digits); break;
-        //case "cot": t = rat.Cos(deg ? t : t * (rat.Pi(digits) / 180), digits) / rat.Sin(deg ? t : t * (rat.Pi(digits) / 180), digits); break;
-
-        case "sin": if (deg) t = t * (Math.PI / 180); t = rat.Sin(t, digits); break;
-        case "cos": if (deg) t = t * (Math.PI / 180); t = rat.Cos(t, digits); break;
-        case "tan": if (deg) t = t * (Math.PI / 180); t = rat.Sin(t, digits) / rat.Cos(t, digits); break;
-        case "cot": if (deg) t = t * (Math.PI / 180); t = rat.Cos(t, digits) / rat.Sin(t, digits); break;
-        case "asin": t = Math.Asin((double)t); if (deg) t = t * (180 / Math.PI); break;
-        case "atan": t = Math.Atan((double)t); if (deg) t = t * (180 / Math.PI); break;
+        case "sin": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Sin(t, digits); break;
+        case "cos": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Cos(t, digits); break;
+        case "tan": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Sin(t, digits) / rat.Cos(t, digits); break;
+        case "cot": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Cos(t, digits) / rat.Sin(t, digits); break;
+        case "asin": t = rat.Asin(t, digits); if (deg) t = t * (180 / rat.Pi(digits)); break;
+        case "atan": t = rat.Atan(t, digits); if (deg) t = t * (180 / rat.Pi(digits)); break;
         default: break;
       }
       return t;

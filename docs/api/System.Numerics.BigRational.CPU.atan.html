@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Method Equals
+    <title>Method atan
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Method Equals
+    <meta name="title" content="Method atan
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -121,8 +121,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.op_Equality.html" title="Equality" class="">Equality</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.Equals.html" title="Equals" class="active">Equals</a>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.Equals.html" title="Equals" class="">Equals</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.Exp.html" title="Exp" class="">Exp</a>
@@ -244,8 +244,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.add.html" title="add" class="">add</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.BigRational.CPU.atan.html" title="atan" class="">atan</a>
+                                <li class="active">
+                                  <a href="System.Numerics.BigRational.CPU.atan.html" title="atan" class="active">atan</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.bdi.html" title="bdi" class="">bdi</a>
@@ -385,28 +385,29 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.Equals*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.atan*">
 
-<h1 id="System_Numerics_BigRational_Equals_" data-uid="System.Numerics.BigRational.Equals*">Method Equals
+<h1 id="System_Numerics_BigRational_CPU_atan_" data-uid="System.Numerics.BigRational.CPU.atan*">Method atan
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_Equals_System_Object_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_atan_System_UInt32_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.atan(System.UInt32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L338">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2777">View Source</a>
 </span>
-<a id="System_Numerics_BigRational_Equals_" data-uid="System.Numerics.BigRational.Equals*"></a>
-<h4 id="System_Numerics_BigRational_Equals_System_Object_" data-uid="System.Numerics.BigRational.Equals(System.Object)">Equals(Object)</h4>
-<div class="markdown level1 summary"><p>Returns a value that indicates whether the current instance and a specified object have the same value.</p>
+<a id="System_Numerics_BigRational_CPU_atan_" data-uid="System.Numerics.BigRational.CPU.atan*"></a>
+<h4 id="System_Numerics_BigRational_CPU_atan_System_UInt32_" data-uid="System.Numerics.BigRational.CPU.atan(System.UInt32)">atan(UInt32)</h4>
+<div class="markdown level1 summary"><p>Replaces the value on top of the stack with the atan of that value.<br>
+The value interpreted as an angle is measured in radians.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public override readonly bool Equals(object obj)</code></pre>
+  <pre><code class="lang-csharp hljs">public void atan(uint c)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -419,85 +420,20 @@
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Object</span></td>
-      <td><span class="parametername">obj</span></td>
-      <td><p>The object to compare.</p>
+      <td><span class="xref">System.UInt32</span></td>
+      <td><span class="parametername">c</span></td>
+      <td><p>The desired precision.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.Boolean</span></td>
-      <td><p>true if the obj argument is a <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number,
-and its value is equal to the value of the current <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> instance;
-otherwise, false.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="overrides">Overrides</h5>
-<div><span class="xref">System.ValueType.Equals(System.Object)</span></div>
-<span class="small pull-right mobile-hide">
-  <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_Equals_System_Numerics_BigRational_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.Equals(System.Numerics.BigRational)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-</span>
-<span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L347">View Source</a>
-</span>
-<a id="System_Numerics_BigRational_Equals_" data-uid="System.Numerics.BigRational.Equals*"></a>
-<h4 id="System_Numerics_BigRational_Equals_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.Equals(System.Numerics.BigRational)">Equals(BigRational)</h4>
-<div class="markdown level1 summary"><p>Returns a value that indicates whether the current instance and a specified <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number have the same value.</p>
+<h5 id="System_Numerics_BigRational_CPU_atan_System_UInt32__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>The desired precision is controlled by the parameter <code data-dev-comment-type="paramref" class="paramref">c</code>
+where <code data-dev-comment-type="paramref" class="paramref">c</code> represents a break criteria of the internal iteration.<br>
+For a desired precesission of decimal digits <code data-dev-comment-type="paramref" class="paramref">c</code> can be calculated as:<br>
+<code>msb(pow(10, digits))</code>.<br>
+The result however has to be rounded explicitely to get an exact decimal representation.</p>
 </div>
-<div class="markdown level1 conceptual"></div>
-<h5 class="decalaration">Declaration</h5>
-<div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public readonly bool Equals(BigRational b)</code></pre>
-</div>
-<h5 class="parameters">Parameters</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>The object to compare.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.Boolean</span></td>
-      <td><p>true if this <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number and other have the same value; otherwise, false.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="implements">Implements</h5>
-    <div><span class="xref">System.IEquatable&lt;T&gt;.Equals(T)</span></div>
 </article>
           </div>
           
@@ -506,10 +442,10 @@ otherwise, false.</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_Equals_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.Equals*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_atan_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.atan*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L338" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2777" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>
