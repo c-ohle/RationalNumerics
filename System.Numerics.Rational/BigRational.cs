@@ -59,8 +59,8 @@ namespace System.Numerics
         if (a != null) ArrayPool<char>.Shared.Return(a);
         if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(Math.Max(ns, na));
       }
-      #region debug
-      if (p != null && (p[0] & 0x40000000) != 0) // ⁰₀ 
+      #region debug ext
+      if (p != null && (p[0] & 0x40000000) != 0 && s[0] != 'N') // ⁰₀ 
       {
         var x = p[0] & 0x3fffffff; var i = s.Length; s += ' ' + x.ToString() + ' ' + p[x + 1].ToString();
         fixed (char* p = s) for (int n = s.Length; i < n; i++) { var c = s[i]; if (c != ' ') p[i] = (char)('₀' + (c - '0')); }
@@ -193,12 +193,12 @@ namespace System.Numerics
         }
         if (s < 0) ws[x++] = '-'; ws.Slice(0, x).Reverse(); ws = ws.Slice(x);
       }
-      static bool isnan(uint[] p) //for debug
+      static bool isnan(uint[] p) // ToString extra safety for debug
       {
         if (p == null) return false;
         var i1 = p[0] & 0x3fffffff; if (i1 == 0 || i1 + 3 > p.Length) return true;
         var i2 = p[i1 + 1]; if (i2 == 0 || i1 + i2 + 2 > p.Length) return true;
-        if (i2 == 1 && p[i1 + i2 + 1] == 0) return true;
+        if (/*i2 == 1 &&*/ p[i1 + i2 + 1] == 0) return true;
         return false;
       }
     }
@@ -1112,7 +1112,7 @@ namespace System.Numerics
     /// <param name="a">A <see cref="BigRational"/> number to be rounded.</param>
     /// <param name="digits">The number of fractional digits in the return value.</param>
     /// <returns>The <see cref="BigRational"/> number nearest to value that contains a number of fractional digits equal to digits.</returns>
-    public static BigRational Round(BigRational a, int digits)
+    public static BigRational Round(BigRational a, int digits = 30)
     {
       //var e = Pow10(digits); return Round(a * e) / e;
       var cpu = task_cpu; cpu.push(a);
@@ -1170,7 +1170,7 @@ namespace System.Numerics
     /// <param name="digits">The number of fractional decimal digits in the return value.</param>
     /// <returns>The <see cref="BigRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static BigRational Pow(BigRational x, BigRational y, int digits)
+    public static BigRational Pow(BigRational x, BigRational y, int digits = 30)
     {
       //return Exp(y * Log(x, digits), digits);
       //if(IsInteger(y)) return Pow(x, (int)b); //todo: impl
@@ -1192,7 +1192,7 @@ namespace System.Numerics
     /// <param name="digits">The maximum number of fractional digits in the return value.</param>
     /// <returns>Zero or positive – The positive square root of <paramref name="a"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="a"/> is less zero.</exception>
-    public static BigRational Sqrt(BigRational a, int digits)
+    public static BigRational Sqrt(BigRational a, int digits = 30)
     {
       if (Sign(a) < 0) throw new ArgumentException(nameof(a));
       var cpu = task_cpu; //var x = Math.ILogB(Math.Pow(10, digits)) + 1;
@@ -1207,7 +1207,7 @@ namespace System.Numerics
     /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
     /// <returns>The base 2 logarithm of <paramref name="x"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static BigRational Log2(BigRational x, int digits)
+    public static BigRational Log2(BigRational x, int digits = 30)
     {
       if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
       var cpu = task_cpu;
@@ -1220,9 +1220,9 @@ namespace System.Numerics
     /// </summary>
     /// <param name="x">The number whose logarithm is to be found.</param>
     /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
-    /// <returns>The natural logarithm of <paramref name="x"/>; that is, ln <paramref name="x"/>, or log e <paramref name="x"/>.</returns>
+    /// <returns>The natural logarithm of <paramref name="x"/>; that is, <c>ln <paramref name="x"/></c>, or <c>log e <paramref name="x"/></c>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static BigRational Log(BigRational x, int digits)
+    public static BigRational Log(BigRational x, int digits = 30)
     {
       if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
       var cpu = task_cpu;
@@ -1236,7 +1236,7 @@ namespace System.Numerics
     /// <param name="x">A number specifying a power.</param>
     /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
     /// <returns>The number e raised to the power <paramref name="x"/>.</returns>
-    public static BigRational Exp(BigRational x, int digits)
+    public static BigRational Exp(BigRational x, int digits = 30)
     {
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
@@ -1251,7 +1251,7 @@ namespace System.Numerics
     /// </remarks>
     /// <param name="digits">The number of decimal digits to calculate.</param>
     /// <returns>π rounded to the specified number of decimal digits.</returns>
-    public static BigRational Pi(int digits)
+    public static BigRational Pi(int digits = 30)
     {
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
@@ -1263,7 +1263,7 @@ namespace System.Numerics
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">The number of decimal digits to calculate.</param>
     /// <returns>The sine of <paramref name="x"/>.</returns>
-    public static BigRational Sin(BigRational x, int digits)
+    public static BigRational Sin(BigRational x, int digits = 30)
     {
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
@@ -1276,7 +1276,7 @@ namespace System.Numerics
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">The number of decimal digits to calculate.</param>
     /// <returns>The cosine of <paramref name="x"/>.</returns>
-    public static BigRational Cos(BigRational x, int digits)
+    public static BigRational Cos(BigRational x, int digits = 30)
     {
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
@@ -1289,7 +1289,7 @@ namespace System.Numerics
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">The number of decimal digits to calculate.</param>
     /// <returns>The tangent of <paramref name="x"/>.</returns>
-    public static BigRational Tan(BigRational x, int digits)
+    public static BigRational Tan(BigRational x, int digits = 30)
     {
       return Sin(x, digits) / Cos(x, digits); //todo: inline
     }
@@ -1302,8 +1302,8 @@ namespace System.Numerics
     /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
     /// -or- NaN if <paramref name="x"/> &lt; -1 or <paramref name="x"/> &gt; 1.
     /// </returns>
-    public static BigRational Asin(BigRational x, int digits)
-    { 
+    public static BigRational Asin(BigRational x, int digits = 30)
+    {
       return Atan(x / Sqrt(1 - x * x, digits), digits); //todo: inline
     }
     /// <summary>
@@ -1315,8 +1315,8 @@ namespace System.Numerics
     /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
     /// -or- NaN if <paramref name="x"/> &lt; -1 or <paramref name="x"/> &gt; 1.
     /// </returns>
-    public static BigRational Acos(BigRational x, int digits)
-    { 
+    public static BigRational Acos(BigRational x, int digits = 30)
+    {
       return Atan(Sqrt(1 - x * x, digits) / x, digits); //todo: inline
     }
     /// <summary>
@@ -1325,14 +1325,14 @@ namespace System.Numerics
     /// <param name="x">A number representing a tangent.</param>
     /// <param name="digits">The number of decimal digits to calculate.</param>
     /// <returns>An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2.</returns>
-    public static BigRational Atan(BigRational x, int digits)
+    public static BigRational Atan(BigRational x, int digits = 30)
     {
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
       cpu.push(x); cpu.atan(c);
       cpu.rnd(digits); return cpu.popr();
     }
- 
+
     /// <summary>
     /// Represents a stack machine for rational arithmetics.
     /// </summary>
@@ -1491,7 +1491,6 @@ namespace System.Numerics
         int p = 14 - ((e * 19728) >> 16), t = p; if (p > 308) p = 308; // v < 1E-294
         var d = Math.Abs(v) * Math.Pow(10, p); // Debug.Assert(double.IsNormal(d));
         if (t != p) { d *= Math.Pow(10, t = t - p); p += t; if (d < 1e14) { d *= 10; p++; } }
-        //if (d < 1e14) { d *= 10; p++; }
         var m = (ulong)Math.Round(d);
         push(m); pow(10, p); div(); if (v < 0) neg(); // norm();        
       }
@@ -1509,7 +1508,7 @@ namespace System.Numerics
       {
         if (v == 0) { push(); return; }
         int h = ((int*)&v)[1], e = ((h >> 20) & 0x7FF) - 1075; // Debug.Assert(!double.IsFinite(v) == (e == 0x3cc));
-        if (e == 0x3cc) { pnan(); return; } //NaN 
+        if (e == 0x3cc) { pnan(); return; } // NaN 
         fixed (uint* p = rent((unchecked((uint)(e < 0 ? -e : e)) >> 5) + 8))
         {
           p[0] = 2; p[1] = *(uint*)&v; p[2] = (unchecked((uint)h) & 0x000FFFFF) | 0x100000;
@@ -1895,7 +1894,8 @@ namespace System.Numerics
       /// </summary>
       public void mul()
       {
-        fixed (uint* u = p[i - 2], v = p[i - 1]) mul(u, v, false); swp(0, 2); pop(2);
+        fixed (uint* u = p[i - 2], v = p[i - 1]) mul(u, v, false);
+        swp(0, 2); pop(2);
       }
       /// <summary>
       /// Multiplies the values at index <paramref name="a"/> and <paramref name="b"/> relative to the top of the stack
@@ -2058,22 +2058,31 @@ namespace System.Numerics
         }
       }
       /// <summary>
-      /// Replaces the value on top of the stack with it's multiplicative inverse,
+      /// Replaces the value at index <paramref name="i"/> relative to the top of the stack<br/>
+      /// with it's multiplicative inverse,
       /// also called the reciprocal. <c>x = 1 / x;</c> 
       /// </summary>
       /// <remarks>
       /// It's a fast operation and should be used for <c>1 / x</c> instead of a equivalent <see cref="div"/> operations.
       /// </remarks>
-      public void inv()
+      /// <param name="i">Relative index of a stack entry.</param>
+      public void inv(int i = 0)
       {
-        //push(1); swp(); div();
-        fixed (uint* u = p[i - 1])
-        fixed (uint* v = rent(len(u)))
+        fixed (uint* p = this.p[this.i - 1 - i])
         {
-          uint n = (u[0] & 0x3fffffff) + 1, m = u[n] + 1;
-          copy(v, u + n, m); v[0] |= u[0] & (0x80000000 | 0x40000000);
-          copy(v + m, u, n); v[m] &= 0x3fffffff;
-          swp(); pop();
+          uint n = (p[0] & 0x3fffffff) + 1, m = p[n] + 1, t, a, b;
+          p[n] |= p[0] & (0x80000000 | 0x40000000); p[0] &= 0x3fffffff;
+          if (n == m)
+          {
+            for (a = 0; a < n; a++) { t = p[a]; p[a] = p[b = a + n]; p[b] = t; }
+          }
+          else
+          {
+            uint c = n - 1, d = m + c;
+            for (a = 0, b = c; a < b; a++, b--) { t = p[a]; p[a] = p[b]; p[b] = t; }
+            for (a = n, b = d; a < b; a++, b--) { t = p[a]; p[a] = p[b]; p[b] = t; }
+            for (a = 0, b = d; a < b; a++, b--) { t = p[a]; p[a] = p[b]; p[b] = t; }
+          }
         }
       }
       /// <summary>
@@ -2082,7 +2091,7 @@ namespace System.Numerics
       /// </summary>
       /// <remarks>
       /// Shifts the numerator value only, which is a fast alternative to multiplies by powers of two.<br/>
-      /// To shift the denominator is possible by calling <see cref="inv()"/> before and after.
+      /// To shift the denominator is possible by calling <see cref="inv"/> before and after.
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
@@ -2092,7 +2101,7 @@ namespace System.Numerics
         fixed (uint* u = p[this.i - 1 - i])
         {
           if (*(ulong*)u == 1) return;
-          fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1)) //todo: optimize see shr
+          fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1))
           {
             var n = (u[0] & 0x3fffffff) + 1;
             copy(v, u, n); shl(v, c);
@@ -2107,7 +2116,7 @@ namespace System.Numerics
       /// </summary>
       /// <remarks>
       /// Shifts the numerator value only, which is a fast alternative to divisions by powers of two.<br/>
-      /// To shift the denominator is possible by calling <see cref="inv()"/> before and after.
+      /// To shift the denominator is possible by calling <see cref="inv"/> before and after.
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
@@ -2141,6 +2150,7 @@ namespace System.Numerics
         fixed (uint* v = rent(len(u) + 1))
         {
           var h = u[0]; u[0] &= 0x3fffffff; var t = u + u[0] + 1;
+          if (*(ulong*)t == 1) { pop(); pnan(); return; } //keep NaN
           if (f != 8) div(u, t, v); else copy(v, t, t[0] + 1);
           if ((f & (1 | 2 | 4)) != 0)
           {
@@ -2465,7 +2475,7 @@ namespace System.Numerics
       /// Returns the MSB (most significant bit) of the numerator of the value on top of the stack.
       /// </summary>
       /// <remarks>
-      /// To get the MSB of the denominator is possible by calling <see cref="inv()"/> before and after.
+      /// To get the MSB of the denominator is possible by calling <see cref="inv"/> before and after.
       /// </remarks>
       /// <returns>A <see cref="uint"/> value as MSB.</returns>
       public uint msb()
@@ -2480,7 +2490,7 @@ namespace System.Numerics
       /// Returns the LSB (least significant bit) of the numerator of the value on top of the stack.
       /// </summary>
       /// <remarks>
-      /// To get the LSB of the denominator is possible by calling <see cref="inv()"/> before and after.
+      /// To get the LSB of the denominator is possible by calling <see cref="inv"/> before and after.
       /// </remarks>
       /// <returns>A <see cref="uint"/> value as MSB.</returns>
       public uint lsb()
@@ -2633,21 +2643,22 @@ namespace System.Numerics
       public void log2(uint c)
       {
         if (sign() <= 0) { pop(); pnan(); return; } // NaN
+        lim(c + 32); // todo: check, lim x?
         var a = bdi(); // var c = _shl(1, a); x = x / c;
         if (a != 0) { push(1u); if (a > 0) { shl(a); div(); } else { shl(-a); mul(); } }
         var e = cmpi(0, 1); // push(1u); var e = cmp(1, 0); pop();
         if (e == 0) { pop(); push(a); return; } //if (x == 1) return a;
-        if (e < 0) { shl(1); a--; } // adjust bdi
-        Debug.Assert(cmpi(0, 1) > 0); // if (x <= 1) { } // ???
-        Debug.Assert(cmpi(0, 2) < 0); // if (x >= 2) { } // ???
-        push(); // b
-        for (uint i = 1; i < c; i++)
+        if (e < 0) { shl(1); a--; } // adjust bdi //todo: lim x ?
+        Debug.Assert(cmpi(0, 1) > 0 && cmpi(0, 2) < 0); // if (x <= 1 || x >= 2) { } //todo: remove
+        push(); // b 
+        for (uint i = 1; i <= c; i++)
         {
           sqr(1); lim(c, 1); // x = x * x; x = lim(x, c);
           if (cmpi(1, 2) <= 0) continue; // if (x < 2) continue;        
-          push(2u); div(2, 0); pop(); // x = x / 2;        
-          push(1u); shl((int)i); inv(); // var p = rat.Pow(2, -i); //todo: check fast shl den ?
-          add(); // b += p;
+          //push(2u); div(2, 0); pop(); // x = x / 2; //todo: shl den       
+          swp(); inv(); shl(1); inv(); swp(); // x = x / 2; //todo: shl den
+          push(1u); shl((int)i); inv(); // var p = rat.Pow(2, -i); //var b = bdi(); if (i == c) { }
+          add(); lim(c); // b += p;
         }
         swp(); pop(); if (a != 0) { push(a); add(); } // return a + b;
       }
@@ -2665,20 +2676,21 @@ namespace System.Numerics
       /// <param name="c">The desired precision.</param>
       public void log(uint c)
       {
-        if (sign() <= 0) { pop(); pnan(); return; }
-        push(); swp(); // r
-        var t = bdi(); c += (uint)Math.Abs(t) + 16;
-        push(1u); sub(); dup(); push(2u); add(); div(); // p = (x - 1) / (x + 1)
-        dup(); sqr(); // f = p * p
-        for (uint i = 0, m = mark(); ; i++)
-        {
-          push((i << 1) + 1); div(m - 2, m); swp(); pop();// d = p / ((n << 1) + 1)
-          add(3, 0); // r += d        
-          if (-bdi() >= c) break; // d < 1e-...
-          pop(); mul(1, 0); // p *= f;
-          lim(c, 1); lim(c, 2); // lim p, r
-        }
-        pop(3); shl(1); //r *= 2
+        log2(c); e(c); log2(c); div(); // exponentially faster for rat
+        // if (sign() <= 0) { pop(); pnan(); return; }
+        // push(); swp(); // r
+        // var t = bdi(); c += (uint)Math.Abs(t) + 16;
+        // push(1u); sub(); dup(); push(2u); add(); div(); // p = (x - 1) / (x + 1)
+        // dup(); sqr(); // f = p * p
+        // for (uint i = 0, m = mark(); ; i++)
+        // {
+        //   push((i << 1) + 1); div(m - 2, m); swp(); pop();// d = p / ((n << 1) + 1)
+        //   add(3, 0); // r += d        
+        //   if (-bdi() >= c) break; // d < 1e-...
+        //   pop(); mul(1, 0); // p *= f;
+        //   lim(c, 1); lim(c, 2); // lim p, r
+        // }
+        // pop(3); shl(1); //r *= 2
       }
       /// <summary>
       /// Replaces the value on top of the stack with e raised to the power of that value.
@@ -2704,7 +2716,8 @@ namespace System.Numerics
         pop(); swp(); pop(); if (s < 0) inv();
       }
       /// <summary>
-      /// Calculates PI to the desired precision and push it to the stack.<br/>
+      /// Calculates <c>π</c> (PI) to the desired precision and push it to the stack.<br/>
+      /// Represents the ratio of the circumference of a circle to its diameter.
       /// </summary>
       /// <remarks>
       /// The desired precision is controlled by the parameter <paramref name="c"/> 
@@ -2714,9 +2727,9 @@ namespace System.Numerics
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
-      public void pi(uint c)
+      public void pi(uint c) //todo: cache
       {
-        push(); // https://en.wikipedia.org/wiki/Bellard%27s_formula
+        push(); //alg: https://en.wikipedia.org/wiki/Bellard%27s_formula
         for (uint n = 0; ; n++)
         {
           uint a = n << 2, b = n * 10;
@@ -2732,6 +2745,21 @@ namespace System.Numerics
           add(); lim(c + 64); if (t > c + 32) break; //todo: check
         }
         push(64); div(); //todo: shift
+      }
+      /// <summary>
+      /// Calculates <b>℮</b> (E), the natural logarithmic base to the desired precision and push it to the stack.<br/>
+      /// </summary>
+      /// <remarks>
+      /// The desired precision is controlled by the parameter <paramref name="c"/> 
+      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
+      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
+      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// </remarks>
+      /// <param name="c">The desired precision.</param>
+      public void e(uint c) // todo: cache
+      {
+        push(1u); exp(c); // todo: inline
       }
       /// <summary>
       /// Replaces the value on top of the stack with the sine or cosine of that value.<br/>
@@ -2803,7 +2831,7 @@ namespace System.Numerics
           add(1, 0); lim(c, 1); // a += m
         }
         mul(1, 4); div(1, 2); //z *= z / zsqr1;
-        swp(1, 4); pop(4);        
+        swp(1, 4); pop(4);
         if (sh != 0) shl(sh); // z *= pow(2, sh); 
         if (td) { neg(); pi(c); shr(1); add(); } // z = pi / 2 - z;
         if (s < 0) neg();
@@ -2816,7 +2844,7 @@ namespace System.Numerics
       /// After calculating with large numbers, the <see cref="CPU"/> naturally keeps large buffers that can be safely released in this way.<br/>
       /// More precisely, the operation does not destroy anything. The current CPU instance can continue to be used. But the GC can collect them later when there are no more references to them.
       /// </remarks>
-      public void free() // todo: free() ?
+      public void free()
       {
         cpu = null;
       }
@@ -2830,10 +2858,6 @@ namespace System.Numerics
           if (i == p.Length) Array.Resize(ref p, i << 1);
         }
         return a;
-      }
-      void pnan()
-      {
-        fixed (uint* p = rent(4)) *(ulong*)p = *(ulong*)(p + 2) = 1;
       }
       void add(uint* u, uint* v, bool neg)
       {
@@ -2864,7 +2888,7 @@ namespace System.Numerics
         {
           var s = (v[0] & 0x3fffffff) + 1;
           var t = (u[0] & 0x3fffffff) + 1;
-          mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1) { *(ulong*)(w + 2) = 0x100000001; return; }
+          mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1 && *(ulong*)(u + t) != 1) { *(ulong*)(w + 2) = 0x100000001; return; } // 0 but keep NaN
           mul(u + t, inv ? v : v + s, w + (w[0] + 1));
           w[0] |= ((u[0] ^ v[0]) & 0x80000000) | 0x40000000;
         }
@@ -2918,6 +2942,10 @@ namespace System.Numerics
           d = t + (t[0] + 1); div(t, e, p); div(d, e, p + (p[0] + 1));
           p[0] |= (h & 0x80000000); pop();
         }
+      }
+      void pnan()
+      {
+        fixed (uint* p = rent(4)) *(ulong*)p = *(ulong*)(p + 2) = 1;
       }
 
       static void add(uint* a, uint* b, uint* r)
@@ -3011,7 +3039,8 @@ namespace System.Numerics
         if (na < nb) return;
         if (na == 1)
         {
-          uint q = a[1] / b[1], m = a[1] - (q * b[1]);
+          if (b[1] == 0) return; // keep NaN
+          uint q = a[1] / b[1], m = a[1] - q * b[1];
           a[a[0] = 1] = m; if (r != null) r[1] = q; return;
         }
         if (na == 2)
@@ -3189,7 +3218,7 @@ namespace System.Numerics
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static bool isz(uint* p)
       {
-        Debug.Assert((*(ulong*)p & ~(ulong)(0x40000000 | 0x80000000)) != 1 || *(ulong*)p == 1);
+        //Debug.Assert((*(ulong*)p & ~(ulong)(0x40000000 | 0x80000000)) != 1 || *(ulong*)p == 1);
         return ((ulong*)p)[0] == 1 && ((ulong*)p)[1] != 1; // && !NaN 
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]

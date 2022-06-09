@@ -189,7 +189,7 @@ namespace Test
         case "fact": t = fact(t); break;
         case "sin": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Sin(t, digits); break;
         case "cos": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Cos(t, digits); break;
-        case "tan": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Sin(t, digits) / rat.Cos(t, digits); break;
+        case "tan": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Tan(t, digits); break;
         case "cot": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Cos(t, digits) / rat.Sin(t, digits); break;
         case "asin": t = rat.Asin(t, digits); if (deg) t = t * (180 / rat.Pi(digits)); break;
         case "atan": t = rat.Atan(t, digits); if (deg) t = t * (180 / rat.Pi(digits)); break;
