@@ -1173,12 +1173,16 @@ namespace System.Numerics
     /// <param name="y">A <see cref="BigRational"/> number that specifies a power.</param>
     /// <param name="digits">The number of fractional decimal digits in the return value.</param>
     /// <returns>The <see cref="BigRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
+    /// <exception cref="ArgumentException">For <paramref name="x"/> is less zero and <paramref name="y"/> is fractional..</exception>
     public static BigRational Pow(BigRational x, BigRational y, int digits = 30)
     {
       //return Exp(y * Log(x, digits), digits);
-      //if(IsInteger(y)) return Pow(x, (int)b); //todo: impl
-      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
+      var s = Sign(x); if (s == 0) return 0;
+      if (s < 0) 
+      {
+        if (IsInt(y)) return Round(Pow(x, (int)y), digits); //todo: inline, cases
+        throw new ArgumentException(nameof(x)); 
+      }
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
       cpu.push(x); cpu.log(c);
@@ -2755,7 +2759,7 @@ namespace System.Numerics
       /// <param name="c">The desired precision.</param>
       public void exp(uint c)
       {
-        var s = sign(); if (s < 0) neg(); c += 16;
+        var s = sign(); if (s < 0) neg(); c += 16; //todo: exp NaN fix
         dup(); push(1u); add(); // r = x + 1
         dup(1); // d = x
         for (uint i = 2, m = mark(); ; i++)

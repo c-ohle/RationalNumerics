@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainFrame));
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabPageMandel = new System.Windows.Forms.TabPage();
       this.mandelbrotPage1 = new Test.MandelbrotPage();
@@ -36,13 +37,7 @@
       this.tabPagePolyh = new System.Windows.Forms.TabPage();
       this.label2 = new System.Windows.Forms.Label();
       this.tabPageCalc = new System.Windows.Forms.TabPage();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.button1 = new System.Windows.Forms.Button();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
-      this.label4 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.calculatorPage1 = new Test.CalculatorPage();
+      this.calculatorPage21 = new Test.CalculatorPage();
       this.tabPageTess = new System.Windows.Forms.TabPage();
       this.label1 = new System.Windows.Forms.Label();
       this.labelDebug = new System.Windows.Forms.Label();
@@ -51,8 +46,6 @@
       this.tabPageBench.SuspendLayout();
       this.tabPagePolyh.SuspendLayout();
       this.tabPageCalc.SuspendLayout();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
       this.tabPageTess.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -132,10 +125,7 @@
       // 
       // tabPageCalc
       // 
-      this.tabPageCalc.Controls.Add(this.tabControl1);
-      this.tabPageCalc.Controls.Add(this.label4);
-      this.tabPageCalc.Controls.Add(this.label3);
-      this.tabPageCalc.Controls.Add(this.calculatorPage1);
+      this.tabPageCalc.Controls.Add(this.calculatorPage21);
       this.tabPageCalc.Location = new System.Drawing.Point(4, 29);
       this.tabPageCalc.Name = "tabPageCalc";
       this.tabPageCalc.Padding = new System.Windows.Forms.Padding(3);
@@ -144,82 +134,16 @@
       this.tabPageCalc.Text = "Calculator";
       this.tabPageCalc.UseVisualStyleBackColor = true;
       // 
-      // tabControl1
+      // calculatorPage21
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Location = new System.Drawing.Point(720, 48);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(282, 500);
-      this.tabControl1.TabIndex = 4;
-      // 
-      // tabPage1
-      // 
-      this.tabPage1.BackColor = System.Drawing.Color.Transparent;
-      this.tabPage1.Controls.Add(this.button1);
-      this.tabPage1.Location = new System.Drawing.Point(4, 29);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(274, 467);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "History";
-      this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // button1
-      // 
-      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button1.BackColor = System.Drawing.SystemColors.InactiveBorder;
-      this.button1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-      this.button1.Location = new System.Drawing.Point(228, 424);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(40, 37);
-      this.button1.TabIndex = 0;
-      this.button1.Text = "";
-      this.button1.UseVisualStyleBackColor = false;
-      // 
-      // tabPage2
-      // 
-      this.tabPage2.Location = new System.Drawing.Point(4, 29);
-      this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(274, 467);
-      this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Memory";
-      this.tabPage2.UseVisualStyleBackColor = true;
-      // 
-      // label4
-      // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(345, 21);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(144, 20);
-      this.label4.TabIndex = 3;
-      this.label4.Text = "(Under construction)";
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-      this.label3.Location = new System.Drawing.Point(14, 7);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(309, 38);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "BigRational Calculator";
-      // 
-      // calculatorPage1
-      // 
-      this.calculatorPage1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.calculatorPage1.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-      this.calculatorPage1.Location = new System.Drawing.Point(14, 48);
-      this.calculatorPage1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-      this.calculatorPage1.Name = "calculatorPage1";
-      this.calculatorPage1.Size = new System.Drawing.Size(698, 496);
-      this.calculatorPage1.TabIndex = 0;
+      this.calculatorPage21.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+      this.calculatorPage21.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+      this.calculatorPage21.AutoSize = true;
+      this.calculatorPage21.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.calculatorPage21.Location = new System.Drawing.Point(3, 3);
+      this.calculatorPage21.Name = "calculatorPage21";
+      this.calculatorPage21.Size = new System.Drawing.Size(1004, 550);
+      this.calculatorPage21.TabIndex = 0;
       // 
       // tabPageTess
       // 
@@ -263,6 +187,7 @@
       this.ClientSize = new System.Drawing.Size(1018, 621);
       this.Controls.Add(this.tabControl);
       this.Controls.Add(this.labelDebug);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MinimumSize = new System.Drawing.Size(800, 600);
       this.Name = "MainFrame";
       this.Text = "BigRational Test";
@@ -273,8 +198,6 @@
       this.tabPagePolyh.PerformLayout();
       this.tabPageCalc.ResumeLayout(false);
       this.tabPageCalc.PerformLayout();
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
       this.tabPageTess.ResumeLayout(false);
       this.tabPageTess.PerformLayout();
       this.ResumeLayout(false);
@@ -293,13 +216,7 @@
     private Label label1;
     private TesselatorPage tesselatorPage1;
     private Label label2;
-    private Label label3;
-    private CalculatorPage calculatorPage1;
-    private Label label4;
     private MandelbrotPage mandelbrotPage1;
-    private TabControl tabControl1;
-    private TabPage tabPage1;
-    private TabPage tabPage2;
-    private Button button1;
+    private CalculatorPage calculatorPage21;
   }
 }
