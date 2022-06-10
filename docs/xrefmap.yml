@@ -193,6 +193,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.add
   fullName: System.Numerics.BigRational.CPU.add
   nameWithType: BigRational.CPU.add
+- uid: System.Numerics.BigRational.CPU.and
+  name: and()
+  href: api/System.Numerics.BigRational.CPU.and.html#System_Numerics_BigRational_CPU_and
+  commentId: M:System.Numerics.BigRational.CPU.and
+  fullName: System.Numerics.BigRational.CPU.and()
+  nameWithType: BigRational.CPU.and()
+- uid: System.Numerics.BigRational.CPU.and*
+  name: and
+  href: api/System.Numerics.BigRational.CPU.and.html
+  commentId: Overload:System.Numerics.BigRational.CPU.and
+  fullName: System.Numerics.BigRational.CPU.and
+  nameWithType: BigRational.CPU.and
 - uid: System.Numerics.BigRational.CPU.atan(System.UInt32)
   name: atan(UInt32)
   href: api/System.Numerics.BigRational.CPU.atan.html#System_Numerics_BigRational_CPU_atan_System_UInt32_
@@ -646,6 +658,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.norm
   fullName: System.Numerics.BigRational.CPU.norm
   nameWithType: BigRational.CPU.norm
+- uid: System.Numerics.BigRational.CPU.or
+  name: or()
+  href: api/System.Numerics.BigRational.CPU.or.html#System_Numerics_BigRational_CPU_or
+  commentId: M:System.Numerics.BigRational.CPU.or
+  fullName: System.Numerics.BigRational.CPU.or()
+  nameWithType: BigRational.CPU.or()
+- uid: System.Numerics.BigRational.CPU.or*
+  name: or
+  href: api/System.Numerics.BigRational.CPU.or.html
+  commentId: Overload:System.Numerics.BigRational.CPU.or
+  fullName: System.Numerics.BigRational.CPU.or
+  nameWithType: BigRational.CPU.or
 - uid: System.Numerics.BigRational.CPU.pi(System.UInt32)
   name: pi(UInt32)
   href: api/System.Numerics.BigRational.CPU.pi.html#System_Numerics_BigRational_CPU_pi_System_UInt32_
@@ -973,6 +997,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.tos
   fullName: System.Numerics.BigRational.CPU.tos
   nameWithType: BigRational.CPU.tos
+- uid: System.Numerics.BigRational.CPU.xor
+  name: xor()
+  href: api/System.Numerics.BigRational.CPU.xor.html#System_Numerics_BigRational_CPU_xor
+  commentId: M:System.Numerics.BigRational.CPU.xor
+  fullName: System.Numerics.BigRational.CPU.xor()
+  nameWithType: BigRational.CPU.xor()
+- uid: System.Numerics.BigRational.CPU.xor*
+  name: xor
+  href: api/System.Numerics.BigRational.CPU.xor.html
+  commentId: Overload:System.Numerics.BigRational.CPU.xor
+  fullName: System.Numerics.BigRational.CPU.xor
+  nameWithType: BigRational.CPU.xor
 - uid: System.Numerics.BigRational.Equals(System.Numerics.BigRational)
   name: Equals(BigRational)
   href: api/System.Numerics.BigRational.Equals.html#System_Numerics_BigRational_Equals_System_Numerics_BigRational_
@@ -1075,6 +1111,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.Log
   fullName: System.Numerics.BigRational.Log
   nameWithType: BigRational.Log
+- uid: System.Numerics.BigRational.Log10(System.Numerics.BigRational,System.Int32)
+  name: Log10(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Log10.html#System_Numerics_BigRational_Log10_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Log10(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Log10(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Log10(BigRational, Int32)
+- uid: System.Numerics.BigRational.Log10*
+  name: Log10
+  href: api/System.Numerics.BigRational.Log10.html
+  commentId: Overload:System.Numerics.BigRational.Log10
+  fullName: System.Numerics.BigRational.Log10
+  nameWithType: BigRational.Log10
 - uid: System.Numerics.BigRational.Log2(System.Numerics.BigRational,System.Int32)
   name: Log2(BigRational, Int32)
   href: api/System.Numerics.BigRational.Log2.html#System_Numerics_BigRational_Log2_System_Numerics_BigRational_System_Int32_

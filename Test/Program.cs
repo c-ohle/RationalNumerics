@@ -1,4 +1,4 @@
-global using System.Diagnostics;
+﻿global using System.Diagnostics;
 global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
@@ -13,9 +13,10 @@ namespace Test
       ApplicationConfiguration.Initialize(); test();
       Application.Run(new MainFrame());
     }
-                    
-    static void test()
+
+    static unsafe void test()
     {
+      var cpu = rat.task_cpu;
     }
   }
 }

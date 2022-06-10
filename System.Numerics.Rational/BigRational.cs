@@ -50,8 +50,10 @@ namespace System.Numerics
     /// <returns>The string representation of the current <see cref="BigRational"/> value as
     /// specified by the format and provider parameters.</returns>
     public readonly string ToString(string? format, IFormatProvider? provider = default)
-    { //todo: improve
-      provider ??= format?.Length == 0 ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo; //DebuggerDisplay("", null);
+    {
+      var dbg = format != default && format.Length == 0; // DebuggerDisplay("", null);
+      provider ??= dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo;
+      if (dbg && isnan(this.p)) return NumberFormatInfo.InvariantInfo.NaNSymbol;
       Span<char> sp = stackalloc char[100]; char[]? a = null; string? s = null;
       for (int ns, na = 1024; ; na <<= 1)
       {
@@ -60,10 +62,19 @@ namespace System.Numerics
         if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(Math.Max(ns, na));
       }
       #region debug ext
-      if (p != null && (p[0] & 0x40000000) != 0 && s[0] != 'N') // ⁰₀ 
+      if (dbg && p != null && (p[0] & 0x40000000) != 0) // in debug in cpu only ⁰₀ 
       {
         var x = p[0] & 0x3fffffff; var i = s.Length; s += ' ' + x.ToString() + ' ' + p[x + 1].ToString();
         fixed (char* p = s) for (int n = s.Length; i < n; i++) { var c = s[i]; if (c != ' ') p[i] = (char)('₀' + (c - '0')); }
+      }
+      static bool isnan(uint[] p)
+      {
+        if (p == null) return false;
+        var u = p[0] & 0x3fffffff; if (u == 0 || u + 3 > p.Length) return true;
+        var v = p[u + 1]; if (v == 0 || u + v + 2 > p.Length) return true;
+        if (u != 1 && p[u] == 0) return true;
+        if (p[u + v + 1] == 0) return true;
+        return false;
       }
       #endregion
       return s;
@@ -81,8 +92,9 @@ namespace System.Numerics
     /// <returns>true if the formatting operation succeeds; false otherwise.</returns>
     public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
     {
-      if (isnan(this.p)) return float.NaN.TryFormat(destination, out charsWritten, null, provider);
+      //if (isnan(this.p)) return float.NaN.TryFormat(destination, out charsWritten, null, provider);
       int digs = 32, round = -1, emin = -4, emax = +16; char fc = '\0', tc = fc;
+      //if (format != default && format.Length == 0) digs = CPU.DebugDigits;
       var info = NumberFormatInfo.GetInstance(provider);
       if (format.Length != 0)
       {
@@ -98,7 +110,7 @@ namespace System.Numerics
               if (digs > destination.Length && destination.Length == 100) { charsWritten = digs; return false; } //hint for ToString(,)
               emin = -(emax = int.MaxValue); goto def;
             case 'E':
-              if (round == -1) round = 6; digs = 1 + round; //if (round <= 10) break; 
+              if (round == -1) round = 6; digs = 1 + round;
               if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
               emax = -(emin = int.MaxValue); goto def;
           }
@@ -192,14 +204,6 @@ namespace System.Numerics
           cpu.pop(); if (--i == 0) break; ws[x++] = '/';
         }
         if (s < 0) ws[x++] = '-'; ws.Slice(0, x).Reverse(); ws = ws.Slice(x);
-      }
-      static bool isnan(uint[] p) // ToString extra safety for debug
-      {
-        if (p == null) return false;
-        var i1 = p[0] & 0x3fffffff; if (i1 == 0 || i1 + 3 > p.Length) return true;
-        var i2 = p[i1 + 1]; if (i2 == 0 || i1 + i2 + 2 > p.Length) return true;
-        if (/*i2 == 1 &&*/ p[i1 + i2 + 1] == 0) return true;
-        return false;
       }
     }
     /// <summary>
@@ -1215,6 +1219,10 @@ namespace System.Numerics
       cpu.push(x); cpu.log2(c);
       cpu.rnd(digits); return cpu.popr();
     }
+    public static BigRational Log10(BigRational x, int digits = 30)
+    {
+      return Round(Log2(x, digits) / Log2(10, digits), digits); //todo: inline
+    }
     /// <summary>
     /// Returns the natural (base e) logarithm of a specified number.
     /// </summary>
@@ -1557,7 +1565,8 @@ namespace System.Numerics
         }
       }
 
-      //static readonly uint[][] cache = new uint[20][]; //todo: check small number cache strategy
+      // static BigRational[] cache = new BigRational[33]; //-16..16
+      // static ulong[] cachehits = new ulong[33];
       /// <summary>
       /// Converts the value at absolute position i on stack to a 
       /// always normalized <see cref="BigRational"/> number and returns it.
@@ -1574,16 +1583,11 @@ namespace System.Numerics
         {
           if (isz(p)) { v = default; return; }
           if ((p[0] & 0x40000000) != 0) norm(p);
-          var n = len(p);
-          //if (n == 4 && p[1] <= 10 && p[3] == 1)
-          //{
-          //  var x = p[1] - 1 + (p[0] != 1 ? 10 : 0);
-          //  if (cache[x] == null) fixed (uint* s = cache[x] = new uint[n]) copy(s, p, n);
-          //  v = new BigRational(cache[x]); return;
-          //}
-          var a = new uint[n];
-          fixed (uint* s = a) copy(s, p, n);
-          v = new BigRational(a);
+          uint n = len(p);
+          // var c = n == 4 && p[1] <= 15 && p[3] == 1 ? p[1] + (p[0] >> 31 << 4) : 0;
+          // if (c != 0 && cache[c].p != null) { v = cache[c]; cachehits[c]++; return; }
+          var a = new uint[n]; fixed (uint* s = a) copy(s, p, n);
+          v = new BigRational(a); // if (c != 0) cache[c] = v;
         }
       }
       /// <summary>
@@ -1630,7 +1634,7 @@ namespace System.Numerics
       /// </summary>
       /// <remarks>
       /// <see cref="double.PositiveInfinity"/> or <see cref="double.NegativeInfinity"/> 
-      /// is returned in case of out of range as the <see cref="double"/> precision is limited. 
+      /// is returned in case of out of range as the <see cref="double"/> value range is limited. 
       /// </remarks>
       /// <returns>A <see cref="double"/> value.</returns>
       public double popd()
@@ -2129,6 +2133,51 @@ namespace System.Numerics
           shr(p, c); if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
           if (p[0] != a) copy(p + p[0] + 1, p + a + 1, p[a + 1] + 1);
           p[0] |= (h & 0x80000000) | 0x40000000;
+        }
+      }
+      /// <summary>
+      /// Bitwise logical AND of the numerators<br/>
+      /// of the first two values on top of the stack and replaces them with the result.
+      /// </summary>
+      public void and()
+      {
+        fixed (uint* u = this.p[this.i - 1])
+        fixed (uint* v = this.p[this.i - 2])
+        {
+          uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff, n = nu < nv ? nu : nv, l = 1;
+          for (uint i = 1; i <= n; i++) if ((v[i] &= u[i]) != 0) l = i;
+          if (l != nv) { copy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
+          pop();
+        }
+      }
+      /// <summary>
+      /// Bitwise logical OR of the numerators<br/>
+      /// of the first two values on top of the stack and replaces them with the result.
+      /// </summary>
+      public void or()
+      {
+        fixed (uint* u = this.p[this.i - 1])
+        fixed (uint* v = this.p[this.i - 2])
+        {
+          uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff;
+          if (nv < nu) { swp(); or(); return; }
+          for (uint i = 1; i <= nu; i++) v[i] |= u[i]; pop();
+        }
+      }
+      /// <summary>
+      /// Bitwise logical XOR of the numerators<br/>
+      /// of the first two values on top of the stack and replaces them with the result.
+      /// </summary>
+      public void xor()
+      {
+        fixed (uint* u = this.p[this.i - 1])
+        fixed (uint* v = this.p[this.i - 2])
+        {
+          uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff;
+          if (nv < nu) { swp(); xor(); return; }
+          uint l = 1; for (uint i = 1; i <= nu; i++) if ((v[i] ^= u[i]) != 0) l = i;
+          if (nu == nv && l != nv) { copy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
+          pop();
         }
       }
       /// <summary>
@@ -2677,6 +2726,7 @@ namespace System.Numerics
       public void log(uint c)
       {
         log2(c); e(c); log2(c); div(); // exponentially faster for rat
+        // todo: check again https://en.wikipedia.org/wiki/Natural_logarithm#High_precision
         // if (sign() <= 0) { pop(); pnan(); return; }
         // push(); swp(); // r
         // var t = bdi(); c += (uint)Math.Abs(t) + 16;
@@ -3277,6 +3327,7 @@ namespace System.Numerics
           }
         }
       }
+      //public static int DebugDigits { get; set; } = 32;
     }
     #endregion
   }
