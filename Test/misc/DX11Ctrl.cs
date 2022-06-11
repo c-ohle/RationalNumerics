@@ -1,12 +1,10 @@
-﻿using System.ComponentModel;
-using System.Drawing.Drawing2D;
+﻿using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Security;
 #pragma warning disable CS0649, CS8618, CS8600, CS8602
 
 namespace Test
 {
-  [DesignerCategory("")]
   public unsafe abstract partial class DX11Ctrl : UserControl
   {
     protected static void Initialize(long drv)
@@ -703,7 +701,7 @@ namespace Test
     }
     protected override bool IsInputKey(Keys keyData)
     {
-      return (keyData & (Keys.Control | Keys.Alt)) == 0;
+      return true; // (keyData & (Keys.Control | Keys.Alt)) == 0;
     }
 
     public int OnDriver(object? test) //single view only!

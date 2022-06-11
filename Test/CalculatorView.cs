@@ -18,16 +18,16 @@ namespace Test
     {
       InitializeComponent();
     }
-    protected override CreateParams CreateParams
-    {
-      get { var t = base.CreateParams; t.ExStyle |= 0x02000000; return t; } // WS_EX_COMPOSITED
-    }
     protected override void OnLoad(EventArgs e)
     {
       base.OnLoad(e); if (DesignMode) return;
       textBox1.Text = "0"; label1.Text = ""; digits = 32;
       numericUpDownDigits.Value = digits;
       sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator[0];
+    }
+    protected override CreateParams CreateParams
+    {
+      get { var t = base.CreateParams; t.ExStyle |= 0x02000000; return t; } // WS_EX_COMPOSITED
     }
     List<string> list = new(); int state, kl, digits, exp; char sep; Font? font; bool deg;
 
@@ -371,8 +371,9 @@ namespace Test
     }
     void textBox1_Resize(object sender, EventArgs e)
     {
-      if (!checkresize) return;
-      textBox1_TextChanged(sender, e);
+      if (checkresize) textBox1_TextChanged(sender, e);
+      //textBox1.Enabled = false; textBox1.Enabled = true;
+      //AutoScrollOffset = textBox1.AutoScrollOffset;
     }
     void button_rat_Click(object sender, EventArgs e)
     {

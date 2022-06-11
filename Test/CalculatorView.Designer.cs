@@ -78,6 +78,7 @@
       this.btn_rad = new System.Windows.Forms.Button();
       this.button32 = new System.Windows.Forms.Button();
       this.label2 = new System.Windows.Forms.Label();
+      this.label3 = new System.Windows.Forms.Label();
       button1 = new System.Windows.Forms.Button();
       button2 = new System.Windows.Forms.Button();
       button3 = new System.Windows.Forms.Button();
@@ -131,6 +132,7 @@
       button1.TabIndex = 23;
       button1.Tag = "7";
       button1.Text = "7";
+      button1.UseCompatibleTextRendering = true;
       button1.UseVisualStyleBackColor = true;
       button1.Click += new System.EventHandler(this.button_Click);
       // 
@@ -144,6 +146,7 @@
       button2.TabIndex = 24;
       button2.Tag = "8";
       button2.Text = "8";
+      button2.UseCompatibleTextRendering = true;
       button2.UseVisualStyleBackColor = true;
       button2.Click += new System.EventHandler(this.button_Click);
       // 
@@ -157,6 +160,7 @@
       button3.TabIndex = 25;
       button3.Tag = "9";
       button3.Text = "9";
+      button3.UseCompatibleTextRendering = true;
       button3.UseVisualStyleBackColor = true;
       button3.Click += new System.EventHandler(this.button_Click);
       // 
@@ -170,6 +174,7 @@
       button4.TabIndex = 28;
       button4.Tag = "4";
       button4.Text = "4";
+      button4.UseCompatibleTextRendering = true;
       button4.UseVisualStyleBackColor = true;
       button4.Click += new System.EventHandler(this.button_Click);
       // 
@@ -183,6 +188,7 @@
       button5.TabIndex = 29;
       button5.Tag = "5";
       button5.Text = "5";
+      button5.UseCompatibleTextRendering = true;
       button5.UseVisualStyleBackColor = true;
       button5.Click += new System.EventHandler(this.button_Click);
       // 
@@ -196,6 +202,7 @@
       button6.TabIndex = 30;
       button6.Tag = "6";
       button6.Text = "6";
+      button6.UseCompatibleTextRendering = true;
       button6.UseVisualStyleBackColor = true;
       button6.Click += new System.EventHandler(this.button_Click);
       // 
@@ -209,6 +216,7 @@
       button7.TabIndex = 33;
       button7.Tag = "3";
       button7.Text = "3";
+      button7.UseCompatibleTextRendering = true;
       button7.UseVisualStyleBackColor = true;
       button7.Click += new System.EventHandler(this.button_Click);
       // 
@@ -222,6 +230,7 @@
       button8.TabIndex = 34;
       button8.Tag = "2";
       button8.Text = "2";
+      button8.UseCompatibleTextRendering = true;
       button8.UseVisualStyleBackColor = true;
       button8.Click += new System.EventHandler(this.button_Click);
       // 
@@ -235,6 +244,7 @@
       button9.TabIndex = 35;
       button9.Tag = "1";
       button9.Text = "1";
+      button9.UseCompatibleTextRendering = true;
       button9.UseVisualStyleBackColor = true;
       button9.Click += new System.EventHandler(this.button_Click);
       // 
@@ -249,6 +259,7 @@
       button10.TabIndex = 38;
       button10.Tag = "±";
       button10.Text = "⁺∕₋";
+      button10.UseCompatibleTextRendering = true;
       button10.UseVisualStyleBackColor = false;
       button10.Click += new System.EventHandler(this.button_Click);
       // 
@@ -262,6 +273,7 @@
       button11.TabIndex = 39;
       button11.Tag = "0";
       button11.Text = "0";
+      button11.UseCompatibleTextRendering = true;
       button11.UseVisualStyleBackColor = true;
       button11.Click += new System.EventHandler(this.button_Click);
       // 
@@ -276,6 +288,7 @@
       button13.TabIndex = 26;
       button13.Tag = "*";
       button13.Text = "×";
+      button13.UseCompatibleTextRendering = true;
       button13.UseVisualStyleBackColor = false;
       button13.Click += new System.EventHandler(this.button_Click);
       // 
@@ -290,6 +303,7 @@
       button14.TabIndex = 31;
       button14.Tag = "-";
       button14.Text = "-";
+      button14.UseCompatibleTextRendering = true;
       button14.UseVisualStyleBackColor = false;
       button14.Click += new System.EventHandler(this.button_Click);
       // 
@@ -304,6 +318,7 @@
       button15.TabIndex = 36;
       button15.Tag = "+";
       button15.Text = "+";
+      button15.UseCompatibleTextRendering = true;
       button15.UseVisualStyleBackColor = false;
       button15.Click += new System.EventHandler(this.button_Click);
       // 
@@ -318,6 +333,7 @@
       button16.TabIndex = 42;
       button16.Tag = "=";
       button16.Text = "=";
+      button16.UseCompatibleTextRendering = true;
       button16.UseVisualStyleBackColor = false;
       button16.Click += new System.EventHandler(this.button_Click);
       // 
@@ -332,6 +348,7 @@
       button17.TabIndex = 21;
       button17.Tag = "/";
       button17.Text = "÷";
+      button17.UseCompatibleTextRendering = true;
       button17.UseVisualStyleBackColor = false;
       button17.Click += new System.EventHandler(this.button_Click);
       // 
@@ -346,6 +363,7 @@
       button18.TabIndex = 18;
       button18.Tag = "(";
       button18.Text = "(";
+      button18.UseCompatibleTextRendering = true;
       button18.UseVisualStyleBackColor = false;
       button18.Click += new System.EventHandler(this.button_Click);
       // 
@@ -360,6 +378,7 @@
       button19.TabIndex = 19;
       button19.Tag = ")";
       button19.Text = ")";
+      button19.UseCompatibleTextRendering = true;
       button19.UseVisualStyleBackColor = false;
       button19.Click += new System.EventHandler(this.button_Click);
       // 
@@ -374,6 +393,7 @@
       button20.TabIndex = 20;
       button20.Tag = "fact";
       button20.Text = "n!";
+      button20.UseCompatibleTextRendering = true;
       button20.UseVisualStyleBackColor = false;
       button20.Click += new System.EventHandler(this.button_Click);
       // 
@@ -402,6 +422,7 @@
       button22.TabIndex = 8;
       button22.Tag = "π";
       button22.Text = "π";
+      button22.UseCompatibleTextRendering = true;
       button22.UseVisualStyleBackColor = false;
       button22.Click += new System.EventHandler(this.button_Click);
       // 
@@ -416,6 +437,7 @@
       button23.TabIndex = 9;
       button23.Tag = "℮";
       button23.Text = "℮";
+      button23.UseCompatibleTextRendering = true;
       button23.UseVisualStyleBackColor = false;
       button23.Click += new System.EventHandler(this.button_Click);
       // 
@@ -430,6 +452,7 @@
       button24.TabIndex = 10;
       button24.Tag = "CE";
       button24.Text = "CE";
+      button24.UseCompatibleTextRendering = true;
       button24.UseVisualStyleBackColor = false;
       button24.Click += new System.EventHandler(this.button_Click);
       // 
@@ -444,6 +467,7 @@
       button25.TabIndex = 17;
       button25.Tag = "sqrt";
       button25.Text = "√";
+      button25.UseCompatibleTextRendering = true;
       button25.UseVisualStyleBackColor = false;
       button25.Click += new System.EventHandler(this.button_Click);
       // 
@@ -458,6 +482,7 @@
       button26.TabIndex = 12;
       button26.Tag = "sqr";
       button26.Text = "x²";
+      button26.UseCompatibleTextRendering = true;
       button26.UseVisualStyleBackColor = false;
       button26.Click += new System.EventHandler(this.button_Click);
       // 
@@ -472,6 +497,7 @@
       button27.TabIndex = 27;
       button27.Tag = "ln";
       button27.Text = "ln";
+      button27.UseCompatibleTextRendering = true;
       button27.UseVisualStyleBackColor = false;
       button27.Click += new System.EventHandler(this.button_Click);
       // 
@@ -486,6 +512,7 @@
       btn_sin.TabIndex = 32;
       btn_sin.Tag = "sin";
       btn_sin.Text = "sin";
+      btn_sin.UseCompatibleTextRendering = true;
       btn_sin.UseVisualStyleBackColor = false;
       btn_sin.Click += new System.EventHandler(this.button_Click);
       // 
@@ -500,6 +527,7 @@
       btn_cos.TabIndex = 37;
       btn_cos.Tag = "cos";
       btn_cos.Text = "cos";
+      btn_cos.UseCompatibleTextRendering = true;
       btn_cos.UseVisualStyleBackColor = false;
       btn_cos.Click += new System.EventHandler(this.button_Click);
       // 
@@ -514,6 +542,7 @@
       button30.TabIndex = 22;
       button30.Tag = "log";
       button30.Text = "log";
+      button30.UseCompatibleTextRendering = true;
       button30.UseVisualStyleBackColor = false;
       button30.Click += new System.EventHandler(this.button_Click);
       // 
@@ -528,6 +557,7 @@
       button33.TabIndex = 16;
       button33.Tag = "%";
       button33.Text = "mod";
+      button33.UseCompatibleTextRendering = true;
       button33.UseVisualStyleBackColor = false;
       button33.Click += new System.EventHandler(this.button_Click);
       // 
@@ -542,6 +572,7 @@
       button34.TabIndex = 15;
       button34.Tag = "E";
       button34.Text = "exp";
+      button34.UseCompatibleTextRendering = true;
       button34.UseVisualStyleBackColor = false;
       button34.Click += new System.EventHandler(this.button_Click);
       // 
@@ -556,6 +587,7 @@
       button35.TabIndex = 7;
       button35.Tag = "?";
       button35.Text = "2  ";
+      button35.UseCompatibleTextRendering = true;
       button35.UseVisualStyleBackColor = false;
       button35.Click += new System.EventHandler(this.button_Click);
       // 
@@ -570,6 +602,7 @@
       button36.TabIndex = 13;
       button36.Tag = "inv";
       button36.Text = "⅟ₓ";
+      button36.UseCompatibleTextRendering = true;
       button36.UseVisualStyleBackColor = false;
       button36.Click += new System.EventHandler(this.button_Click);
       // 
@@ -585,6 +618,7 @@
       button37.TabIndex = 14;
       button37.Tag = "abs";
       button37.Text = "│x│";
+      button37.UseCompatibleTextRendering = true;
       button37.UseVisualStyleBackColor = false;
       button37.Click += new System.EventHandler(this.button_Click);
       // 
@@ -600,6 +634,7 @@
       button38.Tag = "\'";
       button38.Text = "\'";
       this.toolTip1.SetToolTip(button38, "repetition");
+      button38.UseCompatibleTextRendering = true;
       button38.UseVisualStyleBackColor = false;
       button38.Click += new System.EventHandler(this.button_Click);
       // 
@@ -614,6 +649,7 @@
       btn_tan.TabIndex = 0;
       btn_tan.Tag = "tan";
       btn_tan.Text = "tan";
+      btn_tan.UseCompatibleTextRendering = true;
       btn_tan.UseVisualStyleBackColor = false;
       btn_tan.Click += new System.EventHandler(this.button_Click);
       // 
@@ -628,6 +664,7 @@
       btn_cot.TabIndex = 0;
       btn_cot.Tag = "cot";
       btn_cot.Text = "cot";
+      btn_cot.UseCompatibleTextRendering = true;
       btn_cot.UseVisualStyleBackColor = false;
       btn_cot.Click += new System.EventHandler(this.button_Click);
       // 
@@ -642,6 +679,7 @@
       button28.TabIndex = 0;
       button28.Tag = "atan";
       button28.Text = "atan";
+      button28.UseCompatibleTextRendering = true;
       button28.UseVisualStyleBackColor = false;
       button28.Click += new System.EventHandler(this.button_Click);
       // 
@@ -656,8 +694,24 @@
       button29.TabIndex = 0;
       button29.Tag = "asin";
       button29.Text = "asin";
+      button29.UseCompatibleTextRendering = true;
       button29.UseVisualStyleBackColor = false;
       button29.Click += new System.EventHandler(this.button_Click);
+      // 
+      // button31
+      // 
+      button31.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      button31.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      button31.Location = new System.Drawing.Point(48, 235);
+      button31.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+      button31.Name = "button31";
+      button31.Size = new System.Drawing.Size(106, 45);
+      button31.TabIndex = 0;
+      button31.Tag = "^";
+      button31.Text = "x";
+      button31.UseCompatibleTextRendering = true;
+      button31.UseVisualStyleBackColor = false;
+      button31.Click += new System.EventHandler(this.button_Click);
       // 
       // button12
       // 
@@ -670,6 +724,7 @@
       this.button12.TabIndex = 40;
       this.button12.Tag = ".";
       this.button12.Text = ".";
+      this.button12.UseCompatibleTextRendering = true;
       this.button12.UseVisualStyleBackColor = false;
       this.button12.Click += new System.EventHandler(this.button_Click);
       // 
@@ -687,7 +742,7 @@
       this.textBox1.Name = "textBox1";
       this.textBox1.ReadOnly = true;
       this.textBox1.ShortcutsEnabled = false;
-      this.textBox1.Size = new System.Drawing.Size(733, 55);
+      this.textBox1.Size = new System.Drawing.Size(733, 56);
       this.textBox1.TabIndex = 2;
       this.textBox1.Text = "0";
       this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -750,6 +805,7 @@
       this.button_rat.TabIndex = 5;
       this.button_rat.Text = "ℚ";
       this.toolTip1.SetToolTip(this.button_rat, "ℚ rational arithmetics\r\nd: double arithmetics");
+      this.button_rat.UseCompatibleTextRendering = true;
       this.button_rat.UseVisualStyleBackColor = false;
       this.button_rat.Click += new System.EventHandler(this.button_rat_Click);
       // 
@@ -764,6 +820,7 @@
       this.btn_rad.TabIndex = 3;
       this.btn_rad.Tag = "R";
       this.btn_rad.Text = "Rad";
+      this.btn_rad.UseCompatibleTextRendering = true;
       this.btn_rad.UseVisualStyleBackColor = false;
       this.btn_rad.Click += new System.EventHandler(this.button_Click);
       // 
@@ -777,6 +834,7 @@
       this.button32.Size = new System.Drawing.Size(106, 29);
       this.button32.TabIndex = 4;
       this.button32.Text = "F-E";
+      this.button32.UseCompatibleTextRendering = true;
       this.button32.UseVisualStyleBackColor = false;
       // 
       // label2
@@ -787,28 +845,28 @@
       this.label2.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.label2.Location = new System.Drawing.Point(104, 238);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(14, 17);
+      this.label2.Size = new System.Drawing.Size(11, 22);
       this.label2.TabIndex = 0;
       this.label2.Text = "y";
+      this.label2.UseCompatibleTextRendering = true;
       // 
-      // button31
+      // label3
       // 
-      button31.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      button31.BackColor = System.Drawing.SystemColors.InactiveBorder;
-      button31.Location = new System.Drawing.Point(48, 235);
-      button31.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-      button31.Name = "button31";
-      button31.Size = new System.Drawing.Size(106, 45);
-      button31.TabIndex = 0;
-      button31.Tag = "^";
-      button31.Text = "x";
-      button31.UseVisualStyleBackColor = false;
-      button31.Click += new System.EventHandler(this.button_Click);
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.AutoSize = true;
+      this.label3.BackColor = System.Drawing.SystemColors.InactiveBorder;
+      this.label3.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.label3.Location = new System.Drawing.Point(221, 135);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(23, 17);
+      this.label3.TabIndex = 0;
+      this.label3.Text = "nd";
       // 
       // CalculatorView
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+      this.AutoScroll = true;
+      this.Controls.Add(this.label3);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.button32);
       this.Controls.Add(this.btn_rad);
@@ -878,5 +936,6 @@
     private Button button32;
     private Label label2;
     private Button button12;
+    private Label label3;
   }
 }

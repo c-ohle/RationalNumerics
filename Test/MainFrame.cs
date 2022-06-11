@@ -15,16 +15,13 @@ namespace Test
     public MainFrame()
     {
       InitializeComponent();
-#if DEBUG
-      var dbg = true;
-#else
-      var dbg = System.Diagnostics.Debugger.IsAttached;
-#endif
-      labelDebug.Visible = dbg;
-
-      //tabControl.SelectedIndex = 3;
-
+      labelDebug.Visible = debug;
+      //tabControl.SelectedIndex = 4;
     }
-
+#if DEBUG
+    internal static readonly bool debug = true;
+#else
+    internal static readonly bool debug = System.Diagnostics.Debugger.IsAttached;
+#endif
   }
 }

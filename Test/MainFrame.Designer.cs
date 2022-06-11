@@ -28,19 +28,24 @@
     /// </summary>
     private void InitializeComponent()
     {
+      Test.MandelbrotPage mandelbrotPage1;
+      Test.TesselatorPage tesselatorPage1;
+      Test.CalculatorPage calculatorPage21;
+      Test.BenchmarksPage benchmarksPage1;
+      Test.PolyhedronPage polyhedronPage1;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainFrame));
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabPageMandel = new System.Windows.Forms.TabPage();
-      this.mandelbrotPage1 = new Test.MandelbrotPage();
       this.tabPageBench = new System.Windows.Forms.TabPage();
-      this.tesselatorPage1 = new Test.TesselatorPage();
       this.tabPagePolyh = new System.Windows.Forms.TabPage();
-      this.label2 = new System.Windows.Forms.Label();
       this.tabPageCalc = new System.Windows.Forms.TabPage();
-      this.calculatorPage21 = new Test.CalculatorPage();
       this.tabPageTess = new System.Windows.Forms.TabPage();
-      this.label1 = new System.Windows.Forms.Label();
       this.labelDebug = new System.Windows.Forms.Label();
+      mandelbrotPage1 = new Test.MandelbrotPage();
+      tesselatorPage1 = new Test.TesselatorPage();
+      calculatorPage21 = new Test.CalculatorPage();
+      benchmarksPage1 = new Test.BenchmarksPage();
+      polyhedronPage1 = new Test.PolyhedronPage();
       this.tabControl.SuspendLayout();
       this.tabPageMandel.SuspendLayout();
       this.tabPageBench.SuspendLayout();
@@ -48,6 +53,48 @@
       this.tabPageCalc.SuspendLayout();
       this.tabPageTess.SuspendLayout();
       this.SuspendLayout();
+      // 
+      // mandelbrotPage1
+      // 
+      mandelbrotPage1.Dock = System.Windows.Forms.DockStyle.Fill;
+      mandelbrotPage1.Location = new System.Drawing.Point(3, 3);
+      mandelbrotPage1.Name = "mandelbrotPage1";
+      mandelbrotPage1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
+      mandelbrotPage1.Size = new System.Drawing.Size(1004, 550);
+      mandelbrotPage1.TabIndex = 0;
+      // 
+      // tesselatorPage1
+      // 
+      tesselatorPage1.Dock = System.Windows.Forms.DockStyle.Fill;
+      tesselatorPage1.Location = new System.Drawing.Point(3, 3);
+      tesselatorPage1.Name = "tesselatorPage1";
+      tesselatorPage1.Size = new System.Drawing.Size(1004, 550);
+      tesselatorPage1.TabIndex = 0;
+      // 
+      // calculatorPage21
+      // 
+      calculatorPage21.AutoSize = true;
+      calculatorPage21.Dock = System.Windows.Forms.DockStyle.Fill;
+      calculatorPage21.Location = new System.Drawing.Point(3, 3);
+      calculatorPage21.Name = "calculatorPage21";
+      calculatorPage21.Size = new System.Drawing.Size(1004, 550);
+      calculatorPage21.TabIndex = 0;
+      // 
+      // benchmarksPage1
+      // 
+      benchmarksPage1.Dock = System.Windows.Forms.DockStyle.Fill;
+      benchmarksPage1.Location = new System.Drawing.Point(3, 3);
+      benchmarksPage1.Name = "benchmarksPage1";
+      benchmarksPage1.Size = new System.Drawing.Size(1004, 550);
+      benchmarksPage1.TabIndex = 0;
+      // 
+      // polyhedronPage1
+      // 
+      polyhedronPage1.Dock = System.Windows.Forms.DockStyle.Fill;
+      polyhedronPage1.Location = new System.Drawing.Point(3, 3);
+      polyhedronPage1.Name = "polyhedronPage1";
+      polyhedronPage1.Size = new System.Drawing.Size(1004, 550);
+      polyhedronPage1.TabIndex = 0;
       // 
       // tabControl
       // 
@@ -65,7 +112,7 @@
       // 
       // tabPageMandel
       // 
-      this.tabPageMandel.Controls.Add(this.mandelbrotPage1);
+      this.tabPageMandel.Controls.Add(mandelbrotPage1);
       this.tabPageMandel.Location = new System.Drawing.Point(4, 29);
       this.tabPageMandel.Name = "tabPageMandel";
       this.tabPageMandel.Padding = new System.Windows.Forms.Padding(3);
@@ -74,18 +121,9 @@
       this.tabPageMandel.Text = "Mandelbrot";
       this.tabPageMandel.UseVisualStyleBackColor = true;
       // 
-      // mandelbrotPage1
-      // 
-      this.mandelbrotPage1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.mandelbrotPage1.Location = new System.Drawing.Point(3, 3);
-      this.mandelbrotPage1.Name = "mandelbrotPage1";
-      this.mandelbrotPage1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
-      this.mandelbrotPage1.Size = new System.Drawing.Size(1004, 550);
-      this.mandelbrotPage1.TabIndex = 0;
-      // 
       // tabPageBench
       // 
-      this.tabPageBench.Controls.Add(this.tesselatorPage1);
+      this.tabPageBench.Controls.Add(tesselatorPage1);
       this.tabPageBench.Location = new System.Drawing.Point(4, 29);
       this.tabPageBench.Name = "tabPageBench";
       this.tabPageBench.Padding = new System.Windows.Forms.Padding(3);
@@ -94,17 +132,9 @@
       this.tabPageBench.Text = "Tesselation";
       this.tabPageBench.UseVisualStyleBackColor = true;
       // 
-      // tesselatorPage1
-      // 
-      this.tesselatorPage1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.tesselatorPage1.Location = new System.Drawing.Point(3, 3);
-      this.tesselatorPage1.Name = "tesselatorPage1";
-      this.tesselatorPage1.Size = new System.Drawing.Size(1004, 550);
-      this.tesselatorPage1.TabIndex = 0;
-      // 
       // tabPagePolyh
       // 
-      this.tabPagePolyh.Controls.Add(this.label2);
+      this.tabPagePolyh.Controls.Add(polyhedronPage1);
       this.tabPagePolyh.Location = new System.Drawing.Point(4, 29);
       this.tabPagePolyh.Name = "tabPagePolyh";
       this.tabPagePolyh.Padding = new System.Windows.Forms.Padding(3);
@@ -113,19 +143,9 @@
       this.tabPagePolyh.Text = "Polyhedron";
       this.tabPagePolyh.UseVisualStyleBackColor = true;
       // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-      this.label2.Location = new System.Drawing.Point(14, 7);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(269, 38);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Under construction";
-      // 
       // tabPageCalc
       // 
-      this.tabPageCalc.Controls.Add(this.calculatorPage21);
+      this.tabPageCalc.Controls.Add(calculatorPage21);
       this.tabPageCalc.Location = new System.Drawing.Point(4, 29);
       this.tabPageCalc.Name = "tabPageCalc";
       this.tabPageCalc.Padding = new System.Windows.Forms.Padding(3);
@@ -134,20 +154,9 @@
       this.tabPageCalc.Text = "Calculator";
       this.tabPageCalc.UseVisualStyleBackColor = true;
       // 
-      // calculatorPage21
-      // 
-      this.calculatorPage21.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
-      this.calculatorPage21.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-      this.calculatorPage21.AutoSize = true;
-      this.calculatorPage21.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.calculatorPage21.Location = new System.Drawing.Point(3, 3);
-      this.calculatorPage21.Name = "calculatorPage21";
-      this.calculatorPage21.Size = new System.Drawing.Size(1004, 550);
-      this.calculatorPage21.TabIndex = 0;
-      // 
       // tabPageTess
       // 
-      this.tabPageTess.Controls.Add(this.label1);
+      this.tabPageTess.Controls.Add(benchmarksPage1);
       this.tabPageTess.Location = new System.Drawing.Point(4, 29);
       this.tabPageTess.Name = "tabPageTess";
       this.tabPageTess.Padding = new System.Windows.Forms.Padding(3);
@@ -155,16 +164,6 @@
       this.tabPageTess.TabIndex = 1;
       this.tabPageTess.Text = "Benchmarks";
       this.tabPageTess.UseVisualStyleBackColor = true;
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-      this.label1.Location = new System.Drawing.Point(14, 7);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(269, 38);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Under construction";
       // 
       // labelDebug
       // 
@@ -195,11 +194,9 @@
       this.tabPageMandel.ResumeLayout(false);
       this.tabPageBench.ResumeLayout(false);
       this.tabPagePolyh.ResumeLayout(false);
-      this.tabPagePolyh.PerformLayout();
       this.tabPageCalc.ResumeLayout(false);
       this.tabPageCalc.PerformLayout();
       this.tabPageTess.ResumeLayout(false);
-      this.tabPageTess.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -213,10 +210,5 @@
     private TabPage tabPageCalc;
     private TabPage tabPageBench;
     private Label labelDebug;
-    private Label label1;
-    private TesselatorPage tesselatorPage1;
-    private Label label2;
-    private MandelbrotPage mandelbrotPage1;
-    private CalculatorPage calculatorPage21;
   }
 }

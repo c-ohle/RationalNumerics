@@ -17,12 +17,11 @@ namespace Test
     {
       InitializeComponent();
     }
-    bool init;
     protected override void OnLoad(EventArgs e)
     {
-      update();
-      setdemo1();
+      update(); setdemo1();
     }
+    bool init;
     void update()
     {
       checkBoxPolygons.Checked = tesselatorView1.DrawPolygons;
@@ -51,7 +50,6 @@ namespace Test
       tesselatorView1.DrawOutlines = checkBoxDrawOutlines.Checked;
       tesselatorView1.Invalidate();
     }
-
     void add_ellipse(Vector2 midpoint, Vector2 radii, int segs)
     {
       var v = tesselatorView1;
@@ -72,7 +70,6 @@ namespace Test
       add_ellipse(new Vector2(300 - 10, 200), new Vector2(20, 20), 16);
       add_ellipse(new Vector2(400 + 10, 200), new Vector2(20, 20), 16);
     }
-
     private void buttonReset_Click(object sender, EventArgs e)
     {
       setdemo1();
