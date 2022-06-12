@@ -46,12 +46,35 @@
       Test.MenuItem redo2_back;
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
+      this._model = new Test.MenuItem();
+      this._ggroup = new Test.MenuItem();
+      this._ungroup = new Test.MenuItem();
+      this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+      this._band = new Test.MenuItem();
+      this._bdiiff = new Test.MenuItem();
+      this._bint = new Test.MenuItem();
+      this._bhalf = new Test.MenuItem();
+      this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+      this._conv = new Test.MenuItem();
+      this.menuItem5 = new Test.MenuItem();
+      this._setings = new Test.MenuItem();
+      this._selstyle = new Test.MenuItem();
+      this._selbox = new Test.MenuItem();
+      this._selpiv = new Test.MenuItem();
+      this._selwire = new Test.MenuItem();
+      this._selnorm = new Test.MenuItem();
+      this._drv = new Test.MenuItem();
+      this.menuItem7 = new Test.MenuItem();
+      this._samples = new Test.MenuItem();
+      this.menuItem8 = new Test.MenuItem();
+      this._3 = new System.Windows.Forms.ToolStripSeparator();
       this.label2 = new System.Windows.Forms.Label();
       this.modelView = new Test.DX11ModelCtrl();
       this.propsView = new Test.DX11PropsCtrl();
       this.contextMenuPropsView = new Test.ContextMenu(this.components);
       this.panel1 = new System.Windows.Forms.Panel();
       this.label3 = new System.Windows.Forms.Label();
+      this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
       undo_back = new Test.MenuItem();
@@ -216,10 +239,196 @@
             copy,
             paste,
             del,
+            this._model,
             _2,
+            this._setings,
+            this._3,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(218, 232);
+      this.contextMenuView.Size = new System.Drawing.Size(218, 286);
+      // 
+      // _model
+      // 
+      this._model.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._ggroup,
+            this._ungroup,
+            this.toolStripSeparator1,
+            this._band,
+            this._bdiiff,
+            this._bint,
+            this._bhalf,
+            this.toolStripSeparator3,
+            this._conv});
+      this._model.Id = 0;
+      this._model.Name = "_model";
+      this._model.Size = new System.Drawing.Size(217, 24);
+      this._model.Text = "Model";
+      // 
+      // _ggroup
+      // 
+      this._ggroup.Id = 2006;
+      this._ggroup.Name = "_ggroup";
+      this._ggroup.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+      this._ggroup.Size = new System.Drawing.Size(253, 26);
+      this._ggroup.Text = "Group";
+      // 
+      // _ungroup
+      // 
+      this._ungroup.Id = 2007;
+      this._ungroup.Name = "_ungroup";
+      this._ungroup.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
+      this._ungroup.Size = new System.Drawing.Size(253, 26);
+      this._ungroup.Text = "Ungroup";
+      // 
+      // toolStripSeparator1
+      // 
+      this.toolStripSeparator1.Name = "toolStripSeparator1";
+      this.toolStripSeparator1.Size = new System.Drawing.Size(250, 6);
+      // 
+      // _band
+      // 
+      this._band.Id = 2050;
+      this._band.Name = "_band";
+      this._band.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.U)));
+      this._band.Size = new System.Drawing.Size(253, 26);
+      this._band.Text = "Union A Ս B";
+      // 
+      // _bdiiff
+      // 
+      this._bdiiff.Id = 2051;
+      this._bdiiff.Name = "_bdiiff";
+      this._bdiiff.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D)));
+      this._bdiiff.Size = new System.Drawing.Size(253, 26);
+      this._bdiiff.Text = "Difference A / B";
+      // 
+      // _bint
+      // 
+      this._bint.Id = 2052;
+      this._bint.Name = "_bint";
+      this._bint.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
+      this._bint.Size = new System.Drawing.Size(253, 26);
+      this._bint.Text = "Intersection A Ո B";
+      // 
+      // _bhalf
+      // 
+      this._bhalf.Id = 2053;
+      this._bhalf.Name = "_bhalf";
+      this._bhalf.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.H)));
+      this._bhalf.Size = new System.Drawing.Size(253, 26);
+      this._bhalf.Text = "Halfspace";
+      // 
+      // toolStripSeparator3
+      // 
+      this.toolStripSeparator3.Name = "toolStripSeparator3";
+      this.toolStripSeparator3.Size = new System.Drawing.Size(250, 6);
+      // 
+      // _conv
+      // 
+      this._conv.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItem5});
+      this._conv.Id = 0;
+      this._conv.Name = "_conv";
+      this._conv.Size = new System.Drawing.Size(253, 26);
+      this._conv.Text = "Convert";
+      // 
+      // menuItem5
+      // 
+      this.menuItem5.Id = 2055;
+      this.menuItem5.Name = "menuItem5";
+      this.menuItem5.Size = new System.Drawing.Size(187, 26);
+      this.menuItem5.Text = "No conversion";
+      // 
+      // _setings
+      // 
+      this._setings.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._selstyle,
+            this._drv,
+            this._samples});
+      this._setings.Id = 0;
+      this._setings.Name = "_setings";
+      this._setings.Size = new System.Drawing.Size(217, 24);
+      this._setings.Text = "Settings";
+      // 
+      // _selstyle
+      // 
+      this._selstyle.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._selbox,
+            this._selpiv,
+            this._selwire,
+            this.toolStripSeparator2,
+            this._selnorm});
+      this._selstyle.Id = 0;
+      this._selstyle.Name = "_selstyle";
+      this._selstyle.Size = new System.Drawing.Size(224, 26);
+      this._selstyle.Text = "Select Style";
+      // 
+      // _selbox
+      // 
+      this._selbox.Id = 2100;
+      this._selbox.Name = "_selbox";
+      this._selbox.Size = new System.Drawing.Size(185, 26);
+      this._selbox.Text = "Bounding Box";
+      // 
+      // _selpiv
+      // 
+      this._selpiv.Id = 2101;
+      this._selpiv.Name = "_selpiv";
+      this._selpiv.ShortcutKeyDisplayString = "";
+      this._selpiv.Size = new System.Drawing.Size(185, 26);
+      this._selpiv.Text = "Pivot";
+      // 
+      // _selwire
+      // 
+      this._selwire.Id = 2102;
+      this._selwire.Name = "_selwire";
+      this._selwire.ShortcutKeyDisplayString = "";
+      this._selwire.Size = new System.Drawing.Size(185, 26);
+      this._selwire.Text = "Wireframe";
+      // 
+      // _selnorm
+      // 
+      this._selnorm.Id = 2103;
+      this._selnorm.Name = "_selnorm";
+      this._selnorm.ShortcutKeyDisplayString = "";
+      this._selnorm.Size = new System.Drawing.Size(185, 26);
+      this._selnorm.Text = "Normals";
+      // 
+      // _drv
+      // 
+      this._drv.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItem7});
+      this._drv.Id = 0;
+      this._drv.Name = "_drv";
+      this._drv.Size = new System.Drawing.Size(224, 26);
+      this._drv.Text = "Graphics Driver";
+      // 
+      // menuItem7
+      // 
+      this.menuItem7.Id = 3015;
+      this.menuItem7.Name = "menuItem7";
+      this.menuItem7.Size = new System.Drawing.Size(132, 26);
+      this.menuItem7.Text = "Driver";
+      // 
+      // _samples
+      // 
+      this._samples.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItem8});
+      this._samples.Id = 0;
+      this._samples.Name = "_samples";
+      this._samples.Size = new System.Drawing.Size(224, 26);
+      this._samples.Text = "Multi-Samples";
+      // 
+      // menuItem8
+      // 
+      this.menuItem8.Id = 3016;
+      this.menuItem8.Name = "menuItem8";
+      this.menuItem8.Size = new System.Drawing.Size(148, 26);
+      this.menuItem8.Text = "Samples";
+      // 
+      // _3
+      // 
+      this._3.Name = "_3";
+      this._3.Size = new System.Drawing.Size(214, 6);
       // 
       // label2
       // 
@@ -289,6 +498,11 @@
       this.label3.TabIndex = 0;
       this.label3.Text = "(under construction)";
       // 
+      // toolStripSeparator2
+      // 
+      this.toolStripSeparator2.Name = "toolStripSeparator2";
+      this.toolStripSeparator2.Size = new System.Drawing.Size(182, 6);
+      // 
       // PolyhedronPage
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -316,5 +530,28 @@
     private ContextMenu contextMenuPropsView;
     private Panel panel1;
     private Label label3;
+    private MenuItem _ggroup;
+    private MenuItem _ungroup;
+    private ToolStripSeparator toolStripSeparator1;
+    private ToolStripSeparator _3;
+    private MenuItem _setings;
+    private MenuItem _selstyle;
+    private MenuItem _selbox;
+    private MenuItem _selpiv;
+    private MenuItem _selwire;
+    private MenuItem _selnorm;
+    private MenuItem _drv;
+    private MenuItem menuItem7;
+    private MenuItem _samples;
+    private MenuItem menuItem8;
+    private MenuItem _model;
+    private MenuItem _conv;
+    private MenuItem menuItem5;
+    private MenuItem _band;
+    private MenuItem _bdiiff;
+    private MenuItem _bint;
+    private MenuItem _bhalf;
+    private ToolStripSeparator toolStripSeparator3;
+    private ToolStripSeparator toolStripSeparator2;
   }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿#pragma warning disable CS8602
+using Microsoft.Win32;
 using System.Data;
 using System.Xml;
 using System.Xml.Linq;

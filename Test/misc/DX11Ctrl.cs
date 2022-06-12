@@ -1,7 +1,7 @@
 ﻿using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Security;
-#pragma warning disable CS0649, CS8618, CS8600, CS8602
+#pragma warning disable CS0649, CS8618, CS8600, CS8602, CS8604
 
 namespace Test
 {
@@ -1432,6 +1432,64 @@ namespace Test
         view.Invalidate();
       }
     }
+
+    public Bitmap Print(int dx, int dy, int samples, uint bkcolor, Action<DC> print)
+    {
+      TEXTURE2D_DESC td;
+      td.Width = dx; td.Height = dy;
+      td.ArraySize = td.MipLevels = 1;
+      td.BindFlags = BIND.RENDER_TARGET | BIND.SHADER_RESOURCE;
+      td.Format = FORMAT.B8G8R8A8_UNORM;
+      td.SampleDesc = CheckMultisample(device, td.Format, Math.Max(1, samples));
+      var tex = device.CreateTexture2D(&td);
+
+      RENDER_TARGET_VIEW_DESC rdesc;
+      rdesc.Format = td.Format;
+      rdesc.ViewDimension = td.SampleDesc.Count > 1 ? RTV_DIMENSION.TEXTURE2DMS : RTV_DIMENSION.TEXTURE2D;
+      var rtv = device.CreateRenderTargetView(tex, &rdesc);
+
+      td.BindFlags = BIND.DEPTH_STENCIL;
+      td.Format = FORMAT.D24_UNORM_S8_UINT;
+      var ds = device.CreateTexture2D(&td);
+
+      DEPTH_STENCIL_VIEW_DESC ddesc;
+      ddesc.Format = td.Format;
+      ddesc.ViewDimension = td.SampleDesc.Count > 1 ? DSV_DIMENSION.TEXTURE2DMS : DSV_DIMENSION.TEXTURE2D;
+      var dsv = device.CreateDepthStencilView(ds, &ddesc);
+
+      VIEWPORT viewport; (&viewport)->Width = dx; viewport.Height = dy; viewport.MaxDepth = 1;
+      Begin(rtv, dsv, viewport, bkcolor);
+
+      print(new DC(this));
+
+      void* zero = null; context.OMSetRenderTargets(1, &zero, zero);
+      release(dsv); release(ds); release(rtv);
+
+      td.BindFlags = 0;
+      td.Format = FORMAT.B8G8R8A8_UNORM;
+      if (td.SampleDesc.Count > 1)
+      {
+        td.SampleDesc.Count = 1;
+        td.SampleDesc.Quality = 0;
+        td.Usage = USAGE.DEFAULT;
+        var t1 = device.CreateTexture2D(&td);
+        context.ResolveSubresource(t1, 0, tex, 0, td.Format);
+        release(tex); tex = t1;
+      }
+
+      td.Usage = USAGE.STAGING;
+      td.CPUAccessFlags = CPU_ACCESS_FLAG.READ;
+      var t2 = device.CreateTexture2D(&td);
+      context.CopyResource(t2, tex);
+      release(tex); tex = t2;
+
+      var map = context.Map(tex, 0, MAP.READ, 0);
+      var a = new Bitmap(dx, dy, map.RowPitch, System.Drawing.Imaging.PixelFormat.Format32bppArgb, new IntPtr(map.pData));
+      var b = new Bitmap(a); a.Dispose();
+      context.Unmap(tex, 0); release(tex);
+      return b;
+    }
+
   }
   //buffer
   unsafe partial class DX11Ctrl
@@ -2796,18 +2854,8 @@ namespace Test
       //virtual FLOAT STDMETHODCALLTYPE GetResourceMinLOD( 
       //    /* [annotation] */ 
       //    __in  ID3D11Resource *pResource) = 0;
-      void dummy51();
-      //virtual void STDMETHODCALLTYPE ResolveSubresource( 
-      //    /* [annotation] */ 
-      //    __in  ID3D11Resource *pDstResource,
-      //    /* [annotation] */ 
-      //    __in  UINT DstSubresource,
-      //    /* [annotation] */ 
-      //    __in  ID3D11Resource *pSrcResource,
-      //    /* [annotation] */ 
-      //    __in  UINT SrcSubresource,
-      //    /* [annotation] */ 
-      //    __in  DXGI_FORMAT Format) = 0;
+      [PreserveSig]
+      void ResolveSubresource(void* /*ID3D11Resource*/ dst, int dstsubres, void* /*ID3D11Resource*/ src, int srcsubres, FORMAT Format);
       void dummy52();
       //virtual void STDMETHODCALLTYPE ExecuteCommandList( 
       //    /* [annotation] */ 

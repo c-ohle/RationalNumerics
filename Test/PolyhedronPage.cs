@@ -51,6 +51,7 @@ namespace Test
       {
         Unit = Models.Scene.Units.Meter,
         Ambient = Color.FromArgb(0x00404040),
+        Shadows = true,
         Nodes = new Models.Node[] {
             new Models.Camera {
               Name = "Camera1", Fov = 30, Near = 0.1f, Far = 1000,
@@ -76,7 +77,7 @@ namespace Test
             },
           }
       };
-    }          
+    }
   }
 
   public class MenuItem : ToolStripMenuItem
@@ -112,13 +113,7 @@ namespace Test
     protected override void OnDropDownClosed(EventArgs e)
     {
       base.OnDropDownClosed(e);
-      if (CmdRoot == null) return;
-      var items = DropDownItems;
-      for (int i = 0, k = -1; i < items.Count; i++)
-      {
-        var p = items[i]; p.Enabled = true;
-        if (p.Tag != null) { items.RemoveAt(i--); if (k != i) items[k = i].Visible = true; }
-      }
+      onclose(DropDownItems);
     }
     protected override void OnClick(EventArgs e)
     {
@@ -127,6 +122,15 @@ namespace Test
       if (Id != 0) CmdRoot(Id, Tag);
     }
     internal static Func<int, object, int>? CmdRoot;
+    internal static void onclose(ToolStripItemCollection items)
+    {
+      if (CmdRoot == null) return;
+      for (int i = 0, k = -1; i < items.Count; i++)
+      {
+        var p = items[i]; p.Enabled = true;
+        if (p.Tag != null) { items.RemoveAt(i--); if (k != i) items[k = i].Visible = true; }
+      }
+    }
   }
   public class ContextMenu : ContextMenuStrip
   {
@@ -135,7 +139,7 @@ namespace Test
     protected override void OnOpening(CancelEventArgs e) { MenuItem.Update(Items); }
     protected override void OnClosed(ToolStripDropDownClosedEventArgs? e)
     {
-      var a = Items; for (int i = 0, n = a.Count; i < n; i++) a[i].Enabled = true;
+      MenuItem.onclose(Items);
     }
   }
   public class DX11PropsCtrl : DX11ModelCtrl.PropsCtrl

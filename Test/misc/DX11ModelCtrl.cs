@@ -3,6 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
+using System.IO.Compression;
 using System.Windows.Forms.Design;
 using System.Xml.Linq;
 using Node = Test.DX11ModelCtrl.Models.Node;
@@ -36,8 +37,7 @@ namespace Test
     List<Node>? selection;
     List<Action>? undos; int undoi;
     Action<DC>? RenderClient; List<string>? infos;
-    int flags = 0x01 | 0x02 | 0x04 | 0x100; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x100:Shadows 
-
+    int flags = 0x01 | 0x02 | 0x04; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals
     protected override void OnLoad(EventArgs e)
     {
       Initialize(4L << 32);
@@ -93,7 +93,7 @@ namespace Test
           dc.Projection = !camera.GetTransform() *
             Matrix4x4.CreatePerspectiveFieldOfView(camera.Fov * (MathF.PI / 180), size.X / size.Y, camera.Near, camera.Far);
           var lightdir = light != null ? light.GetTransform()[2] : default;// Vector3.Normalize(new Vector3(+1, -0.5f, -2));
-          var shadows = (flags & 0x100) != 0;
+          var shadows = scene.Shadows;// (scene.flags & 0x20) != 0;// (flags & 0x100) != 0;
           dc.Light = shadows ? lightdir * 0.3f : lightdir;
           dc.Ambient = scene.ambient;
           dc.State = State.Default3D;
@@ -191,7 +191,10 @@ namespace Test
         dc.Transform = Matrix4x4.Identity; dc.State = State.Default2D;
         dc.Color = 0xff000000; var font = dc.Font; var y = 8f;
         for (int i = 0; i < infos.Count; i++, y += dc.Font.Height)
-          dc.DrawText(8, y + dc.Font.Ascent, Infos[i]);
+        {
+          var s = Infos[i];
+          dc.DrawText(8, y + dc.Font.Ascent, s);
+        }
       }
     }
     protected override int OnMouse(int id, PC pc)
@@ -206,7 +209,6 @@ namespace Test
           break;
         case 0x0201: //WM_LBUTTONDOWN
           {
-            //Focus(); //{ if (pc.Hover is UI.Frame frame) { frame.OnMouse(id, pc); break; } }
             var main = pc.Hover as Node; var keys = ModifierKeys;
             var layer = selection.Count != 0 ? selection[0].Parent : scene;
             if (main != null) for (; !IsSelect(main) && main.Parent is Node t && t != layer; main = t) ;
@@ -300,6 +302,18 @@ namespace Test
       if (selection.Count == 0) return 0;
       if (test != null) return 1;
       var xml = Models.Save(new Models.Scene { Unit = scene.Unit, Nodes = selection.ToArray() });
+      // ////
+      // using (var bmp = Print(256, 256, 4, 0, dc => OnRender(dc)))
+      // using (var str = new MemoryStream())
+      // {
+      //   bmp.Save(str, System.Drawing.Imaging.ImageFormat.Png); var x = str.Position;
+      //   using (var zstr = new System.IO.Compression.ZLibStream(str, System.IO.Compression.CompressionLevel.Optimal, true))
+      //     xml.Save(zstr);
+      //   str.Write(BitConverter.GetBytes(unchecked((int)x)));
+      //   var a = str.ToArray();
+      //   File.WriteAllBytes("C:\\Users\\cohle\\Desktop\\prev.png", a);
+      // }
+      // ////
       Clipboard.SetData("x³", xml.ToString());
       return 1;
     }
@@ -932,13 +946,28 @@ namespace Test
           var p2 = Cursor.Position;
           if (new Vector2(p2.X - p1.X, p2.Y - p1.Y).LengthSquared() < 10) return;
           if (!ws) Select(main); ws = false; if (!AllowDrop) return;
+          var png = settings.CopyFormat == Models.Settings.DropFormat.Png;
           var name = main.Name; if (string.IsNullOrEmpty(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) name = main.GetType().Name;
-          var path = Path.Combine(Path.GetTempPath(), name + ".x³");
+          var path = Path.Combine(Path.GetTempPath(), name + ".x³" + (png ? ".png" : null));
           var xml = Models.Save(new Models.Scene { Unit = scene.Unit, Nodes = selection.ToArray() });
           var ppt = pt; xml.SetAttributeValue("pt", Models.format(new Span<float>(&ppt, 3)));
           var data = new DataObject();
           data.SetFileDropList(new System.Collections.Specialized.StringCollection { path });
-          try { xml.Save(path); DoDragDrop(data, DragDropEffects.Copy); }
+          try
+          {
+            if (png)
+            {
+              var size = settings.PreviewsSize;
+              using (var bmp = Print(size.Width, size.Height, 4, 0, dc => OnRender(dc)))
+              using (var str = new FileStream(path, FileMode.Create))
+              {
+                bmp.Save(str, System.Drawing.Imaging.ImageFormat.Png); var x = str.Position;
+                using (var zstr = new ZLibStream(str, CompressionLevel.Optimal, true)) xml.Save(zstr);
+                str.Write(BitConverter.GetBytes(unchecked((int)x)));
+              }
+            }
+            else xml.Save(path); DoDragDrop(data, DragDropEffects.Copy);
+          }
           catch (Exception e) { Debug.WriteLine(e.Message); }
           finally { File.Delete(path); }
         }
@@ -949,9 +978,17 @@ namespace Test
     {
       var data = pc.View.Tag as DataObject; if (data == null || this.scene.Nodes == null) return null;
       var list = data.GetFileDropList(); if (list == null || list.Count != 1) return null;
-      var path = list[0]; if (path == null) return null;
-      var ext = Path.GetExtension(path).ToLower(); if (ext != ".x³") return null;
-      var xml = XElement.Load(path);
+      var path = list[0]; if (path == null) return null; var xml = default(XElement);
+      if (path.EndsWith(".x³", true, null)) xml = XElement.Load(path);
+      else if (path.EndsWith(".x³.png", true, null)) 
+        using (var str = new FileStream(path, FileMode.Open))
+        {
+          str.Seek(-4, SeekOrigin.End); var c = new byte[4]; str.Read(c); var x = BitConverter.ToInt32(c);
+          str.Seek(x, SeekOrigin.Begin);
+          using (var zstr = new ZLibStream(str, CompressionMode.Decompress))
+            xml = XElement.Load(zstr);
+        }  
+      else return null;
       var pt = default(Vector3); var s = (string)xml.Attribute("pt");
       if (s != null) Models.parse(s.AsSpan().Trim(), new Span<float>(&pt, 3));
       var nodes = Models.Load(xml).Nodes; var rp = nodes[nodes.Length - 1].Location;
@@ -1043,23 +1080,28 @@ namespace Test
       public class Settings
       {
         float raster = 0.001f, angelgrid = 0.01f;
-        [Category("Tools")]
+        [Category("\tModel tools")]
         public float Raster
         {
           get => raster;
           set { raster = value; }
         }
-        [Category("Tools")]
+        [Category("\tModel tools")]
         public float Angelgrid
         {
           get => angelgrid;
           set { angelgrid = value; }
         }
+        public enum DropFormat { Xml, Png }
+        [Category("Copy tools")]
+        public DropFormat CopyFormat { get; set; }
+        [Category("Copy tools")]
+        public Size PreviewsSize { get; set; } = new Size(64, 64);
       }
 
       public abstract class Base
       {
-        internal protected int flags; //0x01: Fixed 0x04:buildok 0x08:vbok 0x10:merge
+        internal protected int flags; //0x01: Fixed 0x04:buildok 0x08:vbok 0x10:merge 0x20:shadows
         string? name;
         public Node[]? Nodes;
         public Base? Parent;
@@ -1140,18 +1182,26 @@ namespace Test
           get => Color.FromArgb(unchecked((int)ambient));
           set { ambient = unchecked((uint)value.ToArgb()); }
         }
+        [Category("Scene")]
+        public bool Shadows
+        {
+          get => (flags & 0x20) != 0;
+          set { flags = (flags & ~0x20) | (value ? 0x20 : 0); }
+        }
         protected internal override void Serialize(XElement e, bool storing)
         {
           if (storing)
           {
             if (unit != 0) e.SetAttributeValue("unit", unit);
             if (ambient != 0) e.SetAttributeValue("ambient", ambient.ToString("X8"));
+            if (Shadows) e.SetAttributeValue("shadows", true);
           }
           else
           {
             XAttribute a;
             if ((a = e.Attribute("unit")) != null) unit = Enum.Parse<Units>(a.Value);
             if ((a = e.Attribute("ambient")) != null) ambient = uint.Parse(a.Value, NumberStyles.HexNumber);
+            if ((a = e.Attribute("shadows")) != null) Shadows = (bool)a;
           }
           base.Serialize(e, storing);
         }
@@ -2629,7 +2679,7 @@ namespace Test
         {
           e.DrawBackground(); var i = e.Index; if (i < 0) return;
           var g = e.Graphics; var o = combo.Items[e.Index]; var r = e.Bounds;
-          var node = o as Models.Node; var font = Font;
+          var node = o as Models.Base; var font = Font;
           if ((e.State & DrawItemState.ComboBoxEdit) == 0 && node != null)
             for (var t = node.Parent; t != null; t = t.Parent) r.X += 16;
           var s1 = o.GetType().Name; var s2 = node != null ? node.Name : null;
@@ -2647,7 +2697,7 @@ namespace Test
           var p = combo.SelectedItem; fillcombo(p);
           Target.Select(p as Models.Node); update = true;
         };
-        grid = new PropertyGrid { Dock = DockStyle.Fill, TabIndex = 1 }; 
+        grid = new PropertyGrid { Dock = DockStyle.Fill, TabIndex = 1 };
         grid.PropertySort = PropertySort.Categorized;
         grid.PropertySortChanged += (p, e) =>
         {
