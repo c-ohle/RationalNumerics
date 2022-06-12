@@ -11,7 +11,7 @@ namespace Test
 {
   public unsafe class DX11ModelCtrl : DX11Ctrl
   {
-    internal Models.Settings? settings;
+    Models.Settings? settings;
     [Browsable(false)]
     public Models.Scene? Scene
     {
@@ -26,13 +26,16 @@ namespace Test
         scene = value; if (scene != null) scene.root = this;
       }
     }
-    internal List<string>? Infos;
+    public List<string> Infos
+    {
+      get => infos ??= new();
+    }
     Models.Scene? scene;
     Models.Camera? camera; Models.Light? light;
     List<Models.Geometry>? transp;
     List<Node>? selection;
     List<Action>? undos; int undoi;
-    Action<DC>? RenderClient;
+    Action<DC>? RenderClient; List<string>? infos;
     int flags = 0x01 | 0x02 | 0x04 | 0x100; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x100:Shadows 
 
     protected override void OnLoad(EventArgs e)
@@ -182,12 +185,12 @@ namespace Test
           }
         }
       }
-      if (Infos != null)
+      if (infos != null && infos.Count != 0)
       {
         dc.Projection = Matrix4x4.CreateOrthographicOffCenter(0, size.X, size.Y, 0, -1000, +1000);
         dc.Transform = Matrix4x4.Identity; dc.State = State.Default2D;
         dc.Color = 0xff000000; var font = dc.Font; var y = 8f;
-        for (int i = 0; i < Infos.Count; i++, y += dc.Font.Height)
+        for (int i = 0; i < infos.Count; i++, y += dc.Font.Height)
           dc.DrawText(8, y + dc.Font.Ascent, Infos[i]);
       }
     }
@@ -203,7 +206,7 @@ namespace Test
           break;
         case 0x0201: //WM_LBUTTONDOWN
           {
-            //{ if (pc.Hover is UI.Frame frame) { frame.OnMouse(id, pc); break; } }
+            //Focus(); //{ if (pc.Hover is UI.Frame frame) { frame.OnMouse(id, pc); break; } }
             var main = pc.Hover as Node; var keys = ModifierKeys;
             var layer = selection.Count != 0 ? selection[0].Parent : scene;
             if (main != null) for (; !IsSelect(main) && main.Parent is Node t && t != layer; main = t) ;
@@ -606,9 +609,7 @@ namespace Test
       var wp = Vector3.Transform(pc.Point, pc.Transform);
       var wm = Matrix4x3.CreateTranslation(wp);
       var cm = camera.Transform;
-      *(Vector3*)&wm.M31 = Vector3.Normalize(cm.Translation - wp);
-      *(Vector3*)&wm.M21 = new Vector3(0, 0, 1);
-      *(Vector3*)&wm.M11 = Vector3.Cross(*(Vector3*)&wm.M21, *(Vector3*)&wm.M31);
+      wm[0] = Vector3.Cross(wm[1] = new Vector3(0, 0, 1), wm[2] = Vector3.Normalize(cm.Translation - wp));
       pc.SetPlane(wm);
       var p1 = pc.Pick();
       return id =>
@@ -1036,54 +1037,6 @@ namespace Test
 
     public static class Models
     {
-      static readonly XNamespace ns = "file://C:/Users/cohle/Desktop/Mini3d";
-      public static XElement Save(Base node)
-      {
-        var e = new XElement(ns + node.GetType().Name);
-        node.Serialize(e, true);
-        return e;
-      }
-      public static Base Load(XElement e)
-      {
-        var node = (Base)Activator.CreateInstance(typeof(Models).GetNestedType(e.Name.LocalName));
-        node.Serialize(e, false);
-        return node;
-      }
-      internal static string format(ReadOnlySpan<float> sp)
-      {
-        return DX11Ctrl.ToString(sp); //, "G9");
-      }
-      internal static string format(ReadOnlySpan<ushort> sp)
-      {
-        return DX11Ctrl.ToString(sp);
-      }
-      internal static void parse(ReadOnlySpan<char> s, Span<float> a)
-      {
-        var fmt = NumberFormatInfo.InvariantInfo;
-        for (int i = 0, n = a.Length; i < n; i++) a[i] = float.Parse(token(ref s), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, fmt);
-      }
-      internal static void parse(ReadOnlySpan<char> s, Span<ushort> a)
-      {
-        var fmt = NumberFormatInfo.InvariantInfo;
-        for (int i = 0, n = a.Length; i < n; i++) a[i] = ushort.Parse(token(ref s), NumberStyles.Integer, fmt);
-      }
-      static ReadOnlySpan<char> token(ref ReadOnlySpan<char> a)
-      {
-        int i = 0; for (; i < a.Length && !(char.IsWhiteSpace(a[i]) || a[i] == ';'); i++) ;
-        var w = a.Slice(0, i); a = a.Slice(i < a.Length ? i + 1 : i).TrimStart(); return w;
-      }
-      static int tokencount(ReadOnlySpan<char> a)
-      {
-        var n = 0; for (var t = a; t.Length != 0; token(ref t), n++) ; return n;
-      }
-      static Vector2 sincos(float a)
-      {
-        var c = MathF.Cos(a);
-        var s = MathF.Sin(a);
-        return new Vector2(c, s);
-      }
-      internal static bool propref;
-
       const string _General = "\t\tGeneral";
       const string _Transform = "\tTransform";
 
@@ -1243,7 +1196,7 @@ namespace Test
         }
       }
 #endif
-        [Category(_General)]
+        [Category(_General), DefaultValue(false)]
         public bool Fixed
         {
           get => (flags & 0x01) != 0;
@@ -2614,7 +2567,215 @@ namespace Test
         }
       }
 
+      #region xml
+      static readonly XNamespace ns = "file://C:/Users/cohle/Desktop/Mini3d";
+      public static XElement Save(Base node)
+      {
+        var e = new XElement(ns + node.GetType().Name);
+        node.Serialize(e, true);
+        return e;
+      }
+      public static Base Load(XElement e)
+      {
+        var node = (Base)Activator.CreateInstance(typeof(Models).GetNestedType(e.Name.LocalName));
+        node.Serialize(e, false);
+        return node;
+      }
+      internal static string format(ReadOnlySpan<float> sp)
+      {
+        return DX11Ctrl.ToString(sp); //, "G9");
+      }
+      internal static string format(ReadOnlySpan<ushort> sp)
+      {
+        return DX11Ctrl.ToString(sp);
+      }
+      internal static void parse(ReadOnlySpan<char> s, Span<float> a)
+      {
+        var fmt = NumberFormatInfo.InvariantInfo;
+        for (int i = 0, n = a.Length; i < n; i++) a[i] = float.Parse(token(ref s), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, fmt);
+      }
+      internal static void parse(ReadOnlySpan<char> s, Span<ushort> a)
+      {
+        var fmt = NumberFormatInfo.InvariantInfo;
+        for (int i = 0, n = a.Length; i < n; i++) a[i] = ushort.Parse(token(ref s), NumberStyles.Integer, fmt);
+      }
+      static ReadOnlySpan<char> token(ref ReadOnlySpan<char> a)
+      {
+        int i = 0; for (; i < a.Length && !(char.IsWhiteSpace(a[i]) || a[i] == ';'); i++) ;
+        var w = a.Slice(0, i); a = a.Slice(i < a.Length ? i + 1 : i).TrimStart(); return w;
+      }
+      static int tokencount(ReadOnlySpan<char> a)
+      {
+        var n = 0; for (var t = a; t.Length != 0; token(ref t), n++) ; return n;
+      }
+      static Vector2 sincos(float a)
+      {
+        var c = MathF.Cos(a);
+        var s = MathF.Sin(a);
+        return new Vector2(c, s);
+      }
+      internal static bool propref;
+      #endregion
+    }
+
+    public abstract class PropsCtrl : UserControl
+    {
+      public DX11ModelCtrl? Target { get; set; }
+      protected override void OnLoad(EventArgs e)
+      {
+        base.OnLoad(e);
+        combo = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList, DrawMode = DrawMode.OwnerDrawFixed };
+        combo.DrawItem += (p, e) =>
+        {
+          e.DrawBackground(); var i = e.Index; if (i < 0) return;
+          var g = e.Graphics; var o = combo.Items[e.Index]; var r = e.Bounds;
+          var node = o as Models.Node; var font = Font;
+          if ((e.State & DrawItemState.ComboBoxEdit) == 0 && node != null)
+            for (var t = node.Parent; t != null; t = t.Parent) r.X += 16;
+          var s1 = o.GetType().Name; var s2 = node != null ? node.Name : null;
+          if (s2 != null)
+          {
+            TextRenderer.DrawText(g, s2, bold ??= new System.Drawing.Font(font, FontStyle.Bold), r, e.ForeColor, TextFormatFlags.Left);
+            r.X += TextRenderer.MeasureText(s2, bold).Width;
+          }
+          TextRenderer.DrawText(g, s1, font, r, e.ForeColor, TextFormatFlags.Left);
+          e.DrawFocusRectangle();
+        };
+        combo.SelectedIndexChanged += (_, e) =>
+        {
+          if (!combo.Focused || comboupdate) return;
+          var p = combo.SelectedItem; fillcombo(p);
+          Target.Select(p as Models.Node); update = true;
+        };
+        grid = new PropertyGrid { Dock = DockStyle.Fill, TabIndex = 1 }; 
+        grid.PropertySort = PropertySort.Categorized;
+        grid.PropertySortChanged += (p, e) =>
+        {
+          if (grid.PropertySort == PropertySort.CategorizedAlphabetical)
+            grid.PropertySort = PropertySort.Categorized;
+        };
+        grid.PropertyValueChanged += (_, e) =>
+        {
+          var d = e.ChangedItem.PropertyDescriptor; if (d.PropertyType == typeof(Type)) return;
+          var o = e.ChangedItem.GetType().GetProperty("Instance").GetValue(e.ChangedItem);
+          var s = d.Name; var v = e.OldValue;
+          Target.Invalidate(); if (o is not Models.Base) return;
+          if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
+          var t = o.GetType().GetProperty(s).GetValue(o);
+          if (object.Equals(v, t)) return;
+          Target.AddUndo(() => { var p = o.GetType().GetProperty(s); var t = p.GetValue(o); p.SetValue(o, v); v = t; });
+        };
+        var a = Controls; a.Add(grid); a.Add(combo);
+        if (!regs)
+        {
+          regs = true; var tcf = new TypeConverterAttribute(typeof(TCF));
+          TypeDescriptor.AddAttributes(typeof(Vector2), tcf);
+          TypeDescriptor.AddAttributes(typeof(Vector3), tcf);
+          TypeDescriptor.AddAttributes(typeof(Vector4), tcf);
+        }
+      }
+      protected override void OnVisibleChanged(EventArgs e)
+      {
+        base.OnVisibleChanged(e); if (Target == null || grid == null) return;
+        if (Visible)
+        {
+          Target.Animations += onidle; Target.Inval += oninv; update = true;
+        }
+        else
+        {
+          Target.Animations -= onidle; Target.Inval -= oninv;
+          grid.SelectedObject = null; combo.Items.Clear();
+        }
+      }
+      protected override void OnMouseMove(MouseEventArgs e)
+      {
+        if (Capture)
+        {
+          Width = Math.Max(Padding.Left, Math.Min(Parent.ClientSize.Width,
+            xx - Cursor.Position.X)); Parent.Update(); return;
+        }
+        Cursor = Cursors.SizeWE;
+      }
+      protected override void OnMouseDown(MouseEventArgs e)
+      {
+        Capture = true; xx = Width + Cursor.Position.X;
+      }
+      protected override void OnMouseUp(MouseEventArgs e)
+      {
+        Capture = false;
+      }
+      protected override void OnMouseLeave(EventArgs e)
+      {
+        Cursor = Cursors.Default;
+      }
+      PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
+      bool comboupdate; int xx; static bool regs; object? lastpd;
+      void fillcombo(object disp)
+      {
+        var items = combo.Items; comboupdate = true;
+        items.Clear();
+        items.Add(Target.settings);
+        items.Add(Target.Scene);
+        if (disp is Models.Base node)
+        {
+          recu(items, node);
+          static void recu(ComboBox.ObjectCollection items, Models.Base node)
+          {
+            if (node.Parent != null) recu(items, node.Parent);
+            var a = node.Nodes; if (a == null) return;
+            for (int i = 0, x = items.IndexOf(node); i < a.Length; i++)
+              items.Insert(++x, a[i]);
+          }
+        }
+        combo.SelectedItem = disp; combo.Update(); comboupdate = false;
+      }
+      bool update;
+      void oninv() { update = true; }
+      void onidle(int ms)
+      {
+        if (!update) return; update = false; //Debug.WriteLine($"onidle {ms}");
+        if (combo.DroppedDown) return;
+        var list = Target.selection;
+        var csel = combo.SelectedItem;
+        var disp = list.Count != 0 ? (object)list[list.Count - 1] :
+          csel != null && csel is not Models.Base ? csel :
+          Target.Scene;
+        if (csel != disp && !combo.ContainsFocus) fillcombo(csel = disp);
+        if (grid.SelectedObject != csel)
+        {
+          grid.SelectedObject = csel;
+          Models.propref = false; lastpd = null;
+          if (grid.PropertySort == PropertySort.NoSort) grid.PropertySort = PropertySort.Categorized;
+        }
+        else
+        {
+          if (Models.propref) { Models.propref = false; grid.Refresh(); return; }
+          combo.Invalidate(); if (ContainsFocus) return;
+          var p = grid.Controls[2]; p.Invalidate(true); p.Refresh();
+        }
+      }
+      class TCF : TypeConverter
+      {
+        public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type? destinationType)
+        {
+          if (value is Vector2 a) return $"{a.X}; {a.Y}";
+          if (value is Vector3 b) return $"{b.X}; {b.Y}; {b.Z}";
+          if (value is Vector4 c) return $"{c.X}; {c.Y}; {c.Z}; {c.W}";
+          //if (value is rat d) return d.ToString();
+          return null;
+        }
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type? sourceType) => true;
+        public override object ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+        {
+          var a = ((string)value).Split(';');
+          var b = stackalloc float[a.Length];
+          for (int i = 0; i < a.Length; i++) b[i] = float.Parse(a[i]);
+          if (a.Length == 2) return new Vector2(b[0], b[1]);
+          if (a.Length == 3) return new Vector3(b[0], b[1], b[2]);
+          if (a.Length == 4) return new Vector4(b[0], b[1], b[2], b[3]);
+          return base.ConvertFrom(context, culture, value);
+        }
+      }
     }
   }
-
 }

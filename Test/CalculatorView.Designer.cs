@@ -69,8 +69,11 @@
       System.Windows.Forms.Button button28;
       System.Windows.Forms.Button button29;
       System.Windows.Forms.Button button31;
+      System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
       this.button12 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
+      this.contextMenuEdit = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.mi_paste = new System.Windows.Forms.ToolStripMenuItem();
       this.label1 = new System.Windows.Forms.Label();
       this.numericUpDownDigits = new System.Windows.Forms.NumericUpDown();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -119,6 +122,8 @@
       button28 = new System.Windows.Forms.Button();
       button29 = new System.Windows.Forms.Button();
       button31 = new System.Windows.Forms.Button();
+      toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+      this.contextMenuEdit.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDigits)).BeginInit();
       this.SuspendLayout();
       // 
@@ -713,6 +718,14 @@
       button31.UseVisualStyleBackColor = false;
       button31.Click += new System.EventHandler(this.button_Click);
       // 
+      // toolStripMenuItem1
+      // 
+      toolStripMenuItem1.Name = "toolStripMenuItem1";
+      toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+      toolStripMenuItem1.Size = new System.Drawing.Size(210, 24);
+      toolStripMenuItem1.Text = "Copy";
+      toolStripMenuItem1.Click += new System.EventHandler(this.oncopy);
+      // 
       // button12
       // 
       this.button12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -734,6 +747,7 @@
       this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.textBox1.BackColor = System.Drawing.SystemColors.Control;
+      this.textBox1.ContextMenuStrip = this.contextMenuEdit;
       this.textBox1.Font = new System.Drawing.Font("Segoe UI", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.textBox1.HideSelection = false;
       this.textBox1.Location = new System.Drawing.Point(0, 32);
@@ -749,6 +763,24 @@
       this.textBox1.WordWrap = false;
       this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
       this.textBox1.Resize += new System.EventHandler(this.textBox1_Resize);
+      // 
+      // contextMenuEdit
+      // 
+      this.contextMenuEdit.ImageScalingSize = new System.Drawing.Size(20, 20);
+      this.contextMenuEdit.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            toolStripMenuItem1,
+            this.mi_paste});
+      this.contextMenuEdit.Name = "contextMenuEdit";
+      this.contextMenuEdit.Size = new System.Drawing.Size(211, 80);
+      this.contextMenuEdit.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuEdit_Opening);
+      // 
+      // mi_paste
+      // 
+      this.mi_paste.Name = "mi_paste";
+      this.mi_paste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+      this.mi_paste.Size = new System.Drawing.Size(210, 24);
+      this.mi_paste.Text = "Paste";
+      this.mi_paste.Click += new System.EventHandler(this.onpaste);
       // 
       // label1
       // 
@@ -919,6 +951,7 @@
       this.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
       this.Name = "CalculatorView";
       this.Size = new System.Drawing.Size(738, 512);
+      this.contextMenuEdit.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDigits)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -937,5 +970,7 @@
     private Label label2;
     private Button button12;
     private Label label3;
+    private ContextMenuStrip contextMenuEdit;
+    private ToolStripMenuItem mi_paste;
   }
 }

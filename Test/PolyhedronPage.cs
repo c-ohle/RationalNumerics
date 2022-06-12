@@ -13,15 +13,14 @@ namespace Test
     {
       base.OnLoad(e);
       MenuItem.CmdRoot = OnCommand;
-      var view = this.dX11CtrlModel1;
-      view.Scene = demo1();
-      (view.Infos ??= new()).Add(view.Adapter);
+      modelView.Scene = demo1();
+      modelView.Infos.Add(modelView.Adapter);
     }
     int OnCommand(int id, object? test)
     {
       try
       {
-        var x = this.dX11CtrlModel1.OnCmd(id, test);
+        var x = this.modelView.OnCmd(id, test);
         if (x != 0) return x;
         switch (id)
         {
@@ -37,7 +36,11 @@ namespace Test
     }
     private int OnProperties(object? test)
     {
-      if (test == null) { }
+      if (test == null)
+      {
+        propsView.Visible ^= true;
+        //this.splitContainer1.Panel2Collapsed = !this.splitContainer1.Panel2Collapsed;
+      }
       return 1;
     }
     static Models.Scene demo1()
@@ -73,7 +76,7 @@ namespace Test
             },
           }
       };
-    }
+    }          
   }
 
   public class MenuItem : ToolStripMenuItem
@@ -134,5 +137,8 @@ namespace Test
     {
       var a = Items; for (int i = 0, n = a.Count; i < n; i++) a[i].Enabled = true;
     }
+  }
+  public class DX11PropsCtrl : DX11ModelCtrl.PropsCtrl
+  {
   }
 }

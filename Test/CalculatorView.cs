@@ -372,13 +372,23 @@ namespace Test
     void textBox1_Resize(object sender, EventArgs e)
     {
       if (checkresize) textBox1_TextChanged(sender, e);
-      //textBox1.Enabled = false; textBox1.Enabled = true;
-      //AutoScrollOffset = textBox1.AutoScrollOffset;
+    }
+    private void contextMenuEdit_Opening(object sender, CancelEventArgs e)
+    {
+      mi_paste.Enabled = Clipboard.ContainsText();
     }
     void button_rat_Click(object sender, EventArgs e)
     {
       button_rat.Text = button_rat.Text == "ℚ" ? "d" : "ℚ";
       numericUpDownRound_ValueChanged(sender, e);
+    }
+    private void oncopy(object sender, EventArgs e)
+    {
+      ProcessDialogKey(Keys.Control | Keys.C);
+    }
+    private void onpaste(object sender, EventArgs e)
+    {
+      ProcessDialogKey(Keys.Control|Keys.V);
     }
     protected override bool ProcessDialogKey(Keys k)
     {
@@ -389,11 +399,13 @@ namespace Test
           case Keys.C: Clipboard.SetText(textBox1.Text); break;
           case Keys.V:
             if (!Clipboard.ContainsText()) break;
-            if (state != 0 || list.Count != 0) break;
             try
             {
-              var s = Clipboard.GetText(); var t = rat.Parse(s);
-              textBox1.Text = t.ToString("S" + (digits + 2)); textBox1.Select(textBox1.TextLength, 0); textBox1.ScrollToCaret();
+              var s = Clipboard.GetText();
+              var t = rat.Parse(s);
+              s = t.ToString("S" + (digits + 2)); //if (state != 0 || list.Count != 0) break;
+              list.Clear(); state = kl = exp = 0; label1.Text = "";
+              textBox1.Text = s; textBox1.Select(textBox1.TextLength, 0); textBox1.ScrollToCaret();
               return true;
             }
             catch { }

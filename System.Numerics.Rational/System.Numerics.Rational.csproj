@@ -23,6 +23,7 @@
     <PackageTags>C#;Rational</PackageTags>
     <TieredCompilationQuickJit>false</TieredCompilationQuickJit>
     <TieredCompilation>false</TieredCompilation>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

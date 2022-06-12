@@ -104,6 +104,29 @@ namespace System.Numerics
       //M12 == b.M12 && M22 == b.M22 && M32 == b.M32 && M42 == b.M42 &&
       //M13 == b.M13 && M23 == b.M23 && M33 == b.M33 && M43 == b.M43;
     }
+    public Vector3 this[int i]
+    {
+      get
+      {
+        switch (i)
+        {
+          case 00: return new Vector3(M11, M12, M13);
+          case 01: return new Vector3(M21, M22, M23);
+          case 02: return new Vector3(M31, M32, M33);
+          default: return new Vector3(M41, M42, M43);
+        }
+      }
+      set
+      {
+        switch (i)
+        {
+          case 00: M11 = value.X; M12 = value.Y; M13 = value.Z; break;
+          case 01: M21 = value.X; M22 = value.Y; M23 = value.Z; break;
+          case 02: M31 = value.X; M32 = value.Y; M33 = value.Z; break;
+          default: M41 = value.X; M42 = value.Y; M43 = value.Z; break;
+        }
+      }
+    }
     public static Matrix4x3 Identity
     {
       get => new() { M11 = 1, M22 = 1, M33 = 1 };
@@ -168,29 +191,6 @@ namespace System.Numerics
           Matrix4x3.CreateTranslation(Translation);
       }
     }
-    public Vector3 this[int i]
-    {
-      get
-      {
-        switch (i)
-        {
-          case 00: return new Vector3(M11, M12, M13);
-          case 01: return new Vector3(M21, M22, M23);
-          case 02: return new Vector3(M31, M32, M33);
-          default: return new Vector3(M41, M42, M43);
-        }
-      }
-      set
-      {
-        switch (i)
-        {
-          case 00: M11 = value.X; M12 = value.Y; M13 = value.Z; break;
-          case 01: M21 = value.X; M22 = value.Y; M23 = value.Z; break;
-          case 02: M31 = value.X; M32 = value.Y; M33 = value.Z; break;
-          default: M41 = value.X; M42 = value.Y; M43 = value.Z; break;
-        }
-      }
-    }
     public static implicit operator Matrix4x4(Matrix4x3 m)
     {
       return new Matrix4x4(m.M11, m.M12, m.M13, 0, m.M21, m.M22, m.M23, 0, m.M31, m.M32, m.M33, 0, m.M41, m.M42, m.M43, 1);
@@ -244,6 +244,11 @@ namespace System.Numerics
 
       return m;
     }
+    /// <summary>
+    /// Inverts the specified matrix.
+    /// </summary>
+    /// <param name="a">The matrix to invert.</param>
+    /// <returns>When this method returns, contains the inverted matrix if the operation succeeded.</returns>
     public static Matrix4x3 operator !(Matrix4x3 a)
     {
       var t1 = a.M32 * a.M43 - a.M33 * a.M42;
