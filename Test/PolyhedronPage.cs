@@ -14,7 +14,8 @@ namespace Test
       base.OnLoad(e);
       MenuItem.CmdRoot = OnCommand;
       modelView.Scene = demo1();
-      modelView.Infos.Add(modelView.Adapter);
+      modelView.Infos.Add("@1"); // modelView.Adapter);
+      //modelView.Infos.Add("@2");
     }
     int OnCommand(int id, object? test)
     {

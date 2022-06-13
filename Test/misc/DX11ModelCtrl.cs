@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CS8601, CS8600, CS8602, CS8603, CS8604
+using System.Buffers;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
@@ -59,7 +60,7 @@ namespace Test
       var tm = dc.Transform;
       for (int i = 0; i < nodes.Length; i++)
       {
-        var node = nodes[i];
+        var node = nodes[i]; if ((node.flags & 0x02) != 0) continue;
         dc.Transform = node.Transform * tm;
         var pp = node.VisibleNodes; if (pp != null) render(dc, was, pp);
         var geo = node as Models.Geometry; if (geo == null) continue;
@@ -125,7 +126,11 @@ namespace Test
               dc.Color = 0x40000000; var t1 = dc.State;
               dc.BlendState = BlendState.Alpha;
               dc.Rasterizer = Rasterizer.Wireframe;
-              for (int i = 0; i < selection.Count; i++) wire(dc, selection[i]);
+              for (int i = 0; i < selection.Count; i++)
+              {
+                var node = selection[i]; if ((node.flags & 0x02) != 0) continue;
+                wire(dc, node);
+              }
               static void wire(DC dc, Node p)
               {
                 if (p is Models.Geometry geo) { geo.checkbuild(0); dc.Transform = p.GetTransform(); dc.DrawMesh(geo.vb, geo.ib); }
@@ -137,8 +142,8 @@ namespace Test
             {
               for (int i = 0; i < selection.Count; i++)
               {
-                var node = selection[i]; var box = node.GetBox();
-                if (box.Min.X == float.MaxValue) box = default;
+                var node = selection[i]; if ((node.flags & 0x02) != 0) continue;
+                var box = node.GetBox(); if (box.Min.X == float.MaxValue) box = default;
                 dc.Transform = node.GetTransform();
                 dc.Select(node);
                 if ((flags & 1) != 0) { dc.Color = 0xffffffff; dc.DrawBox(box); }
@@ -162,7 +167,7 @@ namespace Test
           {
             for (int i = 0; i < transp.Count; i++)
             {
-              var geo = transp[i];
+              var geo = transp[i]; if ((geo.flags & 0x02) != 0) continue;
               dc.Transform = geo.GetTransform(scene);
               dc.State = State.Default3D;
               dc.BlendState = BlendState.Alpha; dc.Select(geo);
@@ -193,6 +198,7 @@ namespace Test
         for (int i = 0; i < infos.Count; i++, y += dc.Font.Height)
         {
           var s = Infos[i];
+          switch (s) { case "@1": s = base.Adapter; break; /*case "@2": s = size.ToString(); break;*/ }
           dc.DrawText(8, y + dc.Font.Ascent, s);
         }
       }
@@ -268,11 +274,11 @@ namespace Test
         case 2053: return OnIntersect(id, test); // Halfspace"
         case 2054: return OnCheckMash(test);
         case 2055: return OnConvert(test);
+        case 2056: return OnCenter(test);
         case 2100: //Select Box
         case 2101: //Select Pivot
         case 2102: //Select Wireframe
-        case 2103: //Select Normals
-        case 2108: //Shadows
+        case 2103: //Select Normals //case 2108: //Shadows
           return OnFlags(test, id);
         case 3015: return base.OnDriver(test);
         case 3016: return base.OnSamples(test);
@@ -302,38 +308,24 @@ namespace Test
       if (selection.Count == 0) return 0;
       if (test != null) return 1;
       var xml = Models.Save(new Models.Scene { Unit = scene.Unit, Nodes = selection.ToArray() });
-      // ////
-      // using (var bmp = Print(256, 256, 4, 0, dc => OnRender(dc)))
-      // using (var str = new MemoryStream())
-      // {
-      //   bmp.Save(str, System.Drawing.Imaging.ImageFormat.Png); var x = str.Position;
-      //   using (var zstr = new System.IO.Compression.ZLibStream(str, System.IO.Compression.CompressionLevel.Optimal, true))
-      //     xml.Save(zstr);
-      //   str.Write(BitConverter.GetBytes(unchecked((int)x)));
-      //   var a = str.ToArray();
-      //   File.WriteAllBytes("C:\\Users\\cohle\\Desktop\\prev.png", a);
-      // }
-      // ////
-      Clipboard.SetData("x³", xml.ToString());
-      return 1;
+      Clipboard.SetText(xml.ToString()); return 1;
     }
     int OnPaste(object? test)
     {
-      if (Clipboard.ContainsData("x³"))
-      {
-        if (test != null || this.scene.Nodes == null) return 1;
-        var xml = XElement.Parse((string)Clipboard.GetData("x³"));
-        var p = Models.Load(xml);
-        Execute(undonodes(this.scene, this.scene.Nodes.Concat(p.Nodes).ToArray()), undosel(p.Nodes));
-        return 0;
-      }
-      return 0;
+      if (!Clipboard.ContainsText()) return 0;
+      var s = Clipboard.GetText();
+      if (s[0] != '<' || !s.Contains(Models.ns.NamespaceName)) return 0;
+      if (test != null) return 1;
+      var xml = XElement.Parse(s); var scene = Models.Load(xml); //todo: units
+      Execute(undonodes(this.scene, this.scene.Nodes.Concat(scene.Nodes).ToArray()), undosel(scene.Nodes));
+      return 1;
     }
     int OnDelete(object? test)
     {
       if (selection.Count == 0 || scene.Nodes == null) return 0;
       if (test != null) return 1;
-      Execute(undosel(null), undonodes(selection[0].Parent, scene.Nodes.Except(selection).ToArray()));
+      var layer = selection[0].Parent;
+      Execute(undosel(null), undonodes(layer, layer.Nodes.Except(selection).ToArray()));
       return 1;
     }
     int OnSelectAll(object? test)
@@ -509,6 +501,14 @@ namespace Test
       }
       return 0;
     }
+    int OnCenter(object? test)
+    {
+      if (selection.Count == 0) return 0;
+      if (test != null) return 1;
+      var cm = camera.GetTransform(scene); var size = ClientSize;
+      var pr = Matrix4x4.CreatePerspectiveFieldOfView(camera.Fov * (MathF.PI / 180), (float)size.Width / size.Height, camera.Near, camera.Far);
+      cm = Center(pr, cm, selection).m; Execute(undotrans(camera, cm)); return 1;
+    }
 
     bool IsSelect(Node node) => selection.Contains(node);
     public void Select(object? p, bool toggle = false)
@@ -566,9 +566,13 @@ namespace Test
     {
       return () => { var t = selection.Count != 0 ? selection.ToArray() : null; Select(a); a = t; };
     }
-    Action undonodes(Models.Base p, Node[]? nodes)
+    Action undonodes(Models.Base p, Node[]? b)
     {
-      return () => { var t = p.Nodes; p.Nodes = nodes; nodes = t; };
+      return () =>
+      {
+        if (b != null) for (int i = 0, n = b.Length; i < n; i++) b[i].Parent = p;
+        var t = p.Nodes; p.Nodes = b; b = t;
+      };
     }
     static Action? undotrans(Node p, Matrix4x3 m)
     {
@@ -937,7 +941,6 @@ namespace Test
     {
       var ws = IsSelect(main); if (!ws) Select(main, true);
       var pt = Vector3.Transform(pc.Point, ((Node)pc.Hover).GetTransform(main.Parent));
-      //var pt = Vector3.Transform(pc.Point, pc.Transform);
       var p1 = Cursor.Position;
       return id =>
       {
@@ -946,7 +949,7 @@ namespace Test
           var p2 = Cursor.Position;
           if (new Vector2(p2.X - p1.X, p2.Y - p1.Y).LengthSquared() < 10) return;
           if (!ws) Select(main); ws = false; if (!AllowDrop) return;
-          var png = settings.CopyFormat == Models.Settings.DropFormat.Png;
+          var png = settings.FileFormat == Models.Settings.DropFormat.Png;
           var name = main.Name; if (string.IsNullOrEmpty(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) name = main.GetType().Name;
           var path = Path.Combine(Path.GetTempPath(), name + ".x³" + (png ? ".png" : null));
           var xml = Models.Save(new Models.Scene { Unit = scene.Unit, Nodes = selection.ToArray() });
@@ -957,8 +960,7 @@ namespace Test
           {
             if (png)
             {
-              var size = settings.PreviewsSize;
-              using (var bmp = Print(size.Width, size.Height, 4, 0, dc => OnRender(dc)))
+              using (var bmp = preview(settings.PreviewsSize, 20))
               using (var str = new FileStream(path, FileMode.Create))
               {
                 bmp.Save(str, System.Drawing.Imaging.ImageFormat.Png); var x = str.Position;
@@ -976,22 +978,66 @@ namespace Test
     }
     Action<int>? tool_drop(PC pc)
     {
-      var data = pc.View.Tag as DataObject; if (data == null || this.scene.Nodes == null) return null;
-      var list = data.GetFileDropList(); if (list == null || list.Count != 1) return null;
-      var path = list[0]; if (path == null) return null; var xml = default(XElement);
-      if (path.EndsWith(".x³", true, null)) xml = XElement.Load(path);
-      else if (path.EndsWith(".x³.png", true, null)) 
-        using (var str = new FileStream(path, FileMode.Open))
+      static Node[] load(DataObject data, out Vector3 pt)
+      {
+        var list = data.GetFileDropList(); pt = default;
+        if (list != null && list.Count == 1)
+        {
+          var path = list[0];
+          if (path.EndsWith(".x³", true, null)) return loadx(XElement.Load(path), ref pt);
+          if (path.EndsWith(".x³.png", true, null)) using (var str = new FileStream(path, FileMode.Open)) return loadxpng(str, ref pt);
+          else return null;
+        }
+        if (data.GetDataPresent("UniformResourceLocatorW"))
+        {
+          var rst = data.GetData("UniformResourceLocatorW") as MemoryStream; if (rst == null) return null;
+          var txt = System.Text.Encoding.Unicode.GetString(rst.ToArray());
+          var par = txt.Split('\0'); if (par.Length == 0) return null;
+          var url = par[0]; if (!url.EndsWith(".png", true, null)) return null;
+          if (url.EndsWith(".x%C2%B3.png", true, null))
+          {
+            if (url[0] == 'f')
+            {
+              var path = new Uri(url).LocalPath;
+              using (var str = new FileStream(path, FileMode.Open)) return loadxpng(str, ref pt);
+            }
+            else
+            {
+              using (var client = new HttpClient())
+              {
+                var task = client.GetByteArrayAsync(url); task.Wait();
+                if (task.Status == TaskStatus.RanToCompletion)
+                {
+                  using (var str = new MemoryStream(task.Result)) return loadxpng(str, ref pt);
+                }
+              }
+            }
+          }
+          var tex = GetTexture(url); var ts = tex.Size; var os = ts / 500;
+          var box = new Models.BoxGeometry { Transform = Matrix4x3.Identity, Max = new Vector3(os, 0.01f) };
+          box.ranges = new (int, Models.Material)[] { (0, new Models.Material {
+            Diffuse = 0xffffffff, Texture = tex,
+            Transform = Matrix4x3.CreateScale(new Vector3(1 / os.X, -1 / os.Y, 1)) } )};
+          return new Node[] { box };
+        }
+        return null;
+        static Node[] loadxpng(Stream str, ref Vector3 pt)
         {
           str.Seek(-4, SeekOrigin.End); var c = new byte[4]; str.Read(c); var x = BitConverter.ToInt32(c);
           str.Seek(x, SeekOrigin.Begin);
           using (var zstr = new ZLibStream(str, CompressionMode.Decompress))
-            xml = XElement.Load(zstr);
-        }  
-      else return null;
-      var pt = default(Vector3); var s = (string)xml.Attribute("pt");
-      if (s != null) Models.parse(s.AsSpan().Trim(), new Span<float>(&pt, 3));
-      var nodes = Models.Load(xml).Nodes; var rp = nodes[nodes.Length - 1].Location;
+            return loadx(XElement.Load(zstr), ref pt);
+        }
+        static Node[] loadx(XElement xml, ref Vector3 pt)
+        {
+          var s = (string)xml.Attribute("pt"); var v = default(Vector3);
+          if (s != null) { Models.parse(s.AsSpan().Trim(), new Span<float>(&v, 3)); pt = v; }
+          return Models.Load(xml).Nodes;
+        }
+      }
+      var data = pc.View.Tag as DataObject; if (data == null || this.scene.Nodes == null) return null;
+      var nodes = load(data, out var pt); if (nodes == null) return null;
+      var rp = nodes[nodes.Length - 1].Location;
       var mover = move(nodes); var oldnodes = this.scene.Nodes;
       this.scene.Nodes = this.scene.Nodes.Concat(nodes).ToArray();
       pc.SetPlane(Matrix4x3.CreateTranslation(pt)); var plane = pc.Plane;
@@ -1071,37 +1117,77 @@ namespace Test
       var v = (aa * bc - ab * ac) * d; if (v < 0 || u + v > 1) return false;
       return true;
     }
+    static (Matrix4x3 m, Vector2 nf) Center(in Matrix4x4 proj, in Matrix4x3 cm, IList<Node> nodes)
+    {
+      var u = new Vector2(proj.M11, proj.M22);
+      var c = (min: new Vector3(+float.MaxValue), max: new Vector3(-float.MaxValue), new Vector2(-1) / u);
+      recu(ref c, nodes, !cm);
+      var v = (c.max - c.min) * 0.5f; var z = MathF.Max(v.Y * u.Y, v.X * u.X);
+      return (Matrix4x3.CreateTranslation(c.min.X + v.X, c.min.Y + v.Y, z) * cm, new Vector2(c.min.Z - z, c.max.Z - z));
+      static void recu(ref (Vector3 min, Vector3 max, Vector2 s) c, IList<Node> nodes, in Matrix4x3 pm)
+      {
+        for (int i = 0, n = nodes.Count; i < n; i++)
+        {
+          var node = nodes[i]; var m = node.Transform * pm;
+          if (node.Nodes != null) recu(ref c, node.Nodes, m);
+          if (node is not Models.Geometry g) continue;
+          var a = g.vertices; if (a == null) continue;
+          for (int t = 0; t < a.Length; t++)
+          {
+            var p = Matrix4x3.Transform(a[t], m);
+            var q = new Vector3(c.s * p.Z, 0);
+            c.min = Vector3.Min(c.min, p + q);
+            c.max = Vector3.Max(c.max, p - q);
+          }
+        }
+      }
+    }
+    Bitmap preview(Size size, float fov)
+    {
+      return Print(size.Width, size.Height, 4, 0, dc =>
+      {
+        var cm = camera.Transform; // GetTransform(scene); 
+        var pr = Matrix4x4.CreatePerspectiveFieldOfView(fov * (MathF.PI / 180), (float)size.Width / size.Height, camera.Near, camera.Far);
+        var tm = Center(pr, cm, selection).m;
+        var a = scene.Nodes; var b = ArrayPool<int>.Shared.Rent(a.Length);
+        for (int i = 0; i < a.Length; i++) { b[i] = a[i].flags; a[i].flags |= 0x02; }
+        for (int i = 0; i < selection.Count; i++) selection[i].flags &= ~0x02;
+        var t3 = this.flags; this.flags &= ~(0x01 | 0x02 | 0x04 | 0x08);
+        camera.Transform = tm; var t1 = camera.Fov; camera.Fov = fov;
+        var t2 = infos; infos = null; OnRender(dc);
+        camera.Transform = cm; camera.Fov = t1; infos = t2; this.flags = t3;
+        for (int i = 0; i < a.Length; i++) { a[i].flags = (a[i].flags & ~0x02) | (b[i] & 0x02); }
+        ArrayPool<int>.Shared.Return(b);
+      });
+    }
 
     public static class Models
     {
-      const string _General = "\t\tGeneral";
-      const string _Transform = "\tTransform";
-
       public class Settings
       {
         float raster = 0.001f, angelgrid = 0.01f;
-        [Category("\tModel tools")]
+        [Category("\tModelTools")]
         public float Raster
         {
           get => raster;
           set { raster = value; }
         }
-        [Category("\tModel tools")]
+        [Category("\tModelTools")]
         public float Angelgrid
         {
           get => angelgrid;
           set { angelgrid = value; }
         }
         public enum DropFormat { Xml, Png }
-        [Category("Copy tools")]
-        public DropFormat CopyFormat { get; set; }
-        [Category("Copy tools")]
+        [Category("DragTools")]
+        public DropFormat FileFormat { get; set; }
+        [Category("DragTools")]
         public Size PreviewsSize { get; set; } = new Size(64, 64);
       }
 
       public abstract class Base
       {
-        internal protected int flags; //0x01: Fixed 0x04:buildok 0x08:vbok 0x10:merge 0x20:shadows
+        internal protected int flags; //0x01: Fixed 0x02:!visible 0x04:buildok 0x08:vbok 0x10:merge 0x20:shadows
         string? name;
         public Node[]? Nodes;
         public Base? Parent;
@@ -1154,8 +1240,6 @@ namespace Test
         internal protected Node[]? VisibleNodes
         {
           get => Nodes != null && this is not BoolGeometry ? Nodes : default;
-          //get => (flags & 0x02) == 0;
-          //set => flags = (flags & ~0x02) | (value ? 0 : 0x02);
         }
         internal protected virtual object? GetService(Type t)
         {
@@ -1168,7 +1252,7 @@ namespace Test
         internal DX11Ctrl? root;
         public enum Units { Meter = 1, Centimeter = 2, Millimeter = 3, Micron = 4, Foot = 5, Inch = 6 }
         Units unit; internal uint ambient;
-        [Category(_General)]
+        [Category("\t\tGeneral")]
         public new string? Name { get => base.Name; set => base.Name = value; }
         [Category("Scene")]
         public Units Unit
@@ -1216,55 +1300,33 @@ namespace Test
 
       public class Node : Base
       {
-        [Category(_General)]
+        [Category("\t\tGeneral")]
         public new string? Name { get => base.Name; set => base.Name = value; }
-#if false
-      [Category(_General), TypeConverter(typeof(TTC))]
-      public Type Type
-      {
-        get => GetType();
-        set { }
-      }
-      class TTC : TypeConverter
-      {
-        public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type? destinationType)
-        {
-          return value is Type t ? t.Name : String.Empty;
-        }
-        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) => true;
-        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
-        {
-          if(value is not string s) return null;
-          return typeof(ObjectModel).GetNestedType(s);
-        }
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext? context) => true;
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext? context) => true;
-        public override StandardValuesCollection? GetStandardValues(ITypeDescriptorContext? context)
-        {
-          var a = typeof(ObjectModel).GetNestedTypes().Where(p => !p.IsAbstract && p.IsAssignableTo(typeof(Node))).ToArray();
-          return new StandardValuesCollection(a);
-        }
-      }
-#endif
-        [Category(_General), DefaultValue(false)]
+        [Category("\t\tGeneral"), DefaultValue(false)]
         public bool Fixed
         {
           get => (flags & 0x01) != 0;
           set => flags = (flags & ~0x01) | (value ? 0x01 : 0);
         }
-        [Category(_Transform)]
+        [Category("\t\tGeneral"), DefaultValue(true)]
+        public bool Visible
+        {
+          get => (flags & 0x02) == 0;
+          set => flags = (flags & ~0x02) | (value ? 0 : 0x02);
+        }
+        [Category("\tTransform")]
         public Vector3 Location
         {
           get => Transform.Translation;
           set { Transform.Translation = value; Parent?.Invalidate(); }
         }
-        [Category(_Transform)]
+        [Category("\tTransform")]
         public Vector3 Rotation
         {
           get => Transform.Rotation;
           set { Transform.Rotation = value; Parent?.Invalidate(); }
         }
-        [Category(_Transform)]
+        [Category("\tTransform")]
         public Vector3 Scaling
         {
           get => Transform.Scaling;
@@ -1307,6 +1369,7 @@ namespace Test
             var m = Transform;
             if (!m.IsIdentity) e.SetAttributeValue("transform", format(new ReadOnlySpan<float>(&m, 12)));
             if (Fixed) e.SetAttributeValue("fixed", true);
+            if (!Visible) e.SetAttributeValue("visible", false);
           }
           else
           {
@@ -1318,6 +1381,7 @@ namespace Test
             }
             else Transform = Matrix4x3.Identity;
             if ((a = e.Attribute("fixed")) != null) Fixed = (bool)a;
+            if ((a = e.Attribute("visible")) != null) Visible = (bool)a;
           }
         }
         internal protected virtual void InitNew(Node? from)
@@ -2618,7 +2682,7 @@ namespace Test
       }
 
       #region xml
-      static readonly XNamespace ns = "file://C:/Users/cohle/Desktop/Mini3d";
+      public static readonly XNamespace ns = "file://C:/Users/cohle/Desktop/Mini3d";
       public static XElement Save(Base node)
       {
         var e = new XElement(ns + node.GetType().Name);
@@ -2681,7 +2745,17 @@ namespace Test
           var g = e.Graphics; var o = combo.Items[e.Index]; var r = e.Bounds;
           var node = o as Models.Base; var font = Font;
           if ((e.State & DrawItemState.ComboBoxEdit) == 0 && node != null)
+          {
             for (var t = node.Parent; t != null; t = t.Parent) r.X += 16;
+            if (node.Nodes != null)
+            {
+              var ss = Target.selection; var s = default(Models.Base);
+              if (ss.Count != 0) //for (int x = 0; x < ss.Count && ms == null; x++)
+                for (s = ss[ss.Count - 1]; s != null && s != node; s = s.Parent) ;
+              TextRenderer.DrawText(g, s != null ? "" : "", font, // ˃ ˅
+                new Rectangle(r.X - 15, r.Y - 2, r.Width, r.Height), e.ForeColor, TextFormatFlags.Left);
+            }
+          }
           var s1 = o.GetType().Name; var s2 = node != null ? node.Name : null;
           if (s2 != null)
           {

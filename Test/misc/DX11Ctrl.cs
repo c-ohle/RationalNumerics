@@ -1695,7 +1695,8 @@ namespace Test
               p.srv = CreateTexture((System.Drawing.Bitmap)bmp);
             }
           }
-          if (url.IndexOf(':', 0, 8) <= 1) load(this, url); // url.StartsWith("https:",StringComparison.OrdinalIgnoreCase))
+          if (url.IndexOf(':', 0, 8) <= 1) load(this, url); 
+          else if(url[0] == 'f') { var path = new Uri(url).LocalPath; load(this, path); }
           else
           {
             try
@@ -1728,7 +1729,7 @@ namespace Test
                 }
               }
             }
-            //static (HttpClient? p, int n) httpclient;
+            //static (HttpClient? p, ifile:///C:/Users/cohle/Desktop/web/Box1.x%C2%B3.pngnt n) httpclient;
             //if (httpclient.n++ == 0) httpclient.p = new HttpClient();
             //var task = httpclient.p.GetStreamAsync(url);
             //task.GetAwaiter().OnCompleted(() =>
