@@ -55,6 +55,8 @@
       this._bint = new Test.MenuItem();
       this._bhalf = new Test.MenuItem();
       this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+      this._center = new Test.MenuItem();
+      this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
       this._conv = new Test.MenuItem();
       this.menuItem5 = new Test.MenuItem();
       this._setings = new Test.MenuItem();
@@ -75,8 +77,7 @@
       this.contextMenuPropsView = new Test.ContextMenu(this.components);
       this.panel1 = new System.Windows.Forms.Panel();
       this.label3 = new System.Windows.Forms.Label();
-      this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-      this._center = new Test.MenuItem();
+      this.button_toolbox = new System.Windows.Forms.Button();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
       undo_back = new Test.MenuItem();
@@ -247,7 +248,7 @@
             this._3,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(218, 314);
+      this.contextMenuView.Size = new System.Drawing.Size(218, 286);
       // 
       // _model
       // 
@@ -325,6 +326,20 @@
       // 
       this.toolStripSeparator3.Name = "toolStripSeparator3";
       this.toolStripSeparator3.Size = new System.Drawing.Size(250, 6);
+      // 
+      // _center
+      // 
+      this._center.Id = 2056;
+      this._center.Name = "_center";
+      this._center.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.C)));
+      this._center.Size = new System.Drawing.Size(253, 26);
+      this._center.Text = "Center";
+      // 
+      // toolStripSeparator4
+      // 
+      this.toolStripSeparator4.Name = "toolStripSeparator4";
+      this.toolStripSeparator4.Size = new System.Drawing.Size(250, 6);
       // 
       // _conv
       // 
@@ -507,23 +522,20 @@
       this.label3.TabIndex = 0;
       this.label3.Text = "(under construction)";
       // 
-      // toolStripSeparator4
+      // button_toolbox
       // 
-      this.toolStripSeparator4.Name = "toolStripSeparator4";
-      this.toolStripSeparator4.Size = new System.Drawing.Size(250, 6);
-      // 
-      // _center
-      // 
-      this._center.Id = 2056;
-      this._center.Name = "_center";
-      this._center.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.C)));
-      this._center.Size = new System.Drawing.Size(253, 26);
-      this._center.Text = "Center";
+      this.button_toolbox.Location = new System.Drawing.Point(492, 13);
+      this.button_toolbox.Name = "button_toolbox";
+      this.button_toolbox.Size = new System.Drawing.Size(94, 29);
+      this.button_toolbox.TabIndex = 2;
+      this.button_toolbox.Text = "Toolbox";
+      this.button_toolbox.UseVisualStyleBackColor = true;
+      this.button_toolbox.Click += new System.EventHandler(this.button_toolbox_Click);
       // 
       // PolyhedronPage
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+      this.Controls.Add(this.button_toolbox);
       this.Controls.Add(this.panel1);
       this.Controls.Add(this.label3);
       this.Controls.Add(this.label2);
@@ -573,5 +585,6 @@
     private ToolStripSeparator toolStripSeparator2;
     private MenuItem _center;
     private ToolStripSeparator toolStripSeparator4;
+    private Button button_toolbox;
   }
 }

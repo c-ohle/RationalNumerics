@@ -1361,6 +1361,50 @@
       },
       "is_incremental": false,
       "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/Box1.x³.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/Box1.x³.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/Text1.x³.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/Text1.x³.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/cat.htm",
+      "output": {
+        "resource": {
+          "relative_path": "web/cat.htm"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/logo.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/logo.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
     }
   ],
   "incremental_info": [

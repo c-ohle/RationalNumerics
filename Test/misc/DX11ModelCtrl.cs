@@ -986,7 +986,7 @@ namespace Test
           var path = list[0];
           if (path.EndsWith(".x³", true, null)) return loadx(XElement.Load(path), ref pt);
           if (path.EndsWith(".x³.png", true, null)) using (var str = new FileStream(path, FileMode.Open)) return loadxpng(str, ref pt);
-          else return null;
+          //else return null;
         }
         if (data.GetDataPresent("UniformResourceLocatorW"))
         {

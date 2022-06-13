@@ -79,6 +79,24 @@ namespace Test
           }
       };
     }
+
+    //WebBrowser? wb;
+    private void button_toolbox_Click(object sender, EventArgs e)
+    {                
+      //if (wb == null)
+      //{
+      //  wb = new WebBrowser() { Bounds = new Rectangle(8,8,300,400) };
+      //  wb.AllowNavigation = true;
+      //  wb.ScriptErrorsSuppressed = true;
+      //  modelView.Controls.Add(wb);
+      //  //wb.Navigate("https://htmlpreview.github.io/?https://github.com/c-ohle/RationalNumerics/blob/master/Test/web/cat.htm");
+      //  //wb.Navigate("https://htmlpreview.github.io/?https://github.com/c-ohle/RationalNumerics/blob/master/Test/web/cat.htm");
+      //
+      //  wb.Navigate("https://c-ohle.github.io/RationalNumerics/");
+      //  //wb.Navigate("file://C:/Users/cohle/Desktop/RationalNumerics/Test/web/cat.htm");
+      //}
+      //else { wb.Dispose(); wb = null; }
+    }
   }
 
   public class MenuItem : ToolStripMenuItem
