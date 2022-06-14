@@ -1375,10 +1375,76 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "web/Cylinder.x³.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/Cylinder.x³.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/Extrusion1.x³.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/Extrusion1.x³.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/Extrusion2.x³.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/Extrusion2.x³.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/Plate1.x³.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/Plate1.x³.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/Sphere1.x³.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/Sphere1.x³.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "web/Text1.x³.png",
       "output": {
         "resource": {
           "relative_path": "web/Text1.x³.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/Torus1.x³.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/Torus1.x³.png"
         }
       },
       "is_incremental": false,

@@ -38,7 +38,7 @@ namespace Test
     List<Node>? selection;
     List<Action>? undos; int undoi;
     Action<DC>? RenderClient; List<string>? infos;
-    int flags = 0x01 | 0x02 | 0x04; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals
+    int flags = 0x01 | 0x02 | 0x04 | 0x10; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients
     protected override void OnLoad(EventArgs e)
     {
       Initialize(4L << 32);
@@ -121,7 +121,7 @@ namespace Test
             dc.PixelShader = PixelShader.Color;
             dc.DepthStencil = DepthStencil.ZWrite;
             dc.Rasterizer = Rasterizer.CullNone;
-            if ((flags & 4) != 0 && !dc.IsPicking)
+            if ((flags & 0x04) != 0 && !dc.IsPicking)
             {
               dc.Color = 0x40000000; var t1 = dc.State;
               dc.BlendState = BlendState.Alpha;
@@ -138,7 +138,7 @@ namespace Test
               }
               dc.State = t1;
             }
-            if ((flags & (1 | 2)) != 0)
+            if ((flags & (0x01 | 0x02)) != 0)
             {
               for (int i = 0; i < selection.Count; i++)
               {
@@ -160,8 +160,9 @@ namespace Test
               dc.Select();
             }
             if (!dc.IsPicking) RenderClient?.Invoke(dc);
-            var main = selection.Count == 1 ? selection[0] as Models.Geometry : null;
-            if (main != null) main.Render(dc, main);
+            if ((flags & 0x10) != 0 && selection.Count == 1)
+              if(selection[0] is Models.Geometry g && g.Visible) 
+                g.Render(dc, g);
           }
           if (transp.Count != 0)
           {
@@ -267,7 +268,6 @@ namespace Test
         case 2006: return OnGroup(test);
         case 2007: return OnUngroup(test);
         //case 2008: return OnProperties(test);
-        case 2009: return OnSelectAll(test);
         case 2050: return OnIntersect(id, test); // Union
         case 2051: return OnIntersect(id, test); // Difference
         case 2052: return OnIntersect(id, test); // Intersection
@@ -275,10 +275,12 @@ namespace Test
         case 2054: return OnCheckMash(test);
         case 2055: return OnConvert(test);
         case 2056: return OnCenter(test);
+        case 2057: return OnSelectAll(test);
         case 2100: //Select Box
         case 2101: //Select Pivot
         case 2102: //Select Wireframe
-        case 2103: //Select Normals //case 2108: //Shadows
+        case 2103: //Select Normals
+        case 2104:
           return OnFlags(test, id);
         case 3015: return base.OnDriver(test);
         case 3016: return base.OnSamples(test);
@@ -993,27 +995,20 @@ namespace Test
           var rst = data.GetData("UniformResourceLocatorW") as MemoryStream; if (rst == null) return null;
           var txt = System.Text.Encoding.Unicode.GetString(rst.ToArray());
           var par = txt.Split('\0'); if (par.Length == 0) return null;
-          var url = par[0]; if (!url.EndsWith(".png", true, null)) return null;
-          if (url.EndsWith(".x%C2%B3.png", true, null))
+          var uri = new Uri(par[0]); var path = uri.LocalPath;
+          if (!path.EndsWith(".png", true, null)) return null;
+          if (path.EndsWith(".x³.png", true, null))
           {
-            if (url[0] == 'f')
+            if (uri.IsFile) using (var str = new FileStream(uri.LocalPath, FileMode.Open)) return loadxpng(str, ref pt);
+            var client = GetHttpClient();
+            using (var task = client.GetByteArrayAsync(uri))
             {
-              var path = new Uri(url).LocalPath;
-              using (var str = new FileStream(path, FileMode.Open)) return loadxpng(str, ref pt);
-            }
-            else
-            {
-              using (var client = new HttpClient())
-              {
-                var task = client.GetByteArrayAsync(url); task.Wait();
-                if (task.Status == TaskStatus.RanToCompletion)
-                {
-                  using (var str = new MemoryStream(task.Result)) return loadxpng(str, ref pt);
-                }
-              }
+              task.Wait();
+              if (task.Status == TaskStatus.RanToCompletion)
+                using (var str = new MemoryStream(task.Result)) return loadxpng(str, ref pt);
             }
           }
-          var tex = GetTexture(url); var ts = tex.Size; var os = ts / 500;
+          var tex = GetTexture(uri.AbsoluteUri); var ts = tex.Size; var os = ts / 100;
           var box = new Models.BoxGeometry { Transform = Matrix4x3.Identity, Max = new Vector3(os, 0.01f) };
           box.ranges = new (int, Models.Material)[] { (0, new Models.Material {
             Diffuse = 0xffffffff, Texture = tex,
@@ -1057,7 +1052,7 @@ namespace Test
         else if (id == 1)
         {
           var sel = undosel(nodes); sel(); pc.Invalidate();
-          AddUndo(undo(sel, undonodes(this.scene, oldnodes)));
+          AddUndo(undo(sel, undonodes(this.scene, oldnodes))); Focus();
         }
         else if (id == 2) { this.scene.Nodes = oldnodes; pc.Invalidate(); }
       };
@@ -1152,10 +1147,10 @@ namespace Test
         var a = scene.Nodes; var b = ArrayPool<int>.Shared.Rent(a.Length);
         for (int i = 0; i < a.Length; i++) { b[i] = a[i].flags; a[i].flags |= 0x02; }
         for (int i = 0; i < selection.Count; i++) selection[i].flags &= ~0x02;
-        var t3 = this.flags; this.flags &= ~(0x01 | 0x02 | 0x04 | 0x08);
-        camera.Transform = tm; var t1 = camera.Fov; camera.Fov = fov;
+        var t3 = this.flags; this.flags &= ~(0x01 | 0x02 | 0x04 | 0x08 | 0x10);
+        camera.Transform = tm; var t1 = camera.Fov; camera.Fov = fov; // var t4 = RenderClient; RenderClient = null;
         var t2 = infos; infos = null; OnRender(dc);
-        camera.Transform = cm; camera.Fov = t1; infos = t2; this.flags = t3;
+        camera.Transform = cm; camera.Fov = t1; infos = t2; this.flags = t3; // RenderClient = t4;
         for (int i = 0; i < a.Length; i++) { a[i].flags = (a[i].flags & ~0x02) | (b[i] & 0x02); }
         ArrayPool<int>.Shared.Return(b);
       });
@@ -1183,6 +1178,8 @@ namespace Test
         public DropFormat FileFormat { get; set; }
         [Category("DragTools")]
         public Size PreviewsSize { get; set; } = new Size(64, 64);
+        [Category("Registry"), DefaultValue(false)]
+        public bool SaveSettings { get; set; }
       }
 
       public abstract class Base
@@ -2811,29 +2808,29 @@ namespace Test
           grid.SelectedObject = null; combo.Items.Clear();
         }
       }
-      protected override void OnMouseMove(MouseEventArgs e)
-      {
-        if (Capture)
-        {
-          Width = Math.Max(Padding.Left, Math.Min(Parent.ClientSize.Width,
-            xx - Cursor.Position.X)); Parent.Update(); return;
-        }
-        Cursor = Cursors.SizeWE;
-      }
-      protected override void OnMouseDown(MouseEventArgs e)
-      {
-        Capture = true; xx = Width + Cursor.Position.X;
-      }
-      protected override void OnMouseUp(MouseEventArgs e)
-      {
-        Capture = false;
-      }
-      protected override void OnMouseLeave(EventArgs e)
-      {
-        Cursor = Cursors.Default;
-      }
+      //protected override void OnMouseMove(MouseEventArgs e)
+      //{
+      //  if (Capture)
+      //  {
+      //    Width = Math.Max(Padding.Left, Math.Min(Parent.ClientSize.Width,
+      //      xx - Cursor.Position.X)); Parent.Update(); return;
+      //  }
+      //  Cursor = Cursors.SizeWE;
+      //}
+      //protected override void OnMouseDown(MouseEventArgs e)
+      //{
+      //  Capture = true; xx = Width + Cursor.Position.X;
+      //}
+      //protected override void OnMouseUp(MouseEventArgs e)
+      //{
+      //  Capture = false;
+      //}
+      //protected override void OnMouseLeave(EventArgs e)
+      //{
+      //  Cursor = Cursors.Default;
+      //}
       PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
-      bool comboupdate; int xx; static bool regs; object? lastpd;
+      bool comboupdate; static bool regs; object? lastpd; //int xx;
       void fillcombo(object disp)
       {
         var items = combo.Items; comboupdate = true;

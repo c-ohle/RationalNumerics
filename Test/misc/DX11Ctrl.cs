@@ -66,7 +66,7 @@ namespace Test
     protected abstract int OnMouse(int id, PC dc);
     public Action<int>? Animations;
     public Action? Inval;
-    
+
     VIEWPORT viewport; bool inval;
     ISwapChain? swapchain; void* rtv, dsv; //IRenderTargetView, IDepthStencilView
 
@@ -135,7 +135,7 @@ namespace Test
 
     public override void Refresh()
     {
-      Animations?.Invoke(Environment.TickCount); if (!inval) return; 
+      Animations?.Invoke(Environment.TickCount); if (!inval) return;
       if (this.rtv == null) sizebuffers();
       Begin(rtv, dsv, viewport, BkColor); // root != null ? root.Color : (uint)BackColor.ToArgb());
       OnRender(new DC(this)); swapchain.Present(0, 0);
@@ -789,7 +789,7 @@ namespace Test
 
     static Vector3 ToVector3(Vector4 p)
     {
-      return new Vector3(p.X / p.W, p.Y / p.W, p.Z / p.W);
+      return new Vector3(p.X, p.Y, p.Z) / p.W;
     }
     static uint ToUInt(Vector4 s)
     { //todo: SSE
@@ -1218,7 +1218,7 @@ namespace Test
       }
       public void DrawArrow(Vector3 p, Vector3 v, float r, int s = 10)
       {
-        var t1 = this.State; 
+        var t1 = this.State;
         this.VertexShader = VertexShader.Lighting;
         this.PixelShader = PixelShader.Color3D;
         //this.Rasterizer = Rasterizer.CullNone;
@@ -1229,7 +1229,7 @@ namespace Test
         var vv = this.BeginVertices(s << 1);
         for (int i = 0; i < s; i++)
         {
-          var (sin,cos) = MathF.SinCos(i * fa);
+          var (sin, cos) = MathF.SinCos(i * fa);
           var n = r1 * cos + r2 * sin;
           vv[(i << 1) + 0].p = p + n * r;
           vv[(i << 1) + 1].p = p + v;
@@ -1695,59 +1695,39 @@ namespace Test
               p.srv = CreateTexture((System.Drawing.Bitmap)bmp);
             }
           }
-          if (url.IndexOf(':', 0, 8) <= 1) load(this, url); 
-          else if(url[0] == 'f') { var path = new Uri(url).LocalPath; load(this, path); }
-          else
+          if (url.IndexOf(':', 0, 8) <= 1) { load(this, url); return; }
+          var uri = new Uri(url);
+          if (uri.IsFile) { load(this, uri.LocalPath); return; }
+          try
           {
-            try
+            var ci = (INTERNET_CACHE_ENTRY_INFO*)StackPtr; int cn = 4096;
+            var ok = GetUrlCacheEntryInfo(url, ci, ref cn);
+            if (ok) { load(this, new string((char*)ci->path)); return; }
+          }
+          catch (Exception ex) { Debug.WriteLine(ex.Message); }
+          var client = GetHttpClient();
+          using (var task = client.GetByteArrayAsync(uri))
+          {
+            task.Wait();
+            if (task.Status == TaskStatus.RanToCompletion)
             {
-              var ci = (INTERNET_CACHE_ENTRY_INFO*)StackPtr; int cn = 4096;
-              var ok = GetUrlCacheEntryInfo(url, ci, ref cn);
-              if (ok) { load(this, new string((char*)ci->path)); return; }
-            }
-            catch (Exception ex) { Debug.WriteLine(ex.Message); }
-            using (var client = new HttpClient())
-            {
-              var task = client.GetByteArrayAsync(url); task.Wait();
-              if (task.Status == TaskStatus.RanToCompletion)
+              using (var str = new MemoryStream(task.Result))
+              using (var bmp = Image.FromStream(str))
               {
-                using (var str = new MemoryStream(task.Result))
-                using (var bmp = Image.FromStream(str))
-                {
-                  info = bmp.Width | (bmp.Height << 16);
-                  srv = CreateTexture((System.Drawing.Bitmap)bmp);
-                }
-                var ext = Path.GetExtension(url);
-                var ok = CreateUrlCacheEntry(url, 0, ext, (char*)StackPtr, 0);
-                if (ok)
-                {
-                  var path = new string((char*)StackPtr);
-                  File.WriteAllBytes(path, task.Result);
-                  const string h = "HTTP/1.0 200 OK\r\n\r\n";
-                  ok = CommitUrlCacheEntry(url, path, default, default, 1, h, (uint)h.Length, ext, null);
-                  Debug.Assert(ok);
-                }
+                info = bmp.Width | (bmp.Height << 16);
+                srv = CreateTexture((System.Drawing.Bitmap)bmp);
+              }
+              var ext = Path.GetExtension(url);
+              var ok = CreateUrlCacheEntry(url, 0, ext, (char*)StackPtr, 0);
+              if (ok)
+              {
+                var path = new string((char*)StackPtr);
+                File.WriteAllBytes(path, task.Result);
+                const string h = "HTTP/1.0 200 OK\r\n\r\n";
+                ok = CommitUrlCacheEntry(url, path, default, default, 1, h, (uint)h.Length, ext, null);
+                Debug.Assert(ok);
               }
             }
-            //static (HttpClient? p, ifile:///C:/Users/cohle/Desktop/web/Box1.x%C2%B3.pngnt n) httpclient;
-            //if (httpclient.n++ == 0) httpclient.p = new HttpClient();
-            //var task = httpclient.p.GetStreamAsync(url);
-            //task.GetAwaiter().OnCompleted(() =>
-            //{
-            //  if (task.Status == TaskStatus.RanToCompletion)
-            //    try
-            //    {
-            //      using (var bmp = Image.FromStream(task.Result))
-            //      {
-            //        info = bmp.Width | (bmp.Height << 16);
-            //        srv = CreateTexture((System.Drawing.Bitmap)bmp);
-            //        for (var p = D3DControl.first; p != null; p = p.next) p.Invalidate();
-            //      }
-            //    }
-            //    catch (Exception ex) { Debug.WriteLine(ex.Message); }
-            //  if (--httpclient.n == 0) { httpclient.p.Dispose(); httpclient.p = null; }
-            //});
-            return;
           }
         }
         catch (Exception e) { Debug.WriteLine(url + " " + e.Message); }
@@ -1766,6 +1746,16 @@ namespace Test
         release(ref srv);
       }
     }
+
+    //static WeakReference http;
+    //protected static HttpClient GetHttpClient()
+    //{
+    //  if (http == null || http.Target is not HttpClient client)
+    //    http = new WeakReference(client = new HttpClient());
+    //  return client;
+    //}
+    static HttpClient http;
+    protected static HttpClient GetHttpClient() => http ??= new HttpClient();
 
     static void* CreateTexture(Bitmap bmp, int flags = 0) //IShaderResourceView
     {
@@ -1820,8 +1810,6 @@ namespace Test
 
     public static Texture GetTexture(string url)
     {
-      //var rb = new Span<byte>(StackPtr, maxstack >> 1);
-      //using (var str = File.OpenRead(path)) { var x = str.Read(rb); rb = rb.Slice(0, x); }
       var sp = new Span<byte>(StackPtr, 0x10000);
       var wp = sp; Write(ref wp, url);
       return (Texture)Buffer.GetBuffer(typeof(Texture), StackPtr, sp.Length - wp.Length, null);
@@ -2160,7 +2148,7 @@ namespace Test
           var pc = ph + 16; //TTPOLYCURVE
           for (; pc < ph + ((int*)ph)[0]; pc = pc + 4 + ((ushort*)pc)[1] * 8)
           {
-            var cpfx = ((ushort*)pc)[1]; var pfx = ((int x,int y)*)(pc + 4);
+            var cpfx = ((ushort*)pc)[1]; var pfx = ((int x, int y)*)(pc + 4);
             if (((ushort*)pc)[0] == 1) //TT_PRIM_LINE
             {
               for (int t = 0; t < cpfx; t++) act(1, pfx[t].x, pfx[t].y); //AddVertex                  
@@ -2225,11 +2213,11 @@ namespace Test
         dy = ddy - (dy << gy); ddy += ddy;
         gy = ay << sq;
         gx = ax << sq;
-        for(int t = 1 << (sq - 1); ; )
+        for (int t = 1 << (sq - 1); ;)
         {
           gx += dx; dx += ddx; gy += dy;
           act(1, ((gx + t) >> sq) << 10, ((gy + t) >> sq) << 10); //AddVertex
-          if (--i == 0) break;  dy += ddy;
+          if (--i == 0) break; dy += ddy;
         }
       }
     }

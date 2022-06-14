@@ -26,6 +26,8 @@ namespace Test
         switch (id)
         {
           case 2008: return OnProperties(test);
+          case 2009: return OnToolbox(test);
+          case 2010: return OnStoryBoard(test);
         }
       }
       catch (Exception e)
@@ -35,19 +37,47 @@ namespace Test
       }
       return 0;
     }
-    private int OnProperties(object? test)
+    int OnProperties(object? test)
     {
-      if (test == null)
-      {
-        propsView.Visible ^= true;
-        //this.splitContainer1.Panel2Collapsed = !this.splitContainer1.Panel2Collapsed;
-      }
+      if (test != null) return 1;
+      if (propsView.Visible && toolbox != null && toolbox.Visible) { showtb(false); return 1; }
+      propsView.Visible ^= true; if (propsView.Visible && toolbox != null && toolbox.Visible) showtb(false);
       return 1;
     }
-    static Models.Scene demo1()
+    int OnToolbox(object? test)
     {
-      //var tex1 = DX11Ctrl.GetTexture("https://raw.githubusercontent.com/c-ohle/CSG-Project/master/bin/textures/wood1.png");
-      //var tex2 = DX11Ctrl.GetTexture("https://raw.githubusercontent.com/c-ohle/CSG-Project/master/bin/textures/bricks1.png");
+      if (test != null) return 1;
+      if (toolbox == null) propsView.Controls.Add(toolbox = new WebBrowser()
+      {
+        Visible = false,
+        Dock = DockStyle.Fill,
+        AllowNavigation = true,
+        ScriptErrorsSuppressed = true,
+        WebBrowserShortcutsEnabled = false,
+        IsWebBrowserContextMenuEnabled = false,
+        //ScrollBarsEnabled = false,
+        Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat.htm"),
+        //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat.htm"),
+      });
+      if (propsView.Visible && toolbox != null && !toolbox.Visible) { showtb(true); return 1; }
+      propsView.Visible ^= true; if (propsView.Visible && toolbox != null && !toolbox.Visible) showtb(true);
+      return 1;
+    }
+    int OnStoryBoard(object? test)
+    {
+      if (test != null) return 1;
+      panelStory.Visible ^= true;
+      return 1;
+    }
+    WebBrowser? toolbox;
+    void showtb(bool on)
+    {
+      var a = propsView.Controls;
+      for (int i = 0; i < a.Count; i++) { var p = a[i]; p.Visible = p is WebBrowser == on; }
+    }
+
+    Models.Scene demo1()
+    {
       return new Models.Scene
       {
         Unit = Models.Scene.Units.Meter,
@@ -56,11 +86,14 @@ namespace Test
         Nodes = new Models.Node[] {
             new Models.Camera {
               Name = "Camera1", Fov = 30, Near = 0.1f, Far = 1000,
-              Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(new Vector3(-5, -3, 2), new Vector3(), new Vector3(0, 0, 1)),
+              Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(
+                //new Vector3(0, -7, 2), new Vector3(), new Vector3(0, 0, 1)),
+                new Vector3(0, -5, 5), new Vector3(), new Vector3(0, 0, 1)),
             },
             new Models.Light {
               Name = "Light1",
-              Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(new Vector3(), -new Vector3(+1, -0.5f, -2), new Vector3(0, 0, 1)),
+              Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(
+                new Vector3(), new Vector3(-1, -1.5f, 3), new Vector3(0, 0, 1)),
             },
             new Models.BoxGeometry {
               Name = "Ground", Fixed = true,
@@ -69,33 +102,69 @@ namespace Test
               ranges = new (int, Models.Material)[] { (0, new Models.Material {
                 Diffuse = (uint)Color.LightGray.ToArgb(), /*Texture = tex1*/ }) },
             },
-            new Models.BoxGeometry {
-              Name="Box1",
-              Transform = Matrix4x3.CreateTranslation(0, 0, 0),
-              p2 = new Vector3(1, 1, 1),
-              ranges = new (int, Models.Material)[] { (0, new Models.Material {
-                Diffuse = (uint)Color.Gold.ToArgb(), /*Texture = tex2*/ } ) },
-            },
+            //new Models.BoxGeometry {
+            //  Name="Box1",
+            //  Transform = Matrix4x3.CreateTranslation(0, 0, 0),
+            //  p2 = new Vector3(1, 1, 1),
+            //  ranges = new (int, Models.Material)[] { (0, new Models.Material {
+            //    Diffuse = (uint)Color.Gold.ToArgb(), /*Texture = tex2*/ } ) },
+            //},
+            extdemo(),
           }
       };
+
+      static Models.ExtrusionGeometry extdemo()
+      {
+        var pp = new List<Vector2>(); var cc = new List<ushort>();
+        TesselatorPage.demo1((pp, cc));
+        for (int i = 0; i < pp.Count; i++) pp[i] = (pp[i] - new Vector2(350, 200)) * (-1.0f / 100);
+        var model = new Models.ExtrusionGeometry
+        {
+          Name = "Extrusion1",
+          Transform = Matrix4x3.Identity,
+          points = pp.ToArray(),
+          counts = cc.ToArray(),
+          Height = 0.2f,
+          ranges = new (int, Models.Material)[] { (0, new Models.Material {
+          Diffuse = (uint)Color.Gold.ToArgb(), }) }
+        };
+        return model;
+      }
+    }
+    void btn_run_Click(object sender, EventArgs e)
+    {
+
     }
 
-    //WebBrowser? wb;
-    private void button_toolbox_Click(object sender, EventArgs e)
-    {                
-      //if (wb == null)
-      //{
-      //  wb = new WebBrowser() { Bounds = new Rectangle(8,8,300,400) };
-      //  wb.AllowNavigation = true;
-      //  wb.ScriptErrorsSuppressed = true;
-      //  modelView.Controls.Add(wb);
-      //  //wb.Navigate("https://htmlpreview.github.io/?https://github.com/c-ohle/RationalNumerics/blob/master/Test/web/cat.htm");
-      //  //wb.Navigate("https://htmlpreview.github.io/?https://github.com/c-ohle/RationalNumerics/blob/master/Test/web/cat.htm");
-      //
-      //  wb.Navigate("https://c-ohle.github.io/RationalNumerics/");
-      //  //wb.Navigate("file://C:/Users/cohle/Desktop/RationalNumerics/Test/web/cat.htm");
-      //}
-      //else { wb.Dispose(); wb = null; }
+    int xx;
+    void panelStory_MouseEnter(object sender, EventArgs e)
+    {
+      var p = (Control)sender; p.Cursor = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
+    }
+    void panelStory_MouseLeave(object sender, EventArgs e)
+    {
+      var p = (Control)sender; p.Cursor = Cursors.Default;
+    }
+    void panelStory_MouseDown(object sender, MouseEventArgs e)
+    {
+      var p = (Control)sender; p.Capture = true;
+      xx = p.Dock == DockStyle.Bottom ? p.Height + Cursor.Position.Y : p.Width + Cursor.Position.X;
+    }
+    void panelStory_MouseMove(object sender, MouseEventArgs e)
+    {
+      var p = (Control)sender;
+      if (p.Capture)
+      {
+        if (p.Dock == DockStyle.Bottom)
+          p.Height = Math.Max(p.Padding.Top, Math.Min(p.Parent.ClientSize.Height, xx - Cursor.Position.Y));
+        else
+          p.Width = Math.Max(p.Padding.Left, Math.Min(p.Parent.ClientSize.Width, xx - Cursor.Position.X));
+        p.Parent.Update(); return;
+      }
+    }
+    void panelStory_MouseUp(object sender, MouseEventArgs e)
+    {
+      var p = (Control)sender; p.Capture = false;
     }
   }
 

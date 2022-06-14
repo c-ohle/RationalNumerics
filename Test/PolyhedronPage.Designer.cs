@@ -44,6 +44,21 @@
       Test.MenuItem redo2_y;
       Test.MenuItem undo2_back;
       Test.MenuItem redo2_back;
+      Test.MenuItem _toolbox;
+      Test.MenuItem _storyboard;
+      Test.MenuItem _selall;
+      System.Windows.Forms.Button btn_run;
+      System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Item1",
+            "1000",
+            "20"}, -1);
+      System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Item2",
+            "500",
+            "20"}, -1);
+      System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Item3");
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
+      this.@__toolbox = new Test.MenuItem();
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
       this._model = new Test.MenuItem();
@@ -64,6 +79,7 @@
       this._selbox = new Test.MenuItem();
       this._selpiv = new Test.MenuItem();
       this._selwire = new Test.MenuItem();
+      this._selpoints = new Test.MenuItem();
       this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
       this._selnorm = new Test.MenuItem();
       this._drv = new Test.MenuItem();
@@ -71,13 +87,25 @@
       this._samples = new Test.MenuItem();
       this.menuItem8 = new Test.MenuItem();
       this._3 = new System.Windows.Forms.ToolStripSeparator();
-      this.label2 = new System.Windows.Forms.Label();
+      this._4 = new System.Windows.Forms.ToolStripSeparator();
       this.modelView = new Test.DX11ModelCtrl();
       this.propsView = new Test.DX11PropsCtrl();
       this.contextMenuPropsView = new Test.ContextMenu(this.components);
+      this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
       this.panel1 = new System.Windows.Forms.Panel();
+      this.panelStory = new System.Windows.Forms.Panel();
+      this.listView1 = new System.Windows.Forms.ListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+      this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+      this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+      this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
+      this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+      this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+      this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
       this.label3 = new System.Windows.Forms.Label();
-      this.button_toolbox = new System.Windows.Forms.Button();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
       undo_back = new Test.MenuItem();
@@ -93,22 +121,28 @@
       redo2_y = new Test.MenuItem();
       undo2_back = new Test.MenuItem();
       redo2_back = new Test.MenuItem();
+      _toolbox = new Test.MenuItem();
+      _storyboard = new Test.MenuItem();
+      _selall = new Test.MenuItem();
+      btn_run = new System.Windows.Forms.Button();
       this.contextMenuView.SuspendLayout();
       this.contextMenuPropsView.SuspendLayout();
       this.panel1.SuspendLayout();
+      this.panelStory.SuspendLayout();
+      this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // _1
       // 
       _1.Name = "_1";
-      _1.Size = new System.Drawing.Size(214, 6);
+      _1.Size = new System.Drawing.Size(228, 6);
       // 
       // redo_back
       // 
       redo_back.Id = 2001;
       redo_back.Name = "redo_back";
       redo_back.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Back)));
-      redo_back.Size = new System.Drawing.Size(217, 24);
+      redo_back.Size = new System.Drawing.Size(231, 24);
       redo_back.Text = "Redo";
       redo_back.Visible = false;
       // 
@@ -117,7 +151,7 @@
       undo_back.Id = 2000;
       undo_back.Name = "undo_back";
       undo_back.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Back)));
-      undo_back.Size = new System.Drawing.Size(217, 24);
+      undo_back.Size = new System.Drawing.Size(231, 24);
       undo_back.Text = "Undo";
       undo_back.Visible = false;
       // 
@@ -126,7 +160,7 @@
       props.Id = 2008;
       props.Name = "props";
       props.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return)));
-      props.Size = new System.Drawing.Size(217, 24);
+      props.Size = new System.Drawing.Size(231, 24);
       props.Text = "Properties";
       // 
       // undo_z
@@ -135,7 +169,7 @@
       undo_z.Name = "undo_z";
       undo_z.ShortcutKeyDisplayString = "";
       undo_z.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-      undo_z.Size = new System.Drawing.Size(217, 24);
+      undo_z.Size = new System.Drawing.Size(231, 24);
       undo_z.Text = "Undo";
       // 
       // redo_y
@@ -143,20 +177,20 @@
       redo_y.Id = 2001;
       redo_y.Name = "redo_y";
       redo_y.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-      redo_y.Size = new System.Drawing.Size(217, 24);
+      redo_y.Size = new System.Drawing.Size(231, 24);
       redo_y.Text = "Redo";
       // 
       // _2
       // 
       _2.Name = "_2";
-      _2.Size = new System.Drawing.Size(214, 6);
+      _2.Size = new System.Drawing.Size(228, 6);
       // 
       // cut
       // 
       cut.Id = 2002;
       cut.Name = "cut";
       cut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-      cut.Size = new System.Drawing.Size(217, 24);
+      cut.Size = new System.Drawing.Size(231, 24);
       cut.Text = "Cut";
       // 
       // copy
@@ -164,7 +198,7 @@
       copy.Id = 2003;
       copy.Name = "copy";
       copy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-      copy.Size = new System.Drawing.Size(217, 24);
+      copy.Size = new System.Drawing.Size(231, 24);
       copy.Text = "Copy";
       // 
       // paste
@@ -172,7 +206,7 @@
       paste.Id = 2004;
       paste.Name = "paste";
       paste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-      paste.Size = new System.Drawing.Size(217, 24);
+      paste.Size = new System.Drawing.Size(231, 24);
       paste.Text = "Paste";
       // 
       // del
@@ -180,7 +214,7 @@
       del.Id = 2005;
       del.Name = "del";
       del.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-      del.Size = new System.Drawing.Size(217, 24);
+      del.Size = new System.Drawing.Size(231, 24);
       del.Text = "Delete";
       del.Visible = false;
       // 
@@ -190,7 +224,7 @@
       undo2_z.Name = "undo2_z";
       undo2_z.ShortcutKeyDisplayString = "";
       undo2_z.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-      undo2_z.Size = new System.Drawing.Size(186, 24);
+      undo2_z.Size = new System.Drawing.Size(212, 24);
       undo2_z.Text = "Undo";
       // 
       // redo2_y
@@ -198,7 +232,7 @@
       redo2_y.Id = 2001;
       redo2_y.Name = "redo2_y";
       redo2_y.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-      redo2_y.Size = new System.Drawing.Size(186, 24);
+      redo2_y.Size = new System.Drawing.Size(212, 24);
       redo2_y.Text = "Redo";
       // 
       // undo2_back
@@ -206,7 +240,7 @@
       undo2_back.Id = 2000;
       undo2_back.Name = "undo2_back";
       undo2_back.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Back)));
-      undo2_back.Size = new System.Drawing.Size(186, 24);
+      undo2_back.Size = new System.Drawing.Size(212, 24);
       undo2_back.Text = "Undo";
       undo2_back.Visible = false;
       // 
@@ -215,9 +249,54 @@
       redo2_back.Id = 2001;
       redo2_back.Name = "redo2_back";
       redo2_back.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Back)));
-      redo2_back.Size = new System.Drawing.Size(186, 24);
+      redo2_back.Size = new System.Drawing.Size(212, 24);
       redo2_back.Text = "Redo";
       redo2_back.Visible = false;
+      // 
+      // _toolbox
+      // 
+      _toolbox.Id = 2009;
+      _toolbox.Name = "_toolbox";
+      _toolbox.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.X)));
+      _toolbox.Size = new System.Drawing.Size(231, 24);
+      _toolbox.Text = "Toolbox";
+      // 
+      // _storyboard
+      // 
+      _storyboard.Id = 2010;
+      _storyboard.Name = "_storyboard";
+      _storyboard.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.S)));
+      _storyboard.Size = new System.Drawing.Size(231, 24);
+      _storyboard.Text = "Storyboard";
+      // 
+      // _selall
+      // 
+      _selall.Id = 2057;
+      _selall.Name = "_selall";
+      _selall.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+      _selall.Size = new System.Drawing.Size(231, 24);
+      _selall.Text = "Select All";
+      // 
+      // btn_run
+      // 
+      btn_run.Location = new System.Drawing.Point(344, 12);
+      btn_run.Name = "btn_run";
+      btn_run.Size = new System.Drawing.Size(94, 29);
+      btn_run.TabIndex = 2;
+      btn_run.Text = "Run Test";
+      btn_run.UseVisualStyleBackColor = true;
+      btn_run.Click += new System.EventHandler(this.btn_run_Click);
+      // 
+      // __toolbox
+      // 
+      this.@__toolbox.Id = 2009;
+      this.@__toolbox.Name = "__toolbox";
+      this.@__toolbox.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.X)));
+      this.@__toolbox.Size = new System.Drawing.Size(212, 24);
+      this.@__toolbox.Text = "Toolbox";
       // 
       // label1
       // 
@@ -242,13 +321,17 @@
             copy,
             paste,
             del,
-            this._model,
+            _selall,
             _2,
+            this._model,
             this._setings,
             this._3,
+            _toolbox,
+            _storyboard,
+            this._4,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(218, 286);
+      this.contextMenuView.Size = new System.Drawing.Size(232, 364);
       // 
       // _model
       // 
@@ -266,7 +349,7 @@
             this._conv});
       this._model.Id = 0;
       this._model.Name = "_model";
-      this._model.Size = new System.Drawing.Size(217, 24);
+      this._model.Size = new System.Drawing.Size(231, 24);
       this._model.Text = "Model";
       // 
       // _ggroup
@@ -365,7 +448,7 @@
             this._samples});
       this._setings.Id = 0;
       this._setings.Name = "_setings";
-      this._setings.Size = new System.Drawing.Size(217, 24);
+      this._setings.Size = new System.Drawing.Size(231, 24);
       this._setings.Text = "Settings";
       // 
       // _selstyle
@@ -374,6 +457,7 @@
             this._selbox,
             this._selpiv,
             this._selwire,
+            this._selpoints,
             this.toolStripSeparator2,
             this._selnorm});
       this._selstyle.Id = 0;
@@ -403,6 +487,13 @@
       this._selwire.ShortcutKeyDisplayString = "";
       this._selwire.Size = new System.Drawing.Size(185, 26);
       this._selwire.Text = "Wireframe";
+      // 
+      // _selpoints
+      // 
+      this._selpoints.Id = 2104;
+      this._selpoints.Name = "_selpoints";
+      this._selpoints.Size = new System.Drawing.Size(185, 26);
+      this._selpoints.Text = "Points";
       // 
       // toolStripSeparator2
       // 
@@ -452,16 +543,12 @@
       // _3
       // 
       this._3.Name = "_3";
-      this._3.Size = new System.Drawing.Size(214, 6);
+      this._3.Size = new System.Drawing.Size(228, 6);
       // 
-      // label2
+      // _4
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(344, 17);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(142, 20);
-      this.label2.TabIndex = 0;
-      this.label2.Text = "(under construction)";
+      this._4.Name = "_4";
+      this._4.Size = new System.Drawing.Size(228, 6);
       // 
       // modelView
       // 
@@ -473,20 +560,24 @@
       this.modelView.Location = new System.Drawing.Point(0, 0);
       this.modelView.Name = "modelView";
       this.modelView.Scene = null;
-      this.modelView.Size = new System.Drawing.Size(675, 499);
+      this.modelView.Size = new System.Drawing.Size(670, 380);
       this.modelView.TabIndex = 1;
       // 
       // propsView
       // 
       this.propsView.ContextMenuStrip = this.contextMenuPropsView;
       this.propsView.Dock = System.Windows.Forms.DockStyle.Right;
-      this.propsView.Location = new System.Drawing.Point(675, 0);
+      this.propsView.Location = new System.Drawing.Point(670, 0);
       this.propsView.Name = "propsView";
       this.propsView.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
-      this.propsView.Size = new System.Drawing.Size(286, 499);
+      this.propsView.Size = new System.Drawing.Size(286, 511);
       this.propsView.TabIndex = 2;
       this.propsView.Target = this.modelView;
       this.propsView.Visible = false;
+      this.propsView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseDown);
+      this.propsView.MouseEnter += new System.EventHandler(this.panelStory_MouseEnter);
+      this.propsView.MouseLeave += new System.EventHandler(this.panelStory_MouseLeave);
+      this.propsView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseMove);
       // 
       // contextMenuPropsView
       // 
@@ -495,9 +586,16 @@
             undo2_z,
             redo2_y,
             undo2_back,
-            redo2_back});
+            redo2_back,
+            this.toolStripSeparator5,
+            this.@__toolbox});
       this.contextMenuPropsView.Name = "contextMenu4";
-      this.contextMenuPropsView.Size = new System.Drawing.Size(187, 100);
+      this.contextMenuPropsView.Size = new System.Drawing.Size(213, 130);
+      // 
+      // toolStripSeparator5
+      // 
+      this.toolStripSeparator5.Name = "toolStripSeparator5";
+      this.toolStripSeparator5.Size = new System.Drawing.Size(209, 6);
       // 
       // panel1
       // 
@@ -505,12 +603,140 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.panel1.Controls.Add(this.modelView);
+      this.panel1.Controls.Add(this.panelStory);
       this.panel1.Controls.Add(this.propsView);
-      this.panel1.Location = new System.Drawing.Point(11, 55);
+      this.panel1.Location = new System.Drawing.Point(16, 47);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(961, 499);
+      this.panel1.Size = new System.Drawing.Size(956, 511);
       this.panel1.TabIndex = 1;
       this.panel1.TabStop = true;
+      // 
+      // panelStory
+      // 
+      this.panelStory.Controls.Add(this.listView1);
+      this.panelStory.Controls.Add(this.toolStrip1);
+      this.panelStory.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.panelStory.Location = new System.Drawing.Point(0, 380);
+      this.panelStory.Name = "panelStory";
+      this.panelStory.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this.panelStory.Size = new System.Drawing.Size(670, 131);
+      this.panelStory.TabIndex = 2;
+      this.panelStory.Visible = false;
+      this.panelStory.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseDown);
+      this.panelStory.MouseEnter += new System.EventHandler(this.panelStory_MouseEnter);
+      this.panelStory.MouseLeave += new System.EventHandler(this.panelStory_MouseLeave);
+      this.panelStory.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseMove);
+      this.panelStory.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseUp);
+      // 
+      // listView1
+      // 
+      this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+      this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.listView1.FullRowSelect = true;
+      this.listView1.GridLines = true;
+      listViewItem1.StateImageIndex = 0;
+      listViewItem2.StateImageIndex = 0;
+      listViewItem3.StateImageIndex = 0;
+      this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1,
+            listViewItem2,
+            listViewItem3});
+      this.listView1.LabelEdit = true;
+      this.listView1.Location = new System.Drawing.Point(0, 33);
+      this.listView1.Name = "listView1";
+      this.listView1.Size = new System.Drawing.Size(670, 98);
+      this.listView1.TabIndex = 1;
+      this.listView1.UseCompatibleStateImageBehavior = false;
+      this.listView1.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Test1";
+      this.columnHeader1.Width = 200;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Test2";
+      this.columnHeader2.Width = 100;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Test3";
+      this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      // 
+      // toolStrip1
+      // 
+      this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+      this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+      this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1,
+            this.toolStripButton3,
+            this.toolStripButton5,
+            this.toolStripButton1,
+            this.toolStripButton2,
+            this.toolStripButton4});
+      this.toolStrip1.Location = new System.Drawing.Point(0, 6);
+      this.toolStrip1.Name = "toolStrip1";
+      this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+      this.toolStrip1.Size = new System.Drawing.Size(670, 27);
+      this.toolStrip1.TabIndex = 0;
+      this.toolStrip1.Text = "toolStrip1";
+      // 
+      // toolStripLabel1
+      // 
+      this.toolStripLabel1.Name = "toolStripLabel1";
+      this.toolStripLabel1.Size = new System.Drawing.Size(83, 24);
+      this.toolStripLabel1.Text = "Storyboard";
+      // 
+      // toolStripButton3
+      // 
+      this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
+      this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton3.Name = "toolStripButton3";
+      this.toolStripButton3.Size = new System.Drawing.Size(29, 24);
+      this.toolStripButton3.Text = "";
+      // 
+      // toolStripButton5
+      // 
+      this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.toolStripButton5.ForeColor = System.Drawing.Color.Red;
+      this.toolStripButton5.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton5.Image")));
+      this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton5.Name = "toolStripButton5";
+      this.toolStripButton5.Size = new System.Drawing.Size(29, 24);
+      this.toolStripButton5.Text = "";
+      // 
+      // toolStripButton1
+      // 
+      this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+      this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton1.Name = "toolStripButton1";
+      this.toolStripButton1.Size = new System.Drawing.Size(29, 24);
+      this.toolStripButton1.Text = "";
+      // 
+      // toolStripButton2
+      // 
+      this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+      this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton2.Name = "toolStripButton2";
+      this.toolStripButton2.Size = new System.Drawing.Size(29, 24);
+      this.toolStripButton2.Text = "";
+      // 
+      // toolStripButton4
+      // 
+      this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
+      this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton4.Name = "toolStripButton4";
+      this.toolStripButton4.Size = new System.Drawing.Size(29, 24);
+      this.toolStripButton4.Text = "";
       // 
       // label3
       // 
@@ -522,29 +748,22 @@
       this.label3.TabIndex = 0;
       this.label3.Text = "(under construction)";
       // 
-      // button_toolbox
-      // 
-      this.button_toolbox.Location = new System.Drawing.Point(492, 13);
-      this.button_toolbox.Name = "button_toolbox";
-      this.button_toolbox.Size = new System.Drawing.Size(94, 29);
-      this.button_toolbox.TabIndex = 2;
-      this.button_toolbox.Text = "Toolbox";
-      this.button_toolbox.UseVisualStyleBackColor = true;
-      this.button_toolbox.Click += new System.EventHandler(this.button_toolbox_Click);
-      // 
       // PolyhedronPage
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-      this.Controls.Add(this.button_toolbox);
+      this.Controls.Add(btn_run);
       this.Controls.Add(this.panel1);
       this.Controls.Add(this.label3);
-      this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
       this.Name = "PolyhedronPage";
       this.Size = new System.Drawing.Size(975, 598);
       this.contextMenuView.ResumeLayout(false);
       this.contextMenuPropsView.ResumeLayout(false);
       this.panel1.ResumeLayout(false);
+      this.panelStory.ResumeLayout(false);
+      this.panelStory.PerformLayout();
+      this.toolStrip1.ResumeLayout(false);
+      this.toolStrip1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -554,7 +773,6 @@
 
     private Label label1;
     private ContextMenu contextMenuView;
-    private Label label2;
     private DX11ModelCtrl modelView;
     private DX11PropsCtrl propsView;
     private ContextMenu contextMenuPropsView;
@@ -585,6 +803,21 @@
     private ToolStripSeparator toolStripSeparator2;
     private MenuItem _center;
     private ToolStripSeparator toolStripSeparator4;
-    private Button button_toolbox;
+    private ToolStripSeparator _4;
+    private ToolStripSeparator toolStripSeparator5;
+    private MenuItem __toolbox;
+    private Panel panelStory;
+    private ToolStrip toolStrip1;
+    private ToolStripLabel toolStripLabel1;
+    private ListView listView1;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+    private ColumnHeader columnHeader3;
+    private ToolStripButton toolStripButton1;
+    private ToolStripButton toolStripButton2;
+    private ToolStripButton toolStripButton3;
+    private ToolStripButton toolStripButton4;
+    private ToolStripButton toolStripButton5;
+    private MenuItem _selpoints;
   }
 }

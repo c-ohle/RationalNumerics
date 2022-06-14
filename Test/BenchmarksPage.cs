@@ -20,9 +20,10 @@ namespace Test
       {
         Dock = DockStyle.Fill,
         AllowNavigation = false,
-        //AllowWebBrowserDrop = false,
         WebBrowserShortcutsEnabled = false,
-        IsWebBrowserContextMenuEnabled = false
+        IsWebBrowserContextMenuEnabled = false,
+        ScriptErrorsSuppressed = true
+        //AllowWebBrowserDrop = false,
       };
       panel_webview.Controls.Add(wb);
       wb.DocumentCompleted += Wb_DocumentCompleted;

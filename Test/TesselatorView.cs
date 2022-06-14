@@ -27,7 +27,7 @@ namespace Test
     public bool DrawOutlines { get; set; }
     public bool DrawMesh { get; set; }
     public readonly List<Vector2> Points = new();
-    public readonly List<int> Counts = new();
+    public readonly List<ushort> Counts = new();
     public void Reset()
     {
       Winding = Winding.EvenOdd;
