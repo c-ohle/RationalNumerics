@@ -64,7 +64,7 @@ namespace Test
     protected uint BkColor { get; set; }
     protected abstract void OnRender(DC dc);
     protected abstract int OnMouse(int id, PC dc);
-    public Action<int>? Animations;
+    public Action? Animations;
     public Action? Inval;
 
     VIEWPORT viewport; bool inval;
@@ -135,7 +135,7 @@ namespace Test
 
     public override void Refresh()
     {
-      Animations?.Invoke(Environment.TickCount); if (!inval) return;
+      Animations?.Invoke(); if (!inval) return;
       if (this.rtv == null) sizebuffers();
       Begin(rtv, dsv, viewport, BkColor); // root != null ? root.Color : (uint)BackColor.ToArgb());
       OnRender(new DC(this)); swapchain.Present(0, 0);
@@ -976,10 +976,12 @@ namespace Test
       {
         var t2 = this.Texture; this.Texture = texpt32 ??= gettex();
         var t0 = this.State;
+        this.VertexShader = VertexShader.Default;
         this.PixelShader = PixelShader.AlphaTexture;
         this.BlendState = BlendState.Alpha;
         this.Rasterizer = Rasterizer.CullNone;
         this.DepthStencil = DepthStencil.ZWrite;
+        //this.Textrans = Matrix4x4.Identity;
         Matrix4x4 m1; this.Operator(0x75, &m1); Matrix4x4.Invert(m1, out var m2);
         Vector2 t1; t1.X = -r; t1.Y = +r;
         for (int i = 0; i < np; i++)

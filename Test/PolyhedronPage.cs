@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using Models = Test.DX11ModelCtrl.Models;
 
 namespace Test
@@ -55,9 +56,9 @@ namespace Test
         ScriptErrorsSuppressed = true,
         WebBrowserShortcutsEnabled = false,
         IsWebBrowserContextMenuEnabled = false,
-        //ScrollBarsEnabled = false,
-        Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat.htm"),
-        //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat.htm"),
+        ScrollBarsEnabled = false,
+        Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat/index.htm"),
+        //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat/index.htm"),
       });
       if (propsView.Visible && toolbox != null && !toolbox.Visible) { showtb(true); return 1; }
       propsView.Visible ^= true; if (propsView.Visible && toolbox != null && !toolbox.Visible) showtb(true);
@@ -112,7 +113,6 @@ namespace Test
             extdemo(),
           }
       };
-
       static Models.ExtrusionGeometry extdemo()
       {
         var pp = new List<Vector2>(); var cc = new List<ushort>();
@@ -133,6 +133,60 @@ namespace Test
     }
     void btn_run_Click(object sender, EventArgs e)
     {
+      var scene = modelView.Scene; if (scene == null) return;
+      var cam = scene.Find("Camera1") as Models.Camera; if (cam == null) return;
+      var obj = scene.Find("Extrusion1") as Models.Node; if (obj == null) return;
+
+      //var m1 = cam.Transform;
+      //var m2 = Matrix4x3.CreateTranslation(0, 0, -2) * cam.Transform;
+      var m1 = Matrix4x3.Parse("1 0 -0 0 0.7071068 0.7071068 0 -0.7071068 0.7071068 0 -5.0000005 5.0000005", CultureInfo.InvariantCulture);
+      var m2 = Matrix4x3.Parse("0.7429419 0.66935587 0 -0.5006389 0.55567694 0.66376495 0.44429496 -0.4931388 0.74794126 2.0379539 -2.396401 3.3004177", CultureInfo.InvariantCulture);
+
+      //modelView.Animations += 
+      //  animate(modelView, cam, m1, m2,
+      //  animate(modelView, cam, m2, m1,
+      //    animate(modelView, obj,
+      //    Matrix4x3.Identity,
+      //    Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
+      //  animate(modelView, obj,
+      //    Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
+      //    Matrix4x3.CreateRotationY(MathF.PI) * Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
+      //  animate(modelView, obj,
+      //    Matrix4x3.CreateRotationY(MathF.PI) * Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
+      //    Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2))
+      //  //animate(modelView, cam, m1, m2))
+      //  ))));
+
+      modelView.Animations +=
+        animate(modelView, obj,
+          Matrix4x3.Identity,
+          Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
+        animate(modelView, obj,
+          Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
+          Matrix4x3.CreateRotationY(MathF.PI) * Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
+        animate(modelView, obj,
+          Matrix4x3.CreateRotationY(MathF.PI) * Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
+          Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2))
+        //animate(modelView, cam, m1, m2))
+        ));
+
+      static Action animate(DX11Ctrl view, Models.Node node, Matrix4x3 m1, Matrix4x3 m2, Action? next = null)
+      {
+        Matrix4x4.Decompose(m1, out _, out var q1, out var t1);
+        Matrix4x4.Decompose(m2, out _, out var q2, out var t2);
+        int count = 0; return zoom;
+        void zoom()
+        {
+          var f = MathF.Min(1, sigmoid(++count / 20f, 4));
+          var m = (Matrix4x3)(
+            Matrix4x4.CreateFromQuaternion(Quaternion.Lerp(q1, q2, f)) *
+            Matrix4x4.CreateTranslation(Vector3.Lerp(t1, t2, f)));
+          node.Transform = m; view.Invalidate();
+          if (f == 1) { view.Animations -= zoom; view.Animations += next; }
+        }
+      }
+
+      static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
 
     }
 

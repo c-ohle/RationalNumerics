@@ -58,6 +58,7 @@
             "20"}, -1);
       System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Item3");
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
+      Test.MenuItem _copy;
       this.@__toolbox = new Test.MenuItem();
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
@@ -106,6 +107,7 @@
       this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
       this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
       this.label3 = new System.Windows.Forms.Label();
+      this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
       undo_back = new Test.MenuItem();
@@ -125,6 +127,7 @@
       _storyboard = new Test.MenuItem();
       _selall = new Test.MenuItem();
       btn_run = new System.Windows.Forms.Button();
+      _copy = new Test.MenuItem();
       this.contextMenuView.SuspendLayout();
       this.contextMenuPropsView.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -224,7 +227,8 @@
       undo2_z.Name = "undo2_z";
       undo2_z.ShortcutKeyDisplayString = "";
       undo2_z.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-      undo2_z.Size = new System.Drawing.Size(212, 24);
+      undo2_z.ShowShortcutKeys = false;
+      undo2_z.Size = new System.Drawing.Size(123, 24);
       undo2_z.Text = "Undo";
       // 
       // redo2_y
@@ -232,7 +236,8 @@
       redo2_y.Id = 2001;
       redo2_y.Name = "redo2_y";
       redo2_y.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-      redo2_y.Size = new System.Drawing.Size(212, 24);
+      redo2_y.ShowShortcutKeys = false;
+      redo2_y.Size = new System.Drawing.Size(123, 24);
       redo2_y.Text = "Redo";
       // 
       // undo2_back
@@ -240,7 +245,8 @@
       undo2_back.Id = 2000;
       undo2_back.Name = "undo2_back";
       undo2_back.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Back)));
-      undo2_back.Size = new System.Drawing.Size(212, 24);
+      undo2_back.ShowShortcutKeys = false;
+      undo2_back.Size = new System.Drawing.Size(123, 24);
       undo2_back.Text = "Undo";
       undo2_back.Visible = false;
       // 
@@ -249,7 +255,8 @@
       redo2_back.Id = 2001;
       redo2_back.Name = "redo2_back";
       redo2_back.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Back)));
-      redo2_back.Size = new System.Drawing.Size(212, 24);
+      redo2_back.ShowShortcutKeys = false;
+      redo2_back.Size = new System.Drawing.Size(123, 24);
       redo2_back.Text = "Redo";
       redo2_back.Visible = false;
       // 
@@ -295,7 +302,8 @@
       this.@__toolbox.Name = "__toolbox";
       this.@__toolbox.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
             | System.Windows.Forms.Keys.X)));
-      this.@__toolbox.Size = new System.Drawing.Size(212, 24);
+      this.@__toolbox.ShowShortcutKeys = false;
+      this.@__toolbox.Size = new System.Drawing.Size(123, 24);
       this.@__toolbox.Text = "Toolbox";
       // 
       // label1
@@ -587,15 +595,17 @@
             redo2_y,
             undo2_back,
             redo2_back,
+            this.toolStripSeparator6,
+            _copy,
             this.toolStripSeparator5,
             this.@__toolbox});
       this.contextMenuPropsView.Name = "contextMenu4";
-      this.contextMenuPropsView.Size = new System.Drawing.Size(213, 130);
+      this.contextMenuPropsView.Size = new System.Drawing.Size(124, 160);
       // 
       // toolStripSeparator5
       // 
       this.toolStripSeparator5.Name = "toolStripSeparator5";
-      this.toolStripSeparator5.Size = new System.Drawing.Size(209, 6);
+      this.toolStripSeparator5.Size = new System.Drawing.Size(120, 6);
       // 
       // panel1
       // 
@@ -748,6 +758,20 @@
       this.label3.TabIndex = 0;
       this.label3.Text = "(under construction)";
       // 
+      // _copy
+      // 
+      _copy.Id = 2003;
+      _copy.Name = "_copy";
+      _copy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+      _copy.ShowShortcutKeys = false;
+      _copy.Size = new System.Drawing.Size(123, 24);
+      _copy.Text = "Copy";
+      // 
+      // toolStripSeparator6
+      // 
+      this.toolStripSeparator6.Name = "toolStripSeparator6";
+      this.toolStripSeparator6.Size = new System.Drawing.Size(120, 6);
+      // 
       // PolyhedronPage
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -819,5 +843,6 @@
     private ToolStripButton toolStripButton4;
     private ToolStripButton toolStripButton5;
     private MenuItem _selpoints;
+    private ToolStripSeparator toolStripSeparator6;
   }
 }

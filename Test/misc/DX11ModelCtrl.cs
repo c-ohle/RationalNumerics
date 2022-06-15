@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Windows.Forms.Design;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Node = Test.DX11ModelCtrl.Models.Node;
 
 namespace Test
@@ -161,7 +162,7 @@ namespace Test
             }
             if (!dc.IsPicking) RenderClient?.Invoke(dc);
             if ((flags & 0x10) != 0 && selection.Count == 1)
-              if(selection[0] is Models.Geometry g && g.Visible) 
+              if (selection[0] is Models.Geometry g && g.Visible)
                 g.Render(dc, g);
           }
           if (transp.Count != 0)
@@ -1205,7 +1206,7 @@ namespace Test
             if (Nodes != null)
               for (int i = 0; i < Nodes.Length; i++)
               {
-                var p = Nodes[i]; var c = new XElement(ns + p.GetType().Name);
+                var p = Nodes[i]; var c = new XElement(ns + o2s(p));
                 e.Add(c); p.Serialize(c, true);
               }
           }
@@ -1217,7 +1218,7 @@ namespace Test
             for (var p = e.FirstNode; p != null; p = p.NextNode)
             {
               if (p is not XElement pe) continue;
-              var t = typeof(Models).GetNestedType(pe.Name.LocalName);
+              var t = s2t(pe.Name.LocalName);
               if (t == null || !t.IsSubclassOf(typeof(Base))) continue;
               pe.AddAnnotation(t); n++;
             }
@@ -1241,6 +1242,14 @@ namespace Test
         internal protected virtual object? GetService(Type t)
         {
           return Parent != null ? Parent.GetService(t) : null;
+        }
+        public Base? Find(string name)
+        {
+          if (Nodes != null)
+            for (int i = 0; i < Nodes.Length; i++)
+              if (Nodes[i].Name == name)
+                return Nodes[i];
+          return null;
         }
       }
 
@@ -1553,10 +1562,10 @@ namespace Test
             if (ranges.Length == 1) save(e, ranges[0].material);
             else
             {
-              var ea = new XElement(ns + "Materials"); e.AddFirst(ea);
+              var ea = new XElement(ns + "materials"); e.AddFirst(ea);
               for (int k = 0; k < ranges.Length; k++)
               {
-                var r = ranges[k]; var em = new XElement(ns + "Material"); ea.Add(em);
+                var r = ranges[k]; var em = new XElement(ns + "material"); ea.Add(em);
                 if (r.count != 0) em.SetAttributeValue("count", r.count);
                 save(em, r.material);
               }
@@ -1570,7 +1579,7 @@ namespace Test
           }
           else
           {
-            var ea = e.Element(ns + "Materials");
+            var ea = e.Element(ns + "materials");
             if (ea == null)
             {
               ranges = new (int, Material)[] { new(0, load(e)) };
@@ -1671,6 +1680,7 @@ namespace Test
           }
         }
       }
+
       public class MeshGeometry : Geometry
       {
         [Category("Geometry")]
@@ -1895,6 +1905,7 @@ namespace Test
           }
         }
       }
+
       public class SphereGeometry : Geometry
       {
         float radius; public int segx, segy;
@@ -1971,6 +1982,7 @@ namespace Test
           if (box.Min.X != float.MaxValue) { Nodes = null; radius = (box.Max - box.Min).Length() * 0.5f; }
         }
       }
+
       public class CylinderGeometry : Geometry
       {
         float radius, height; int seg;
@@ -2679,16 +2691,59 @@ namespace Test
       }
 
       #region xml
-      public static readonly XNamespace ns = "file://C:/Users/cohle/Desktop/Mini3d";
+      public static readonly XNamespace ns = XNamespace.None;//"file://C:/Users/cohle/Desktop/Mini3d";
+
+      static Type? s2t(string s)
+      {
+        switch (s)
+        {
+          case "g": case "Node": return typeof(Node);
+          case "box": case "BoxGeometry": return typeof(BoxGeometry);
+          case "polyext": case "ExtrusionGeometry": return typeof(ExtrusionGeometry);
+          case "polyrot": case "RotationGeometry": return typeof(RotationGeometry);
+          case "mesh": case "MeshGeometry": return typeof(MeshGeometry);
+          case "bool": case "BoolGeometry": return typeof(BoolGeometry);
+          case "text": case "TextGeometry": return typeof(TextGeometry);
+          case "cylinder": case "CylinderGeometry": return typeof(CylinderGeometry);
+          case "sphere": case "SphereGeometry": return typeof(SphereGeometry);
+          case "light": case "Light": return typeof(Light);
+          case "camera": case "Camera": return typeof(Camera);
+          case "scene": case "Scene": return typeof(Scene);
+          default: return null;
+        }
+      }
+      static object? s2o(string s)
+      {
+        return Activator.CreateInstance(s2t(s));
+      }
+      static string o2s(object p)
+      {
+        //return p.GetType().Name; //var a = (XmlTypeAttribute)Attribute.GetCustomAttribute(p.GetType(), typeof(XmlTypeAttribute));
+        var t = p.GetType();
+        if (t == typeof(Node)) return "g";
+        if (t == typeof(BoxGeometry)) return "box";
+        if (t == typeof(ExtrusionGeometry)) return "polyext";
+        if (t == typeof(RotationGeometry)) return "polyrot";
+        if (t == typeof(MeshGeometry)) return "mesh";
+        if (t == typeof(BoolGeometry)) return "bool";
+        if (t == typeof(TextGeometry)) return "text";
+        if (t == typeof(CylinderGeometry)) return "cylinder";
+        if (t == typeof(SphereGeometry)) return "sphere";
+        if (t == typeof(Light)) return "light";
+        if (t == typeof(Camera)) return "camera";
+        if (t == typeof(Scene)) return "scene";
+        throw new Exception();
+      }
+
       public static XElement Save(Base node)
       {
-        var e = new XElement(ns + node.GetType().Name);
+        var e = new XElement(ns + o2s(node)); 
         node.Serialize(e, true);
         return e;
       }
       public static Base Load(XElement e)
       {
-        var node = (Base)Activator.CreateInstance(typeof(Models).GetNestedType(e.Name.LocalName));
+        var node = (Base)s2o(e.Name.LocalName); // (Base)Activator.CreateInstance(typeof(Models).GetNestedType(e.Name.LocalName));
         node.Serialize(e, false);
         return node;
       }
@@ -2852,7 +2907,7 @@ namespace Test
       }
       bool update;
       void oninv() { update = true; }
-      void onidle(int ms)
+      void onidle()
       {
         if (!update) return; update = false; //Debug.WriteLine($"onidle {ms}");
         if (combo.DroppedDown) return;

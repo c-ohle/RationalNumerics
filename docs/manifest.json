@@ -1364,10 +1364,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/Box1.x³.png",
+      "source_relative_path": "web/cat/Box1.x³.png",
       "output": {
         "resource": {
-          "relative_path": "web/Box1.x³.png"
+          "relative_path": "web/cat/Box1.x³.png"
         }
       },
       "is_incremental": false,
@@ -1375,10 +1375,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/Cylinder.x³.png",
+      "source_relative_path": "web/cat/Cylinder.x³.png",
       "output": {
         "resource": {
-          "relative_path": "web/Cylinder.x³.png"
+          "relative_path": "web/cat/Cylinder.x³.png"
         }
       },
       "is_incremental": false,
@@ -1386,10 +1386,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/Extrusion1.x³.png",
+      "source_relative_path": "web/cat/Extrusion1.x³.png",
       "output": {
         "resource": {
-          "relative_path": "web/Extrusion1.x³.png"
+          "relative_path": "web/cat/Extrusion1.x³.png"
         }
       },
       "is_incremental": false,
@@ -1397,10 +1397,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/Extrusion2.x³.png",
+      "source_relative_path": "web/cat/Extrusion2.x³.png",
       "output": {
         "resource": {
-          "relative_path": "web/Extrusion2.x³.png"
+          "relative_path": "web/cat/Extrusion2.x³.png"
         }
       },
       "is_incremental": false,
@@ -1408,10 +1408,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/Plate1.x³.png",
+      "source_relative_path": "web/cat/Plate1.x³.png",
       "output": {
         "resource": {
-          "relative_path": "web/Plate1.x³.png"
+          "relative_path": "web/cat/Plate1.x³.png"
         }
       },
       "is_incremental": false,
@@ -1419,10 +1419,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/Sphere1.x³.png",
+      "source_relative_path": "web/cat/Sphere1.x³.png",
       "output": {
         "resource": {
-          "relative_path": "web/Sphere1.x³.png"
+          "relative_path": "web/cat/Sphere1.x³.png"
         }
       },
       "is_incremental": false,
@@ -1430,10 +1430,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/Text1.x³.png",
+      "source_relative_path": "web/cat/Text1.x³.png",
       "output": {
         "resource": {
-          "relative_path": "web/Text1.x³.png"
+          "relative_path": "web/cat/Text1.x³.png"
         }
       },
       "is_incremental": false,
@@ -1441,10 +1441,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/Torus1.x³.png",
+      "source_relative_path": "web/cat/Torus1.x³.png",
       "output": {
         "resource": {
-          "relative_path": "web/Torus1.x³.png"
+          "relative_path": "web/cat/Torus1.x³.png"
         }
       },
       "is_incremental": false,
@@ -1452,10 +1452,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/cat.htm",
+      "source_relative_path": "web/cat/index.htm",
       "output": {
         "resource": {
-          "relative_path": "web/cat.htm"
+          "relative_path": "web/cat/index.htm"
         }
       },
       "is_incremental": false,
@@ -1463,10 +1463,21 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "web/logo.png",
+      "source_relative_path": "web/cat/logo.png",
       "output": {
         "resource": {
-          "relative_path": "web/logo.png"
+          "relative_path": "web/cat/logo.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "web/tex/millis.png",
+      "output": {
+        "resource": {
+          "relative_path": "web/tex/millis.png"
         }
       },
       "is_incremental": false,

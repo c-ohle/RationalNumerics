@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <title></title>
+  <style type="text/css">
+    .group{cursor:default;font-weight:normal;color:#555555;background-color:#EEEEEE;padding-left:4px}
+  </style>
+  <script> 
+    function toggle(p) {
+      var e = p.nextElementSibling;//document.getElementById(id); 
+      var h = e.style.display == "none"; 
+      e.style.display = h ? "block" : "none";
+      p.innerText = (h ? "◢ " : "▷ ") + p.innerText.slice(2);
+      if (h) e.parentElement.scrollIntoView(); }
+  </script>
+</head>
+  <body style="font:normal 10pt Segoe UI">
+    <div style="position:absolute;top:0px;bottom:0px;left:0px;right:0px;overflow:auto;"> 
+      <div>
+        <div class="group" onclick="toggle(this)">◢ Primitives</div>
+        <div style="display:block;margin-left:16px">
+          <table>   
+            <tr><td><img src="Box1.x³.png" /></td><td>Box</td></tr>
+            <tr><td><img src="Plate1.x³.png" /></td><td>Plate</td></tr>
+            <tr><td><img src="Extrusion1.x³.png" /></td><td>Extrusion</td></tr>  
+            <tr><td><img src="Text1.x³.png" /></td><td>Text</td></tr>
+            <tr><td><img src="Cylinder.x³.png" /></td><td>Cylinder</td></tr>
+            <tr><td><img src="Torus1.x³.png" /></td><td>Torus</td></tr>
+            <tr><td><img src="Sphere1.x³.png" /></td><td>Sphere</td></tr>  
+            <tr><td><img src="Extrusion2.x³.png" /></td><td>Polyextrusion</td></tr>          
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="group" onclick="toggle(this,2)">▷ Misc</div>
+        <div style="display:none;margin-left:16px">
+          <table>
+            <tr><td><img src="Extrusion2.x³.png" /></td><td>Polyextrusion</td></tr>          
+            <tr><td><img src="Torus1.x³.png" /></td><td>Torus</td></tr>
+            <tr><td><img src="Sphere1.x³.png" /></td><td>Sphere</td></tr>  
+            <tr><td><img src="logo.png" /></td><td>Logo</td></tr>    
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="group" onclick="toggle(this,2)">▷ More misc</div>
+        <div style="display:none;margin-left:16px">
+          <table>
+            <tr><td><img src="Extrusion2.x³.png" /></td><td>Polyextrusion</td></tr>          
+            <tr><td><img src="Torus1.x³.png" /></td><td>Torus</td></tr>
+            <tr><td><img src="Sphere1.x³.png" /></td><td>Sphere</td></tr>  
+            <tr><td><img src="logo.png" /></td><td>Logo</td></tr>    
+          </table>
+        </div>
+      </div>
+    </div> 
+  </body>
+</html>

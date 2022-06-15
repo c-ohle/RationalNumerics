@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 namespace System.Numerics
 {
@@ -323,6 +325,23 @@ namespace System.Numerics
         a.X * b.M11 + a.Y * b.M21 + a.Z * b.M31 + b.M41,
         a.X * b.M12 + a.Y * b.M22 + a.Z * b.M32 + b.M42,
         a.X * b.M13 + a.Y * b.M23 + a.Z * b.M33 + b.M43);
+    }
+    public static Matrix4x3 Lerp(Matrix4x3 a, Matrix4x3 b, float f)
+    {
+      Matrix4x3 c;
+      c.M11 = a.M11 + (b.M11 - a.M11) * f;
+      c.M12 = a.M12 + (b.M12 - a.M12) * f;
+      c.M13 = a.M13 + (b.M13 - a.M13) * f;
+      c.M21 = a.M21 + (b.M21 - a.M21) * f;
+      c.M22 = a.M22 + (b.M22 - a.M22) * f;
+      c.M23 = a.M23 + (b.M23 - a.M23) * f;
+      c.M31 = a.M31 + (b.M31 - a.M31) * f;
+      c.M32 = a.M32 + (b.M32 - a.M32) * f;
+      c.M33 = a.M33 + (b.M33 - a.M33) * f;
+      c.M41 = a.M41 + (b.M41 - a.M41) * f;
+      c.M42 = a.M42 + (b.M42 - a.M42) * f;
+      c.M43 = a.M43 + (b.M43 - a.M43) * f;
+      return c;
     }
   }
 }
