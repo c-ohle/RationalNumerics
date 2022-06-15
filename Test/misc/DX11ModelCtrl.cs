@@ -39,6 +39,7 @@ namespace Test
     List<Node>? selection;
     List<Action>? undos; int undoi;
     Action<DC>? RenderClient; List<string>? infos;
+    internal XElement? records;
     int flags = 0x01 | 0x02 | 0x04 | 0x10; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients
     protected override void OnLoad(EventArgs e)
     {
@@ -580,12 +581,19 @@ namespace Test
     static Action? undotrans(Node p, Matrix4x3 m)
     {
       if (p.Transform == m) return null;
+      if (p is Models.Camera)
+      {
+        var ctrl = (DX11ModelCtrl)p.GetService(typeof(DX11ModelCtrl));
+        if (ctrl.records != null)
+          ctrl.records.Add(new XElement("m", new XAttribute("t", p.Name),
+            new XAttribute("a", m.ToString("")), new XAttribute("b", p.Transform.ToString(""))));
+      }
       return () => { var t = p.Transform; p.Transform = m; m = t; };
     }
     static Action? undo(object? p)
     {
       if (p is Action ac) return ac;
-      if (p is Action<int, Matrix4x3> em) return () => em(0, default);
+      if (p is Action<int, Matrix4x3> em) { em(3, default); return () => em(0, default); }
       if (p is IEnumerable<Action> en) return undo(en.ToArray());
       return null;
     }
@@ -598,6 +606,7 @@ namespace Test
     }
 
     static int lastwheel;
+
     void wheel(PC pc)
     {
       if (pc.Hover is not Node) return;
@@ -733,13 +742,20 @@ namespace Test
       return (id, v) =>
       {
         if (id == 0) { v = node.Transform; node.Transform = m; m = v; node.Parent?.Invalidate(); }
-        else
+        else if (id == 1)
         {
           var t = m * v;
           if (v.M41 != 0) t.M41 = MathF.Round(t.M41, 6);
           if (v.M42 != 0) t.M42 = MathF.Round(t.M42, 6);
           if (v.M43 != 0) t.M43 = MathF.Round(t.M43, 6);
           node.Transform = t; node.Parent?.Invalidate();
+        }
+        else if (id == 3)
+        {
+          var ctrl = (DX11ModelCtrl)node.GetService(typeof(DX11ModelCtrl));
+          if (ctrl.records != null)
+            ctrl.records.Add(new XElement("m", new XAttribute("t", node.Name),
+              new XAttribute("a", m.ToString("")), new XAttribute("b", node.Transform.ToString(""))));
         }
       };
     }
@@ -775,7 +791,6 @@ namespace Test
           if (dp == default) return; //Debug.WriteLine($"{dp}");
           if (mo == null) mo = move(selection);
           mo(1, Matrix4x3.CreateTranslation(new Vector3(dp, 0)));
-          //mo(1, xm * Matrix4x3.CreateTranslation(new Vector3(dp, 0)) * !xm);
         }
         if (id == 1)
         {
@@ -952,9 +967,9 @@ namespace Test
           var p2 = Cursor.Position;
           if (new Vector2(p2.X - p1.X, p2.Y - p1.Y).LengthSquared() < 10) return;
           if (!ws) Select(main); ws = false; if (!AllowDrop) return;
-          var png = settings.FileFormat == Models.Settings.DropFormat.Png;
+          var png = settings.FileFormat == Models.Settings.DropFormat.xxzpng;
           var name = main.Name; if (string.IsNullOrEmpty(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) name = main.GetType().Name;
-          var path = Path.Combine(Path.GetTempPath(), name + ".x³" + (png ? ".png" : null));
+          var path = Path.Combine(Path.GetTempPath(), name + (png ? ".xxz.png" : ".xxz"));
           var xml = Models.Save(new Models.Scene { Unit = scene.Unit, Nodes = selection.ToArray() });
           var ppt = pt; xml.SetAttributeValue("pt", Models.format(new Span<float>(&ppt, 3)));
           var data = new DataObject();
@@ -987,8 +1002,8 @@ namespace Test
         if (list != null && list.Count == 1)
         {
           var path = list[0];
-          if (path.EndsWith(".x³", true, null)) return loadx(XElement.Load(path), ref pt);
-          if (path.EndsWith(".x³.png", true, null)) using (var str = new FileStream(path, FileMode.Open)) return loadxpng(str, ref pt);
+          if (path.EndsWith(".xxz", true, null)) return loadx(XElement.Load(path), ref pt);
+          if (path.EndsWith(".xxz.png", true, null)) using (var str = new FileStream(path, FileMode.Open)) return loadxpng(str, ref pt);
           //else return null;
         }
         if (data.GetDataPresent("UniformResourceLocatorW"))
@@ -998,7 +1013,7 @@ namespace Test
           var par = txt.Split('\0'); if (par.Length == 0) return null;
           var uri = new Uri(par[0]); var path = uri.LocalPath;
           if (!path.EndsWith(".png", true, null)) return null;
-          if (path.EndsWith(".x³.png", true, null))
+          if (path.EndsWith(".xxz.png", true, null))
           {
             if (uri.IsFile) using (var str = new FileStream(uri.LocalPath, FileMode.Open)) return loadxpng(str, ref pt);
             var client = GetHttpClient();
@@ -1174,7 +1189,7 @@ namespace Test
           get => angelgrid;
           set { angelgrid = value; }
         }
-        public enum DropFormat { Xml, Png }
+        public enum DropFormat { xxz, xxzpng }
         [Category("DragTools")]
         public DropFormat FileFormat { get; set; }
         [Category("DragTools")]
@@ -1320,19 +1335,19 @@ namespace Test
           get => (flags & 0x02) == 0;
           set => flags = (flags & ~0x02) | (value ? 0 : 0x02);
         }
-        [Category("\tTransform")]
+        [Category("\tTransform"), TypeConverter(typeof(VectorConverter))]
         public Vector3 Location
         {
           get => Transform.Translation;
           set { Transform.Translation = value; Parent?.Invalidate(); }
         }
-        [Category("\tTransform")]
+        [Category("\tTransform"), TypeConverter(typeof(VectorConverter))]
         public Vector3 Rotation
         {
           get => Transform.Rotation;
           set { Transform.Rotation = value; Parent?.Invalidate(); }
         }
-        [Category("\tTransform")]
+        [Category("\tTransform"), TypeConverter(typeof(VectorConverter))]
         public Vector3 Scaling
         {
           get => Transform.Scaling;
@@ -1840,13 +1855,13 @@ namespace Test
       public class BoxGeometry : Geometry
       {
         internal Vector3 p1, p2;
-        [Category("Geometry")]
+        [Category("Geometry"), TypeConverter(typeof(VectorConverter))]
         public Vector3 Min
         {
           get => p1;
           set { p1 = value; Invalidate(); }
         }
-        [Category("Geometry")]
+        [Category("Geometry"), TypeConverter(typeof(VectorConverter))]
         public Vector3 Max
         {
           get => p2;
@@ -2690,6 +2705,7 @@ namespace Test
         }
       }
 
+
       #region xml
       public static readonly XNamespace ns = XNamespace.None;//"file://C:/Users/cohle/Desktop/Mini3d";
 
@@ -2737,7 +2753,7 @@ namespace Test
 
       public static XElement Save(Base node)
       {
-        var e = new XElement(ns + o2s(node)); 
+        var e = new XElement(ns + o2s(node));
         node.Serialize(e, true);
         return e;
       }
@@ -2781,6 +2797,30 @@ namespace Test
         return new Vector2(c, s);
       }
       internal static bool propref;
+      #endregion
+      #region converter
+      class VectorConverter : TypeConverter
+      {
+        public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type? destinationType)
+        {
+          if (value is Vector2 a) return $"{a.X}; {a.Y}";
+          if (value is Vector3 b) return $"{b.X}; {b.Y}; {b.Z}";
+          if (value is Vector4 c) return $"{c.X}; {c.Y}; {c.Z}; {c.W}";
+          //if (value is rat d) return d.ToString();
+          return null;
+        }
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type? sourceType) => true;
+        public override object ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+        {
+          var a = ((string)value).Split(';');
+          var b = stackalloc float[a.Length];
+          for (int i = 0; i < a.Length; i++) b[i] = float.Parse(a[i]);
+          if (a.Length == 2) return new Vector2(b[0], b[1]);
+          if (a.Length == 3) return new Vector3(b[0], b[1], b[2]);
+          if (a.Length == 4) return new Vector4(b[0], b[1], b[2], b[3]);
+          return base.ConvertFrom(context, culture, value);
+        }
+      }
       #endregion
     }
 
@@ -2832,23 +2872,28 @@ namespace Test
         };
         grid.PropertyValueChanged += (_, e) =>
         {
-          var d = e.ChangedItem.PropertyDescriptor; if (d.PropertyType == typeof(Type)) return;
+          var d = e.ChangedItem.PropertyDescriptor; //if (d.PropertyType == typeof(Type)) return;
           var o = e.ChangedItem.GetType().GetProperty("Instance").GetValue(e.ChangedItem);
           var s = d.Name; var v = e.OldValue;
-          Target.Invalidate(); if (o is not Models.Base) return;
+          Target.Invalidate(); if (o is not Models.Base ba) return;
           if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
           var t = o.GetType().GetProperty(s).GetValue(o);
           if (object.Equals(v, t)) return;
           Target.AddUndo(() => { var p = o.GetType().GetProperty(s); var t = p.GetValue(o); p.SetValue(o, v); v = t; });
+          if (Target.records != null)
+            Target.records.Add(new XElement("p",
+              new XAttribute("t", ba.Name), new XAttribute("p", s),
+              new XAttribute("a", d.Converter.ConvertToInvariantString(v)),
+              new XAttribute("b", d.Converter.ConvertToInvariantString(t))));
         };
         var a = Controls; a.Add(grid); a.Add(combo);
-        if (!regs)
-        {
-          regs = true; var tcf = new TypeConverterAttribute(typeof(TCF));
-          TypeDescriptor.AddAttributes(typeof(Vector2), tcf);
-          TypeDescriptor.AddAttributes(typeof(Vector3), tcf);
-          TypeDescriptor.AddAttributes(typeof(Vector4), tcf);
-        }
+        //if (!regs)
+        //{
+        //  regs = true; var tcf = new TypeConverterAttribute(typeof(TCF));
+        //  TypeDescriptor.AddAttributes(typeof(Vector2), tcf);
+        //  TypeDescriptor.AddAttributes(typeof(Vector3), tcf);
+        //  TypeDescriptor.AddAttributes(typeof(Vector4), tcf);
+        //}
       }
       protected override void OnVisibleChanged(EventArgs e)
       {
@@ -2885,7 +2930,7 @@ namespace Test
       //  Cursor = Cursors.Default;
       //}
       PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
-      bool comboupdate; static bool regs; object? lastpd; //int xx;
+      bool comboupdate; object? lastpd; //int xx;
       void fillcombo(object disp)
       {
         var items = combo.Items; comboupdate = true;
@@ -2928,28 +2973,6 @@ namespace Test
           if (Models.propref) { Models.propref = false; grid.Refresh(); return; }
           combo.Invalidate(); if (ContainsFocus) return;
           var p = grid.Controls[2]; p.Invalidate(true); p.Refresh();
-        }
-      }
-      class TCF : TypeConverter
-      {
-        public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type? destinationType)
-        {
-          if (value is Vector2 a) return $"{a.X}; {a.Y}";
-          if (value is Vector3 b) return $"{b.X}; {b.Y}; {b.Z}";
-          if (value is Vector4 c) return $"{c.X}; {c.Y}; {c.Z}; {c.W}";
-          //if (value is rat d) return d.ToString();
-          return null;
-        }
-        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type? sourceType) => true;
-        public override object ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
-        {
-          var a = ((string)value).Split(';');
-          var b = stackalloc float[a.Length];
-          for (int i = 0; i < a.Length; i++) b[i] = float.Parse(a[i]);
-          if (a.Length == 2) return new Vector2(b[0], b[1]);
-          if (a.Length == 3) return new Vector3(b[0], b[1], b[2]);
-          if (a.Length == 4) return new Vector4(b[0], b[1], b[2], b[3]);
-          return base.ConvertFrom(context, culture, value);
         }
       }
     }

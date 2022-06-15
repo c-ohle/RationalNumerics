@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
+using System.Xml.Linq;
 using Models = Test.DX11ModelCtrl.Models;
 
 namespace Test
@@ -101,7 +102,9 @@ namespace Test
               Transform = Matrix4x3.CreateTranslation(0, 0, 0),
               p1 = new Vector3(-10, -10, -0.1f), p2 = new Vector3(+10, +10, 0),
               ranges = new (int, Models.Material)[] { (0, new Models.Material {
-                Diffuse = (uint)Color.LightGray.ToArgb(), /*Texture = tex1*/ }) },
+                Diffuse = (uint)Color.LightGray.ToArgb(),
+                //Texture = DX11ModelCtrl.GetTexture("https://c-ohle.github.io/RationalNumerics/web/tex/millis.png"),
+              }) },
             },
             //new Models.BoxGeometry {
             //  Name="Box1",
@@ -131,6 +134,7 @@ namespace Test
         return model;
       }
     }
+
     void btn_run_Click(object sender, EventArgs e)
     {
       var scene = modelView.Scene; if (scene == null) return;
@@ -141,21 +145,6 @@ namespace Test
       //var m2 = Matrix4x3.CreateTranslation(0, 0, -2) * cam.Transform;
       var m1 = Matrix4x3.Parse("1 0 -0 0 0.7071068 0.7071068 0 -0.7071068 0.7071068 0 -5.0000005 5.0000005", CultureInfo.InvariantCulture);
       var m2 = Matrix4x3.Parse("0.7429419 0.66935587 0 -0.5006389 0.55567694 0.66376495 0.44429496 -0.4931388 0.74794126 2.0379539 -2.396401 3.3004177", CultureInfo.InvariantCulture);
-
-      //modelView.Animations += 
-      //  animate(modelView, cam, m1, m2,
-      //  animate(modelView, cam, m2, m1,
-      //    animate(modelView, obj,
-      //    Matrix4x3.Identity,
-      //    Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
-      //  animate(modelView, obj,
-      //    Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
-      //    Matrix4x3.CreateRotationY(MathF.PI) * Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
-      //  animate(modelView, obj,
-      //    Matrix4x3.CreateRotationY(MathF.PI) * Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
-      //    Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2))
-      //  //animate(modelView, cam, m1, m2))
-      //  ))));
 
       modelView.Animations +=
         animate(modelView, obj,
@@ -187,6 +176,65 @@ namespace Test
       }
 
       static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
+
+    }
+
+    XElement? records;
+    void btn_record_Click(object sender, EventArgs e)
+    {
+      if (btn_record.Checked) return;
+      btn_record.Checked = true; btn_stop.Enabled = true; btn_back.Enabled = false;
+      modelView.records = new XElement("r");
+    }
+    void btn_stop_Click(object sender, EventArgs e)
+    {
+      if (!btn_record.Checked) return;
+      btn_record.Checked = false; btn_stop.Enabled = false;
+      if (modelView.records == null) return;
+      this.records = modelView.records; modelView.records = null;
+      if (!this.records.HasElements) return;
+      btn_back.Enabled = true;
+      this.records.Save("C:\\Users\\cohle\\Desktop\\rec.xml");
+    }
+    void btn_back_Click(object sender, EventArgs e)
+    {
+      if (this.records == null) return;
+      var a = this.records.Elements().ToArray();
+      var scene = modelView.Scene; if (scene == null) return;
+      for (int i = a.Length - 1; i >= 0; i--)
+      {
+        var p = a[i]; var t = unchecked((string?)p.Attribute("t")); if (t == null) continue;
+        var node = scene.Find(t); if (node == null) continue;
+        if (p.Name.LocalName == "m")
+        {
+          var sa = (string?)p.Attribute("a");
+          var sb = (string?)p.Attribute("b");
+          var ma = Matrix4x3.Parse(sa, CultureInfo.InvariantCulture);
+          var mb = Matrix4x3.Parse(sb, CultureInfo.InvariantCulture);
+        }
+        else
+        {
+          try
+          {
+            var sp = (string?)p.Attribute("p"); //if (sp == null) continue; 
+            var pc = TypeDescriptor.GetProperties(node);
+            var pd = pc.Find(sp, false);
+            var tc = pd.Converter;
+            var oa = tc.ConvertFromInvariantString((string?)p.Attribute("a"));
+            var ob = tc.ConvertFromInvariantString((string?)p.Attribute("b"));
+            
+          }
+          catch (Exception ex) { }
+        }
+      }
+      btn_back.Enabled = false;
+      //btn_forw.Enabled = true;
+    }
+    void btn_forw_Click(object sender, EventArgs e)
+    {
+    }
+    void btn_play_Click(object sender, EventArgs e)
+    {
 
     }
 
