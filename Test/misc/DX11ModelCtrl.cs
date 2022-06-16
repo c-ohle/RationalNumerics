@@ -105,9 +105,8 @@ namespace Test
     Models.Camera? camera; Models.Light? light;
     List<Models.Geometry>? transp;
     List<Node>? selection;
-    List<Ani>? undos; int undoi;
+    internal List<Ani>? undos; internal int undoi;  //todo: private
     Action<DC>? RenderClient; List<string>? infos;
-    internal XElement? records;
     int flags = 0x01 | 0x02 | 0x04 | 0x10; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients
     protected override void OnLoad(EventArgs e)
     {
@@ -360,13 +359,13 @@ namespace Test
     int OnRedo(object? test)
     {
       if (undos == null || undoi >= undos.Count) return 0;
-      if (test == null) { undos[undoi++].exec(); Invalidate(); Focus(); }
+      if (test == null) { undos[undoi++].exec(); Invalidate(); Focus(); UndoChanged?.Invoke(); }
       return 1;
     }
     int OnUndo(object? test)
     {
       if (undos == null || undoi == 0) return 0;
-      if (test == null) { undos[--undoi].exec(); Invalidate(); Focus(); }
+      if (test == null) { undos[--undoi].exec(); Invalidate(); Focus(); UndoChanged?.Invoke(); }
       return 1;
     }
     int OnCut(object? test)
@@ -595,8 +594,9 @@ namespace Test
       if (p == null) return;
       if (undos == null) undos = new List<Ani>();
       undos.RemoveRange(undoi, undos.Count - undoi);
-      undos.Add(p); undoi = undos.Count;
+      undos.Add(p); undoi = undos.Count; UndoChanged?.Invoke();
     }
+    public Action? UndoChanged;
     public void Execute(Ani a)
     {
       if (a == null) return;
@@ -2031,7 +2031,7 @@ namespace Test
             var grid = (PropertyGrid)owner;
             var toolstrip = (ToolStrip)grid.Controls[3];
             var btn = (ToolStripButton)toolstrip.Items[4];
-            if (btn.Checked) return false;
+            if (btn.Checked) return false; ((PropsCtrl)grid.Parent).btnprops.PerformClick();
             btn.Checked = true; toolstrip.Cursor = Cursors.Default;
             var page = new PolyEditCtrl { Dock = DockStyle.Fill, BorderStyle = BorderStyle.FixedSingle, Tag = component };
             var site = grid.Controls[2].Controls; site.Add(page); page.BringToFront(); page.Focus();
@@ -2792,7 +2792,11 @@ namespace Test
         };
         combo.SelectedIndexChanged += (_, e) =>
         {
-          if (!btnprops.Checked) { return; } //todo: ...
+          if (!btnprops.Checked)
+          {
+            //showtoolbox(combo.SelectedIndex == 1);
+            return;
+          }
           if (!combo.Focused || comboupdate) return;
           var p = combo.SelectedItem;
           fillcombo(p);
@@ -2818,28 +2822,37 @@ namespace Test
         };
         var a = Controls; a.Add(grid); a.Add(combo);
 
-        var cc = grid.Controls; view = cc[2];
+        var cc = grid.Controls; view = cc[2]; info = cc[0];
         var ts = (ToolStrip)cc[3]; var it = ts.Items; ts.RenderMode = ToolStripRenderMode.Professional;
         btnprops = new ToolStripButton() { Text = "", ToolTipText = "Properties", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Checked = true };
         btnsetting = new ToolStripButton() { Text = "", ToolTipText = "Settings", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
         btnedit = new ToolStripButton() { Text = "", ToolTipText = "Edit", Enabled = false, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        btntoolbox = new ToolStripButton() { Text = "⛽", ToolTipText = "Toolbox", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Alignment = ToolStripItemAlignment.Right };
         it.Add(new ToolStripSeparator());
         it.Add(btnprops);
         it.Add(btnsetting);
         it.Add(btnedit);
+        it.Add(btntoolbox);
         btnprops.Click += (p, e) =>
         {
-          if (btnprops.Checked) return; btnprops.Checked = true; btnsetting.Checked = false;
-          grid.Focus(); oninv(); var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
+          if (btnprops.Checked) return; btnprops.Checked = true;
+          btnsetting.Checked = btntoolbox.Checked = false; showtoolbox(false);
+          oninv(); combo.Items.Clear(); grid.Focus(); var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
         };
         btnsetting.Click += (p, e) =>
         {
-          if (btnsetting.Checked) return; btnsetting.Checked = true; btnprops.Checked = false;
+          if (btnsetting.Checked) return; btnsetting.Checked = true;
+          btnprops.Checked = btntoolbox.Checked = false; showtoolbox(false);
           grid.SelectedObject = Target.settings;
-          combo.Items.Clear();
-          combo.Items.Add("Settings");
-          combo.Items.Add("Toolbox"); combo.SelectedIndex = 0;
+          combo.Items.Clear(); combo.Items.Add("Settings"); combo.SelectedIndex = 0;
           var cm = ContextMenuStrip; if (cm != null) cm.Enabled = false;
+        };
+        btntoolbox.Click += (p, e) =>
+        {
+          btntoolbox.Checked = true;
+          btnprops.Checked = btnsetting.Checked = false;
+          combo.Items.Clear(); combo.Items.Add("Toolbox"); combo.SelectedIndex = 0;
+          showtoolbox(true);
         };
       }
       protected override void OnVisibleChanged(EventArgs e)
@@ -2856,7 +2869,7 @@ namespace Test
         }
       }
       PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
-      Control? view; internal ToolStripButton? btnprops, btnsetting, btnedit;
+      Control? view, info; internal ToolStripButton? btnprops, btnsetting, btnedit, btntoolbox;
       bool comboupdate, update; object? lastpd;
       void fillcombo(object disp)
       {
@@ -2900,6 +2913,36 @@ namespace Test
           combo.Invalidate(); if (ContainsFocus) return;
           view.Invalidate(true); view.Refresh();
         }
+      }
+
+      WebBrowser? wb;
+      void showtoolbox(bool on)
+      {
+        if (on == (wb != null && wb.Visible)) return;
+        if (on)
+        {
+          if (wb == null)
+            view.Controls.Add(wb = new WebBrowser()
+            {
+              Visible = false,
+              Dock = DockStyle.Fill,
+              AllowNavigation = false,
+              ScriptErrorsSuppressed = true,
+              WebBrowserShortcutsEnabled = false,
+              IsWebBrowserContextMenuEnabled = false,
+              ScrollBarsEnabled = false,
+              Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat/index.htm"),
+              //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat/index.htm"),
+            });
+          info.Visible = false;
+          wb.Visible = true;
+          wb.BringToFront(); wb.Focus();
+        }
+        else
+        {
+          wb.Visible = false; info.Visible = true;
+        }
+        grid.Height++; grid.Height--;
       }
     }
   }

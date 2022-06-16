@@ -44,7 +44,6 @@
       Test.MenuItem redo2_y;
       Test.MenuItem undo2_back;
       Test.MenuItem redo2_back;
-      Test.MenuItem _toolbox;
       Test.MenuItem _storyboard;
       Test.MenuItem _selall;
       System.Windows.Forms.Button btn_run;
@@ -91,9 +90,11 @@
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
       this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
       this.btn_back = new System.Windows.Forms.ToolStripButton();
+      this.btn_back_ = new System.Windows.Forms.ToolStripButton();
       this.btn_record = new System.Windows.Forms.ToolStripButton();
-      this.btn_stop = new System.Windows.Forms.ToolStripButton();
       this.btn_play = new System.Windows.Forms.ToolStripButton();
+      this.btn_stop = new System.Windows.Forms.ToolStripButton();
+      this.btn_forw_ = new System.Windows.Forms.ToolStripButton();
       this.btn_forw = new System.Windows.Forms.ToolStripButton();
       this.label3 = new System.Windows.Forms.Label();
       _1 = new System.Windows.Forms.ToolStripSeparator();
@@ -111,7 +112,6 @@
       redo2_y = new Test.MenuItem();
       undo2_back = new Test.MenuItem();
       redo2_back = new Test.MenuItem();
-      _toolbox = new Test.MenuItem();
       _storyboard = new Test.MenuItem();
       _selall = new Test.MenuItem();
       btn_run = new System.Windows.Forms.Button();
@@ -248,15 +248,6 @@
       redo2_back.Text = "Redo";
       redo2_back.Visible = false;
       // 
-      // _toolbox
-      // 
-      _toolbox.Id = 2009;
-      _toolbox.Name = "_toolbox";
-      _toolbox.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
-            | System.Windows.Forms.Keys.X)));
-      _toolbox.Size = new System.Drawing.Size(231, 24);
-      _toolbox.Text = "Toolbox";
-      // 
       // _storyboard
       // 
       _storyboard.Id = 2010;
@@ -331,12 +322,11 @@
             this._model,
             this._setings,
             this._3,
-            _toolbox,
             _storyboard,
             this._4,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(232, 364);
+      this.contextMenuView.Size = new System.Drawing.Size(232, 368);
       // 
       // _model
       // 
@@ -557,9 +547,8 @@
       this.propsView.Target = this.modelView;
       this.propsView.Visible = false;
       this.propsView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseDown);
-      this.propsView.MouseEnter += new System.EventHandler(this.panelStory_MouseEnter);
-      this.propsView.MouseLeave += new System.EventHandler(this.panelStory_MouseLeave);
       this.propsView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseMove);
+      this.propsView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseUp);
       // 
       // contextMenuPropsView
       // 
@@ -612,8 +601,6 @@
       this.panelStory.TabIndex = 2;
       this.panelStory.Visible = false;
       this.panelStory.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseDown);
-      this.panelStory.MouseEnter += new System.EventHandler(this.panelStory_MouseEnter);
-      this.panelStory.MouseLeave += new System.EventHandler(this.panelStory_MouseLeave);
       this.panelStory.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseMove);
       this.panelStory.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseUp);
       // 
@@ -634,6 +621,7 @@
       this.listView1.TabIndex = 1;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
+      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
@@ -657,9 +645,11 @@
       this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
             this.btn_back,
+            this.btn_back_,
             this.btn_record,
-            this.btn_stop,
             this.btn_play,
+            this.btn_stop,
+            this.btn_forw_,
             this.btn_forw});
       this.toolStrip1.Location = new System.Drawing.Point(0, 6);
       this.toolStrip1.Name = "toolStrip1";
@@ -685,31 +675,34 @@
       this.btn_back.Name = "btn_back";
       this.btn_back.Size = new System.Drawing.Size(29, 24);
       this.btn_back.Text = "";
+      this.btn_back.ToolTipText = "Start";
       this.btn_back.Click += new System.EventHandler(this.btn_back_Click);
+      // 
+      // btn_back_
+      // 
+      this.btn_back_.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.btn_back_.Enabled = false;
+      this.btn_back_.Font = new System.Drawing.Font("Segoe UI Symbol", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.btn_back_.Image = ((System.Drawing.Image)(resources.GetObject("btn_back_.Image")));
+      this.btn_back_.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_back_.Name = "btn_back_";
+      this.btn_back_.Size = new System.Drawing.Size(29, 24);
+      this.btn_back_.Text = "⏪";
+      this.btn_back_.Click += new System.EventHandler(this.btn_back__Click);
       // 
       // btn_record
       // 
       this.btn_record.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_record.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.btn_record.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.btn_record.ForeColor = System.Drawing.Color.Red;
       this.btn_record.Image = ((System.Drawing.Image)(resources.GetObject("btn_record.Image")));
       this.btn_record.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_record.Name = "btn_record";
       this.btn_record.Size = new System.Drawing.Size(29, 24);
       this.btn_record.Text = "";
+      this.btn_record.ToolTipText = "Record";
       this.btn_record.Click += new System.EventHandler(this.btn_record_Click);
-      // 
-      // btn_stop
-      // 
-      this.btn_stop.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
-      this.btn_stop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_stop.Enabled = false;
-      this.btn_stop.Image = ((System.Drawing.Image)(resources.GetObject("btn_stop.Image")));
-      this.btn_stop.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.btn_stop.Name = "btn_stop";
-      this.btn_stop.Size = new System.Drawing.Size(29, 24);
-      this.btn_stop.Text = "";
-      this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
       // 
       // btn_play
       // 
@@ -721,7 +714,33 @@
       this.btn_play.Name = "btn_play";
       this.btn_play.Size = new System.Drawing.Size(29, 24);
       this.btn_play.Text = "";
+      this.btn_play.ToolTipText = "Play";
       this.btn_play.Click += new System.EventHandler(this.btn_play_Click);
+      // 
+      // btn_stop
+      // 
+      this.btn_stop.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
+      this.btn_stop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.btn_stop.Enabled = false;
+      this.btn_stop.Image = ((System.Drawing.Image)(resources.GetObject("btn_stop.Image")));
+      this.btn_stop.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_stop.Name = "btn_stop";
+      this.btn_stop.Size = new System.Drawing.Size(29, 24);
+      this.btn_stop.Text = "";
+      this.btn_stop.ToolTipText = "Stop";
+      this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
+      // 
+      // btn_forw_
+      // 
+      this.btn_forw_.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.btn_forw_.Enabled = false;
+      this.btn_forw_.Font = new System.Drawing.Font("Segoe UI Symbol", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.btn_forw_.Image = ((System.Drawing.Image)(resources.GetObject("btn_forw_.Image")));
+      this.btn_forw_.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_forw_.Name = "btn_forw_";
+      this.btn_forw_.Size = new System.Drawing.Size(29, 24);
+      this.btn_forw_.Text = "⏩";
+      this.btn_forw_.Click += new System.EventHandler(this.btn_forw__Click);
       // 
       // btn_forw
       // 
@@ -733,6 +752,7 @@
       this.btn_forw.Name = "btn_forw";
       this.btn_forw.Size = new System.Drawing.Size(29, 24);
       this.btn_forw.Text = "";
+      this.btn_forw.ToolTipText = "End";
       this.btn_forw.Click += new System.EventHandler(this.btn_forw_Click);
       // 
       // label3
@@ -814,5 +834,7 @@
     private ToolStripButton btn_record;
     private MenuItem _selpoints;
     private ToolStripSeparator toolStripSeparator6;
+    private ToolStripButton btn_back_;
+    private ToolStripButton btn_forw_;
   }
 }

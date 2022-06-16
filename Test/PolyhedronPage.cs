@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿#pragma warning disable CS8602
+using System.ComponentModel;
 using System.Globalization;
 using System.Xml.Linq;
 using Models = Test.DX11ModelCtrl.Models;
@@ -28,7 +29,7 @@ namespace Test
         switch (id)
         {
           case 2008: return OnProperties(test);
-          case 2009: return OnToolbox(test);
+          //case 2009: return OnToolbox(test);
           case 2010: return OnStoryBoard(test);
         }
       }
@@ -42,29 +43,8 @@ namespace Test
     int OnProperties(object? test)
     {
       if (test != null) return 1;
-      if (propsView.Visible && toolbox != null && toolbox.Visible) { showtb(false); return 1; }
       if (propsView.Visible && !propsView.btnprops.Checked) { propsView.btnprops.PerformClick(); return 1; }
-      propsView.Visible ^= true; if (propsView.Visible && toolbox != null && toolbox.Visible) showtb(false);
-      return 1;
-    }
-    int OnToolbox(object? test)
-    {
-      if (test != null) return 1;
-      if (toolbox == null) propsView.Controls.Add(toolbox = new WebBrowser()
-      {
-        Visible = false,
-        Dock = DockStyle.Fill,
-        AllowNavigation = true,
-        ScriptErrorsSuppressed = true,
-        WebBrowserShortcutsEnabled = false,
-        IsWebBrowserContextMenuEnabled = false,
-        ScrollBarsEnabled = false,
-        Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat/index.htm"),
-        //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat/index.htm"),
-      });
-      if (propsView.Visible && toolbox != null && !toolbox.Visible) { showtb(true); return 1; }
-      propsView.Visible ^= true; if (propsView.Visible && toolbox != null && !toolbox.Visible) showtb(true);
-      return 1;
+      propsView.Visible ^= true; return 1;
     }
     int OnStoryBoard(object? test)
     {
@@ -72,11 +52,31 @@ namespace Test
       panelStory.Visible ^= true;
       return 1;
     }
-    WebBrowser? toolbox;
-    void showtb(bool on)
+   
+    int tv;
+    void panelStory_MouseDown(object sender, MouseEventArgs e)
     {
-      var a = propsView.Controls;
-      for (int i = 0; i < a.Count; i++) { var p = a[i]; p.Visible = p is WebBrowser == on; }
+      var p = (Control)sender; p.Capture = true;
+      tv = p.Dock == DockStyle.Bottom ? p.Height + Cursor.Position.Y : p.Width + Cursor.Position.X;
+      p.Cursor = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
+    }
+    void panelStory_MouseMove(object sender, MouseEventArgs e)
+    {
+      var p = (Control)sender;
+      if (!p.Capture) Cursor.Current = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
+      else
+      {
+        if (p.Dock == DockStyle.Bottom)
+          p.Height = Math.Max(p.Padding.Top, Math.Min(p.Parent.ClientSize.Height, tv - Cursor.Position.Y));
+        else
+          p.Width = Math.Max(p.Padding.Left, Math.Min(p.Parent.ClientSize.Width, tv - Cursor.Position.X));
+        p.Parent.Update();
+      }
+    }
+    void panelStory_MouseUp(object sender, MouseEventArgs e)
+    {
+      var p = (Control)sender; p.Capture = false;
+      p.Cursor = Cursors.Default;
     }
 
     Models.Scene demo1()
@@ -104,7 +104,7 @@ namespace Test
               p1 = new Vector3(-10, -10, -0.1f), p2 = new Vector3(+10, +10, 0),
               ranges = new (int, Models.Material)[] { (0, new Models.Material {
                 Diffuse = (uint)Color.LightGray.ToArgb(),
-                //Texture = DX11ModelCtrl.GetTexture("https://c-ohle.github.io/RationalNumerics/web/tex/millis.png"),
+                Texture = DX11ModelCtrl.GetTexture("https://c-ohle.github.io/RationalNumerics/web/tex/millis.png"),
               }) },
             },
             //new Models.BoxGeometry {
@@ -180,97 +180,92 @@ namespace Test
 
     }
 
-    XElement? records;
+    //XElement? records;
+    int undoab, anix; DX11ModelCtrl.Ani[]? anis;
     void btn_record_Click(object sender, EventArgs e)
     {
       if (btn_record.Checked) return;
-      btn_record.Checked = true; btn_stop.Enabled = true; btn_back.Enabled = false;
-      modelView.records = new XElement("r");
+      btn_record.Checked = true;
+      btn_stop.Enabled = true;
+      btn_back.Enabled = btn_forw.Enabled = false;
+      //btn_stop.Enabled = btn_stop.Visible = !(btn_play.Visible = false);
+      //btn_back.Enabled = false; 
+      listView1.Items.Clear();
+      this.anis = null; this.anix = 0; this.undoab = modelView.undoi; modelView.UndoChanged += undochanged;
+    }
+    void undochanged()
+    {
+      var items = listView1.Items;
+      var c = modelView.undoi - this.undoab;
+      if (c < items.Count) { if (c < 0) return; if (c != items.Count - 1) { } items.RemoveAt(c); return; }
+      var p = modelView.undos[modelView.undoi - 1];
+      var b = new ListViewItem(p.GetType().Name);
+      items.Add(b); listView1.SelectedIndices.Clear(); b.Selected = true;
+      b.SubItems.Add(items.Count.ToString());// new ListViewItem.ListViewSubItem(""));
+      listView1.EnsureVisible(items.Count - 1);
     }
     void btn_stop_Click(object sender, EventArgs e)
     {
-      if (!btn_record.Checked) return;
-      btn_record.Checked = false; btn_stop.Enabled = false;
-      if (modelView.records == null) return;
-      this.records = modelView.records; modelView.records = null;
-      if (!this.records.HasElements) return;
-      btn_back.Enabled = true;
-      this.records.Save("C:\\Users\\cohle\\Desktop\\rec.xml");
-    }
-    void btn_back_Click(object sender, EventArgs e)
-    {
-      if (this.records == null) return;
-      var a = this.records.Elements().ToArray();
-      var scene = modelView.Scene; if (scene == null) return;
-      for (int i = a.Length - 1; i >= 0; i--)
+      if (!btn_stop.Enabled) return;
+      if (btn_play.Checked)
       {
-        var p = a[i]; var t = unchecked((string?)p.Attribute("t")); if (t == null) continue;
-        var node = scene.Find(t); if (node == null) continue;
-        if (p.Name.LocalName == "m")
-        {
-          var sa = (string?)p.Attribute("a");
-          var sb = (string?)p.Attribute("b");
-          var ma = Matrix4x3.Parse(sa, CultureInfo.InvariantCulture);
-          var mb = Matrix4x3.Parse(sb, CultureInfo.InvariantCulture);
-        }
-        else
-        {
-          try
-          {
-            var sp = (string?)p.Attribute("p"); //if (sp == null) continue; 
-            var pc = TypeDescriptor.GetProperties(node);
-            var pd = pc.Find(sp, false);
-            var tc = pd.Converter;
-            var oa = tc.ConvertFromInvariantString((string?)p.Attribute("a"));
-            var ob = tc.ConvertFromInvariantString((string?)p.Attribute("b"));
-
-          }
-          catch (Exception ex) { }
-        }
+        btn_play.Checked = false;
+        btn_stop.Enabled = false;
+        btn_record.Enabled = true;
+        btn_back.Enabled = btn_back_.Enabled = this.anix != 0;
+        btn_forw.Enabled = btn_forw_.Enabled = this.anix < this.anis.Length;
       }
-      btn_back.Enabled = false;
-      //btn_forw.Enabled = true;
+      else if (btn_record.Checked)
+      {
+        btn_record.Checked = false; modelView.UndoChanged -= undochanged;
+        btn_stop.Enabled = false;
+        //btn_stop.Enabled = btn_stop.Visible = !(btn_play.Visible = true);
+        if (modelView.undos == null || modelView.undoi <= undoab) return;
+        //if (listView1.Items.Count == 0) return;
+        listView1.Items.Add("*");
+        this.anis = modelView.undos.Skip(undoab).ToArray(); this.anix = this.anis.Length;
+        btn_back.Enabled = btn_back_.Enabled = true; return;
+      }
+      //if (modelView.records == null) return;
+      //this.records = modelView.records; modelView.records = null;
+      //if (!this.records.HasElements) return;
+      //btn_back.Enabled = true;
+      //this.records.Save("C:\\Users\\cohle\\Desktop\\rec.xml");
     }
-    void btn_forw_Click(object sender, EventArgs e)
+    void gotoi(int x)
     {
+      if (this.anis == null) return;
+      x = Math.Max(0, Math.Min(this.anis.Length, x)); if (x == this.anix) return;
+      for (; this.anix < x;) this.anis[this.anix++].exec();
+      for (; this.anix > x;) this.anis[--this.anix].exec();
+      modelView.Invalidate();
+      btn_back.Enabled = btn_back_.Enabled = this.anix != 0;
+      btn_forw.Enabled = btn_forw_.Enabled = this.anix < this.anis.Length;
+      btn_play.Enabled = btn_forw.Enabled;
+      listView1.SelectedIndices.Clear();
+      if (x < listView1.Items.Count) { listView1.Items[x].Selected = true; listView1.EnsureVisible(x); }
+    }
+    void btn_back_Click(object sender, EventArgs e) => gotoi(0); 
+    void btn_back__Click(object sender, EventArgs e) => gotoi(this.anix - 1);
+    void btn_forw__Click(object sender, EventArgs e) => gotoi(this.anix + 1);
+    void btn_forw_Click(object sender, EventArgs e) => gotoi(this.anis.Length); 
+    void listView1_SelectedIndexChanged(object sender, EventArgs e) //todo: dynamic
+    {
+      if (btn_play.Checked || btn_record.Checked) return;
+      var a = listView1.SelectedIndices; if (a.Count != 1) return;
+      var i = a[0]; if (i == this.anix) return;//remove
+      gotoi(i);
     }
     void btn_play_Click(object sender, EventArgs e)
     {
-
+      if (btn_play.Checked) return;
+      btn_play.Checked = true;
+      btn_stop.Enabled = true;
+      btn_record.Enabled = false;
+      btn_back_.Enabled = btn_forw_.Enabled = false;
+      btn_back.Enabled = btn_forw.Enabled = false;
     }
 
-    int xx;
-    void panelStory_MouseEnter(object sender, EventArgs e)
-    {
-      //var p = (Control)sender; 
-      //p.Cursor = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
-    }
-    void panelStory_MouseLeave(object sender, EventArgs e)
-    {
-      //var p = (Control)sender; p.Cursor = Cursors.Default;
-    }
-    void panelStory_MouseDown(object sender, MouseEventArgs e)
-    {
-      var p = (Control)sender; p.Capture = true;
-      xx = p.Dock == DockStyle.Bottom ? p.Height + Cursor.Position.Y : p.Width + Cursor.Position.X;
-    }
-    void panelStory_MouseMove(object sender, MouseEventArgs e)
-    {
-      var p = (Control)sender;
-      Cursor.Current = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
-      if (p.Capture)
-      {
-        if (p.Dock == DockStyle.Bottom)
-          p.Height = Math.Max(p.Padding.Top, Math.Min(p.Parent.ClientSize.Height, xx - Cursor.Position.Y));
-        else
-          p.Width = Math.Max(p.Padding.Left, Math.Min(p.Parent.ClientSize.Width, xx - Cursor.Position.X));
-        p.Parent.Update();
-      }
-    }
-    void panelStory_MouseUp(object sender, MouseEventArgs e)
-    {
-      var p = (Control)sender; p.Capture = false;
-    }
   }
 
   public class MenuItem : ToolStripMenuItem
