@@ -43,6 +43,7 @@ namespace Test
     {
       if (test != null) return 1;
       if (propsView.Visible && toolbox != null && toolbox.Visible) { showtb(false); return 1; }
+      if (propsView.Visible && !propsView.btnprops.Checked) { propsView.btnprops.PerformClick(); return 1; }
       propsView.Visible ^= true; if (propsView.Visible && toolbox != null && toolbox.Visible) showtb(false);
       return 1;
     }
@@ -222,7 +223,7 @@ namespace Test
             var tc = pd.Converter;
             var oa = tc.ConvertFromInvariantString((string?)p.Attribute("a"));
             var ob = tc.ConvertFromInvariantString((string?)p.Attribute("b"));
-            
+
           }
           catch (Exception ex) { }
         }
@@ -241,11 +242,12 @@ namespace Test
     int xx;
     void panelStory_MouseEnter(object sender, EventArgs e)
     {
-      var p = (Control)sender; p.Cursor = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
+      //var p = (Control)sender; 
+      //p.Cursor = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
     }
     void panelStory_MouseLeave(object sender, EventArgs e)
     {
-      var p = (Control)sender; p.Cursor = Cursors.Default;
+      //var p = (Control)sender; p.Cursor = Cursors.Default;
     }
     void panelStory_MouseDown(object sender, MouseEventArgs e)
     {
@@ -255,13 +257,14 @@ namespace Test
     void panelStory_MouseMove(object sender, MouseEventArgs e)
     {
       var p = (Control)sender;
+      Cursor.Current = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
       if (p.Capture)
       {
         if (p.Dock == DockStyle.Bottom)
           p.Height = Math.Max(p.Padding.Top, Math.Min(p.Parent.ClientSize.Height, xx - Cursor.Position.Y));
         else
           p.Width = Math.Max(p.Padding.Left, Math.Min(p.Parent.ClientSize.Width, xx - Cursor.Position.X));
-        p.Parent.Update(); return;
+        p.Parent.Update();
       }
     }
     void panelStory_MouseUp(object sender, MouseEventArgs e)

@@ -49,10 +49,6 @@
       Test.MenuItem _selall;
       System.Windows.Forms.Button btn_run;
       Test.MenuItem _copy;
-      System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Item1",
-            "1000",
-            "20"}, -1);
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
       this.@__toolbox = new Test.MenuItem();
       this.label1 = new System.Windows.Forms.Label();
@@ -67,9 +63,6 @@
       this._bhalf = new Test.MenuItem();
       this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
       this._center = new Test.MenuItem();
-      this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-      this._conv = new Test.MenuItem();
-      this.menuItem5 = new Test.MenuItem();
       this._setings = new Test.MenuItem();
       this._selstyle = new Test.MenuItem();
       this._selbox = new Test.MenuItem();
@@ -356,9 +349,7 @@
             this._bint,
             this._bhalf,
             this.toolStripSeparator3,
-            this._center,
-            this.toolStripSeparator4,
-            this._conv});
+            this._center});
       this._model.Id = 0;
       this._model.Name = "_model";
       this._model.Size = new System.Drawing.Size(231, 24);
@@ -430,27 +421,6 @@
             | System.Windows.Forms.Keys.C)));
       this._center.Size = new System.Drawing.Size(253, 26);
       this._center.Text = "Center";
-      // 
-      // toolStripSeparator4
-      // 
-      this.toolStripSeparator4.Name = "toolStripSeparator4";
-      this.toolStripSeparator4.Size = new System.Drawing.Size(250, 6);
-      // 
-      // _conv
-      // 
-      this._conv.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItem5});
-      this._conv.Id = 0;
-      this._conv.Name = "_conv";
-      this._conv.Size = new System.Drawing.Size(253, 26);
-      this._conv.Text = "Convert";
-      // 
-      // menuItem5
-      // 
-      this.menuItem5.Id = 2055;
-      this.menuItem5.Name = "menuItem5";
-      this.menuItem5.Size = new System.Drawing.Size(187, 26);
-      this.menuItem5.Text = "No conversion";
       // 
       // _setings
       // 
@@ -657,9 +627,6 @@
       this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.listView1.FullRowSelect = true;
       this.listView1.GridLines = true;
-      listViewItem4.StateImageIndex = 0;
-      this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem4});
       this.listView1.LabelEdit = true;
       this.listView1.Location = new System.Drawing.Point(0, 33);
       this.listView1.Name = "listView1";
@@ -696,7 +663,7 @@
             this.btn_forw});
       this.toolStrip1.Location = new System.Drawing.Point(0, 6);
       this.toolStrip1.Name = "toolStrip1";
-      this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+      this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
       this.toolStrip1.ShowItemToolTips = false;
       this.toolStrip1.Size = new System.Drawing.Size(670, 27);
       this.toolStrip1.TabIndex = 0;
@@ -710,6 +677,7 @@
       // 
       // btn_back
       // 
+      this.btn_back.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_back.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.btn_back.Enabled = false;
       this.btn_back.Image = ((System.Drawing.Image)(resources.GetObject("btn_back.Image")));
@@ -721,6 +689,7 @@
       // 
       // btn_record
       // 
+      this.btn_record.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_record.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.btn_record.ForeColor = System.Drawing.Color.Red;
       this.btn_record.Image = ((System.Drawing.Image)(resources.GetObject("btn_record.Image")));
@@ -732,6 +701,7 @@
       // 
       // btn_stop
       // 
+      this.btn_stop.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_stop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.btn_stop.Enabled = false;
       this.btn_stop.Image = ((System.Drawing.Image)(resources.GetObject("btn_stop.Image")));
@@ -743,6 +713,7 @@
       // 
       // btn_play
       // 
+      this.btn_play.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_play.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.btn_play.Enabled = false;
       this.btn_play.Image = ((System.Drawing.Image)(resources.GetObject("btn_play.Image")));
@@ -754,6 +725,7 @@
       // 
       // btn_forw
       // 
+      this.btn_forw.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_forw.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.btn_forw.Enabled = false;
       this.btn_forw.Image = ((System.Drawing.Image)(resources.GetObject("btn_forw.Image")));
@@ -818,8 +790,6 @@
     private MenuItem _samples;
     private MenuItem menuItem8;
     private MenuItem _model;
-    private MenuItem _conv;
-    private MenuItem menuItem5;
     private MenuItem _band;
     private MenuItem _bdiiff;
     private MenuItem _bint;
@@ -827,7 +797,6 @@
     private ToolStripSeparator toolStripSeparator3;
     private ToolStripSeparator toolStripSeparator2;
     private MenuItem _center;
-    private ToolStripSeparator toolStripSeparator4;
     private ToolStripSeparator _4;
     private ToolStripSeparator toolStripSeparator5;
     private MenuItem __toolbox;

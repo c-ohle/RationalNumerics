@@ -14,6 +14,74 @@ namespace Test
 {
   public unsafe class DX11ModelCtrl : DX11Ctrl
   {
+    public abstract class Ani
+    {
+      internal abstract void exec();
+      internal static Ani? join(params object[] a) // Ani, IEnumerable<Ani>, null
+      {
+        static Ani? join(object[] p)
+        {
+          var a = p.Select(p =>
+            p is Ani a ? a :
+            p is IEnumerable<Ani> e ? join(e.ToArray()) :
+            null).OfType<Ani>().ToArray();
+          if (a.Length == 0) return null;
+          if (a.Length == 1) return a[0];
+          return new AniSet(a);
+        }
+        return join(a);
+      }
+    }
+    class AniTrans : Ani
+    {
+      Node p; Matrix4x3 m;
+      internal AniTrans(Node p, in Matrix4x3 m) { this.p = p; this.m = m; }
+      internal override void exec() { var t = p.Transform; p.Transform = m; m = t; }
+      internal static AniTrans? get(Node p, in Matrix4x3 m) => p.Transform != m ? new AniTrans(p, m) : null;
+    }
+    class AniSet : Ani
+    {
+      Ani[] a;
+      internal AniSet(Ani[] a) => this.a = a;
+      internal override void exec()
+      {
+        for (int i = 0; i < a.Length; i++) a[i].exec(); Array.Reverse(a);
+      }
+    }
+    class AniProp : Ani
+    {
+      object p; string s; object v;
+      internal AniProp(object p, string s, object v) { this.p = p; this.s = s; this.v = v; }
+      internal override void exec()
+      {
+        var pd = p.GetType().GetProperty(s); var t = pd.GetValue(p); pd.SetValue(p, v); v = t;
+      }
+    }
+    class AniNodes : Ani
+    {
+      Models.Base p; Node[]? b;
+      internal AniNodes(Models.Base p, Node[]? b) { this.p = p; this.b = b; }
+      internal override void exec()
+      {
+        if (b != null) for (int i = 0, n = b.Length; i < n; i++) b[i].Parent = p;
+        var t = p.Nodes; p.Nodes = b; b = t;
+      }
+    }
+    class AniSel : Ani
+    {
+      DX11ModelCtrl p; Node[]? a;
+      internal AniSel(DX11ModelCtrl p, Node[]? a) { this.p = p; this.a = a; }
+      internal override void exec()
+      {
+        var t = p.selection.Count != 0 ? p.selection.ToArray() : null; p.Select(a); a = t;
+      }
+    }
+    class AniAction : Ani
+    {
+      internal AniAction(Action p) => this.p = p; Action p;
+      internal override void exec() => p();
+    }
+
     Models.Settings? settings;
     [Browsable(false)]
     public Models.Scene? Scene
@@ -37,7 +105,7 @@ namespace Test
     Models.Camera? camera; Models.Light? light;
     List<Models.Geometry>? transp;
     List<Node>? selection;
-    List<Action>? undos; int undoi;
+    List<Ani>? undos; int undoi;
     Action<DC>? RenderClient; List<string>? infos;
     internal XElement? records;
     int flags = 0x01 | 0x02 | 0x04 | 0x10; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients
@@ -275,7 +343,7 @@ namespace Test
         case 2052: return OnIntersect(id, test); // Intersection
         case 2053: return OnIntersect(id, test); // Halfspace"
         case 2054: return OnCheckMash(test);
-        case 2055: return OnConvert(test);
+        //case 2055: return OnConvert(test);
         case 2056: return OnCenter(test);
         case 2057: return OnSelectAll(test);
         case 2100: //Select Box
@@ -292,13 +360,13 @@ namespace Test
     int OnRedo(object? test)
     {
       if (undos == null || undoi >= undos.Count) return 0;
-      if (test == null) { undos[undoi++](); Invalidate(); Focus(); }
+      if (test == null) { undos[undoi++].exec(); Invalidate(); Focus(); }
       return 1;
     }
     int OnUndo(object? test)
     {
       if (undos == null || undoi == 0) return 0;
-      if (test == null) { undos[--undoi](); Invalidate(); Focus(); }
+      if (test == null) { undos[--undoi].exec(); Invalidate(); Focus(); }
       return 1;
     }
     int OnCut(object? test)
@@ -321,7 +389,7 @@ namespace Test
       if (s[0] != '<' || !s.Contains(Models.ns.NamespaceName)) return 0;
       if (test != null) return 1;
       var xml = XElement.Parse(s); var scene = Models.Load(xml); //todo: units
-      Execute(undonodes(this.scene, this.scene.Nodes.Concat(scene.Nodes).ToArray()), undosel(scene.Nodes));
+      Execute(new AniNodes(this.scene, this.scene.Nodes.Concat(scene.Nodes).ToArray()), undosel(scene.Nodes));
       return 1;
     }
     int OnDelete(object? test)
@@ -329,7 +397,7 @@ namespace Test
       if (selection.Count == 0 || scene.Nodes == null) return 0;
       if (test != null) return 1;
       var layer = selection[0].Parent;
-      Execute(undosel(null), undonodes(layer, layer.Nodes.Except(selection).ToArray()));
+      Execute(undosel(null), new AniNodes(layer, layer.Nodes.Except(selection).ToArray()));
       return 1;
     }
     int OnSelectAll(object? test)
@@ -351,10 +419,19 @@ namespace Test
       var box = (Min: new Vector3(float.MaxValue), Max: new Vector3(-float.MaxValue));
       foreach (var p in selection) p.GetBox(ref box, p.Transform);
       if (box.Min.X == float.MaxValue) box = default;
-      var g = new Node { Nodes = selection.ToArray() }; var pm = (box.Min + box.Max) * 0.5f; pm.Z = box.Min.Z;
+      var a = selection.ToArray();
+      var g = settings.GroupType == Models.Settings.GroupM.BoolGeometry &&
+        a.Length == 2 && a[0] is Models.Geometry ga && a[1] is Models.Geometry ?
+        new Models.BoolGeometry()
+        {
+          Nodes = a,
+          ranges = new (int count, Models.Material material)[] { (0, ga.ranges[0].material) }
+        } :
+        new Node { Nodes = a };
+      var pm = (box.Min + box.Max) * 0.5f; pm.Z = box.Min.Z;
       var m = Matrix4x3.CreateTranslation(pm); g.Transform = m; m = !m;
       var nodes = this.scene.Nodes.Except(selection).Concat(Enumerable.Repeat(g, 1)).ToArray();
-      Execute(undonodes(this.scene, nodes), selection.Select(p => undotrans(p, p.Transform * m)), undosel(g));
+      Execute(new AniNodes(this.scene, nodes), selection.Select(p => AniTrans.get(p, p.Transform * m)), undosel(g));
       return 1;
     }
     int OnUngroup(object? test)
@@ -364,8 +441,8 @@ namespace Test
       if (test != null) return 1; //var scene = groups.First().Parent;
       var childs = groups.SelectMany(p => p.Nodes ?? Array.Empty<Node>()).ToArray();
       var nodes = this.scene.Nodes.Except(groups).Concat(childs).ToArray();
-      Execute(undonodes(this.scene, nodes),
-        childs.Select(p => undotrans(p, p.Transform * ((Node)p.Parent).Transform)), undosel(childs));
+      Execute(new AniNodes(this.scene, nodes),
+        childs.Select(p => AniTrans.get(p, p.Transform * ((Node)p.Parent).Transform)), undosel(childs));
       return 1;
     }
     int OnFlags(object? test, int id)
@@ -452,7 +529,7 @@ namespace Test
             ranges = ras
           };
           var xx = a.Parent.Nodes.Select(p => p == a ? c : p).ToArray();
-          Execute(undosel(a), undonodes(a.Parent, xx), undosel(c));
+          Execute(undosel(a), new AniNodes(a.Parent, xx), undosel(c));
         }
       }
       else
@@ -470,39 +547,9 @@ namespace Test
           ranges = ras
         };
         var xx = a.Parent.Nodes.Select(p => p == a ? c : p == b ? null : p).OfType<Node>().ToArray();
-        Execute(undosel(a), undonodes(a.Parent, xx), undosel(c));
+        Execute(undosel(a), new AniNodes(a.Parent, xx), undosel(c));
       }
       Cursor.Current = Cursors.Arrow;
-      return 0;
-    }
-    int OnConvert(object? test)
-    {
-      if (selection.Count != 1) return 0;
-      var oldnode = selection[0]; var tn = oldnode.GetType(); var cc = oldnode.Nodes ?? Array.Empty<Node>();
-      if (test is ToolStripMenuItem item)
-      {
-        var nodetypes = typeof(Models).GetNestedTypes().Where(t => canconv(oldnode, t));
-        var items = item.DropDownItems;
-        foreach (var p in nodetypes) items.Add(new ToolStripMenuItem(p.Name) { Tag = p, Checked = p == tn });
-        return 0;
-      }
-      if (test is not Type t || t == tn) return 0;
-      var newnode = (Node)Activator.CreateInstance(t);
-      newnode.InitNew(oldnode);
-      Execute(
-        undonodes(oldnode.Parent, oldnode.Parent.Nodes.Select(p => p == oldnode ? newnode : p).ToArray()),
-        undosel(newnode));
-      static bool canconv(Node from, Type to)
-      {
-        if (to.IsAbstract || !(to == typeof(Node) || to.IsSubclassOf(typeof(Node)))) return false;
-        if (to == typeof(Models.MeshGeometry)) { if (from is not Models.Geometry) return false; }
-        else if (to == typeof(Models.BoolGeometry))
-        {
-          var cc = from.Nodes; if (cc == null || cc.Length != 2) return false;
-          if (cc[0] is not Models.Geometry && cc[1] is not Models.Geometry) return false;
-        }
-        return true;
-      }
       return 0;
     }
     int OnCenter(object? test)
@@ -511,7 +558,7 @@ namespace Test
       if (test != null) return 1;
       var cm = camera.GetTransform(scene); var size = ClientSize;
       var pr = Matrix4x4.CreatePerspectiveFieldOfView(camera.Fov * (MathF.PI / 180), (float)size.Width / size.Height, camera.Near, camera.Far);
-      cm = Center(pr, cm, selection).m; Execute(undotrans(camera, cm)); return 1;
+      cm = Center(pr, cm, selection).m; Execute(AniTrans.get(camera, cm)); return 1;
     }
 
     bool IsSelect(Node node) => selection.Contains(node);
@@ -543,22 +590,22 @@ namespace Test
         Invalidate(); return;
       }
     }
-    public void AddUndo(Action? p)
+    public void AddUndo(Ani? p)
     {
       if (p == null) return;
-      if (undos == null) undos = new List<Action>();
+      if (undos == null) undos = new List<Ani>();
       undos.RemoveRange(undoi, undos.Count - undoi);
       undos.Add(p); undoi = undos.Count;
     }
-    public void Execute(Action a)
+    public void Execute(Ani a)
     {
       if (a == null) return;
-      a(); AddUndo(a); Invalidate();
+      a.exec(); AddUndo(a); Invalidate();
     }
-    public void Execute(params object[] a)
+    public void Execute(params object[] a) //Ani, IEnumerable<Ani>, null
     {
-      var b = undo(a); if (b == null) return;
-      b(); AddUndo(b); Invalidate();
+      var b = Ani.join(a); if (b == null) return;
+      b.exec(); AddUndo(b); Invalidate();
     }
     [Browsable(false)]
     public bool IsModified
@@ -566,47 +613,12 @@ namespace Test
       get => undoi != 0;
       set { undos = null; undoi = 0; }
     }
-    Action undosel(params Node[]? a)
+    Ani undosel(params Node[]? a)
     {
-      return () => { var t = selection.Count != 0 ? selection.ToArray() : null; Select(a); a = t; };
-    }
-    Action undonodes(Models.Base p, Node[]? b)
-    {
-      return () =>
-      {
-        if (b != null) for (int i = 0, n = b.Length; i < n; i++) b[i].Parent = p;
-        var t = p.Nodes; p.Nodes = b; b = t;
-      };
-    }
-    static Action? undotrans(Node p, Matrix4x3 m)
-    {
-      if (p.Transform == m) return null;
-      if (p is Models.Camera)
-      {
-        var ctrl = (DX11ModelCtrl)p.GetService(typeof(DX11ModelCtrl));
-        if (ctrl.records != null)
-          ctrl.records.Add(new XElement("m", new XAttribute("t", p.Name),
-            new XAttribute("a", m.ToString("")), new XAttribute("b", p.Transform.ToString(""))));
-      }
-      return () => { var t = p.Transform; p.Transform = m; m = t; };
-    }
-    static Action? undo(object? p)
-    {
-      if (p is Action ac) return ac;
-      if (p is Action<int, Matrix4x3> em) { em(3, default); return () => em(0, default); }
-      if (p is IEnumerable<Action> en) return undo(en.ToArray());
-      return null;
-    }
-    static Action? undo(params object[] a)
-    {
-      var b = a.SelectMany(p => p is IEnumerable<Action> e ? e : Enumerable.Repeat(undo(p), 1)).OfType<Action>().ToArray();
-      if (b.Length == 0) return null;
-      if (b.Length == 1) return b[0];
-      return () => { for (int i = 0; i < b.Length; i++) b[i](); Array.Reverse(b); };
+      return new AniSel(this, a); //return new AniEm(() => { var t = selection.Count != 0 ? selection.ToArray() : null; Select(a); a = t; });
     }
 
     static int lastwheel;
-
     void wheel(PC pc)
     {
       if (pc.Hover is not Node) return;
@@ -615,7 +627,7 @@ namespace Test
       var v = wp - m.Translation;
       var l = v.Length(); var f = pc.Primitive / 120f;
       camera.Transform = m * Matrix4x3.CreateTranslation(v * (l * f * 0.02f)); pc.Invalidate();
-      var t = Environment.TickCount; if (t - lastwheel > 500) { lastwheel = t; AddUndo(undotrans(camera, m)); }
+      var t = Environment.TickCount; if (t - lastwheel > 500) { lastwheel = t; AddUndo(AniTrans.get(camera, m)); }
     }
     Action<int> tool_cam_move(PC pc)
     {
@@ -631,7 +643,7 @@ namespace Test
           camera.Transform = m * Matrix4x3.CreateTranslation(dp.X, dp.Y, 0);
           pc.Invalidate();
         }
-        if (id == 1) AddUndo(undotrans(camera, m));// undo(main, om));
+        if (id == 1) AddUndo(AniTrans.get(camera, m));
       };
     }
     Action<int> tool_cam_vert(PC pc)
@@ -649,7 +661,7 @@ namespace Test
           var dz = p1.Y - pc.Pick().Y;
           camera.Transform = cm * Matrix4x3.CreateTranslation(0, 0, dz); pc.Invalidate();
         }
-        if (id == 1) AddUndo(undotrans(camera, cm));
+        if (id == 1) AddUndo(AniTrans.get(camera, cm));
       };
     }
     Action<int> tool_cam_decl(PC pc)
@@ -670,7 +682,7 @@ namespace Test
             Matrix4x3.CreateTranslation(rot);
           pc.Invalidate();
         }
-        if (id == 1) AddUndo(undotrans(camera, cm));
+        if (id == 1) AddUndo(AniTrans.get(camera, cm));
       };
     }
     Action<int> tool_cam_incl(PC pc)
@@ -685,7 +697,7 @@ namespace Test
           camera.Transform = Matrix4x3.CreateRotationX(MathF.Atan(pc.Pick().Y) - a1) * cm;
           pc.Invalidate();
         }
-        if (id == 1) AddUndo(undotrans(camera, cm));
+        if (id == 1) AddUndo(AniTrans.get(camera, cm));
       };
     }
     Action<int> tool_cam_select(PC pc)
@@ -736,7 +748,7 @@ namespace Test
       }
     }
 
-    static Action<int, Matrix4x3> move(Node node)
+    static Func<int, Matrix4x3, object> move(Node node)
     {
       var m = node.Transform;
       return (id, v) =>
@@ -750,32 +762,30 @@ namespace Test
           if (v.M43 != 0) t.M43 = MathF.Round(t.M43, 6);
           node.Transform = t; node.Parent?.Invalidate();
         }
-        else if (id == 3)
-        {
-          var ctrl = (DX11ModelCtrl)node.GetService(typeof(DX11ModelCtrl));
-          if (ctrl.records != null)
-            ctrl.records.Add(new XElement("m", new XAttribute("t", node.Name),
-              new XAttribute("a", m.ToString("")), new XAttribute("b", node.Transform.ToString(""))));
-        }
+        else if (id == 7) return AniTrans.get(node, m);
+        return null;
       };
     }
-    static Action<int, Matrix4x3> move(IEnumerable<Node> nodes)
+    static Func<int, Matrix4x3, object> move(IEnumerable<Node> nodes)
     {
       var a = nodes.Select(p => move(p)).ToArray();
-      return a.Length == 1 ? a[0] : (id, m) => { for (int i = 0; i < a.Length; i++) a[i](id, m); };
+      return a.Length == 1 ? a[0] : (id, m) =>
+      {
+        if (id == 7) return new AniSet(a.Select(p => p(7, m)).OfType<AniTrans>().ToArray());
+        for (int i = 0; i < a.Length; i++) a[i](id, m); return null;
+      };
     }
     Action<int> tool_obj_move(PC pc, Node main)
     {
       var ws = IsSelect(main); if (!ws) Select(main);
       var rp = main.Location;
-      var mo = default(Action<int, Matrix4x3>);
+      var mo = default(Func<int, Matrix4x3, object>); //var ani = default(Ani);
       var wp = Vector3.Transform(pc.Point, pc.Transform);
       var wm = Matrix4x3.CreateTranslation(wp);
       if (main.Parent is Node pn) { var t = pn.GetTransform(); t.M41 = t.M42 = t.M43 = 0; wm = t * wm; }
       //if (main.Parent is Node pn) wm = Matrix4x3.CreateTranslation(Vector3.Transform(wp, !pn.GetTransform())) * pn.GetTransform();
       //var xm = main.Parent is Node pn ? pn.GetTransform() : Matrix4x3.Identity;
-      pc.SetPlane(wm); Vector2 p1 = pc.Pick(), p2 = p1;
-      //RenderClient += drawplane; Invalidate();
+      pc.SetPlane(wm); Vector2 p1 = pc.Pick(), p2 = p1; //RenderClient += drawplane; Invalidate();
       return id =>
       {
         if (id == 0)
@@ -807,7 +817,7 @@ namespace Test
               Select(main);
             }
           }
-          else if (main.Location != rp) AddUndo(undo(mo));
+          else if (main.Location != rp) AddUndo(mo(7, default) as Ani);
         }
       };
       //void drawplane(DC dc)
@@ -824,7 +834,7 @@ namespace Test
       if (!IsSelect(main)) Select(main);
       var box = (Min: new Vector3(float.MaxValue), Max: new Vector3(-float.MaxValue));
       foreach (var p in selection) p.GetBox(ref box, p.Transform);
-      var mo = default(Action<int, Matrix4x3>);
+      var mo = default(Func<int, Matrix4x3, object>);
       var rp = main.Location;
       var wp = Vector3.Transform(pc.Point, pc.Transform);
       var wm = Matrix4x3.CreateTranslation(wp);
@@ -851,7 +861,7 @@ namespace Test
         if (id == 1)
         {
           //RenderClient -= drawplane; Invalidate();
-          if (main.Location != rp) AddUndo(undo(mo));
+          if (main.Location != rp) AddUndo(mo(7, default) as Ani);
         }
       };
       //void drawplane(DC dc)
@@ -866,7 +876,7 @@ namespace Test
     Action<int> tool_obj_rot(PC pc, Node main)
     {
       var ws = IsSelect(main); if (!ws) Select(main);
-      var mo = default(Action<int, Matrix4x3>);
+      var mo = default(Func<int, Matrix4x3, object>);
       var wp = Vector3.Transform(pc.Point, pc.Transform);
       var mw = main.Transform;// GetTransform();
       var mp = mw.Translation;
@@ -898,7 +908,7 @@ namespace Test
               if (t != null && !t.Fixed) Select(t);
             }
           }
-          else if (rw != 0) AddUndo(undo(mo));
+          else if (rw != 0) AddUndo(mo(7, default) as Ani);
         }
       };
       //void drawplane(DC dc)
@@ -913,7 +923,7 @@ namespace Test
     Action<int> tool_obj_rot_axis(PC pc, Node main, int axis)
     {
       if (!IsSelect(main)) Select(main);
-      var mo = default(Action<int, Matrix4x3>);
+      var mo = default(Func<int, Matrix4x3, object>);
       var mm = main.Transform;// GetTransform();
       var wp = Vector3.Transform(pc.Point, pc.Transform);
       var op = Vector3.Transform(wp, !main.GetTransform());
@@ -943,7 +953,7 @@ namespace Test
         if (id == 1)
         {
           //RenderClient -= drawplane; Invalidate();
-          if (rw != 0) AddUndo(undo(mo));
+          if (rw != 0) AddUndo(mo(7, default) as Ani);
         }
       };
       //void drawplane(DC dc)
@@ -967,7 +977,7 @@ namespace Test
           var p2 = Cursor.Position;
           if (new Vector2(p2.X - p1.X, p2.Y - p1.Y).LengthSquared() < 10) return;
           if (!ws) Select(main); ws = false; if (!AllowDrop) return;
-          var png = settings.FileFormat == Models.Settings.DropFormat.xxzpng;
+          var png = settings.FileFormat == Models.Settings.XFormat.xxzpng;
           var name = main.Name; if (string.IsNullOrEmpty(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) name = main.GetType().Name;
           var path = Path.Combine(Path.GetTempPath(), name + (png ? ".xxz.png" : ".xxz"));
           var xml = Models.Save(new Models.Scene { Unit = scene.Unit, Nodes = selection.ToArray() });
@@ -1067,8 +1077,8 @@ namespace Test
         }
         else if (id == 1)
         {
-          var sel = undosel(nodes); sel(); pc.Invalidate();
-          AddUndo(undo(sel, undonodes(this.scene, oldnodes))); Focus();
+          var sel = undosel(nodes); sel.exec(); pc.Invalidate();
+          AddUndo(Ani.join(sel, new AniNodes(this.scene, oldnodes))); Focus();
         }
         else if (id == 2) { this.scene.Nodes = oldnodes; pc.Invalidate(); }
       };
@@ -1177,25 +1187,37 @@ namespace Test
       public class Settings
       {
         float raster = 0.001f, angelgrid = 0.01f;
-        [Category("\tModelTools")]
+        [Category("\t\tModel Tools"), DefaultValue(0.001f)]
         public float Raster
         {
           get => raster;
           set { raster = value; }
         }
-        [Category("\tModelTools")]
+        [Category("\t\tModel Tools"), DefaultValue(0.01f)]
         public float Angelgrid
         {
           get => angelgrid;
           set { angelgrid = value; }
         }
-        public enum DropFormat { xxz, xxzpng }
-        [Category("DragTools")]
-        public DropFormat FileFormat { get; set; }
-        [Category("DragTools")]
+
+        [Category("\tDrag Tool"), DefaultValue(XFormat.xxz)]
+        public XFormat FileFormat { get; set; }
+        [Category("\tDrag Tool"), DefaultValue(typeof(Size), "64, 64")]
         public Size PreviewsSize { get; set; } = new Size(64, 64);
+
+        [Category("Group Command"), DefaultValue(GroupM.Group)]
+        public GroupM GroupType { get; set; }
+        [Category("Group Command"), DefaultValue(GroupC.CenterXY)]
+        public GroupC GroupCenter { get; set; }
+
+        //[Category("Driver")] todo:
+
         [Category("Registry"), DefaultValue(false)]
         public bool SaveSettings { get; set; }
+
+        public enum GroupM { Group, BoolGeometry }
+        public enum GroupC { CenterXY }
+        public enum XFormat { xxz, xxzpng }
       }
 
       public abstract class Base
@@ -1405,11 +1427,6 @@ namespace Test
             if ((a = e.Attribute("visible")) != null) Visible = (bool)a;
           }
         }
-        internal protected virtual void InitNew(Node? from)
-        {
-          if (from != null) { Name = from.Name; Transform = from.Transform; Nodes = from.Nodes; }
-          else Transform = Matrix4x3.Identity;
-        }
       }
 
       public class Camera : Node
@@ -1436,11 +1453,6 @@ namespace Test
             if ((p = e.Attribute("near")) != null) Near = (float)p; else Near = 0.1f;
             if ((p = e.Attribute("far")) != null) Far = (float)p; else Far = 1000;
           }
-        }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from);
-          Fov = 50; Near = 0.1f; Far = 1000;
         }
       }
 
@@ -1562,12 +1574,6 @@ namespace Test
         protected internal override void Invalidate()
         {
           flags &= ~(0x04 | 0x08); base.Invalidate();
-        }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from);
-          var mat = from is Geometry geo ? geo.ranges[0].material : new Material { Diffuse = 0xffeeeeee };
-          ranges = new (int count, Material material)[] { new(0, mat) };
         }
         protected internal override unsafe void Serialize(XElement e, bool storing)
         {
@@ -1756,17 +1762,6 @@ namespace Test
             }
           }
         }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from);
-          if (from is Geometry geo)
-          {
-            vertices = (Vector3[])geo.vertices.Clone();
-            indices = (ushort[])geo.indices;
-            ranges = ((int count, Material material)[])geo.ranges.Clone();
-          }
-          //else throw new ArgumentException();
-        }
         protected internal override Array GetVertices() => rpts ?? (Array)vertices;
       }
 
@@ -1786,10 +1781,6 @@ namespace Test
         {
           get => source;
           set { source = value; ranges = myranges; propref = true; Invalidate(); }
-        }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from); myranges = ranges;
         }
         protected internal override void Serialize(XElement e, bool storing)
         {
@@ -1812,7 +1803,7 @@ namespace Test
         protected internal override void Build()
         {
           var n = Nodes != null ? Nodes.Length : 0;
-          for (int i = 0; i < n; i++) Nodes[i].Parent = this;
+          for (int i = 0; i < n; i++) Nodes[i].Parent = this; if (myranges == null) myranges = ranges;
           if (n >= 2 && Nodes[0] is Geometry a && Nodes[1] is Geometry b)
           {
             a.checkbuild(0x08);
@@ -1910,15 +1901,6 @@ namespace Test
           indices[30] = 3; indices[31] = 0; indices[32] = 4; indices[33] = 4; indices[34] = 7; indices[35] = 3;
           if (p1.X < p2.X ^ p1.Y < p2.Y ^ p1.Z < p2.Z) invert();
         }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from); p2 = new Vector3(1);
-          if (from != null)
-          {
-            var box = from.GetBox();
-            if (box.Min.X != float.MaxValue) { Nodes = null; p1 = box.Min; p2 = box.Max; }
-          }
-        }
       }
 
       public class SphereGeometry : Geometry
@@ -1988,14 +1970,6 @@ namespace Test
             indices[ni++] = (ushort)(t + x);
           }
         }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from);
-          segx = 32; segy = 16; radius = 1;
-          if (from == null) return;
-          var box = from.GetBox();
-          if (box.Min.X != float.MaxValue) { Nodes = null; radius = (box.Max - box.Min).Length() * 0.5f; }
-        }
       }
 
       public class CylinderGeometry : Geometry
@@ -2042,14 +2016,6 @@ namespace Test
             indices[k + 0] = indices[k + 5] = (ushort)i; indices[k + 1] = (ushort)j;
             indices[k + 2] = indices[k + 3] = (ushort)(j + seg); indices[k + 4] = (ushort)(i + seg);
           }
-        }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from);
-          seg = 32; radius = height = 1;
-          if (from == null) return;
-          var box = from.GetBox();
-          if (box.Min.X != float.MaxValue) { Nodes = null; height = box.Max.Z; radius = (box.Max - box.Min).Length() * 0.5f; }
         }
       }
 
@@ -2192,7 +2158,7 @@ namespace Test
               }
               if (id == 1)
               {
-                if (geo.points[wo] != o) RootCtrl.AddUndo(vd ?? undo(geo, wo, o));
+                if (geo.points[wo] != o) RootCtrl.AddUndo(new AniAction(vd ?? undo(geo, wo, o)));
                 else vd?.Invoke();
               }
             };
@@ -2217,7 +2183,7 @@ namespace Test
               if (id == 1)
               {
                 Cursor = Cursors.Default; if (vd == null) return;
-                if (p1 != p2) RootCtrl.AddUndo(vd); else { vd(); Invalidate(); }
+                if (p1 != p2) RootCtrl.AddUndo(new AniAction(vd)); else { vd(); Invalidate(); }
               }
             };
           }
@@ -2351,24 +2317,6 @@ namespace Test
             if ((a = e.Attribute("winding")) != null) Winding.TryParse(a.Value, out winding);
           }
         }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from);
-          Vector2 min = default, max = new Vector2(1);
-          if (from != null)
-          {
-            var box = from.GetBox();
-            if (box.Min.X != float.MaxValue)
-            {
-              Nodes = null;
-              min = new(box.Min.X, box.Min.Y);
-              max = new(box.Max.X, box.Max.Y);
-              height = box.Max.Z;
-            }
-          }
-          //counts = new ushort[] { 4 };
-          points = new Vector2[] { min, new(max.X, min.Y), max, new(min.X, max.Y), };
-        }
         protected internal override void Build()
         {
           var tess = TesselatorR.GetInstance();
@@ -2410,7 +2358,7 @@ namespace Test
             return id =>
             {
               if (id == 0) { p2 = pc.Pick(); points[i] = o + (p2 - p1); Invalidate(); }
-              if (id == 1 && p1 != p2) (pc.View as DX11ModelCtrl)?.AddUndo(() => { var t = points[i]; points[i] = o; o = t; Invalidate(); });
+              if (id == 1 && p1 != p2) (pc.View as DX11ModelCtrl)?.AddUndo(new AniAction(() => { var t = points[i]; points[i] = o; o = t; Invalidate(); }));
             };
           }
         }
@@ -2421,14 +2369,6 @@ namespace Test
         int seg;
         [Category("Geometry")]
         public int Seg { get => seg; set { seg = value; Invalidate(); } }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from);
-          seg = 20;
-          var n = 20; var f = (MathF.Tau / n); var r = 0.2f; var v = new Vector2(0.5f, 0);
-          Array.Resize(ref points, n);
-          for (int i = 0; i < n; i++) points[i] = sincos(i * f) * r + v;
-        }
         internal protected override unsafe void Serialize(XElement e, bool storing)
         {
           base.Serialize(e, storing);
@@ -2616,7 +2556,7 @@ namespace Test
                 p2 = pc.Pick(); var p = o + (p2 - p1); p.X = Math.Max(0, p.X);
                 if (p != points[i]) { points[i] = p; Invalidate(); }
               }
-              if (id == 1 && o != points[i]) ((DX11ModelCtrl)pc.View).AddUndo(() => { var t = points[i]; points[i] = o; o = t; Invalidate(); });
+              if (id == 1 && o != points[i]) ((DX11ModelCtrl)pc.View).AddUndo(new AniAction(() => { var t = points[i]; points[i] = o; o = t; Invalidate(); }));
             };
           }
         }
@@ -2695,13 +2635,6 @@ namespace Test
           });
           tess.EndPolygon();
           extruse(tess, depth);
-        }
-        protected internal override void InitNew(Node? from)
-        {
-          base.InitNew(from);
-          if (from == null) return;
-          var box = from.GetBox();
-          if (box.Min.X != float.MaxValue) { text = "X"; var s = box.Max - box.Min; depth = s.Y; height = s.Z; }
         }
       }
 
@@ -2848,19 +2781,21 @@ namespace Test
                 new Rectangle(r.X - 15, r.Y - 2, r.Width, r.Height), e.ForeColor, TextFormatFlags.Left);
             }
           }
-          var s1 = o.GetType().Name; var s2 = node != null ? node.Name : null;
-          if (s2 != null)
+          var sn = node != null ? node.Name : o as string;
+          if (sn != null)
           {
-            TextRenderer.DrawText(g, s2, bold ??= new System.Drawing.Font(font, FontStyle.Bold), r, e.ForeColor, TextFormatFlags.Left);
-            r.X += TextRenderer.MeasureText(s2, bold).Width;
+            TextRenderer.DrawText(g, sn, bold ??= new System.Drawing.Font(font, FontStyle.Bold), r, e.ForeColor, TextFormatFlags.Left);
+            r.X += TextRenderer.MeasureText(sn, bold).Width;
           }
-          TextRenderer.DrawText(g, s1, font, r, e.ForeColor, TextFormatFlags.Left);
+          if (node != null) TextRenderer.DrawText(g, o.GetType().Name, font, r, e.ForeColor, TextFormatFlags.Left);
           e.DrawFocusRectangle();
         };
         combo.SelectedIndexChanged += (_, e) =>
         {
+          if (!btnprops.Checked) { return; } //todo: ...
           if (!combo.Focused || comboupdate) return;
-          var p = combo.SelectedItem; fillcombo(p);
+          var p = combo.SelectedItem;
+          fillcombo(p);
           Target.Select(p as Models.Node); update = true;
         };
         grid = new PropertyGrid { Dock = DockStyle.Fill, TabIndex = 1 };
@@ -2879,21 +2814,33 @@ namespace Test
           if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
           var t = o.GetType().GetProperty(s).GetValue(o);
           if (object.Equals(v, t)) return;
-          Target.AddUndo(() => { var p = o.GetType().GetProperty(s); var t = p.GetValue(o); p.SetValue(o, v); v = t; });
-          if (Target.records != null)
-            Target.records.Add(new XElement("p",
-              new XAttribute("t", ba.Name), new XAttribute("p", s),
-              new XAttribute("a", d.Converter.ConvertToInvariantString(v)),
-              new XAttribute("b", d.Converter.ConvertToInvariantString(t))));
+          Target.AddUndo(new AniProp(o, s, v));
         };
         var a = Controls; a.Add(grid); a.Add(combo);
-        //if (!regs)
-        //{
-        //  regs = true; var tcf = new TypeConverterAttribute(typeof(TCF));
-        //  TypeDescriptor.AddAttributes(typeof(Vector2), tcf);
-        //  TypeDescriptor.AddAttributes(typeof(Vector3), tcf);
-        //  TypeDescriptor.AddAttributes(typeof(Vector4), tcf);
-        //}
+
+        var cc = grid.Controls; view = cc[2];
+        var ts = (ToolStrip)cc[3]; var it = ts.Items; ts.RenderMode = ToolStripRenderMode.Professional;
+        btnprops = new ToolStripButton() { Text = "", ToolTipText = "Properties", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Checked = true };
+        btnsetting = new ToolStripButton() { Text = "", ToolTipText = "Settings", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        btnedit = new ToolStripButton() { Text = "", ToolTipText = "Edit", Enabled = false, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        it.Add(new ToolStripSeparator());
+        it.Add(btnprops);
+        it.Add(btnsetting);
+        it.Add(btnedit);
+        btnprops.Click += (p, e) =>
+        {
+          if (btnprops.Checked) return; btnprops.Checked = true; btnsetting.Checked = false;
+          grid.Focus(); oninv(); var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
+        };
+        btnsetting.Click += (p, e) =>
+        {
+          if (btnsetting.Checked) return; btnsetting.Checked = true; btnprops.Checked = false;
+          grid.SelectedObject = Target.settings;
+          combo.Items.Clear();
+          combo.Items.Add("Settings");
+          combo.Items.Add("Toolbox"); combo.SelectedIndex = 0;
+          var cm = ContextMenuStrip; if (cm != null) cm.Enabled = false;
+        };
       }
       protected override void OnVisibleChanged(EventArgs e)
       {
@@ -2908,34 +2855,14 @@ namespace Test
           grid.SelectedObject = null; combo.Items.Clear();
         }
       }
-      //protected override void OnMouseMove(MouseEventArgs e)
-      //{
-      //  if (Capture)
-      //  {
-      //    Width = Math.Max(Padding.Left, Math.Min(Parent.ClientSize.Width,
-      //      xx - Cursor.Position.X)); Parent.Update(); return;
-      //  }
-      //  Cursor = Cursors.SizeWE;
-      //}
-      //protected override void OnMouseDown(MouseEventArgs e)
-      //{
-      //  Capture = true; xx = Width + Cursor.Position.X;
-      //}
-      //protected override void OnMouseUp(MouseEventArgs e)
-      //{
-      //  Capture = false;
-      //}
-      //protected override void OnMouseLeave(EventArgs e)
-      //{
-      //  Cursor = Cursors.Default;
-      //}
       PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
-      bool comboupdate; object? lastpd; //int xx;
+      Control? view; internal ToolStripButton? btnprops, btnsetting, btnedit;
+      bool comboupdate, update; object? lastpd;
       void fillcombo(object disp)
       {
         var items = combo.Items; comboupdate = true;
         items.Clear();
-        items.Add(Target.settings);
+        //items.Add(Target.settings);
         items.Add(Target.Scene);
         if (disp is Models.Base node)
         {
@@ -2950,12 +2877,11 @@ namespace Test
         }
         combo.SelectedItem = disp; combo.Update(); comboupdate = false;
       }
-      bool update;
       void oninv() { update = true; }
       void onidle()
       {
-        if (!update) return; update = false; //Debug.WriteLine($"onidle {ms}");
-        if (combo.DroppedDown) return;
+        if (!update) return; update = false; // Debug.WriteLine($"onidle {ms}");
+        if (combo.DroppedDown || btnsetting.Checked) return;
         var list = Target.selection;
         var csel = combo.SelectedItem;
         var disp = list.Count != 0 ? (object)list[list.Count - 1] :
@@ -2972,7 +2898,7 @@ namespace Test
         {
           if (Models.propref) { Models.propref = false; grid.Refresh(); return; }
           combo.Invalidate(); if (ContainsFocus) return;
-          var p = grid.Controls[2]; p.Invalidate(true); p.Refresh();
+          view.Invalidate(true); view.Refresh();
         }
       }
     }
