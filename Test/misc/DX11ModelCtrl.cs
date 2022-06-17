@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.IO.Compression;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Windows.Forms.Design;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -17,6 +19,7 @@ namespace Test
     public abstract class Ani
     {
       internal abstract void exec();
+      internal virtual void link(List<AniLine> line, int time) { }
       internal static Ani? join(params object[] a) // Ani, IEnumerable<Ani>, null
       {
         static Ani? join(object[] p)
@@ -32,23 +35,62 @@ namespace Test
         return join(a);
       }
     }
-    class AniTrans : Ani
+    public abstract class AniLine
     {
-      Node p; Matrix4x3 m;
+      internal readonly List<int> times = new(2);
+      internal abstract bool lerp(int time);
+      protected static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
+    }
+
+    sealed class AniTrans : Ani
+    {
+      readonly Node p; Matrix4x3 m;
       internal AniTrans(Node p, in Matrix4x3 m) { this.p = p; this.m = m; }
       internal override void exec() { var t = p.Transform; p.Transform = m; m = t; }
       internal static AniTrans? get(Node p, in Matrix4x3 m) => p.Transform != m ? new AniTrans(p, m) : null;
-    }
-    class AniSet : Ani
-    {
-      Ani[] a;
-      internal AniSet(Ani[] a) => this.a = a;
-      internal override void exec()
+      internal override void link(List<AniLine> l, int time)
       {
-        for (int i = 0; i < a.Length; i++) a[i].exec(); Array.Reverse(a);
+        for (int i = 0; i < l.Count; i++)
+          if (l[i] is Line t && t.p == p)
+          {
+            t.times.Add(time); t.times.Add(900);
+            t.list.Insert(t.list.Count - 1, m);
+            return;
+          }
+        var pl = new Line(p);
+        pl.times.Add(time); pl.times.Add(900);
+        pl.list.Add(m); pl.list.Add(p.Transform); l.Add(pl);
+      }
+      class Line : AniLine
+      {
+        internal Line(Node p) { this.p = p; }
+        internal readonly Node p; internal readonly List<Matrix4x3> list = new(2);
+        internal override bool lerp(int time)
+        {
+          int x = 0;
+          for (int i = 0, t, dt; i < times.Count; i += 2, x++)
+          {
+            if (time <= (t = times[i])) break;
+            if (time <= t + (dt = times[i + 1]))
+            {
+              var f = (float)(time - t) / dt;
+              if (true) f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, 4);
+              //p.Transform = Matrix4x3.Lerp(matri[x], matri[x + 1], f);              
+              Matrix4x4.Decompose(list[x + 0], out var s1, out var q1, out var t1);
+              Matrix4x4.Decompose(list[x + 1], out var s2, out var q2, out var t2);
+              var tm =
+                Matrix4x4.CreateFromQuaternion(Quaternion.Lerp(q1, q2, f)) *
+                Matrix4x4.CreateTranslation(Vector3.Lerp(t1, t2, f));
+              p.Transform = (Matrix4x3)tm;
+              return true;
+            }
+          }
+          var m = list[x]; if (p.Transform == m) return false;
+          p.Transform = m; return true;
+        }
       }
     }
-    class AniProp : Ani
+    sealed class AniProp : Ani
     {
       object p; string s; object v;
       internal AniProp(object p, string s, object v) { this.p = p; this.s = s; this.v = v; }
@@ -56,8 +98,119 @@ namespace Test
       {
         var pd = p.GetType().GetProperty(s); var t = pd.GetValue(p); pd.SetValue(p, v); v = t;
       }
+      internal override void link(List<AniLine> l, int time)
+      {
+        var pd = p.GetType().GetProperty(s); var pt = pd.PropertyType;
+        if (pt == typeof(Color)) ColorLine.link<ColorLine>(l, p, s, (Color)v, time, 500);
+        else if (pt == typeof(float)) FloatLine.link<FloatLine>(l, p, s, (float)v, time, 500);
+        else if (pt == typeof(Vector2)) Vector2Line.link<Vector2Line>(l, p, s, (Vector2)v, time, 500);
+        else if (pt == typeof(Vector3)) Vector3Line.link<Vector3Line>(l, p, s, (Vector3)v, time, 500);
+        else if (pt == typeof(bool)) Vector3Line.link<Vector3Line>(l, p, s, (Vector3)v, time, 0);
+        else
+        {
+          //for (int i = 0; i < l.Count; i++)
+          //  if (l[i] is Line t && t.p == p && t.s.Name == s)
+          //  {
+          //    t.times.Add(time); t.times.Add(0);
+          //    t.list.Insert(t.list.Count - 1, v);
+          //    return;
+          //  }
+          //var pl = new Line(); pl.p = p; pl.s = pd;
+          //pl.times.Add(time); pl.times.Add(0);
+          //pl.list.Add(v); pl.list.Add(p.GetType().GetProperty(s).GetValue(p));
+          //l.Add(pl);
+        }
+      }
+
+      abstract class PropLine<T> : AniLine
+      {
+        internal static void link<TC>(List<AniLine> l, object p, string s, T v, int time, int dt) where TC : PropLine<T>, new()
+        {
+          for (int i = 0; i < l.Count; i++)
+            if (l[i] is TC t && t.p == p && t.name == s)
+            {
+              t.times.Add(time); t.times.Add(dt);
+              t.list.Insert(t.list.Count - 1, t.acc.get(p));
+              return;
+            }
+          var tc = new TC();
+          var pi = (tc.p = p).GetType().GetProperty(s);
+          if (pi.DeclaringType != pi.ReflectedType) pi = pi.DeclaringType.GetProperty(s);
+          tc.acc = GetPropAcc<T>(pi); tc.times.Add(time); tc.times.Add(dt);
+          tc.list.Add(v); tc.list.Add(tc.acc.get(p)); l.Add(tc);
+        }
+        internal object? p; internal string name => acc.get.Method.Name;
+        internal readonly List<T> list = new(2); PropAcc<T>? acc;
+        protected abstract bool equals(T a, T b);
+        protected abstract T lerp(T a, T b, float f);
+        internal override bool lerp(int time)
+        {
+          int x = 0;
+          for (int i = 0, t, dt; i < times.Count; i += 2, x++)
+          {
+            if (time <= (t = times[i])) break;
+            if (time <= t + (dt = times[i + 1]))
+            {
+              var f = (float)(time - t) / dt;
+              if (true) f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, 4);
+              acc.set(p, lerp(list[x + 0], list[x + 1], f));
+              return true;
+            }
+          }
+          var b = list[x];
+          if (equals(acc.get(p), b)) return false;
+          acc.set(p, b); return true;
+        }
+      }
+      sealed class ColorLine : PropLine<Color>
+      {
+        protected override bool equals(Color a, Color b) => a == b;
+        protected override Color lerp(Color a, Color b, float f)
+        {
+          var v = Vector4.Lerp(new Vector4(a.A, a.R, a.G, a.B), new Vector4(b.A, b.R, b.G, b.B), f);
+          return Color.FromArgb((int)v.X, (int)v.Y, (int)v.Z, (int)v.W);
+        }
+      }
+      sealed class FloatLine : PropLine<float>
+      {
+        protected override bool equals(float a, float b) => a == b;
+        protected override float lerp(float a, float b, float f) => a + (b - a) * f;
+      }
+      sealed class Vector2Line : PropLine<Vector2>
+      {
+        protected override bool equals(Vector2 a, Vector2 b) => a == b;
+        protected override Vector2 lerp(Vector2 a, Vector2 b, float f) => Vector2.Lerp(a, b, f);
+      }
+      sealed class Vector3Line : PropLine<Vector3>
+      {
+        protected override bool equals(Vector3 a, Vector3 b) => a == b;
+        protected override Vector3 lerp(Vector3 a, Vector3 b, float f) => Vector3.Lerp(a, b, f);
+      }
+      sealed class BoolLine : PropLine<bool>
+      {
+        protected override bool equals(bool a, bool b) => a == b;
+        protected override bool lerp(bool a, bool b, float f) => a;
+      }
+
+      //class Line : AniLine
+      //{
+      //  internal object p; internal System.Reflection.PropertyInfo s;
+      //  internal readonly List<object> list = new(2);
+      //  internal override bool lerp(int time)
+      //  {
+      //    int x = 0;
+      //    for (int i = 0, t, dt; i < times.Count; i += 2, x++)
+      //    {
+      //      if (time <= (t = times[i])) break;
+      //      if (time <= t + (dt = times[i + 1])) return false;
+      //    }
+      //    var a = s.GetValue(p); var b = list[x];
+      //    if (a.Equals(b)) return false;
+      //    s.SetValue(p, b); return true;
+      //  }
+      //}
     }
-    class AniNodes : Ani
+    sealed class AniNodes : Ani
     {
       Models.Base p; Node[]? b;
       internal AniNodes(Models.Base p, Node[]? b) { this.p = p; this.b = b; }
@@ -67,7 +220,16 @@ namespace Test
         var t = p.Nodes; p.Nodes = b; b = t;
       }
     }
-    class AniSel : Ani
+    sealed class AniSet : Ani
+    {
+      Ani[] a;
+      internal AniSet(Ani[] a) => this.a = a;
+      internal override void exec()
+      {
+        for (int i = 0; i < a.Length; i++) a[i].exec(); Array.Reverse(a);
+      }
+    }
+    sealed class AniSel : Ani
     {
       DX11ModelCtrl p; Node[]? a;
       internal AniSel(DX11ModelCtrl p, Node[]? a) { this.p = p; this.a = a; }
@@ -76,7 +238,7 @@ namespace Test
         var t = p.selection.Count != 0 ? p.selection.ToArray() : null; p.Select(a); a = t;
       }
     }
-    class AniAction : Ani
+    sealed class AniAction : Ani
     {
       internal AniAction(Action p) => this.p = p; Action p;
       internal override void exec() => p();
@@ -421,11 +583,7 @@ namespace Test
       var a = selection.ToArray();
       var g = settings.GroupType == Models.Settings.GroupM.BoolGeometry &&
         a.Length == 2 && a[0] is Models.Geometry ga && a[1] is Models.Geometry ?
-        new Models.BoolGeometry()
-        {
-          Nodes = a,
-          ranges = new (int count, Models.Material material)[] { (0, ga.ranges[0].material) }
-        } :
+        new Models.BoolGeometry() { Nodes = a, ranges = new (int count, Models.Material material)[] { (0, ga.ranges[0].material) } } :
         new Node { Nodes = a };
       var pm = (box.Min + box.Max) * 0.5f; pm.Z = box.Min.Z;
       var m = Matrix4x3.CreateTranslation(pm); g.Transform = m; m = !m;
@@ -2818,7 +2976,7 @@ namespace Test
           if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
           var t = o.GetType().GetProperty(s).GetValue(o);
           if (object.Equals(v, t)) return;
-          Target.AddUndo(new AniProp(o, s, v));
+          Target.AddUndo(new AniProp(ba, s, v));
         };
         var a = Controls; a.Add(grid); a.Add(combo);
 
@@ -2827,17 +2985,28 @@ namespace Test
         btnprops = new ToolStripButton() { Text = "", ToolTipText = "Properties", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Checked = true };
         btnsetting = new ToolStripButton() { Text = "", ToolTipText = "Settings", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
         btnedit = new ToolStripButton() { Text = "", ToolTipText = "Edit", Enabled = false, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
-        btntoolbox = new ToolStripButton() { Text = "⛽", ToolTipText = "Toolbox", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Alignment = ToolStripItemAlignment.Right };
+        btntoolbox = new ToolStripButton()
+        {
+          Text = "⚒", //"⛽"
+          Font = new System.Drawing.Font(this.Font.FontFamily, 7.5f), // this.Font.Size * 3 / 4),
+          ToolTipText = "Toolbox",
+          AccessibleRole = AccessibleRole.RadioButton,
+          DisplayStyle = ToolStripItemDisplayStyle.Text,
+          Alignment = ToolStripItemAlignment.Right
+        };
+        btnstory = new ToolStripButton() { Text = "", ToolTipText = "Storyboard", AccessibleRole = AccessibleRole.CheckButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
         it.Add(new ToolStripSeparator());
         it.Add(btnprops);
         it.Add(btnsetting);
         it.Add(btnedit);
+        it.Add(btnstory);
         it.Add(btntoolbox);
         btnprops.Click += (p, e) =>
         {
           if (btnprops.Checked) return; btnprops.Checked = true;
           btnsetting.Checked = btntoolbox.Checked = false; showtoolbox(false);
-          oninv(); combo.Items.Clear(); grid.Focus(); var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
+          oninv(); combo.Items.Clear(); grid.Focus();
+          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
         };
         btnsetting.Click += (p, e) =>
         {
@@ -2845,7 +3014,7 @@ namespace Test
           btnprops.Checked = btntoolbox.Checked = false; showtoolbox(false);
           grid.SelectedObject = Target.settings;
           combo.Items.Clear(); combo.Items.Add("Settings"); combo.SelectedIndex = 0;
-          var cm = ContextMenuStrip; if (cm != null) cm.Enabled = false;
+          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = false;
         };
         btntoolbox.Click += (p, e) =>
         {
@@ -2869,7 +3038,7 @@ namespace Test
         }
       }
       PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
-      Control? view, info; internal ToolStripButton? btnprops, btnsetting, btnedit, btntoolbox;
+      Control? view, info; internal ToolStripButton? btnprops, btnsetting, btnedit, btntoolbox, btnstory;
       bool comboupdate, update; object? lastpd;
       void fillcombo(object disp)
       {
@@ -2894,7 +3063,7 @@ namespace Test
       void onidle()
       {
         if (!update) return; update = false; // Debug.WriteLine($"onidle {ms}");
-        if (combo.DroppedDown || btnsetting.Checked) return;
+        if (combo.DroppedDown || !btnprops.Checked) return;
         var list = Target.selection;
         var csel = combo.SelectedItem;
         var disp = list.Count != 0 ? (object)list[list.Count - 1] :

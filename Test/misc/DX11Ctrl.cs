@@ -1,4 +1,5 @@
 ﻿using System.Drawing.Drawing2D;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Security;
 #pragma warning disable CS0649, CS8618, CS8600, CS8602, CS8604
@@ -2223,6 +2224,26 @@ namespace Test
         }
       }
     }
+
+
+    static Dictionary<System.Reflection.PropertyInfo, object>? propdict;
+    public record class PropAcc<T>(Func<object, T> get, Action<object, T> set);
+    public static PropAcc<T> GetPropAcc<T>(System.Reflection.PropertyInfo pi)
+    {
+      Debug.Assert(pi.DeclaringType == pi.ReflectedType); // pi.DeclaringType.GetProperty(pi.Name) !!!
+      if (!(propdict ??= new()).TryGetValue(pi, out var p))
+      {
+        var t0 = Expression.Parameter(typeof(object));
+        var t2 = Expression.Property(Expression.Convert(t0, pi.DeclaringType), pi);
+        var t3 = Expression.Lambda<Func<object, T>>(t2, pi.Name, new ParameterExpression[] { t0 });
+        var t5 = Expression.Parameter(typeof(T));
+        var t6 = Expression.Assign(t2, t5);
+        var t8 = Expression.Lambda<Action<object, T>>(t6, pi.Name, new ParameterExpression[] { t0, t5 });
+        propdict.Add(pi, p = new PropAcc<T>(t3.Compile(), t8.Compile()));
+      }
+      return (PropAcc<T>)p;
+    }
+
   }
   //shader
   unsafe partial class DX11Ctrl

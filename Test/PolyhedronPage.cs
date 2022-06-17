@@ -18,7 +18,7 @@ namespace Test
       MenuItem.CmdRoot = OnCommand;
       modelView.Scene = demo1();
       modelView.Infos.Add("@1"); // modelView.Adapter);
-      //modelView.Infos.Add("@2");
+      //modelView.Infos.Add("@2"); // fps
     }
     int OnCommand(int id, object? test)
     {
@@ -44,7 +44,10 @@ namespace Test
     {
       if (test != null) return 1;
       if (propsView.Visible && !propsView.btnprops.Checked) { propsView.btnprops.PerformClick(); return 1; }
-      propsView.Visible ^= true; return 1;
+      var t = propsView.IsHandleCreated;
+      propsView.Visible ^= true;
+      if(!t) propsView.btnstory.Click += (_, _) => panelStory.Visible = (propsView.btnstory.Checked ^= true);
+      return 1;
     }
     int OnStoryBoard(object? test)
     {
@@ -52,7 +55,7 @@ namespace Test
       panelStory.Visible ^= true;
       return 1;
     }
-   
+
     int tv;
     void panelStory_MouseDown(object sender, MouseEventArgs e)
     {
@@ -180,16 +183,13 @@ namespace Test
 
     }
 
-    //XElement? records;
     int undoab, anix; DX11ModelCtrl.Ani[]? anis;
+
     void btn_record_Click(object sender, EventArgs e)
     {
       if (btn_record.Checked) return;
-      btn_record.Checked = true;
-      btn_stop.Enabled = true;
-      btn_back.Enabled = btn_forw.Enabled = false;
-      //btn_stop.Enabled = btn_stop.Visible = !(btn_play.Visible = false);
-      //btn_back.Enabled = false; 
+      btn_record.Checked = btn_stop.Enabled = true;
+      btn_play.Enabled = btn_back.Enabled = btn_forw.Enabled = btn_back_.Enabled = btn_forw_.Enabled = false;
       listView1.Items.Clear();
       this.anis = null; this.anix = 0; this.undoab = modelView.undoi; modelView.UndoChanged += undochanged;
     }
@@ -204,34 +204,6 @@ namespace Test
       b.SubItems.Add(items.Count.ToString());// new ListViewItem.ListViewSubItem(""));
       listView1.EnsureVisible(items.Count - 1);
     }
-    void btn_stop_Click(object sender, EventArgs e)
-    {
-      if (!btn_stop.Enabled) return;
-      if (btn_play.Checked)
-      {
-        btn_play.Checked = false;
-        btn_stop.Enabled = false;
-        btn_record.Enabled = true;
-        btn_back.Enabled = btn_back_.Enabled = this.anix != 0;
-        btn_forw.Enabled = btn_forw_.Enabled = this.anix < this.anis.Length;
-      }
-      else if (btn_record.Checked)
-      {
-        btn_record.Checked = false; modelView.UndoChanged -= undochanged;
-        btn_stop.Enabled = false;
-        //btn_stop.Enabled = btn_stop.Visible = !(btn_play.Visible = true);
-        if (modelView.undos == null || modelView.undoi <= undoab) return;
-        //if (listView1.Items.Count == 0) return;
-        listView1.Items.Add("*");
-        this.anis = modelView.undos.Skip(undoab).ToArray(); this.anix = this.anis.Length;
-        btn_back.Enabled = btn_back_.Enabled = true; return;
-      }
-      //if (modelView.records == null) return;
-      //this.records = modelView.records; modelView.records = null;
-      //if (!this.records.HasElements) return;
-      //btn_back.Enabled = true;
-      //this.records.Save("C:\\Users\\cohle\\Desktop\\rec.xml");
-    }
     void gotoi(int x)
     {
       if (this.anis == null) return;
@@ -245,10 +217,10 @@ namespace Test
       listView1.SelectedIndices.Clear();
       if (x < listView1.Items.Count) { listView1.Items[x].Selected = true; listView1.EnsureVisible(x); }
     }
-    void btn_back_Click(object sender, EventArgs e) => gotoi(0); 
+    void btn_back_Click(object sender, EventArgs e) => gotoi(0);
     void btn_back__Click(object sender, EventArgs e) => gotoi(this.anix - 1);
     void btn_forw__Click(object sender, EventArgs e) => gotoi(this.anix + 1);
-    void btn_forw_Click(object sender, EventArgs e) => gotoi(this.anis.Length); 
+    void btn_forw_Click(object sender, EventArgs e) => gotoi(this.anis.Length);
     void listView1_SelectedIndexChanged(object sender, EventArgs e) //todo: dynamic
     {
       if (btn_play.Checked || btn_record.Checked) return;
@@ -264,6 +236,57 @@ namespace Test
       btn_record.Enabled = false;
       btn_back_.Enabled = btn_forw_.Enabled = false;
       btn_back.Enabled = btn_forw.Enabled = false;
+
+      time = 0; modelView.Animations += animate;
+    }
+
+    static int getmaxt(List<DX11ModelCtrl.AniLine> a)
+    {
+      var max = 0;
+      for (int i = 0; i < a.Count; i++) { var t = a[i].times; max = Math.Max(max, t[t.Count - 2] + t[t.Count - 1]); }
+      return max;
+    }
+
+    List<DX11ModelCtrl.AniLine>? anilines; int time;
+    void animate()
+    {
+      var inf = false;
+      for (int i = 0; i < anilines.Count; i++) inf |= anilines[i].lerp(time);
+      if (inf) modelView.Invalidate(); time += 10;
+    }
+    void btn_stop_Click(object sender, EventArgs e)
+    {
+      if (!btn_stop.Enabled) return;
+      if (btn_play.Checked)
+      {
+        modelView.Animations -= animate;
+
+        btn_play.Checked = false;
+        btn_stop.Enabled = false;
+        btn_record.Enabled = true;
+        btn_back.Enabled = btn_back_.Enabled = this.anix != 0;
+        btn_forw.Enabled = btn_forw_.Enabled = this.anix < this.anis.Length;
+      }
+      else if (btn_record.Checked)
+      {
+        btn_record.Checked = false; modelView.UndoChanged -= undochanged;
+        btn_stop.Enabled = false;
+        //btn_stop.Enabled = btn_stop.Visible = !(btn_play.Visible = true);
+        if (modelView.undos == null || modelView.undoi <= undoab) return;
+        listView1.Items.Add("*");
+        btn_back.Enabled = btn_back_.Enabled = true;
+
+        this.anis = modelView.undos.Skip(undoab).ToArray(); this.anix = this.anis.Length;
+
+        anilines = new List<DX11ModelCtrl.AniLine>();
+        for (int i = 0; i < this.anis.Length; i++)
+        {
+          var tm = getmaxt(anilines);
+          this.anis[i].link(anilines, tm + 100);// i * 1000);
+        }
+        return;
+        //this.records.Save("C:\\Users\\cohle\\Desktop\\rec.xml");
+      }
     }
 
   }
