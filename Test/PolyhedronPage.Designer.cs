@@ -48,8 +48,8 @@
       Test.MenuItem _selall;
       System.Windows.Forms.Button btn_run;
       Test.MenuItem _copy;
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
       Test.MenuItem _pros;
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
       this._model = new Test.MenuItem();
@@ -82,10 +82,6 @@
       this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
       this.panel1 = new System.Windows.Forms.Panel();
       this.panelStory = new System.Windows.Forms.Panel();
-      this.listView1 = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
       this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
       this.btn_back = new System.Windows.Forms.ToolStripButton();
@@ -283,6 +279,15 @@
       _copy.ShowShortcutKeys = false;
       _copy.Size = new System.Drawing.Size(136, 24);
       _copy.Text = "Copy";
+      // 
+      // _pros
+      // 
+      _pros.Id = 2008;
+      _pros.Name = "_pros";
+      _pros.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return)));
+      _pros.ShowShortcutKeys = false;
+      _pros.Size = new System.Drawing.Size(136, 24);
+      _pros.Text = "Properties";
       // 
       // label1
       // 
@@ -575,7 +580,6 @@
       // 
       // panelStory
       // 
-      this.panelStory.Controls.Add(this.listView1);
       this.panelStory.Controls.Add(this.toolStrip1);
       this.panelStory.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.panelStory.Location = new System.Drawing.Point(0, 380);
@@ -587,40 +591,6 @@
       this.panelStory.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseDown);
       this.panelStory.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseMove);
       this.panelStory.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseUp);
-      // 
-      // listView1
-      // 
-      this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
-      this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.listView1.FullRowSelect = true;
-      this.listView1.GridLines = true;
-      this.listView1.LabelEdit = true;
-      this.listView1.Location = new System.Drawing.Point(0, 33);
-      this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(670, 98);
-      this.listView1.TabIndex = 1;
-      this.listView1.UseCompatibleStateImageBehavior = false;
-      this.listView1.View = System.Windows.Forms.View.Details;
-      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
-      // 
-      // columnHeader1
-      // 
-      this.columnHeader1.Text = "Test1";
-      this.columnHeader1.Width = 200;
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Test2";
-      this.columnHeader2.Width = 100;
-      // 
-      // columnHeader3
-      // 
-      this.columnHeader3.Text = "Test3";
-      this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       // 
       // toolStrip1
       // 
@@ -749,15 +719,6 @@
       this.label3.TabIndex = 0;
       this.label3.Text = "(under construction)";
       // 
-      // _pros
-      // 
-      _pros.Id = 2008;
-      _pros.Name = "_pros";
-      _pros.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return)));
-      _pros.ShowShortcutKeys = false;
-      _pros.Size = new System.Drawing.Size(136, 24);
-      _pros.Text = "Properties";
-      // 
       // PolyhedronPage
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -814,10 +775,6 @@
     private Panel panelStory;
     private ToolStrip toolStrip1;
     private ToolStripLabel toolStripLabel1;
-    private ListView listView1;
-    private ColumnHeader columnHeader1;
-    private ColumnHeader columnHeader2;
-    private ColumnHeader columnHeader3;
     private ToolStripButton btn_stop;
     private ToolStripButton btn_play;
     private ToolStripButton btn_back;

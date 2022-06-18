@@ -160,12 +160,15 @@ namespace Test
       if (kl != 0) return null;
       try
       {
+        var d = button_rat.Text == "d";
+        if (!d && digits > 1000) Cursor.Current = Cursors.WaitCursor;
         var a = 0; var b = state == 2 ? list.Count - 1 : list.Count - 2;
-        var r = button_rat.Text == "d" ? rnd(parsed(a, b)) : parse(a, b);
+        var r = d ? rnd(parsed(a, b)) : parse(a, b);
         return r.ToString("S" + (digits + 2));
         double rnd(double t) { if (digits <= 15) t = Math.Round(t, digits); return t; }
       }
       catch (Exception) { return "NaN"; }
+      finally { if(digits > 1000) Cursor.Current = Cursors.Default; }
     }
     rat parse(int a, int b)
     {
@@ -337,8 +340,10 @@ namespace Test
     #region handler 
     void numericUpDownRound_ValueChanged(object sender, EventArgs e)
     {
-      digits = (int)numericUpDownDigits.Value; numericUpDownDigits.Update();
-      var s = parse(); if (s != null) textBox1.Text = s;
+      digits = (int)numericUpDownDigits.Value;
+      numericUpDownDigits.ForeColor = digits > 1000 ? Color.Red : Color.Black;
+      numericUpDownDigits.Update();      
+      var s = parse(); if (s != null) { textBox1.Text = s; Debug.Assert(s.Length == textBox1.Text.Length); }
     }
     void numericUpDownRound_KeyDown(object sender, KeyEventArgs e)
     {
@@ -404,7 +409,10 @@ namespace Test
               var s = Clipboard.GetText();
               var t = rat.Parse(s);
               s = t.ToString("S" + (digits + 2)); //if (state != 0 || list.Count != 0) break;
-              list.Clear(); state = kl = exp = 0; label1.Text = "";
+              //{ list.Clear(); state = kl = exp = 0; label1.Text = ""; }                 
+              if (state == 2 || state == 3) { list.Clear(); state = kl = exp = 0; }
+              //if (exp != 0) { if (s.Length == exp + 2 && s[exp + 1] == '0') s = s.Substring(0, exp + 1); }
+              state = 0;
               textBox1.Text = s; textBox1.Select(textBox1.TextLength, 0); textBox1.ScrollToCaret();
               return true;
             }

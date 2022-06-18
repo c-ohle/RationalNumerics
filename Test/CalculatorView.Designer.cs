@@ -722,7 +722,7 @@
       // 
       toolStripMenuItem1.Name = "toolStripMenuItem1";
       toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-      toolStripMenuItem1.Size = new System.Drawing.Size(210, 24);
+      toolStripMenuItem1.Size = new System.Drawing.Size(163, 24);
       toolStripMenuItem1.Text = "Copy";
       toolStripMenuItem1.Click += new System.EventHandler(this.oncopy);
       // 
@@ -751,7 +751,6 @@
       this.textBox1.Font = new System.Drawing.Font("Segoe UI", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.textBox1.HideSelection = false;
       this.textBox1.Location = new System.Drawing.Point(0, 32);
-      this.textBox1.MaxLength = 65536;
       this.textBox1.Multiline = true;
       this.textBox1.Name = "textBox1";
       this.textBox1.ReadOnly = true;
@@ -771,14 +770,14 @@
             toolStripMenuItem1,
             this.mi_paste});
       this.contextMenuEdit.Name = "contextMenuEdit";
-      this.contextMenuEdit.Size = new System.Drawing.Size(211, 80);
+      this.contextMenuEdit.Size = new System.Drawing.Size(164, 52);
       this.contextMenuEdit.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuEdit_Opening);
       // 
       // mi_paste
       // 
       this.mi_paste.Name = "mi_paste";
       this.mi_paste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-      this.mi_paste.Size = new System.Drawing.Size(210, 24);
+      this.mi_paste.Size = new System.Drawing.Size(163, 24);
       this.mi_paste.Text = "Paste";
       this.mi_paste.Click += new System.EventHandler(this.onpaste);
       // 
@@ -804,7 +803,7 @@
       this.numericUpDownDigits.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.numericUpDownDigits.Location = new System.Drawing.Point(658, 99);
       this.numericUpDownDigits.Maximum = new decimal(new int[] {
-            10000,
+            1000000,
             0,
             0,
             0});

@@ -18,8 +18,16 @@ namespace Test
       MenuItem.CmdRoot = OnCommand;
       modelView.Scene = demo1();
       modelView.Infos.Add("@1"); // modelView.Adapter);
-      //modelView.Infos.Add("@2"); // fps
+      modelView.Infos.Add("@2"); // fps
+      panelStory.VisibleChanged += (_, _) =>
+      {
+        if (timeLineView != null) return;
+        timeLineView = new TimeLineView { Dock = DockStyle.Fill };
+        panelStory.Controls.Add(timeLineView); timeLineView.BringToFront();
+      };
     }
+    TimeLineView? timeLineView;
+
     int OnCommand(int id, object? test)
     {
       try
@@ -46,14 +54,14 @@ namespace Test
       if (propsView.Visible && !propsView.btnprops.Checked) { propsView.btnprops.PerformClick(); return 1; }
       var t = propsView.IsHandleCreated;
       propsView.Visible ^= true;
-      if(!t) propsView.btnstory.Click += (_, _) => panelStory.Visible = (propsView.btnstory.Checked ^= true);
+      if (!t) propsView.btnstory.Click += (_, _) => panelStory.Visible = (propsView.btnstory.Checked ^= true);
       return 1;
     }
     int OnStoryBoard(object? test)
     {
       if (test != null) return 1;
-      panelStory.Visible ^= true;
-      return 1;
+      var x = propsView.IsHandleCreated; if (!x) OnProperties(null);
+      propsView.btnstory.PerformClick(); if (!x) OnProperties(null); return 1;
     }
 
     int tv;
@@ -182,52 +190,38 @@ namespace Test
       static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
 
     }
-
-    int undoab, anix; DX11ModelCtrl.Ani[]? anis;
-
+ 
     void btn_record_Click(object sender, EventArgs e)
     {
       if (btn_record.Checked) return;
       btn_record.Checked = btn_stop.Enabled = true;
-      btn_play.Enabled = btn_back.Enabled = btn_forw.Enabled = btn_back_.Enabled = btn_forw_.Enabled = false;
-      listView1.Items.Clear();
-      this.anis = null; this.anix = 0; this.undoab = modelView.undoi; modelView.UndoChanged += undochanged;
+      btn_play.Enabled = btn_back.Enabled = btn_forw.Enabled = btn_back_.Enabled = btn_forw_.Enabled = false;      
+      timeLineView.Clear(); 
+      modelView.UndoChanged += undochanged;
     }
     void undochanged()
     {
-      var items = listView1.Items;
-      var c = modelView.undoi - this.undoab;
-      if (c < items.Count) { if (c < 0) return; if (c != items.Count - 1) { } items.RemoveAt(c); return; }
-      var p = modelView.undos[modelView.undoi - 1];
-      var b = new ListViewItem(p.GetType().Name);
-      items.Add(b); listView1.SelectedIndices.Clear(); b.Selected = true;
-      b.SubItems.Add(items.Count.ToString());// new ListViewItem.ListViewSubItem(""));
-      listView1.EnsureVisible(items.Count - 1);
+      if (modelView.undoi == 0) return;
+      var undo = modelView.undos[modelView.undoi - 1];
+      timeLineView.Add(undo);
     }
     void gotoi(int x)
     {
-      if (this.anis == null) return;
-      x = Math.Max(0, Math.Min(this.anis.Length, x)); if (x == this.anix) return;
-      for (; this.anix < x;) this.anis[this.anix++].exec();
-      for (; this.anix > x;) this.anis[--this.anix].exec();
-      modelView.Invalidate();
-      btn_back.Enabled = btn_back_.Enabled = this.anix != 0;
-      btn_forw.Enabled = btn_forw_.Enabled = this.anix < this.anis.Length;
-      btn_play.Enabled = btn_forw.Enabled;
-      listView1.SelectedIndices.Clear();
-      if (x < listView1.Items.Count) { listView1.Items[x].Selected = true; listView1.EnsureVisible(x); }
+      //if (this.anis == null) return;
+      //x = Math.Max(0, Math.Min(this.anis.Length, x)); if (x == this.anix) return;
+      //for (; this.anix < x;) this.anis[this.anix++].exec();
+      //for (; this.anix > x;) this.anis[--this.anix].exec();
+      //modelView.Invalidate();
+      //btn_back.Enabled = btn_back_.Enabled = this.anix != 0;
+      //btn_forw.Enabled = btn_forw_.Enabled = this.anix < this.anis.Length;
+      //btn_play.Enabled = btn_forw.Enabled;
+      //listView1.SelectedIndices.Clear();
+      //if (x < listView1.Items.Count) { listView1.Items[x].Selected = true; listView1.EnsureVisible(x); }
     }
     void btn_back_Click(object sender, EventArgs e) => gotoi(0);
-    void btn_back__Click(object sender, EventArgs e) => gotoi(this.anix - 1);
-    void btn_forw__Click(object sender, EventArgs e) => gotoi(this.anix + 1);
-    void btn_forw_Click(object sender, EventArgs e) => gotoi(this.anis.Length);
-    void listView1_SelectedIndexChanged(object sender, EventArgs e) //todo: dynamic
-    {
-      if (btn_play.Checked || btn_record.Checked) return;
-      var a = listView1.SelectedIndices; if (a.Count != 1) return;
-      var i = a[0]; if (i == this.anix) return;//remove
-      gotoi(i);
-    }
+    void btn_back__Click(object sender, EventArgs e) => gotoi(0);//this.anix - 1);
+    void btn_forw__Click(object sender, EventArgs e) => gotoi(0);//this.anix + 1);
+    void btn_forw_Click(object sender, EventArgs e) => gotoi(0);//this.anis.Length);
     void btn_play_Click(object sender, EventArgs e)
     {
       if (btn_play.Checked) return;
@@ -236,8 +230,7 @@ namespace Test
       btn_record.Enabled = false;
       btn_back_.Enabled = btn_forw_.Enabled = false;
       btn_back.Enabled = btn_forw.Enabled = false;
-
-      time = 0; modelView.Animations += animate;
+      //time = 0; modelView.Animations += animate;
     }
 
     static int getmaxt(List<DX11ModelCtrl.AniLine> a)
@@ -247,12 +240,12 @@ namespace Test
       return max;
     }
 
-    List<DX11ModelCtrl.AniLine>? anilines; int time;
+    //List<DX11ModelCtrl.AniLine>? anilines; int time;
     void animate()
     {
-      var inf = false;
-      for (int i = 0; i < anilines.Count; i++) inf |= anilines[i].lerp(time);
-      if (inf) modelView.Invalidate(); time += 10;
+      //var inf = false;
+      //for (int i = 0; i < anilines.Count; i++) inf |= anilines[i].lerp(time);
+      //if (inf) modelView.Invalidate(); time += 10;
     }
     void btn_stop_Click(object sender, EventArgs e)
     {
@@ -264,28 +257,96 @@ namespace Test
         btn_play.Checked = false;
         btn_stop.Enabled = false;
         btn_record.Enabled = true;
-        btn_back.Enabled = btn_back_.Enabled = this.anix != 0;
-        btn_forw.Enabled = btn_forw_.Enabled = this.anix < this.anis.Length;
+        btn_back.Enabled = btn_back_.Enabled = false;// this.anix != 0;
+        btn_forw.Enabled = btn_forw_.Enabled = false;// this.anix < this.anis.Length;
       }
       else if (btn_record.Checked)
       {
         btn_record.Checked = false; modelView.UndoChanged -= undochanged;
         btn_stop.Enabled = false;
         //btn_stop.Enabled = btn_stop.Visible = !(btn_play.Visible = true);
-        if (modelView.undos == null || modelView.undoi <= undoab) return;
-        listView1.Items.Add("*");
+        //if (modelView.undos == null || modelView.undoi <= undoab) return;
+        //listView1.Items.Add("*");
         btn_back.Enabled = btn_back_.Enabled = true;
 
-        this.anis = modelView.undos.Skip(undoab).ToArray(); this.anix = this.anis.Length;
-
-        anilines = new List<DX11ModelCtrl.AniLine>();
-        for (int i = 0; i < this.anis.Length; i++)
-        {
-          var tm = getmaxt(anilines);
-          this.anis[i].link(anilines, tm + 100);// i * 1000);
-        }
+        //this.anis = modelView.undos.Skip(undoab).ToArray(); this.anix = this.anis.Length;
+        //anilines = new List<DX11ModelCtrl.AniLine>();
+        //for (int i = 0; i < this.anis.Length; i++)
+        //{
+        //  var tm = getmaxt(anilines);
+        //  this.anis[i].link(anilines, tm + 100);// i * 1000);
+        //}
         return;
         //this.records.Save("C:\\Users\\cohle\\Desktop\\rec.xml");
+      }
+    }
+
+    class TimeLineView : UserControl
+    {
+      internal readonly List<DX11ModelCtrl.AniLine> anilines = new();
+      internal int time, endtime; float xscale = 0.1f;
+      internal TimeLineView() { DoubleBuffered = true; AutoScroll = true; }
+      internal void Clear()
+      {
+        anilines.Clear(); time = endtime = 0;
+        AutoScrollMinSize = default;
+      }
+      internal void Add(DX11ModelCtrl.Undo undo)
+      {
+        undo.link(anilines, getmaxt(anilines)); time = endtime = getmaxt(anilines);
+        AutoScrollMinSize = new Size(64 + (int)(endtime * xscale), 16 + anilines.Count * 16);
+        var o = AutoScrollPosition; var q = AutoScrollMinSize;
+        o.X = q.Width; AutoScrollPosition = o; Invalidate();
+      }
+      protected override void OnPaint(PaintEventArgs e)
+      {
+        var g = e.Graphics; var o = AutoScrollPosition; g.TranslateTransform(o.X, o.Y);
+        for (int i = 0; i < anilines.Count; i++)
+        {
+          var l = anilines[i]; var tt = l.times;
+          for (int k = 0; k < tt.Count; k += 2)
+          {
+            var t = tt[k]; var dt = tt[k + 1]; endtime = Math.Max(endtime, t + dt);
+            g.DrawRectangle(Pens.Black, t * xscale, i * 16, dt * xscale, 16);
+          }
+        }
+        var x = (int)(time * xscale); g.DrawLine(Pens.Red, x, 0, x, Height);
+      }
+
+      //internal Action? TimeChange;
+      int wo, st; Point pc;
+      protected override void OnMouseDown(MouseEventArgs e)
+      {
+        if (wo == 1) { pc = e.Location; st = time; Capture = true; }
+      }
+      protected override void OnMouseMove(MouseEventArgs e)
+      {
+        if (Capture)
+        {
+          if (wo == 1)
+          {
+            var u = Math.Max(0, Math.Min(endtime, (int)(st + (e.X - pc.X) / xscale)));
+            if (time == u) return;
+            time = u; Invalidate(); Update(); //TimeChange?.Invoke();
+
+            var view = (DX11ModelCtrl?)anilines[0].target.GetService(typeof(DX11ModelCtrl));
+            if (view != null) 
+            {
+              var inf = false;
+              for (int i = 0; i < anilines.Count; i++) inf |= anilines[i].lerp(time);
+              if (inf) view.Invalidate();
+            }
+          }
+          return;
+        }
+        var o = AutoScrollPosition;
+        var x = o.X + (int)(time * xscale);
+        wo = Math.Abs(e.X - x) < 4 ? 1 : 0;
+        this.Cursor = wo == 1 ? Cursors.VSplit : Cursors.Default;
+      }
+      protected override void OnMouseUp(MouseEventArgs e)
+      {
+        Capture = false;
       }
     }
 

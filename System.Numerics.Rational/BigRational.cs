@@ -55,11 +55,11 @@ namespace System.Numerics
       provider ??= dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo;
       if (dbg && isnan(this.p)) return NumberFormatInfo.InvariantInfo.NaNSymbol;
       Span<char> sp = stackalloc char[100]; char[]? a = null; string? s = null;
-      for (int ns, na = 1024; ; na <<= 1)
+      for (int ns, na = 1024; ;)
       {
         if (TryFormat(sp, out ns, format, provider)) s = sp.Slice(0, ns).ToString();
         if (a != null) ArrayPool<char>.Shared.Return(a);
-        if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(Math.Max(ns, na));
+        if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(na = Math.Max(ns, na << 1));
       }
       #region debug ext
       if (dbg && p != null && (p[0] & 0x40000000) != 0) // in debug in cpu only ⁰₀ 
@@ -102,7 +102,11 @@ namespace System.Numerics
           switch (fc = char.ToUpper(tc))
           {
             case 'Q': fc = 'R'; digs = 0; round = -1; goto def; // fractions "1/3"
-            case 'R': case 'S': if (round != -1) digs = round; round = -1; goto def;
+            case 'R':
+            case 'S':
+              if (round == -1) goto def; digs = round; round = -1;
+              if (digs > destination.Length && destination.Length == 100) { charsWritten = digs; return false; } //hint for ToString(,)
+              goto def;
             case 'F':
             case 'L': // like F without trailing zeros
               if (round == -1) round = info.NumberDecimalDigits;
@@ -1178,10 +1182,10 @@ namespace System.Numerics
     {
       //return Exp(y * Log(x, digits), digits);
       var s = Sign(x); if (s == 0) return 0;
-      if (s < 0) 
+      if (s < 0)
       {
         if (IsInt(y)) return Round(Pow(x, (int)y), digits); //todo: inline, cases
-        throw new ArgumentException(nameof(x)); 
+        throw new ArgumentException(nameof(x));
       }
       var cpu = task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
@@ -2621,8 +2625,9 @@ namespace System.Numerics
         if (reps)
         {
           nr = unchecked((int)(this.p[this.i - 3][0] & 0x3fffffff)) + 1;
-          var need = sp.Length * nr;
-          if (need <= 0x8000) { var t = stackalloc uint[need]; rr = t; }
+          var l = (long)sp.Length * nr; var need = unchecked((int)l);                  
+          if (l >= (int.MaxValue >> 3)) reps = false;
+          else if (l <= 0x8000) { var t = stackalloc uint[need]; rr = t; }
           else rr = (uint*)(mem = Marshal.AllocCoTaskMem(need << 2));
         }
         for (int i = 0, t; ; i++)

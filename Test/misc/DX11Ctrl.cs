@@ -67,6 +67,7 @@ namespace Test
     protected abstract int OnMouse(int id, PC dc);
     public Action? Animations;
     public Action? Inval;
+    protected long TimerTicks;
 
     VIEWPORT viewport; bool inval;
     ISwapChain? swapchain; void* rtv, dsv; //IRenderTargetView, IDepthStencilView
@@ -138,9 +139,11 @@ namespace Test
     {
       Animations?.Invoke(); if (!inval) return;
       if (this.rtv == null) sizebuffers();
+      var t = TimerTicks != 0 ? Stopwatch.GetTimestamp() : 0;
       Begin(rtv, dsv, viewport, BkColor); // root != null ? root.Color : (uint)BackColor.ToArgb());
       OnRender(new DC(this)); swapchain.Present(0, 0);
       inval = false; Debug.Assert(StackPtr - BasePtr == 376 + 128);
+      if (t != 0) TimerTicks = Stopwatch.GetTimestamp() - t;
     }
     public new void Invalidate()
     {
@@ -715,8 +718,9 @@ namespace Test
           item.DropDownItems.Add(new ToolStripMenuItem((desc = adapter.Desc).Description) { Tag = desc.DeviceId, Checked = desc.DeviceId == current });
         return 0;
       }
-      if (test is not uint id) return 0;
-      if (((IDXGIDevice)device).Adapter.Desc.DeviceId == id) return 0; Cursor.Current = Cursors.WaitCursor;
+      var pi = ((IDXGIDevice)device).Adapter.Desc.DeviceId;
+      if (test is not uint id) return unchecked((int)pi);
+      if (pi == id) return 0; Cursor.Current = Cursors.WaitCursor;
       var tmp = Buffer.cache.Values.Select(p => p.Target).OfType<Buffer>().Select(p => (buffer: p, data: p.Reset())).ToArray();
       for (var p = DX11Ctrl.first; p != null; p = p.next) { p.releasebuffers(true); p.Invalidate(); }
       reset(null, null);
@@ -727,7 +731,7 @@ namespace Test
     }
     public int OnSamples(object? test)
     {
-      var current = swapchain.Desc.SampleDesc.Count;
+      var current = swapchain != null ? swapchain.Desc.SampleDesc.Count : (int)(drvsettings >> 32);
       if (test is ToolStripMenuItem item)
       {
         SAMPLE_DESC desc; desc.Count = 1; desc.Quality = 0;
@@ -736,7 +740,7 @@ namespace Test
             item.DropDownItems.Add(new ToolStripMenuItem($"{i} Samples") { Tag = i, Checked = current == i });
         return 0;
       }
-      if (test is not int id) return 0;
+      if (test is not int id) return current;
       drvsettings = (drvsettings & 0xffffffff) | ((long)(int)id << 32);
       releasebuffers(true); Invalidate(); OnDeviceSettings(drvsettings); return 0;
     }
@@ -1894,7 +1898,7 @@ namespace Test
         //}
         //cx = x; return i;
       }
-      internal void Draw(DC dc, float x, float y, char* s, int n)
+      public void Draw(DC dc, float x, float y, char* s, int n)
       {
         if (inpick != 0) return;
         var po = SelectObject(wdc, hfont);
@@ -2225,7 +2229,6 @@ namespace Test
       }
     }
 
-
     static Dictionary<System.Reflection.PropertyInfo, object>? propdict;
     public record class PropAcc<T>(Func<object, T> get, Action<object, T> set);
     public static PropAcc<T> GetPropAcc<T>(System.Reflection.PropertyInfo pi)
@@ -2235,9 +2238,10 @@ namespace Test
       {
         var t0 = Expression.Parameter(typeof(object));
         var t2 = Expression.Property(Expression.Convert(t0, pi.DeclaringType), pi);
-        var t3 = Expression.Lambda<Func<object, T>>(t2, pi.Name, new ParameterExpression[] { t0 });
+        var u2 = t2.Type != typeof(T) ? Expression.Convert(t2, typeof(T)) : (Expression)t2;
+        var t3 = Expression.Lambda<Func<object, T>>(u2, pi.Name, new ParameterExpression[] { t0 });
         var t5 = Expression.Parameter(typeof(T));
-        var t6 = Expression.Assign(t2, t5);
+        var t6 = Expression.Assign(t2, t2.Type != t5.Type ? Expression.Convert(t5, t2.Type) : t5);
         var t8 = Expression.Lambda<Action<object, T>>(t6, pi.Name, new ParameterExpression[] { t0, t5 });
         propdict.Add(pi, p = new PropAcc<T>(t3.Compile(), t8.Compile()));
       }
