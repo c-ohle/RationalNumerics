@@ -62,18 +62,6 @@
       this._bhalf = new Test.MenuItem();
       this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
       this._center = new Test.MenuItem();
-      this._setings = new Test.MenuItem();
-      this._selstyle = new Test.MenuItem();
-      this._selbox = new Test.MenuItem();
-      this._selpiv = new Test.MenuItem();
-      this._selwire = new Test.MenuItem();
-      this._selpoints = new Test.MenuItem();
-      this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-      this._selnorm = new Test.MenuItem();
-      this._drv = new Test.MenuItem();
-      this.menuItem7 = new Test.MenuItem();
-      this._samples = new Test.MenuItem();
-      this.menuItem8 = new Test.MenuItem();
       this._3 = new System.Windows.Forms.ToolStripSeparator();
       this._4 = new System.Windows.Forms.ToolStripSeparator();
       this.modelView = new Test.DX11ModelCtrl();
@@ -315,13 +303,12 @@
             _selall,
             _2,
             this._model,
-            this._setings,
             this._3,
             _storyboard,
             this._4,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(232, 340);
+      this.contextMenuView.Size = new System.Drawing.Size(232, 344);
       // 
       // _model
       // 
@@ -407,106 +394,6 @@
       this._center.Size = new System.Drawing.Size(253, 26);
       this._center.Text = "Center";
       // 
-      // _setings
-      // 
-      this._setings.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._selstyle,
-            this._drv,
-            this._samples});
-      this._setings.Id = 0;
-      this._setings.Name = "_setings";
-      this._setings.Size = new System.Drawing.Size(231, 24);
-      this._setings.Text = "Settings";
-      // 
-      // _selstyle
-      // 
-      this._selstyle.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._selbox,
-            this._selpiv,
-            this._selwire,
-            this._selpoints,
-            this.toolStripSeparator2,
-            this._selnorm});
-      this._selstyle.Id = 0;
-      this._selstyle.Name = "_selstyle";
-      this._selstyle.Size = new System.Drawing.Size(193, 26);
-      this._selstyle.Text = "Select Style";
-      // 
-      // _selbox
-      // 
-      this._selbox.Id = 2100;
-      this._selbox.Name = "_selbox";
-      this._selbox.Size = new System.Drawing.Size(185, 26);
-      this._selbox.Text = "Bounding Box";
-      // 
-      // _selpiv
-      // 
-      this._selpiv.Id = 2101;
-      this._selpiv.Name = "_selpiv";
-      this._selpiv.ShortcutKeyDisplayString = "";
-      this._selpiv.Size = new System.Drawing.Size(185, 26);
-      this._selpiv.Text = "Pivot";
-      // 
-      // _selwire
-      // 
-      this._selwire.Id = 2102;
-      this._selwire.Name = "_selwire";
-      this._selwire.ShortcutKeyDisplayString = "";
-      this._selwire.Size = new System.Drawing.Size(185, 26);
-      this._selwire.Text = "Wireframe";
-      // 
-      // _selpoints
-      // 
-      this._selpoints.Id = 2104;
-      this._selpoints.Name = "_selpoints";
-      this._selpoints.Size = new System.Drawing.Size(185, 26);
-      this._selpoints.Text = "Points";
-      // 
-      // toolStripSeparator2
-      // 
-      this.toolStripSeparator2.Name = "toolStripSeparator2";
-      this.toolStripSeparator2.Size = new System.Drawing.Size(182, 6);
-      // 
-      // _selnorm
-      // 
-      this._selnorm.Id = 2103;
-      this._selnorm.Name = "_selnorm";
-      this._selnorm.ShortcutKeyDisplayString = "";
-      this._selnorm.Size = new System.Drawing.Size(185, 26);
-      this._selnorm.Text = "Normals";
-      // 
-      // _drv
-      // 
-      this._drv.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItem7});
-      this._drv.Id = 0;
-      this._drv.Name = "_drv";
-      this._drv.Size = new System.Drawing.Size(193, 26);
-      this._drv.Text = "Graphics Driver";
-      // 
-      // menuItem7
-      // 
-      this.menuItem7.Id = 3015;
-      this.menuItem7.Name = "menuItem7";
-      this.menuItem7.Size = new System.Drawing.Size(132, 26);
-      this.menuItem7.Text = "Driver";
-      // 
-      // _samples
-      // 
-      this._samples.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItem8});
-      this._samples.Id = 0;
-      this._samples.Name = "_samples";
-      this._samples.Size = new System.Drawing.Size(193, 26);
-      this._samples.Text = "Multi-Samples";
-      // 
-      // menuItem8
-      // 
-      this.menuItem8.Id = 3016;
-      this.menuItem8.Name = "menuItem8";
-      this.menuItem8.Size = new System.Drawing.Size(148, 26);
-      this.menuItem8.Text = "Samples";
-      // 
       // _3
       // 
       this._3.Name = "_3";
@@ -542,6 +429,7 @@
       this.propsView.Target = this.modelView;
       this.propsView.Visible = false;
       this.propsView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseDown);
+      this.propsView.MouseLeave += new System.EventHandler(this.panelStory_MouseLeave);
       this.propsView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseMove);
       this.propsView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseUp);
       // 
@@ -589,6 +477,7 @@
       this.panelStory.TabIndex = 2;
       this.panelStory.Visible = false;
       this.panelStory.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseDown);
+      this.panelStory.MouseLeave += new System.EventHandler(this.panelStory_MouseLeave);
       this.panelStory.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseMove);
       this.panelStory.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseUp);
       // 
@@ -616,8 +505,8 @@
       // toolStripLabel1
       // 
       this.toolStripLabel1.Name = "toolStripLabel1";
-      this.toolStripLabel1.Size = new System.Drawing.Size(83, 24);
-      this.toolStripLabel1.Text = "Storyboard";
+      this.toolStripLabel1.Size = new System.Drawing.Size(100, 24);
+      this.toolStripLabel1.Text = " Storyboard";
       // 
       // btn_back
       // 
@@ -753,23 +642,12 @@
     private MenuItem _ungroup;
     private ToolStripSeparator toolStripSeparator1;
     private ToolStripSeparator _3;
-    private MenuItem _setings;
-    private MenuItem _selstyle;
-    private MenuItem _selbox;
-    private MenuItem _selpiv;
-    private MenuItem _selwire;
-    private MenuItem _selnorm;
-    private MenuItem _drv;
-    private MenuItem menuItem7;
-    private MenuItem _samples;
-    private MenuItem menuItem8;
     private MenuItem _model;
     private MenuItem _band;
     private MenuItem _bdiiff;
     private MenuItem _bint;
     private MenuItem _bhalf;
     private ToolStripSeparator toolStripSeparator3;
-    private ToolStripSeparator toolStripSeparator2;
     private MenuItem _center;
     private ToolStripSeparator _4;
     private Panel panelStory;
@@ -780,7 +658,6 @@
     private ToolStripButton btn_back;
     private ToolStripButton btn_forw;
     private ToolStripButton btn_record;
-    private MenuItem _selpoints;
     private ToolStripSeparator toolStripSeparator6;
     private ToolStripButton btn_back_;
     private ToolStripButton btn_forw_;

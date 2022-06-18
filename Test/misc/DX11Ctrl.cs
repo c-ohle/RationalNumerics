@@ -468,8 +468,7 @@ namespace Test
     static void SetTexture(Texture? tex) //IShaderResourceView
     {
       if (curtex == tex) return; var t = tex != null ? tex.srv : null;
-      context.PSSetShaderResources(0, 1, &t);
-      curtex = tex;
+      context.PSSetShaderResources(0, 1, &t); curtex = tex;
     }
 
     Vector4 BlendFactors
@@ -927,7 +926,7 @@ namespace Test
           if (font == null)
           {
             var t = System.Drawing.SystemFonts.MenuFont;
-            font = GetFont(t.Name, t.Size, t.Style); // * DpiScale);
+            font = GetFont(t.Name, t.Size * first.DeviceDpi * (1 / 120f), t.Style);
           }
           return font;
         }

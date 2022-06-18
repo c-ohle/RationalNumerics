@@ -17,7 +17,7 @@ namespace Test
   {
     public TesselatorView()
     {
-      DoubleBuffered = true; Reset();
+      DoubleBuffered = true; //Reset();
     }
     public bool DrawPolygons { get; set; }
     public bool DrawPoints { get; set; }
@@ -34,12 +34,17 @@ namespace Test
       DrawPolygons = true; DrawPoints = false;
       Winding = Winding.EvenOdd; Delaunay = true;
       DrawSurface = DrawOutlines = DrawMesh = true;
-      mx = 0; my = 0; ms = 1; Invalidate();
+      mx = 0; my = 0; ms = DeviceDpi * (1f / 120);
+      prad = 4 * ms; Invalidate();
     }
 
     TesselatorR? tess;
     PointF[]? pointsf; Pen? pen;
-
+    protected override void OnLoad(EventArgs e)
+    {
+      base.OnLoad(e);
+      Reset();
+    }
     protected override void OnPaintBackground(PaintEventArgs e) { }
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -130,7 +135,7 @@ namespace Test
       g.DrawString($"{(t2 - t1) * 1000 / Stopwatch.Frequency} ms", font, Brushes.Black, 4, y); y += font.Height;
     }
 
-    float mx, my, ms, prad = 4;
+    float mx, my, ms, prad;// = 4;
     Action<int>? tool;
     Action<int> tool_move()
     {

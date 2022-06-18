@@ -17,8 +17,8 @@ namespace Test
       base.OnLoad(e);
       MenuItem.CmdRoot = OnCommand;
       modelView.Scene = demo1();
-      modelView.Infos.Add("@1"); // modelView.Adapter);
-      modelView.Infos.Add("@2"); // fps
+      //modelView.Infos.Add("@1"); // modelView.Adapter);
+      //modelView.Infos.Add("@2"); // fps
       panelStory.VisibleChanged += (_, _) =>
       {
         if (timeLineView != null) return;
@@ -88,6 +88,10 @@ namespace Test
     {
       var p = (Control)sender; p.Capture = false;
       p.Cursor = Cursors.Default;
+    }
+    void panelStory_MouseLeave(object sender, EventArgs e)
+    {
+      ((Control)sender).Cursor = Cursors.Default;
     }
 
     Models.Scene demo1()
@@ -190,13 +194,13 @@ namespace Test
       static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
 
     }
- 
+
     void btn_record_Click(object sender, EventArgs e)
     {
       if (btn_record.Checked) return;
       btn_record.Checked = btn_stop.Enabled = true;
-      btn_play.Enabled = btn_back.Enabled = btn_forw.Enabled = btn_back_.Enabled = btn_forw_.Enabled = false;      
-      timeLineView.Clear(); 
+      btn_play.Enabled = btn_back.Enabled = btn_forw.Enabled = btn_back_.Enabled = btn_forw_.Enabled = false;
+      timeLineView.Clear();
       modelView.UndoChanged += undochanged;
     }
     void undochanged()
@@ -240,7 +244,6 @@ namespace Test
       return max;
     }
 
-    //List<DX11ModelCtrl.AniLine>? anilines; int time;
     void animate()
     {
       //var inf = false;
@@ -289,7 +292,7 @@ namespace Test
       internal void Clear()
       {
         anilines.Clear(); time = endtime = 0;
-        AutoScrollMinSize = default;
+        AutoScrollMinSize = default; Invalidate();
       }
       internal void Add(DX11ModelCtrl.Undo undo)
       {
@@ -300,21 +303,23 @@ namespace Test
       }
       protected override void OnPaint(PaintEventArgs e)
       {
-        var g = e.Graphics; var o = AutoScrollPosition; g.TranslateTransform(o.X, o.Y);
-        for (int i = 0; i < anilines.Count; i++)
+        var g = e.Graphics; var s = ClientSize; var o = AutoScrollPosition;
+        g.TranslateTransform(leftofs + o.X, o.Y);
+        for (int i = 0, y = 0; i < anilines.Count; i++, y += 17)
         {
           var l = anilines[i]; var tt = l.times;
           for (int k = 0; k < tt.Count; k += 2)
           {
             var t = tt[k]; var dt = tt[k + 1]; endtime = Math.Max(endtime, t + dt);
-            g.DrawRectangle(Pens.Black, t * xscale, i * 16, dt * xscale, 16);
+            g.DrawRectangle(Pens.Black, t * xscale, y, dt * xscale, 16);
           }
+          g.DrawLine(Pens.LightGray, 0, y + 17, s.Width, y + 17);
         }
-        var x = (int)(time * xscale); g.DrawLine(Pens.Red, x, 0, x, Height);
+        var x = (int)(time * xscale); g.DrawLine(Pens.Red, x, 0, x, s.Height);
       }
 
       //internal Action? TimeChange;
-      int wo, st; Point pc;
+      int wo, st; Point pc; const int leftofs = 8;
       protected override void OnMouseDown(MouseEventArgs e)
       {
         if (wo == 1) { pc = e.Location; st = time; Capture = true; }
@@ -330,7 +335,7 @@ namespace Test
             time = u; Invalidate(); Update(); //TimeChange?.Invoke();
 
             var view = (DX11ModelCtrl?)anilines[0].target.GetService(typeof(DX11ModelCtrl));
-            if (view != null) 
+            if (view != null)
             {
               var inf = false;
               for (int i = 0; i < anilines.Count; i++) inf |= anilines[i].lerp(time);
@@ -340,7 +345,7 @@ namespace Test
           return;
         }
         var o = AutoScrollPosition;
-        var x = o.X + (int)(time * xscale);
+        var x = o.X + leftofs + (int)(time * xscale);
         wo = Math.Abs(e.X - x) < 4 ? 1 : 0;
         this.Cursor = wo == 1 ? Cursors.VSplit : Cursors.Default;
       }
@@ -349,7 +354,7 @@ namespace Test
         Capture = false;
       }
     }
-
+    
   }
 
   public class MenuItem : ToolStripMenuItem

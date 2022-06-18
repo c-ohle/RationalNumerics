@@ -41,7 +41,7 @@ namespace Test
     List<Group>? selection;
     internal List<Undo>? undos; internal int undoi;  //todo: private
     Action<DC>? RenderClient; List<string>? infos; //string? adapter;
-    int flags = 0x01 | 0x02 | 0x04 | 0x10; //0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients
+    int flags = 0x01 | 0x02 | 0x04 | 0x10; // 0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients, 0x20:fps
     protected override void OnLoad(EventArgs e)
     {
       Initialize(4L << 32);
@@ -192,30 +192,24 @@ namespace Test
           }
         }
       }
-      if (infos != null && infos.Count != 0 && !dc.IsPicking)
+      if ((flags & 0x20) != 0 || (infos != null && infos.Count != 0) && !dc.IsPicking)
       {
         dc.Projection = Matrix4x4.CreateOrthographicOffCenter(0, size.X, size.Y, 0, -1000, +1000);
         dc.Transform = Matrix4x4.Identity; dc.State = State.Text2D; // State.Default2D;
-        dc.Color = 0xff000000; var font = dc.Font; var y = 8f;
-        for (int i = 0; i < infos.Count; i++, y += font.Height)
+        dc.Color = 0xff000000; var font = dc.Font; float y = 8f, dy = font.Height;
+        if ((flags & 0x20) != 0)
         {
-          var s = Infos[i];
-          switch (s)
+          if (TimerTicks <= 1) { TimerTicks = 1; }// Invalidate(); }
+          else test(dc, font, 8, y + font.Ascent, (int)(Stopwatch.Frequency / TimerTicks));
+          unsafe static void test(DC dc, Font font, float x, float y, int v)
           {
-            case "@1": s = /*adapter ??= */base.Adapter; break;
-            case "@2":
-              if (TimerTicks <= 1) { TimerTicks = 1; continue; }
-              xxx(dc, font, 8, y + font.Ascent, (int)(Stopwatch.Frequency / TimerTicks));
-              unsafe static void xxx(DC dc, Font font, float x, float y, int v)
-              {
-                var ss = stackalloc char[100]; var sp = new Span<char>(ss, 100);
-                v.TryFormat(sp, out var ns); " fps".CopyTo(sp.Slice(ns)); ns += 4;
-                font.Draw(dc, x, y, ss, ns);
-              }
-              continue;
+            var ss = stackalloc char[100]; var sp = new Span<char>(ss, 100);
+            v.TryFormat(sp, out var ns); " fps".CopyTo(sp.Slice(ns)); ns += 4;
+            font.Draw(dc, x, y, ss, ns);
           }
-          dc.DrawText(8, y + font.Ascent, s);
         }
+        for (int i = 0, n = infos != null ? infos.Count : 0; i < n; i++, y += dy)
+          dc.DrawText(8, y + font.Ascent, Infos[i]);
       }
     }
     protected override int OnMouse(int id, PC pc)
@@ -1362,6 +1356,33 @@ namespace Test
       {
         internal Settings(DX11ModelCtrl p) { this.p = p; }
         readonly DX11ModelCtrl p; float raster = 0.001f, angelgrid = 0.01f;
+
+        [Category("\t\t\tSelection"), DisplayName("Bounding Box"), DefaultValue(true)]
+        public bool sel_box
+        {
+          get => (p.flags & 0x01) != 0; set { p.flags = (p.flags & ~0x01) | (value ? 0x01 : 0); p.Inval(); }
+        }
+        [Category("\t\t\tSelection"), DisplayName("Pivot Coords"), DefaultValue(true)]
+        public bool sel_pivot
+        {
+          get => (p.flags & 0x02) != 0; set { p.flags = (p.flags & ~0x02) | (value ? 0x02 : 0); p.Inval(); }
+        }
+        [Category("\t\t\tSelection"), DisplayName("Wireframe"), DefaultValue(false)]
+        public bool sel_wire
+        {
+          get => (p.flags & 0x04) != 0; set { p.flags = (p.flags & ~0x04) | (value ? 0x04 : 0); p.Inval(); }
+        }
+        [Category("\t\t\tSelection"), DisplayName("Normals"), DefaultValue(false)]
+        public bool sel_normals
+        {
+          get => (p.flags & 0x08) != 0; set { p.flags = (p.flags & ~0x08) | (value ? 0x08 : 0); p.Inval(); }
+        }
+        [Category("\t\t\tSelection"), DisplayName("Tool Points"), DefaultValue(true)]
+        public bool sel_points
+        {
+          get => (p.flags & 0x10) != 0; set { p.flags = (p.flags & ~0x10) | (value ? 0x10 : 0); p.Inval(); }
+        }
+
         [Category("\t\tModel Tools"), DefaultValue(0.001f)]
         public float Raster
         {
@@ -1397,6 +1418,12 @@ namespace Test
           get => p.OnSamples(null);
           set => p.OnSamples(value);
         }
+        [Category("Display Driver"), DisplayName("Show Fps"), DefaultValue(false)]
+        public bool show_fps
+        {
+          get => (p.flags & 0x20) != 0; set { p.flags = (p.flags & ~0x20) | (value ? 0x20 : 0); p.Inval(); }
+        }
+
         [Category("Registry"), DefaultValue(false)]
         public bool SaveSettings { get; set; }
 
