@@ -154,7 +154,7 @@
       // label6
       // 
       this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label6.Location = new System.Drawing.Point(233, 14);
+      this.label6.Location = new System.Drawing.Point(232, 14);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(219, 20);
       this.label6.TabIndex = 7;
@@ -167,7 +167,7 @@
       this.checkBoxActive2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxActive2.Checked = true;
       this.checkBoxActive2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxActive2.Location = new System.Drawing.Point(227, 437);
+      this.checkBoxActive2.Location = new System.Drawing.Point(226, 437);
       this.checkBoxActive2.Name = "checkBoxActive2";
       this.checkBoxActive2.Size = new System.Drawing.Size(225, 24);
       this.checkBoxActive2.TabIndex = 7;
@@ -192,7 +192,7 @@
       this.mandelbrotView2.Name = "mandelbrotView2";
       this.mandelbrotView2.PropChanged = null;
       this.mandelbrotView2.Scaling = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.Scaling")));
-      this.mandelbrotView2.Size = new System.Drawing.Size(445, 391);
+      this.mandelbrotView2.Size = new System.Drawing.Size(444, 391);
       this.mandelbrotView2.StateChanged = null;
       this.mandelbrotView2.TabIndex = 3;
       this.mandelbrotView2.TabStop = false;
@@ -259,7 +259,7 @@
       this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label5.Location = new System.Drawing.Point(3, 531);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(85, 20);
+      this.label5.Size = new System.Drawing.Size(78, 20);
       this.label5.TabIndex = 4;
       this.label5.Text = "Center X:";
       this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -289,7 +289,7 @@
       this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label9.Location = new System.Drawing.Point(3, 563);
       this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(84, 20);
+      this.label9.Size = new System.Drawing.Size(77, 20);
       this.label9.TabIndex = 4;
       this.label9.Text = "Center Y:";
       this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;

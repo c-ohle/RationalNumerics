@@ -32,9 +32,3 @@ Precisission, string formattings and speed for the several functions can be chec
 More detailed benchmarks coming soon.   
 
 For questions or suggestions: [c.ohle@outlook.com](mailto:c.ohle@outlook.com).
-
-<!--
-The precision is useful for solving robustness problems of algorithms that are sensitive to it.  
-Geometric algorithms in particular tend to do this. E.g. With rational arithmetic, the intersections of lines, planes as well as transformations are always exact 
-and corresponding algorithms cannot fail, as is always possible with floating-point arithmetic.
--->

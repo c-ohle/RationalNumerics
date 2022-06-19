@@ -2123,6 +2123,10 @@ namespace Test
       vb = (VertexBuffer)Buffer.GetBuffer(typeof(VertexBuffer), vv, np * sizeof(Vertex), vb);
     }
 
+    static protected Span<T> stackspan<T>() where T : unmanaged
+    {
+      return new Span<T>(StackPtr, (maxstack - unchecked((int)(StackPtr - BasePtr))) / sizeof(T));
+    }
     public static string ToString<T>(ReadOnlySpan<T> a, ReadOnlySpan<char> fmt = default) where T : ISpanFormattable
     {
       IFormatProvider prov = System.Globalization.NumberFormatInfo.InvariantInfo;

@@ -109,12 +109,11 @@
       // 
       // checkBoxDrawSurface
       // 
-      this.checkBoxDrawSurface.AutoSize = true;
       this.checkBoxDrawSurface.Checked = true;
       this.checkBoxDrawSurface.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxDrawSurface.Location = new System.Drawing.Point(16, 34);
       this.checkBoxDrawSurface.Name = "checkBoxDrawSurface";
-      this.checkBoxDrawSurface.Size = new System.Drawing.Size(80, 24);
+      this.checkBoxDrawSurface.Size = new System.Drawing.Size(170, 24);
       this.checkBoxDrawSurface.TabIndex = 7;
       this.checkBoxDrawSurface.Text = "Surface";
       this.toolTip1.SetToolTip(this.checkBoxDrawSurface, "Fills the result mesh polygons with yellow.");
@@ -123,10 +122,9 @@
       // 
       // checkBoxDrawMesh
       // 
-      this.checkBoxDrawMesh.AutoSize = true;
       this.checkBoxDrawMesh.Location = new System.Drawing.Point(16, 64);
       this.checkBoxDrawMesh.Name = "checkBoxDrawMesh";
-      this.checkBoxDrawMesh.Size = new System.Drawing.Size(66, 24);
+      this.checkBoxDrawMesh.Size = new System.Drawing.Size(170, 24);
       this.checkBoxDrawMesh.TabIndex = 8;
       this.checkBoxDrawMesh.Text = "Mesh";
       this.toolTip1.SetToolTip(this.checkBoxDrawMesh, "Draws the result mesh as gray lines.");
@@ -135,12 +133,11 @@
       // 
       // checkBoxDrawOutlines
       // 
-      this.checkBoxDrawOutlines.AutoSize = true;
       this.checkBoxDrawOutlines.Checked = true;
       this.checkBoxDrawOutlines.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxDrawOutlines.Location = new System.Drawing.Point(16, 94);
       this.checkBoxDrawOutlines.Name = "checkBoxDrawOutlines";
-      this.checkBoxDrawOutlines.Size = new System.Drawing.Size(79, 24);
+      this.checkBoxDrawOutlines.Size = new System.Drawing.Size(170, 24);
       this.checkBoxDrawOutlines.TabIndex = 9;
       this.checkBoxDrawOutlines.Text = "Outline";
       this.toolTip1.SetToolTip(this.checkBoxDrawOutlines, "Draws the result outlines as black lines");
@@ -161,12 +158,11 @@
       // 
       // checkBoxPolygons
       // 
-      this.checkBoxPolygons.AutoSize = true;
       this.checkBoxPolygons.Checked = true;
       this.checkBoxPolygons.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxPolygons.Location = new System.Drawing.Point(16, 36);
       this.checkBoxPolygons.Name = "checkBoxPolygons";
-      this.checkBoxPolygons.Size = new System.Drawing.Size(98, 24);
+      this.checkBoxPolygons.Size = new System.Drawing.Size(170, 24);
       this.checkBoxPolygons.TabIndex = 1;
       this.checkBoxPolygons.Text = "Polygones";
       this.toolTip1.SetToolTip(this.checkBoxPolygons, "Draws the input polygons as blue lines.");
@@ -175,10 +171,9 @@
       // 
       // checkBoxPoints
       // 
-      this.checkBoxPoints.AutoSize = true;
       this.checkBoxPoints.Location = new System.Drawing.Point(16, 66);
       this.checkBoxPoints.Name = "checkBoxPoints";
-      this.checkBoxPoints.Size = new System.Drawing.Size(70, 24);
+      this.checkBoxPoints.Size = new System.Drawing.Size(170, 24);
       this.checkBoxPoints.TabIndex = 2;
       this.checkBoxPoints.Text = "Points";
       this.toolTip1.SetToolTip(this.checkBoxPoints, "Draws the input polygon points.");
@@ -215,12 +210,11 @@
       // 
       // checkBox2
       // 
-      this.checkBox2.AutoSize = true;
       this.checkBox2.Checked = true;
       this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBox2.Location = new System.Drawing.Point(16, 123);
       this.checkBox2.Name = "checkBox2";
-      this.checkBox2.Size = new System.Drawing.Size(109, 24);
+      this.checkBox2.Size = new System.Drawing.Size(170, 24);
       this.checkBox2.TabIndex = 5;
       this.checkBox2.Text = "Outline opt.";
       this.toolTip1.SetToolTip(this.checkBox2, "Tessellator ensures that the outlines are always positively oriented in case of s" +
@@ -230,12 +224,11 @@
       // 
       // checkBox1
       // 
-      this.checkBox1.AutoSize = true;
       this.checkBox1.Checked = true;
       this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBox1.Location = new System.Drawing.Point(16, 153);
       this.checkBox1.Name = "checkBox1";
-      this.checkBox1.Size = new System.Drawing.Size(60, 24);
+      this.checkBox1.Size = new System.Drawing.Size(170, 24);
       this.checkBox1.TabIndex = 6;
       this.checkBox1.Text = "Trim";
       this.toolTip1.SetToolTip(this.checkBox1, "Tesselator eliminates unnecessary output vertices.\r\n");
@@ -244,12 +237,11 @@
       // 
       // checkBoxDelaunay
       // 
-      this.checkBoxDelaunay.AutoSize = true;
       this.checkBoxDelaunay.Checked = true;
       this.checkBoxDelaunay.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxDelaunay.Location = new System.Drawing.Point(16, 93);
       this.checkBoxDelaunay.Name = "checkBoxDelaunay";
-      this.checkBoxDelaunay.Size = new System.Drawing.Size(123, 24);
+      this.checkBoxDelaunay.Size = new System.Drawing.Size(170, 24);
       this.checkBoxDelaunay.TabIndex = 4;
       this.checkBoxDelaunay.Text = "Delaunay opt.";
       this.toolTip1.SetToolTip(this.checkBoxDelaunay, "Tesselation with Delaunay mesh optimization.");
@@ -299,9 +291,7 @@
       this.Name = "TesselatorPage";
       this.Size = new System.Drawing.Size(975, 598);
       this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
-      this.groupBox2.PerformLayout();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.ResumeLayout(false);

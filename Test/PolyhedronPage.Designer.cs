@@ -49,6 +49,11 @@
       System.Windows.Forms.Button btn_run;
       Test.MenuItem _copy;
       Test.MenuItem _pros;
+      Test.MenuItem _file;
+      Test.MenuItem _file_new;
+      Test.MenuItem _file_open;
+      Test.MenuItem _file_save;
+      Test.MenuItem _file_saveas;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
@@ -79,6 +84,9 @@
       this.btn_stop = new System.Windows.Forms.ToolStripButton();
       this.btn_forw_ = new System.Windows.Forms.ToolStripButton();
       this.btn_forw = new System.Windows.Forms.ToolStripButton();
+      this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+      this.btn_save = new System.Windows.Forms.ToolStripButton();
+      this.btn_clear = new System.Windows.Forms.ToolStripButton();
       this.label3 = new System.Windows.Forms.Label();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
@@ -100,6 +108,11 @@
       btn_run = new System.Windows.Forms.Button();
       _copy = new Test.MenuItem();
       _pros = new Test.MenuItem();
+      _file = new Test.MenuItem();
+      _file_new = new Test.MenuItem();
+      _file_open = new Test.MenuItem();
+      _file_save = new Test.MenuItem();
+      _file_saveas = new Test.MenuItem();
       this.contextMenuView.SuspendLayout();
       this.contextMenuPropsView.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -277,6 +290,48 @@
       _pros.Size = new System.Drawing.Size(136, 24);
       _pros.Text = "Properties";
       // 
+      // _file
+      // 
+      _file.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            _file_new,
+            _file_open,
+            _file_save,
+            _file_saveas});
+      _file.Id = 0;
+      _file.Name = "_file";
+      _file.Size = new System.Drawing.Size(231, 24);
+      _file.Text = "File";
+      // 
+      // _file_new
+      // 
+      _file_new.Id = 1000;
+      _file_new.Name = "_file_new";
+      _file_new.Size = new System.Drawing.Size(190, 26);
+      _file_new.Text = "New";
+      // 
+      // _file_open
+      // 
+      _file_open.Id = 1001;
+      _file_open.Name = "_file_open";
+      _file_open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+      _file_open.Size = new System.Drawing.Size(190, 26);
+      _file_open.Text = "Open...";
+      // 
+      // _file_save
+      // 
+      _file_save.Id = 1002;
+      _file_save.Name = "_file_save";
+      _file_save.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+      _file_save.Size = new System.Drawing.Size(190, 26);
+      _file_save.Text = "Save";
+      // 
+      // _file_saveas
+      // 
+      _file_saveas.Id = 1003;
+      _file_saveas.Name = "_file_saveas";
+      _file_saveas.Size = new System.Drawing.Size(190, 26);
+      _file_saveas.Text = "Save as...";
+      // 
       // label1
       // 
       this.label1.AutoSize = true;
@@ -303,12 +358,13 @@
             _selall,
             _2,
             this._model,
+            _file,
             this._3,
             _storyboard,
             this._4,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(232, 344);
+      this.contextMenuView.Size = new System.Drawing.Size(232, 340);
       // 
       // _model
       // 
@@ -493,7 +549,10 @@
             this.btn_play,
             this.btn_stop,
             this.btn_forw_,
-            this.btn_forw});
+            this.btn_forw,
+            this.toolStripSeparator2,
+            this.btn_save,
+            this.btn_clear});
       this.toolStrip1.Location = new System.Drawing.Point(0, 6);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -512,7 +571,6 @@
       // 
       this.btn_back.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_back.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_back.Enabled = false;
       this.btn_back.Image = ((System.Drawing.Image)(resources.GetObject("btn_back.Image")));
       this.btn_back.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_back.Name = "btn_back";
@@ -524,7 +582,6 @@
       // btn_back_
       // 
       this.btn_back_.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_back_.Enabled = false;
       this.btn_back_.Font = new System.Drawing.Font("Segoe UI Symbol", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.btn_back_.Image = ((System.Drawing.Image)(resources.GetObject("btn_back_.Image")));
       this.btn_back_.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -551,7 +608,6 @@
       // 
       this.btn_play.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_play.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_play.Enabled = false;
       this.btn_play.Image = ((System.Drawing.Image)(resources.GetObject("btn_play.Image")));
       this.btn_play.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_play.Name = "btn_play";
@@ -564,7 +620,6 @@
       // 
       this.btn_stop.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_stop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_stop.Enabled = false;
       this.btn_stop.Image = ((System.Drawing.Image)(resources.GetObject("btn_stop.Image")));
       this.btn_stop.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_stop.Name = "btn_stop";
@@ -576,7 +631,6 @@
       // btn_forw_
       // 
       this.btn_forw_.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_forw_.Enabled = false;
       this.btn_forw_.Font = new System.Drawing.Font("Segoe UI Symbol", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.btn_forw_.Image = ((System.Drawing.Image)(resources.GetObject("btn_forw_.Image")));
       this.btn_forw_.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -589,7 +643,6 @@
       // 
       this.btn_forw.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_forw.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_forw.Enabled = false;
       this.btn_forw.Image = ((System.Drawing.Image)(resources.GetObject("btn_forw.Image")));
       this.btn_forw.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_forw.Name = "btn_forw";
@@ -597,6 +650,33 @@
       this.btn_forw.Text = "";
       this.btn_forw.ToolTipText = "End";
       this.btn_forw.Click += new System.EventHandler(this.btn_forw_Click);
+      // 
+      // toolStripSeparator2
+      // 
+      this.toolStripSeparator2.Name = "toolStripSeparator2";
+      this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+      // 
+      // btn_save
+      // 
+      this.btn_save.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.btn_save.Image = ((System.Drawing.Image)(resources.GetObject("btn_save.Image")));
+      this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_save.Name = "btn_save";
+      this.btn_save.Size = new System.Drawing.Size(29, 24);
+      this.btn_save.Text = "";
+      this.btn_save.ToolTipText = "Save";
+      this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
+      // 
+      // btn_clear
+      // 
+      this.btn_clear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.btn_clear.Image = ((System.Drawing.Image)(resources.GetObject("btn_clear.Image")));
+      this.btn_clear.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_clear.Name = "btn_clear";
+      this.btn_clear.Size = new System.Drawing.Size(29, 24);
+      this.btn_clear.Text = "";
+      this.btn_clear.ToolTipText = "Clear";
+      this.btn_clear.Click += new System.EventHandler(this.btn_clear_Click);
       // 
       // label3
       // 
@@ -661,5 +741,8 @@
     private ToolStripSeparator toolStripSeparator6;
     private ToolStripButton btn_back_;
     private ToolStripButton btn_forw_;
+    private ToolStripButton btn_clear;
+    private ToolStripButton btn_save;
+    private ToolStripSeparator toolStripSeparator2;
   }
 }
