@@ -838,7 +838,7 @@ namespace Test
       fixed (T* p = &v) ss.CopyTo(new Span<byte>(p, ss.Length));
     }
 
-    public struct DC
+    public readonly struct DC
     {
       public Vector2 Viewport
       {
@@ -1266,7 +1266,7 @@ namespace Test
         SetIndexBuffer(ib);
         apply(); context.DrawIndexed(nv, i, 0);
       }
-      internal DC(DX11Ctrl p) => view = p; DX11Ctrl view;
+      internal DC(DX11Ctrl p) => view = p; readonly DX11Ctrl view;
 
       public void Clear(CLEAR fl)
       {
@@ -1370,10 +1370,9 @@ namespace Test
         Operator(0x4, null); //pop wm 
       }
     }
-    public struct PC
+    public readonly struct PC
     {
-      internal PC(DX11Ctrl p) { view = p; }
-      DX11Ctrl view;
+      internal PC(DX11Ctrl p) => view = p; readonly DX11Ctrl view;
       public DX11Ctrl View
       {
         get => view;

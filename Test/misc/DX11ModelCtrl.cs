@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Windows.Forms.Design;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Group = Test.DX11ModelCtrl.Models.Node;
+using Group = Test.DX11ModelCtrl.Group;
 
 namespace Test
 {
@@ -38,7 +38,7 @@ namespace Test
     Models.Scene? scene;
     Models.Camera? camera; Models.Light? light;
     List<Models.Geometry>? transp;
-    List<Group>? selection;
+    List<Group>? selection; internal (Control view, object? p) extrasel;
     internal List<Undo>? undos; internal int undoi;  //todo: private
     Action<DC>? RenderClient; List<string>? infos; //string? adapter;
     int flags = 0x01 | 0x02 | 0x04 | 0x10; // 0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients, 0x20:fps
@@ -48,7 +48,7 @@ namespace Test
       BkColor = (uint)BackColor.ToArgb();
       selection = new(); settings = new(this); transp = new();
     }
-    void link(Base node)
+    void link(Node node)
     {
       if (camera == null) camera = node as Models.Camera;
       if (light == null) light = node as Models.Light;
@@ -259,6 +259,10 @@ namespace Test
           try { pc.SetTool(tool_drop(pc)); }
           catch (Exception e) { Debug.WriteLine(e.Message); }
           return 1;
+        case 0x0007: //WM_SETFOCUS
+        case 0x0008: //WM_KILLFOCUS
+          if (extrasel.p != null) Invalidate();
+          break;
       }
       return 0;
     }
@@ -938,7 +942,7 @@ namespace Test
         }
         if (id == 1 && ws) { Select(main, true); }
       };
-    }   
+    }
     Action<int>? tool_drop(PC pc)
     {
       static Group[] load(DataObject data, out Vector3 pt)
@@ -1141,13 +1145,13 @@ namespace Test
     }
     public abstract class AniLine
     {
-      internal abstract Base target { get; }
+      internal abstract Node target { get; }
       internal readonly List<int> times = new(2);
       internal abstract bool lerp(int time);
       protected static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
       protected abstract int write(int i, Span<char> s, NumberFormatInfo f);
       protected abstract void read(ReadOnlySpan<char> s, NumberFormatInfo f);
-      protected internal virtual void serial(XElement e, Base? load)
+      protected internal virtual void serial(XElement e, Node? load)
       {
         var fi = NumberFormatInfo.InvariantInfo;
         if (load == null)
@@ -1206,8 +1210,8 @@ namespace Test
       }
       internal class Line : AniLine
       {
-        internal override Base target => p;
-        internal Group p; internal readonly List<Matrix4x3> list = new(2);
+        internal override Node target => p;
+        internal Group? p; internal readonly List<Matrix4x3> list = new(2);
         internal override bool lerp(int time)
         {
           int x = 0;
@@ -1231,7 +1235,7 @@ namespace Test
           var m = list[x]; if (p.Transform == m) return false;
           p.Transform = m; return true;
         }
-        protected internal override void serial(XElement e, Base? load)
+        protected internal override void serial(XElement e, Node? load)
         {
           if (load != null) p = (Group)load;
           base.serial(e, load);
@@ -1279,12 +1283,12 @@ namespace Test
               t.list.Add(t.acc.get(p));
               return;
             }
-          var tc = new TC(); tc.p = (Base)p; tc.setacc(s);
+          var tc = new TC(); tc.p = (Node)p; tc.setacc(s);
           tc.times.Add(time); tc.times.Add(dt);
           tc.list.Add(v); tc.list.Add(tc.acc.get(p)); l.Add(tc);
         }
         internal string name => acc.get.Method.Name;
-        internal override Base target => p; Base? p;
+        internal override Node target => p; Node? p;
         internal readonly List<T> list = new(2); PropAcc<T>? acc;
         protected abstract bool equals(T a, T b);
         protected abstract T lerp(T a, T b, float f);
@@ -1312,7 +1316,7 @@ namespace Test
           if (pi.DeclaringType != pi.ReflectedType) pi = pi.DeclaringType.GetProperty(pi.Name);
           acc = GetPropAcc<T>(pi);
         }
-        protected internal override void serial(XElement e, Base? load)
+        protected internal override void serial(XElement e, Node? load)
         {
           if (load == null) e.SetAttributeValue("prop", name.ToLower());
           else { this.p = load; var a = e.Attribute("prop"); setacc(a.Value); }
@@ -1435,8 +1439,8 @@ namespace Test
     }
     sealed class UndoNodes : Undo
     {
-      Base p; Group[]? b;
-      internal UndoNodes(Base p, Group[]? b) { this.p = p; this.b = b; }
+      Node p; Group[]? b;
+      internal UndoNodes(Node p, Group[]? b) { this.p = p; this.b = b; }
       internal override void exec()
       {
         if (b != null) for (int i = 0, n = b.Length; i < n; i++) b[i].Parent = p;
@@ -1468,203 +1472,6 @@ namespace Test
     }
     #endregion
 
-    public abstract class PropsCtrl : UserControl
-    {
-      public DX11ModelCtrl? Target { get; set; }
-      protected override void OnLoad(EventArgs e)
-      {
-        base.OnLoad(e);
-        combo = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList, DrawMode = DrawMode.OwnerDrawFixed };
-        combo.DrawItem += (p, e) =>
-        {
-          e.DrawBackground(); var i = e.Index; if (i < 0) return;
-          var g = e.Graphics; var o = combo.Items[e.Index]; var r = e.Bounds;
-          var node = o as Base; var font = Font;
-          if ((e.State & DrawItemState.ComboBoxEdit) == 0 && node != null)
-          {
-            for (var t = node.Parent; t != null; t = t.Parent) r.X += 16;
-            if (node.Nodes != null)
-            {
-              var ss = Target.selection; var s = default(Base);
-              if (ss.Count != 0) //for (int x = 0; x < ss.Count && ms == null; x++)
-                for (s = ss[ss.Count - 1]; s != null && s != node; s = s.Parent) ;
-              TextRenderer.DrawText(g, s != null ? "" : "", font, // ˃ ˅
-                new Rectangle(r.X - 15, r.Y - 2, r.Width, r.Height), e.ForeColor, TextFormatFlags.Left);
-            }
-          }
-          var sn = node != null ? node.Name : o as string;
-          if (sn != null)
-          {
-            TextRenderer.DrawText(g, sn, bold ??= new System.Drawing.Font(font, FontStyle.Bold), r, e.ForeColor, TextFormatFlags.Left);
-            r.X += TextRenderer.MeasureText(sn, bold).Width;
-          }
-          if (node != null) TextRenderer.DrawText(g, o.GetType().Name, font, r, e.ForeColor, TextFormatFlags.Left);
-          e.DrawFocusRectangle();
-        };
-        combo.SelectedIndexChanged += (_, e) =>
-        {
-          if (!btnprops.Checked)
-          {
-            //showtoolbox(combo.SelectedIndex == 1);
-            return;
-          }
-          if (!combo.Focused || comboupdate) return;
-          var p = combo.SelectedItem;
-          fillcombo(p);
-          Target.Select(p as Models.Node); update = true;
-        };
-        grid = new PropertyGrid { Dock = DockStyle.Fill, TabIndex = 1 };
-        grid.PropertySort = PropertySort.Categorized;
-        grid.PropertySortChanged += (p, e) =>
-        {
-          if (grid.PropertySort == PropertySort.CategorizedAlphabetical)
-            grid.PropertySort = PropertySort.Categorized;
-        };
-        grid.PropertyValueChanged += (_, e) =>
-        {
-          var d = e.ChangedItem.PropertyDescriptor; //if (d.PropertyType == typeof(Type)) return;
-          var o = e.ChangedItem.GetType().GetProperty("Instance").GetValue(e.ChangedItem);
-          var s = d.Name; var v = e.OldValue;
-          Target.Invalidate(); if (o is not Base ba) return;
-          if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
-          var t = o.GetType().GetProperty(s).GetValue(o);
-          if (object.Equals(v, t)) return;
-          Target.AddUndo(new UndoProp(ba, s, v));
-        };
-        var a = Controls; a.Add(grid); a.Add(combo);
-
-        var cc = grid.Controls; view = cc[2]; info = cc[0];
-        var ts = (ToolStrip)cc[3]; var it = ts.Items; ts.RenderMode = ToolStripRenderMode.Professional;
-        btnprops = new ToolStripButton() { Text = "", ToolTipText = "Properties", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Checked = true };
-        btnsetting = new ToolStripButton() { Text = "", ToolTipText = "Settings", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
-        btnedit = new ToolStripButton() { Text = "", ToolTipText = "Edit", Enabled = false, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
-        btntoolbox = new ToolStripButton()
-        {
-          Text = "⚒", //"⛽"
-          Font = new System.Drawing.Font(this.Font.FontFamily, 7.5f), // this.Font.Size * 3 / 4),
-          ToolTipText = "Toolbox",
-          AccessibleRole = AccessibleRole.RadioButton,
-          DisplayStyle = ToolStripItemDisplayStyle.Text,
-          Alignment = ToolStripItemAlignment.Right
-        };
-        btnstory = new ToolStripButton() { Text = "", ToolTipText = "Storyboard", AccessibleRole = AccessibleRole.CheckButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
-        it.Add(new ToolStripSeparator());
-        it.Add(btnprops);
-        it.Add(btnsetting);
-        it.Add(btnedit);
-        it.Add(btnstory);
-        it.Add(btntoolbox);
-        btnprops.Click += (p, e) =>
-        {
-          if (btnprops.Checked) return; btnprops.Checked = true;
-          btnsetting.Checked = btntoolbox.Checked = false; showtoolbox(false);
-          oninv(); combo.Items.Clear(); grid.Focus();
-          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
-        };
-        btnsetting.Click += (p, e) =>
-        {
-          if (btnsetting.Checked) return; btnsetting.Checked = true;
-          btnprops.Checked = btntoolbox.Checked = false; showtoolbox(false);
-          grid.SelectedObject = Target.settings;
-          combo.Items.Clear(); combo.Items.Add("Settings"); combo.SelectedIndex = 0;
-          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = false;
-        };
-        btntoolbox.Click += (p, e) =>
-        {
-          btntoolbox.Checked = true;
-          btnprops.Checked = btnsetting.Checked = false;
-          combo.Items.Clear(); combo.Items.Add("Toolbox"); combo.SelectedIndex = 0;
-          showtoolbox(true);
-        };
-      }
-      protected override void OnVisibleChanged(EventArgs e)
-      {
-        base.OnVisibleChanged(e); if (Target == null || grid == null) return;
-        if (Visible)
-        {
-          Target.Animations += onidle; Target.Inval += oninv; update = true;
-        }
-        else
-        {
-          Target.Animations -= onidle; Target.Inval -= oninv;
-          grid.SelectedObject = null; combo.Items.Clear();
-        }
-      }
-      PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
-      Control? view, info; internal ToolStripButton? btnprops, btnsetting, btnedit, btntoolbox, btnstory;
-      bool comboupdate, update; object? lastpd; WebBrowser? wb;
-      void fillcombo(object disp)
-      {
-        var items = combo.Items; comboupdate = true;
-        items.Clear();
-        //items.Add(Target.settings);
-        items.Add(Target.Scene);
-        if (disp is Base node)
-        {
-          recu(items, node);
-          static void recu(ComboBox.ObjectCollection items, Base node)
-          {
-            if (node.Parent != null) recu(items, node.Parent);
-            var a = node.Nodes; if (a == null) return;
-            for (int i = 0, x = items.IndexOf(node); i < a.Length; i++)
-              items.Insert(++x, a[i]);
-          }
-        }
-        combo.SelectedItem = disp; combo.Update(); comboupdate = false;
-      }
-      void oninv() { update = true; }
-      void onidle()
-      {
-        if (!update) return; update = false; // Debug.WriteLine($"onidle {ms}");
-        if (combo.DroppedDown || !btnprops.Checked) return;
-        var list = Target.selection;
-        var csel = combo.SelectedItem;
-        var disp = list.Count != 0 ? (object)list[list.Count - 1] :
-          csel != null && csel is not Base ? csel :
-          Target.Scene;
-        if (csel != disp && !combo.ContainsFocus) fillcombo(csel = disp);
-        if (grid.SelectedObject != csel)
-        {
-          grid.SelectedObject = csel;
-          Models.propref = false; lastpd = null;
-          if (grid.PropertySort == PropertySort.NoSort) grid.PropertySort = PropertySort.Categorized;
-        }
-        else
-        {
-          if (Models.propref) { Models.propref = false; grid.Refresh(); return; }
-          combo.Invalidate(); if (ContainsFocus) return;
-          view.Invalidate(true); view.Refresh();
-        }
-      }
-      void showtoolbox(bool on)
-      {
-        if (on == (wb != null && wb.Visible)) return;
-        if (on)
-        {
-          if (wb == null)
-            view.Controls.Add(wb = new WebBrowser()
-            {
-              Visible = false,
-              Dock = DockStyle.Fill,
-              AllowNavigation = false,
-              ScriptErrorsSuppressed = true,
-              WebBrowserShortcutsEnabled = false,
-              IsWebBrowserContextMenuEnabled = false,
-              ScrollBarsEnabled = false,
-              Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat/index.htm"),
-              //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat/index.htm"),
-            });
-          info.Visible = false;
-          wb.Visible = true;
-          wb.BringToFront(); wb.Focus();
-        }
-        else
-        {
-          wb.Visible = false; info.Visible = true;
-        }
-        grid.Height++; grid.Height--;
-      }
-    }
     public class Settings
     {
       internal Settings(DX11ModelCtrl p) { this.p = p; }
@@ -1777,16 +1584,206 @@ namespace Test
     }
   }
 
+  //Props
+  public unsafe partial class DX11ModelCtrl
+  {
+    public abstract class PropsCtrl : UserControl
+    {
+      public DX11ModelCtrl? Target; // { get; set; }
+      protected override void OnLoad(EventArgs e)
+      {
+        base.OnLoad(e);
+        combo = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList, DrawMode = DrawMode.OwnerDrawFixed };
+        combo.DrawItem += (p, e) =>
+        {
+          e.DrawBackground(); var i = e.Index; if (i < 0) return;
+          var g = e.Graphics; var o = combo.Items[e.Index]; var r = e.Bounds;
+          var node = o as Node; var font = Font;
+          if ((e.State & DrawItemState.ComboBoxEdit) == 0 && node != null)
+          {
+            for (var t = node.Parent; t != null; t = t.Parent) r.X += 16;
+            if (node.Nodes != null)
+            {
+              var ss = Target.selection; var s = default(Node);
+              if (ss.Count != 0) //for (int x = 0; x < ss.Count && ms == null; x++)
+                for (s = ss[ss.Count - 1]; s != null && s != node; s = s.Parent) ;
+              TextRenderer.DrawText(g, s != null ? "" : "", font, // ˃ ˅
+                new Rectangle(r.X - 15, r.Y - 2, r.Width, r.Height), e.ForeColor, TextFormatFlags.Left);
+            }
+          }
+          var sn = node != null ? node.Name : o.ToString();
+          if (sn != null)
+          {
+            TextRenderer.DrawText(g, sn, bold ??= new System.Drawing.Font(font, FontStyle.Bold), r, e.ForeColor, TextFormatFlags.Left);
+            r.X += TextRenderer.MeasureText(sn, bold).Width;
+          }
+          if (node != null) TextRenderer.DrawText(g, o.GetType().Name, font, r, e.ForeColor, TextFormatFlags.Left);
+          e.DrawFocusRectangle();
+        };
+        combo.SelectedIndexChanged += (_, e) =>
+        {
+          if (!btnprops.Checked) return;
+          if (!combo.Focused || comboupdate) return;
+          var p = combo.SelectedItem;
+          fillcombo(p);
+          Target.Select(p as Group); update = true;
+        };
+        grid = new PropertyGrid { Dock = DockStyle.Fill, TabIndex = 1 };
+        grid.PropertySort = PropertySort.Categorized;
+        grid.PropertySortChanged += (p, e) =>
+        {
+          if (grid.PropertySort == PropertySort.CategorizedAlphabetical)
+            grid.PropertySort = PropertySort.Categorized;
+        };
+        grid.PropertyValueChanged += (_, e) =>
+        {
+          var d = e.ChangedItem.PropertyDescriptor; //if (d.PropertyType == typeof(Type)) return;
+          var o = e.ChangedItem.GetType().GetProperty("Instance").GetValue(e.ChangedItem);
+          var s = d.Name; var v = e.OldValue;
+          Target.Invalidate(); if (o is not Node ba) return;
+          if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
+          var t = o.GetType().GetProperty(s).GetValue(o);
+          if (object.Equals(v, t)) return;
+          Target.AddUndo(new UndoProp(ba, s, v));
+        };
+        var a = Controls; a.Add(grid); a.Add(combo);
+        var cc = grid.Controls; view = cc[2]; info = cc[0];
+
+        btnprops = new ToolStripButton() { Text = "", ToolTipText = "Properties", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Checked = true };
+        btnsetting = new ToolStripButton() { Text = "", ToolTipText = "Settings", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        btnedit = new ToolStripButton() { Text = "", ToolTipText = "Edit", Enabled = false, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        btntoolbox = new ToolStripButton() { Text = "⚒", Font = new System.Drawing.Font(this.Font.FontFamily, 7.5f), ToolTipText = "Toolbox", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Alignment = ToolStripItemAlignment.Right };
+        btnstory = new ToolStripButton() { Text = "", ToolTipText = "Storyboard", AccessibleRole = AccessibleRole.CheckButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        btnprops.Click += (p, e) =>
+        {
+          if (btnprops.Checked) return; btnprops.Checked = true;
+          btnsetting.Checked = btntoolbox.Checked = false; showtoolbox(false);
+          oninv(); combo.Items.Clear(); grid.Focus();
+          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
+        };
+        btnsetting.Click += (p, e) =>
+        {
+          if (btnsetting.Checked) return; btnsetting.Checked = true;
+          btnprops.Checked = btntoolbox.Checked = false; showtoolbox(false);
+          grid.SelectedObject = Target.settings;
+          combo.Items.Clear(); combo.Items.Add("Settings"); combo.SelectedIndex = 0;
+          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = false;
+        };
+        btntoolbox.Click += (p, e) =>
+        {
+          btntoolbox.Checked = true;
+          btnprops.Checked = btnsetting.Checked = false;
+          combo.Items.Clear(); combo.Items.Add("Toolbox"); combo.SelectedIndex = 0;
+          showtoolbox(true);
+        };
+
+        var ts = (ToolStrip)cc[3]; var it = ts.Items; ts.RenderMode = ToolStripRenderMode.Professional;
+        it.Add(new ToolStripSeparator());
+        it.Add(btnprops); it.Add(btnsetting); it.Add(btnedit); it.Add(btnstory); it.Add(btntoolbox);
+
+        //Target.GotFocus += (_, _) => { if (Target.extrasel.p != null) update = true; };
+        //Target.LostFocus += (_, _) => { if (Target.extrasel.p != null) update = true; };
+      }
+      protected override void OnVisibleChanged(EventArgs e)
+      {
+        base.OnVisibleChanged(e); if (Target == null || grid == null) return;
+        if (Visible)
+        {
+          Target.Animations += onidle; Target.Inval += oninv; update = true;
+        }
+        else
+        {
+          Target.Animations -= onidle; Target.Inval -= oninv;
+          grid.SelectedObject = null; combo.Items.Clear();
+        }
+      }
+      PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
+      Control? view, info; internal ToolStripButton? btnprops, btnsetting, btnedit, btntoolbox, btnstory;
+      bool comboupdate, update; object? lastpd; WebBrowser? wb;
+      void onidle()
+      {
+        if (!update) return; update = false; // Debug.WriteLine($"onidle {ms}");
+        if (combo.DroppedDown || !btnprops.Checked) return;
+        var list = Target.selection; var ext = Target.extrasel;
+        var csel = combo.SelectedItem;
+        var disp =
+          (ext.p != null && (ext.view.ContainsFocus || this.ContainsFocus) ? ext.p : null) ??
+          (list.Count != 0 ? (object)list[list.Count - 1] :
+           csel != null && csel is not Node ? csel : Target.Scene);
+        if (csel != disp && !combo.ContainsFocus) fillcombo(csel = disp);
+        if (grid.SelectedObject != csel)
+        {
+          grid.SelectedObject = csel;
+          Models.propref = false; lastpd = null;
+          if (grid.PropertySort == PropertySort.NoSort) grid.PropertySort = PropertySort.Categorized;
+        }
+        else
+        {
+          if (Models.propref) { Models.propref = false; grid.Refresh(); return; }
+          combo.Invalidate(); if (ContainsFocus) return;
+          view.Invalidate(true); view.Refresh();
+        }
+      }
+      void fillcombo(object disp)
+      {
+        var items = combo.Items; comboupdate = true;
+        items.Clear(); var node = disp as Node;
+        if (node == null) items.Add(disp); // extrasel
+        items.Add(Target.Scene);
+        if (node != null)
+        {
+          recu(items, node);
+          static void recu(ComboBox.ObjectCollection items, Node node)
+          {
+            if (node.Parent != null) recu(items, node.Parent);
+            var a = node.Nodes; if (a == null) return;
+            for (int i = 0, x = items.IndexOf(node); i < a.Length; i++)
+              items.Insert(++x, a[i]);
+          }
+        }
+        combo.SelectedItem = disp; combo.Update(); comboupdate = false;
+      }
+      void oninv() { update = true; }
+      void showtoolbox(bool on)
+      {
+        if (on == (wb != null && wb.Visible)) return;
+        if (on)
+        {
+          if (wb == null)
+            view.Controls.Add(wb = new WebBrowser()
+            {
+              Visible = false,
+              Dock = DockStyle.Fill,
+              AllowNavigation = false,
+              ScriptErrorsSuppressed = true,
+              WebBrowserShortcutsEnabled = false,
+              IsWebBrowserContextMenuEnabled = false,
+              ScrollBarsEnabled = false,
+              Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat/index.htm"),
+              //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat/index.htm"),
+            });
+          info.Visible = false;
+          wb.Visible = true;
+          wb.BringToFront(); wb.Focus();
+        }
+        else
+        {
+          wb.Visible = false; info.Visible = true;
+        }
+        grid.Height++; grid.Height--;
+      }
+    }
+  }
+
   //Models
   public unsafe partial class DX11ModelCtrl
   {
-    //public class PropStore {}
-    public abstract class Base //: PropStore
+    public abstract class Node
     {
-      internal protected int flags; //0x01: Fixed 0x02:!visible 0x04:buildok 0x08:vbok 0x10:merge 0x20:shadows
+      internal protected int flags; // 0x01: Fixed 0x02:!visible 0x04:buildok 0x08:vbok 0x10:merge 0x20:shadows
       string? name;
-      public Models.Node[]? Nodes;
-      public Base? Parent;
+      public Group[]? Nodes;
+      public Node? Parent;
       public string? Name
       {
         get => name;
@@ -1815,18 +1812,18 @@ namespace Test
           if ((a = e.Attribute("name")) != null) Name = a.Value;
           for (int i = 0, n = 0; i < 2; i++)
           {
-            if (i == 1) { if (n == 0) break; Nodes = new Models.Node[n]; n = 0; }
+            if (i == 1) { if (n == 0) break; Nodes = new Group[n]; n = 0; }
             for (var p = e.FirstNode; p != null; p = p.NextNode)
             {
-              if (!(p is XElement pe && Models.s2t(pe.Name.LocalName) is Type t && t.IsSubclassOf(typeof(Base)))) continue;
+              if (!(p is XElement pe && Models.s2t(pe.Name.LocalName) is Type t && t.IsSubclassOf(typeof(Node)))) continue;
               if (i == 0) { n++; continue; }
-              (Nodes[n++] = (Models.Node)Activator.CreateInstance(t)).Serialize(pe, false);
+              (Nodes[n++] = (Group)Activator.CreateInstance(t)).Serialize(pe, false);
             }
           }
         }
       }
       internal protected virtual void Invalidate() => Parent?.Invalidate();
-      internal protected Models.Node[]? VisibleNodes
+      internal protected Group[]? VisibleNodes
       {
         get => Nodes != null && this is not Models.BoolGeometry ? Nodes : default;
       }
@@ -1834,7 +1831,7 @@ namespace Test
       {
         return Parent != null ? Parent.GetService(t) : null;
       }
-      public Base? Find(string name)
+      public Node? Find(string name)
       {
         if (Nodes != null)
           for (int i = 0; i < Nodes.Length; i++)
@@ -1844,9 +1841,97 @@ namespace Test
       }
     }
 
+    public class Group : Node
+    {
+      [Category("\t\tGeneral")]
+      public new string? Name { get => base.Name; set => base.Name = value; }
+      [Category("\t\tGeneral"), DefaultValue(false)]
+      public bool Fixed
+      {
+        get => (flags & 0x01) != 0;
+        set => flags = (flags & ~0x01) | (value ? 0x01 : 0);
+      }
+      [Category("\t\tGeneral"), DefaultValue(true)]
+      public bool Visible
+      {
+        get => (flags & 0x02) == 0;
+        set => flags = (flags & ~0x02) | (value ? 0 : 0x02);
+      }
+      [Category("\tTransform"), TypeConverter(typeof(Models.VectorConverter))]
+      public Vector3 Location
+      {
+        get => Transform.Translation;
+        set { Transform.Translation = value; Parent?.Invalidate(); }
+      }
+      [Category("\tTransform"), TypeConverter(typeof(Models.VectorConverter))]
+      public Vector3 Rotation
+      {
+        get => Transform.Rotation;
+        set { Transform.Rotation = value; Parent?.Invalidate(); }
+      }
+      [Category("\tTransform"), TypeConverter(typeof(Models.VectorConverter))]
+      public Vector3 Scaling
+      {
+        get => Transform.Scaling;
+        set { Transform.Scaling = value; Parent?.Invalidate(); }
+      }
+      public Matrix4x3 Transform;
+      public Matrix4x3 GetTransform(Node? root = null)
+      {
+        if (root == this) return Matrix4x3.Identity;
+        if (root == Parent || Parent is not Group p) return Transform;
+        return Transform * p.GetTransform(root);
+      }
+      public void GetBox(ref (Vector3 Min, Vector3 Max) box, in Matrix4x3? pm = default)
+      {
+        var a = VisibleNodes;
+        if (a != null)
+          for (int i = 0; i < a.Length; i++)
+          {
+            var p = Nodes[i]; p.GetBox(ref box, pm.HasValue ? p.Transform * pm.Value : p.Transform);
+          }
+        if (this is not Models.Geometry geo) return;
+        var pp = geo.vertices; if (pp == null) return;
+        for (int i = 0; i < pp.Length; i++)
+        {
+          var p = pp[i]; if (pm.HasValue) p = Vector3.Transform(p, pm.Value);
+          box.Min = Vector3.Min(box.Min, p);
+          box.Max = Vector3.Max(box.Max, p);
+        }
+      }
+      public (Vector3 Min, Vector3 Max) GetBox(in Matrix4x3? pm = default)
+      {
+        var box = (Min: new Vector3(float.MaxValue), Max: new Vector3(-float.MaxValue));
+        GetBox(ref box, pm); return box;
+      }
+      protected internal override unsafe void Serialize(XElement e, bool storing)
+      {
+        base.Serialize(e, storing);
+        if (storing)
+        {
+          var m = Transform;
+          if (!m.IsIdentity) e.SetAttributeValue("transform", Models.format(new ReadOnlySpan<float>(&m, 12)));
+          if (Fixed) e.SetAttributeValue("fixed", true);
+          if (!Visible) e.SetAttributeValue("visible", false);
+        }
+        else
+        {
+          XAttribute a;
+          if ((a = e.Attribute("transform")) != null)
+          {
+            var m = default(Matrix4x3);
+            Models.parse(a.Value.AsSpan().Trim(), new Span<float>(&m, 12)); Transform = m;
+          }
+          else Transform = Matrix4x3.Identity;
+          if ((a = e.Attribute("fixed")) != null) Fixed = (bool)a;
+          if ((a = e.Attribute("visible")) != null) Visible = (bool)a;
+        }
+      }
+    }
+
     public static class Models
     {
-      public class Scene : Base
+      public class Scene : Node
       {
         internal DX11Ctrl? root;
         public enum Units { Meter = 1, Centimeter = 2, Millimeter = 3, Micron = 4, Foot = 5, Inch = 6 }
@@ -1894,7 +1979,7 @@ namespace Test
                 ani.serial(line, null); set.Add(line);
               }
               e.Add(set);
-              static XElement find(XElement root, Base node) => root.DescendantsAndSelf().FirstOrDefault(p => p.Annotation<Base>() == node);
+              static XElement find(XElement root, Node node) => root.DescendantsAndSelf().FirstOrDefault(p => p.Annotation<Node>() == node);
             }
           }
           else
@@ -1915,7 +2000,7 @@ namespace Test
                 var v = (AniLine)Activator.CreateInstance(u);
                 v.serial(ani, t); anilines.Add(v);
               }
-              static Base? find(XElement root, string id) => root.DescendantsAndSelf().FirstOrDefault(p => (string?)p.Attribute("id") == id)?.Annotation(typeof(Base)) as Base;
+              static Node? find(XElement root, string id) => root.DescendantsAndSelf().FirstOrDefault(p => (string?)p.Attribute("id") == id)?.Annotation(typeof(Node)) as Node;
             }
           }
         }
@@ -1935,95 +2020,7 @@ namespace Test
         //}
       }
 
-      public class Node : Base
-      {
-        [Category("\t\tGeneral")]
-        public new string? Name { get => base.Name; set => base.Name = value; }
-        [Category("\t\tGeneral"), DefaultValue(false)]
-        public bool Fixed
-        {
-          get => (flags & 0x01) != 0;
-          set => flags = (flags & ~0x01) | (value ? 0x01 : 0);
-        }
-        [Category("\t\tGeneral"), DefaultValue(true)]
-        public bool Visible
-        {
-          get => (flags & 0x02) == 0;
-          set => flags = (flags & ~0x02) | (value ? 0 : 0x02);
-        }
-        [Category("\tTransform"), TypeConverter(typeof(VectorConverter))]
-        public Vector3 Location
-        {
-          get => Transform.Translation;
-          set { Transform.Translation = value; Parent?.Invalidate(); }
-        }
-        [Category("\tTransform"), TypeConverter(typeof(VectorConverter))]
-        public Vector3 Rotation
-        {
-          get => Transform.Rotation;
-          set { Transform.Rotation = value; Parent?.Invalidate(); }
-        }
-        [Category("\tTransform"), TypeConverter(typeof(VectorConverter))]
-        public Vector3 Scaling
-        {
-          get => Transform.Scaling;
-          set { Transform.Scaling = value; Parent?.Invalidate(); }
-        }
-        public Matrix4x3 Transform;
-        public Matrix4x3 GetTransform(Base? root = null)
-        {
-          if (root == this) return Matrix4x3.Identity;
-          if (root == Parent || Parent is not Node p) return Transform;
-          return Transform * p.GetTransform(root);
-        }
-        public void GetBox(ref (Vector3 Min, Vector3 Max) box, in Matrix4x3? pm = default)
-        {
-          var a = VisibleNodes;
-          if (a != null)
-            for (int i = 0; i < a.Length; i++)
-            {
-              var p = Nodes[i]; p.GetBox(ref box, pm.HasValue ? p.Transform * pm.Value : p.Transform);
-            }
-          if (this is not Models.Geometry geo) return;
-          var pp = geo.vertices; if (pp == null) return;
-          for (int i = 0; i < pp.Length; i++)
-          {
-            var p = pp[i]; if (pm.HasValue) p = Vector3.Transform(p, pm.Value);
-            box.Min = Vector3.Min(box.Min, p);
-            box.Max = Vector3.Max(box.Max, p);
-          }
-        }
-        public (Vector3 Min, Vector3 Max) GetBox(in Matrix4x3? pm = default)
-        {
-          var box = (Min: new Vector3(float.MaxValue), Max: new Vector3(-float.MaxValue));
-          GetBox(ref box, pm); return box;
-        }
-        protected internal override unsafe void Serialize(XElement e, bool storing)
-        {
-          base.Serialize(e, storing);
-          if (storing)
-          {
-            var m = Transform;
-            if (!m.IsIdentity) e.SetAttributeValue("transform", format(new ReadOnlySpan<float>(&m, 12)));
-            if (Fixed) e.SetAttributeValue("fixed", true);
-            if (!Visible) e.SetAttributeValue("visible", false);
-          }
-          else
-          {
-            XAttribute a;
-            if ((a = e.Attribute("transform")) != null)
-            {
-              var m = default(Matrix4x3);
-              parse(a.Value.AsSpan().Trim(), new Span<float>(&m, 12)); Transform = m;
-            }
-            else Transform = Matrix4x3.Identity;
-            if ((a = e.Attribute("fixed")) != null) Fixed = (bool)a;
-            if ((a = e.Attribute("visible")) != null) Visible = (bool)a;
-          }
-        }
-      }
-
-      public class Camera : Node
+      public class Camera : Group
       {
         [Category("Camera")]
         public float Fov { get; set; }
@@ -2050,7 +2047,7 @@ namespace Test
         }
       }
 
-      public class Light : Node
+      public class Light : Group
       {
         protected internal override void Serialize(XElement e, bool storing)
         {
@@ -2092,7 +2089,7 @@ namespace Test
       }
 
       [TypeConverter(typeof(GTC))]
-      public abstract class Geometry : Node
+      public abstract class Geometry : Group
       {
         int current;
         [Category("Material"), TypeConverter(typeof(MTC)), DefaultValue(0)]
@@ -2228,8 +2225,8 @@ namespace Test
           vertices = Array.Empty<Vector3>();
           indices = Array.Empty<ushort>();
         }
-        protected internal virtual void Render(DX11Ctrl.DC dc, Node main) { }
-        protected internal virtual Action<int>? GetTool(DX11Ctrl.PC pc, Node main)
+        protected internal virtual void Render(DX11Ctrl.DC dc, Group main) { }
+        protected internal virtual Action<int>? GetTool(DX11Ctrl.PC pc, Group main)
         {
           return null;
         }
@@ -2938,7 +2935,7 @@ namespace Test
           tess.EndPolygon();
           extruse(tess, height);
         }
-        protected internal override void Render(DX11Ctrl.DC dc, Node main)
+        protected internal override void Render(DX11Ctrl.DC dc, Group main)
         {
           dc.Transform = main.GetTransform();
           for (int i = 0; i < points.Length; i++) dc.SetPoint(i, new Vector3(points[i], height));
@@ -2951,11 +2948,11 @@ namespace Test
           dc.DrawPoints(points.Length, 7);
           dc.Select();
         }
-        protected internal override Action<int>? GetTool(DX11Ctrl.PC pc, Node main)
+        protected internal override Action<int>? GetTool(DX11Ctrl.PC pc, Group main)
         {
           if ((pc.Id & 0x10000000) != 0) return tool(pc, main);
           return base.GetTool(pc, main);
-          Action<int> tool(DX11Ctrl.PC pc, Node main)
+          Action<int> tool(DX11Ctrl.PC pc, Group main)
           {
             var i = pc.Primitive; var o = points[i];
             pc.SetPlane(Matrix4x3.CreateTranslation(0, 0, height) * main.GetTransform());
@@ -3132,7 +3129,7 @@ namespace Test
           //}
 
         }
-        protected internal override void Render(DX11Ctrl.DC dc, Node main)
+        protected internal override void Render(DX11Ctrl.DC dc, Group main)
         {
           dc.Transform = main.GetTransform();
           for (int i = 0; i < points.Length; i++) dc.SetPoint(i, new Vector3(points[i], 0));
@@ -3145,11 +3142,11 @@ namespace Test
           dc.DrawPoints(points.Length, 7);
           dc.Select();
         }
-        protected internal override Action<int>? GetTool(DX11Ctrl.PC pc, Node main)
+        protected internal override Action<int>? GetTool(DX11Ctrl.PC pc, Group main)
         {
           if ((pc.Id & 0x10000000) != 0) return tool(pc, main);
           return base.GetTool(pc, main);
-          Action<int> tool(DX11Ctrl.PC pc, Node main)
+          Action<int> tool(DX11Ctrl.PC pc, Group main)
           {
             var i = pc.Primitive; var o = points[i];
             pc.SetPlane(Matrix4x3.CreateTranslation(0, 0, 0) * main.GetTransform());
@@ -3249,7 +3246,7 @@ namespace Test
       {
         switch (s)
         {
-          case "g": case "Node": return typeof(Node);
+          case "g": case "Node": return typeof(Group);
           case "box": case "BoxGeometry": return typeof(BoxGeometry);
           case "polyext": case "ExtrusionGeometry": return typeof(ExtrusionGeometry);
           case "polyrot": case "RotationGeometry": return typeof(RotationGeometry);
@@ -3280,7 +3277,7 @@ namespace Test
       {
         //return p.GetType().Name; //var a = (XmlTypeAttribute)Attribute.GetCustomAttribute(p.GetType(), typeof(XmlTypeAttribute));
         var t = p.GetType();
-        if (t == typeof(Node)) return "g";
+        if (t == typeof(Group)) return "g";
         if (t == typeof(BoxGeometry)) return "box";
         if (t == typeof(ExtrusionGeometry)) return "polyext";
         if (t == typeof(RotationGeometry)) return "polyrot";
@@ -3303,15 +3300,15 @@ namespace Test
         throw new Exception();
       }
 
-      public static XElement Save(Base node)
+      public static XElement Save(Node node)
       {
         var e = new XElement(ns + o2s(node));
         node.Serialize(e, true);
         return e;
       }
-      public static Base Load(XElement e)
+      public static Node Load(XElement e)
       {
-        var node = (Base)s2o(e.Name.LocalName); // (Base)Activator.CreateInstance(typeof(Models).GetNestedType(e.Name.LocalName));
+        var node = (Node)s2o(e.Name.LocalName); // (Base)Activator.CreateInstance(typeof(Models).GetNestedType(e.Name.LocalName));
         node.Serialize(e, false);
         return node;
       }
@@ -3351,7 +3348,7 @@ namespace Test
       internal static bool propref;
       #endregion
       #region converter
-      class VectorConverter : TypeConverter
+      internal class VectorConverter : TypeConverter
       {
         public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type? destinationType)
         {

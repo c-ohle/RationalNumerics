@@ -2,12 +2,17 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Xml.Linq;
+using Group = Test.DX11ModelCtrl.Group;
 using Models = Test.DX11ModelCtrl.Models;
 
 namespace Test
 {
   public partial class PolyhedronPage : UserControl
   {
+    //class AnimationControler : Models.Node //DX11ModelCtrl.Base 
+    //{
+    //}
+
     Models.Scene demo1()
     {
       return new Models.Scene
@@ -15,7 +20,11 @@ namespace Test
         Unit = Models.Scene.Units.Meter,
         Ambient = Color.FromArgb(0x00404040),
         Shadows = true,
-        Nodes = new Models.Node[] {
+        Nodes = new Group[] {
+            //new AnimationControler 
+            //{
+            //
+            //},
             new Models.Camera {
               Name = "Camera1", Fov = 30, Near = 0.1f, Far = 1000,
               Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(
@@ -78,7 +87,7 @@ namespace Test
       panelStory.VisibleChanged += (_, _) =>
       {
         if (timeLineView != null) return;
-        timeLineView = new TimeLineView { Dock = DockStyle.Fill };
+        timeLineView = new TimeLineView { Dock = DockStyle.Fill, Target = modelView };
         panelStory.Controls.Add(timeLineView); timeLineView.BringToFront();
         timeLineView.TimeChange += timechange;
       };
@@ -125,7 +134,7 @@ namespace Test
         Unit = Models.Scene.Units.Meter,
         Ambient = Color.FromArgb(0x00404040),
         Shadows = true,
-        Nodes = new Models.Node[] {
+        Nodes = new Group[] {
         new Models.Camera {
           Name = "Camera", Fov = 30, Near = 0.1f, Far = 1000,
           Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(new Vector3(0, -5, 5), new Vector3(), new Vector3(0, 0, 1)),
@@ -217,7 +226,7 @@ namespace Test
     {
       var scene = modelView.Scene; if (scene == null) return;
       var cam = scene.Find("Camera1") as Models.Camera; if (cam == null) return;
-      var obj = scene.Find("Extrusion1") as Models.Node; if (obj == null) return;
+      var obj = scene.Find("Extrusion1") as Group; if (obj == null) return;
 
       //var m1 = cam.Transform;
       //var m2 = Matrix4x3.CreateTranslation(0, 0, -2) * cam.Transform;
@@ -237,7 +246,7 @@ namespace Test
         //animate(modelView, cam, m1, m2))
         ));
 
-      static Action animate(DX11Ctrl view, Models.Node node, Matrix4x3 m1, Matrix4x3 m2, Action? next = null)
+      static Action animate(DX11Ctrl view, Group node, Matrix4x3 m1, Matrix4x3 m2, Action? next = null)
       {
         Matrix4x4.Decompose(m1, out _, out var q1, out var t1);
         Matrix4x4.Decompose(m2, out _, out var q2, out var t2);
@@ -252,9 +261,7 @@ namespace Test
           if (f == 1) { view.Animations -= zoom; view.Animations += next; }
         }
       }
-
       static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
-
     }
 
     void btn_back_Click(object sender, EventArgs e) { } //0
@@ -314,8 +321,13 @@ namespace Test
       var scene = modelView.Scene;
       scene.anilines = timeLineView.lines.ToList();
       var a = Models.Save(scene);
-      var b = XElement.Parse(a.ToString()); 
-      var c = Models.Load(b);               
+      var b = XElement.Parse(a.ToString());
+      var c = Models.Load(b) as Models.Scene;
+
+      timeLineView.Clear();
+      modelView.Scene = c;
+      if (modelView.Scene.anilines != null)
+        timeLineView.lines.AddRange(modelView.Scene.anilines); timeLineView.Invalidate();
     }
     void animate()
     {
@@ -343,6 +355,7 @@ namespace Test
     class TimeLineView : UserControl
     {
       internal TimeLineView() { DoubleBuffered = true; AutoScroll = true; }
+      internal DX11ModelCtrl? Target;
       internal readonly List<DX11ModelCtrl.AniLine> lines = new();
       internal int time, endtime; float xscale = 0.1f; const int leftofs = 8, dyline = 17;
       readonly List<int> selection = new();
@@ -387,10 +400,47 @@ namespace Test
         var x = (int)(time * xscale); g.DrawLine(Pens.Red, x, 0, x, s.Height - o.Y);
       }
       int wo, st, pcx;
+
       void select(int xy)
       {
-        if (selection.Count == 1 && selection[0] == xy) return;
-        selection.Clear(); selection.Add(xy); Invalidate();
+        if (xy == -1 ? selection.Count == 0 : selection.Count == 1 && selection[0] == xy) return;
+        selection.Clear(); if (xy != -1) selection.Add(xy); Invalidate();
+
+        Target.extrasel = selection.Count != 0 ? (this, new AniRec(this)) : default;
+        Target.Invalidate();
+      }
+      public class AniRec
+      {
+        internal AniRec(TimeLineView p) => this.p = p; readonly TimeLineView p;
+        public override string ToString() => "Animation Record";
+        public int Time
+        {
+          get { var xy = p.selection[0]; return p.lines[(xy >> 16)].times[xy & 0xffff]; }
+          set { }
+        }
+        public int Delta
+        {
+          get { var xy = p.selection[0]; return p.lines[(xy >> 16)].times[(xy & 0xffff) | 1]; }
+          set { }
+        }
+        public float Gamma
+        {
+          get { return 0; }
+          set { }
+        }
+        public Color Color
+        {
+          get { return default; }
+          set { }
+        }
+
+      }
+
+      protected override void OnMouseDown(MouseEventArgs e)
+      {
+        Focus(); if (wo == 0) { select(-1); return; }
+        if ((wo & 0x40000001) == 0x40000000) select(wo & 0x3fffffff);
+        pcx = e.X; st = -1; Capture = true;
       }
       protected override void OnMouseMove(MouseEventArgs e)
       {
@@ -438,12 +488,6 @@ namespace Test
           var et = getmaxt(lines); if (et != endtime) endtime = et;
           times[x] = u; Invalidate(); Update(); TimeChange?.Invoke();
         }
-      }
-      protected override void OnMouseDown(MouseEventArgs e)
-      {
-        Focus(); if (wo == 0) return;
-        if ((wo & 0x40000001) == 0x40000000) select(wo & 0x3fffffff);
-        pcx = e.X; st = -1; Capture = true;
       }
       protected override void OnMouseUp(MouseEventArgs e)
       {
