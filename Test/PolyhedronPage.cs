@@ -9,10 +9,6 @@ namespace Test
 {
   public partial class PolyhedronPage : UserControl
   {
-    //class AnimationControler : Models.Node //DX11ModelCtrl.Base 
-    //{
-    //}
-
     Models.Scene demo1()
     {
       return new Models.Scene
@@ -20,11 +16,7 @@ namespace Test
         Unit = Models.Scene.Units.Meter,
         Ambient = Color.FromArgb(0x00404040),
         Shadows = true,
-        Nodes = new Group[] {
-            //new AnimationControler 
-            //{
-            //
-            //},
+        nodes = new Group[] {
             new Models.Camera {
               Name = "Camera1", Fov = 30, Near = 0.1f, Far = 1000,
               Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(
@@ -82,8 +74,8 @@ namespace Test
     {
       base.OnLoad(e);
       MenuItem.CmdRoot = OnCommand;
-      modelView.Scene = demo1();
-      //modelView.Infos.Add("Hello World!"); 
+      modelView.Scene = demo1(); modelView.Infos.Add("Hello World!");
+      propsView.Target = modelView; 
       panelStory.VisibleChanged += (_, _) =>
       {
         if (timeLineView != null) return;
@@ -122,19 +114,19 @@ namespace Test
     {
       var doc = XElement.Load(path);
       var scene = (Models.Scene)Models.Load(doc); //var last = view.Scene != null; if (last && !AskSave()) return; 
-      timeLineView?.Clear();
+      timeLineView?.Refresh();
       modelView.Scene = scene; this.path = path; // UpdateTitle(); if (last && path != null) mru(path, path);
     }
     int OnNew(object? test)
     {
       if (test != null) return 1;
-      timeLineView?.Clear(); this.path = null;
+      timeLineView?.Refresh(); this.path = null;
       modelView.Scene = new Models.Scene
       {
         Unit = Models.Scene.Units.Meter,
         Ambient = Color.FromArgb(0x00404040),
         Shadows = true,
-        Nodes = new Group[] {
+        nodes = new Group[] {
         new Models.Camera {
           Name = "Camera", Fov = 30, Near = 0.1f, Far = 1000,
           Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(new Vector3(0, -5, 5), new Vector3(), new Vector3(0, 0, 1)),
@@ -264,10 +256,10 @@ namespace Test
       static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
     }
 
-    void btn_back_Click(object sender, EventArgs e) { } //0
+    void btn_back_Click(object sender, EventArgs e) => timeLineView.gotoT(0);
     void btn_back__Click(object sender, EventArgs e) { }//this.anix - 1);
     void btn_forw__Click(object sender, EventArgs e) { }//this.anix + 1);
-    void btn_forw_Click(object sender, EventArgs e) { }//this.anis.Length);
+    void btn_forw_Click(object sender, EventArgs e) => timeLineView.gotoT(timeLineView.aniset.getendtime());
     void btn_record_Click(object sender, EventArgs e)
     {
       if (btn_record.Checked ^= true) { modelView.UndoChanged += undochanged; }
@@ -318,25 +310,25 @@ namespace Test
     }
     void btn_save_Click(object sender, EventArgs _)
     {
-      var scene = modelView.Scene;
-      scene.anilines = timeLineView.lines.ToList();
+      var scene = modelView.Scene; if (scene == null) return;
       var a = Models.Save(scene);
+      
       var b = XElement.Parse(a.ToString());
-      var c = Models.Load(b) as Models.Scene;
 
-      timeLineView.Clear();
-      modelView.Scene = c;
-      if (modelView.Scene.anilines != null)
-        timeLineView.lines.AddRange(modelView.Scene.anilines); timeLineView.Invalidate();
+      var c = (Models.Scene)Models.Load(b);
+      modelView.Scene = c; timeLineView.Invalidate();
     }
     void animate()
     {
-      var time = timeLineView.time; var endtime = timeLineView.endtime;
-      if (time >= endtime) { btn_play.PerformClick(); return; }
-      timeLineView.time = time = Math.Min(time + 30, endtime); timeLineView.Invalidate();
-      var a = timeLineView.lines; var inf = false;
-      for (int i = 0; i < a.Count; i++) inf |= a[i].lerp(time);
-      if (inf) modelView.Invalidate();
+      var aniset = timeLineView.aniset;
+      var time = aniset.time; var endtime = aniset.endtime;
+      if (time >= endtime) { btn_play.PerformClick(); return; } //stop
+      timeLineView.gotoT(Math.Min(time + 30, endtime));
+
+      //timeLineView.time = time = Math.Min(time + 30, endtime); timeLineView.Invalidate();      
+      //var a = timeLineView.aniset.list; var inf = false;
+      //for (int i = 0; i < a.Count; i++) inf |= a[i].lerp(time);
+      //if (inf) modelView.Invalidate();
     }
 
     void undochanged()
@@ -347,48 +339,59 @@ namespace Test
     }
     void timechange()
     {
-      var inf = false; var a = timeLineView.lines; var t = timeLineView.time;
+      var inf = false; var aniset = timeLineView.aniset;
+      var a = aniset.list; var t = aniset.time;
       for (int i = 0; i < a.Count; i++) inf |= a[i].lerp(t);
       if (inf) modelView.Invalidate();
     }
 
     class TimeLineView : UserControl
     {
+      internal void gotoT(int t)
+      {
+        var aniset = this.aniset;
+        if (aniset.time == t) return; aniset.time = t; Invalidate();
+        var a = aniset.list; var inf = false;
+        for (int i = 0; i < a.Count; i++) inf |= a[i].lerp(t);
+        if (inf) Target.Invalidate();
+      }
+
       internal TimeLineView() { DoubleBuffered = true; AutoScroll = true; }
       internal DX11ModelCtrl? Target;
-      internal readonly List<DX11ModelCtrl.AniLine> lines = new();
-      internal int time, endtime; float xscale = 0.1f; const int leftofs = 8, dyline = 17;
+      internal DX11ModelCtrl.AniSet aniset
+      {
+        get { return Target.Scene.aniset ??= new(); }
+      }
+      float xscale = 0.1f; const int leftofs = 8, dyline = 17;
       readonly List<int> selection = new();
       internal Action? TimeChange;
       internal void Clear()
       {
-        lines.Clear(); selection.Clear(); time = endtime = 0;
-        AutoScrollMinSize = default; Invalidate();
+        var aniset = this.aniset; aniset.clear(); 
+        selection.Clear(); AutoScrollMinSize = default; Invalidate();
       }
       internal void Add(DX11ModelCtrl.Undo undo)
       {
-        undo.link(lines, getmaxt(lines)); time = endtime = getmaxt(lines); selection.Clear();
+        var aniset = this.aniset;
+        undo.link(aniset, aniset.getendtime());
+        aniset.time = aniset.endtime = aniset.getendtime(); selection.Clear();
         adjust(); var o = AutoScrollPosition; var q = AutoScrollMinSize;
         o.X = q.Width; AutoScrollPosition = o; Invalidate();
       }
       void adjust()
       {
-        AutoScrollMinSize = new Size(64 + (int)(endtime * xscale), 16 + lines.Count * 16);
-        if (time > endtime) { time = endtime; Invalidate(); }
-      }
-      static int getmaxt(List<DX11ModelCtrl.AniLine> a)
-      {
-        var max = 0; for (int i = 0; i < a.Count; i++) { var t = a[i].times; max = Math.Max(max, t[t.Count - 2] + t[t.Count - 1]); }
-        return max;
+        var aniset = this.aniset;
+        AutoScrollMinSize = new Size(64 + (int)(aniset.endtime * xscale), 16 + aniset.list.Count * 16);
+        if (aniset.time > aniset.endtime) { aniset.time = aniset.endtime; Invalidate(); }
       }
       protected override void OnPaint(PaintEventArgs e)
       {
         var g = e.Graphics; var s = ClientSize; var o = AutoScrollPosition;
-        g.TranslateTransform(leftofs + o.X, o.Y);
-        var xe = (int)(endtime * xscale); g.DrawLine(Pens.LightGray, xe, 0, xe, s.Height - o.Y);
-        for (int i = 0, y = 0; i < lines.Count; i++, y += dyline)
+        g.TranslateTransform(leftofs + o.X, o.Y); var aniset = this.aniset; var list = aniset.list;
+        var xe = (int)(aniset.endtime * xscale); g.DrawLine(Pens.LightGray, xe, 0, xe, s.Height - o.Y);
+        for (int i = 0, y = 0; i < list.Count; i++, y += dyline)
         {
-          var l = lines[i]; var tt = l.times;
+          var l = list[i]; var tt = l.times;
           for (int k = 0; k < tt.Count; k += 2)
           {
             var t = tt[k]; var dt = tt[k + 1]; var se = selection.Contains((i << 16) | k);
@@ -397,7 +400,7 @@ namespace Test
           }
           g.DrawLine(Pens.LightGray, 0, y + dyline, s.Width - o.X, y + dyline);
         }
-        var x = (int)(time * xscale); g.DrawLine(Pens.Red, x, 0, x, s.Height - o.Y);
+        var x = (int)(aniset.time * xscale); g.DrawLine(Pens.Red, x, 0, x, s.Height - o.Y);
       }
       int wo, st, pcx;
 
@@ -405,8 +408,9 @@ namespace Test
       {
         if (xy == -1 ? selection.Count == 0 : selection.Count == 1 && selection[0] == xy) return;
         selection.Clear(); if (xy != -1) selection.Add(xy); Invalidate();
-
-        Target.extrasel = selection.Count != 0 ? (this, new AniRec(this)) : default;
+        Target.extrasel = selection.Count != 0 ?
+          (this, new AniRec(this)) :
+          (this, aniset); //default;
         Target.Invalidate();
       }
       public class AniRec
@@ -415,12 +419,12 @@ namespace Test
         public override string ToString() => "Animation Record";
         public int Time
         {
-          get { var xy = p.selection[0]; return p.lines[(xy >> 16)].times[xy & 0xffff]; }
+          get { var xy = p.selection[0]; return p.aniset.list[(xy >> 16)].times[xy & 0xffff]; }
           set { }
         }
         public int Delta
         {
-          get { var xy = p.selection[0]; return p.lines[(xy >> 16)].times[(xy & 0xffff) | 1]; }
+          get { var xy = p.selection[0]; return p.aniset.list[(xy >> 16)].times[(xy & 0xffff) | 1]; }
           set { }
         }
         public float Gamma
@@ -428,12 +432,6 @@ namespace Test
           get { return 0; }
           set { }
         }
-        public Color Color
-        {
-          get { return default; }
-          set { }
-        }
-
       }
 
       protected override void OnMouseDown(MouseEventArgs e)
@@ -444,16 +442,17 @@ namespace Test
       }
       protected override void OnMouseMove(MouseEventArgs e)
       {
+        var aniset = this.aniset; 
         if (!Capture)
         {
-          var o = AutoScrollPosition; var x = o.X + leftofs + (int)(time * xscale);
+          var o = AutoScrollPosition; var x = o.X + leftofs + (int)(aniset.time * xscale);
           wo = Math.Abs(e.X - x) < 4 ? 1 : 0;
           if (wo == 0)
           {
             var i = (e.Y - o.Y) / dyline; var tx = (e.X - leftofs - o.X) / xscale;
-            if (i >= 0 && i < lines.Count)
+            if (i >= 0 && i < aniset.list.Count)
             {
-              var a = lines[i].times;
+              var a = aniset.list[i].times;
               for (int k = a.Count - 2; k >= 0; k -= 2)
               {
                 var t = a[k]; var dt = a[k + 1]; var w = 0x40000000 | k | (i << 16);
@@ -467,14 +466,15 @@ namespace Test
         if (wo == 0) return; var fdt = (e.X - pcx) / xscale;
         if (wo == 1)
         {
-          if (st == -1) st = time;
-          var u = Math.Max(0, Math.Min(endtime, (int)(st + fdt)));
-          if (time == u) return; time = u; Invalidate(); Update(); TimeChange?.Invoke();
+          if (st == -1) st = aniset.time;
+          var u = Math.Max(0, Math.Min(aniset.endtime, (int)(st + fdt)));
+          if (aniset.time == u) return; aniset.time = u; Invalidate(); Update(); TimeChange?.Invoke();
         }
         else //if ((wo & 0x40000000) != 0)
         {
-          int x = wo & 0xffff, y = (wo >> 16) & 0x3fff; var times = lines[y].times;
-          if (st == -1) { st = times[x]; }
+          int x = wo & 0xffff, y = (wo >> 16) & 0x3fff; 
+          var tt = aniset.list[y].times;
+          if (st == -1) { st = tt[x]; }
           var u = (int)(st + fdt);
           if ((wo & 1) == 0)
           {
@@ -484,9 +484,9 @@ namespace Test
           {
             u = Math.Max(20, u);
           }
-          if (times[x] == u) return;
-          var et = getmaxt(lines); if (et != endtime) endtime = et;
-          times[x] = u; Invalidate(); Update(); TimeChange?.Invoke();
+          if (tt[x] == u) return;
+          var et = aniset.getendtime(); if (et != aniset.endtime) aniset.endtime = et;
+          tt[x] = u; Invalidate(); Update(); TimeChange?.Invoke();
         }
       }
       protected override void OnMouseUp(MouseEventArgs e)

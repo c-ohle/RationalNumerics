@@ -482,7 +482,6 @@
       this.propsView.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
       this.propsView.Size = new System.Drawing.Size(286, 511);
       this.propsView.TabIndex = 2;
-      this.propsView.Target = this.modelView;
       this.propsView.Visible = false;
       this.propsView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelStory_MouseDown);
       this.propsView.MouseLeave += new System.EventHandler(this.panelStory_MouseLeave);
@@ -545,14 +544,14 @@
             this.toolStripLabel1,
             this.btn_back,
             this.btn_back_,
-            this.btn_record,
             this.btn_play,
             this.btn_stop,
             this.btn_forw_,
             this.btn_forw,
             this.toolStripSeparator2,
-            this.btn_save,
-            this.btn_clear});
+            this.btn_record,
+            this.btn_clear,
+            this.btn_save});
       this.toolStrip1.Location = new System.Drawing.Point(0, 6);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;

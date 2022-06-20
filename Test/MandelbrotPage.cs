@@ -24,8 +24,10 @@ namespace Test
     {
       var t1 = mandelbrotView1.RenderTime;
       var t2 = mandelbrotView2.RenderTime;
-      labelState1.Text = t1 != 0 ? $"{t1} ms" : "calculating...";
-      labelState2.Text = t2 != 0 ? $"{t2} ms" : checkBoxActive2.Checked ? "calculating..." : "";
+      //labelState1.Text = t1 != 0 ? $"{t1} ms" : "calculating...";
+      //labelState2.Text = t2 != 0 ? $"{t2} ms" : checkBoxActive2.Checked ? "calculating..." : "";
+      labelState1.Text = t1 != 0 ? $"{t1} ms ({mandelbrotView1.Width}×{mandelbrotView1.Height})" : "calculating...";
+      labelState2.Text = t2 != 0 ? $"{t2} ms ({mandelbrotView2.Width}×{mandelbrotView2.Height})" : checkBoxActive2.Checked ? "calculating..." : "";
       labelRelation.Text = t1 != 0 && t2 != 0 ?
         $"{(t1 <= t2 ? 1 : t1 / t2)} : {(t1 <= t2 ? t2 / t1 : 1)}" :
         "___ : ___";

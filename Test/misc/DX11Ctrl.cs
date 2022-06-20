@@ -791,53 +791,6 @@ namespace Test
         ((int)Sampler.Font << 20)),
     }
 
-    static Vector3 ToVector3(Vector4 p)
-    {
-      return new Vector3(p.X, p.Y, p.Z) / p.W;
-    }
-    static uint ToUInt(Vector4 s)
-    { //todo: SSE
-      s *= 255; return unchecked((byte)s.Z | ((uint)(byte)s.Y << 8) | ((uint)(byte)s.X << 16) | ((uint)(byte)s.X << 24));
-    }
-    static Vector4 ToVector4(uint s)
-    { //todo: SSE
-      return new Vector4(((s >> 16) & 0xff), ((s >> 8) & 0xff), (s & 0xff), ((s >> 24) & 0xff)) * (1.0f / 255);
-    }
-    static System.Text.Encoding encoding = System.Text.Encoding.UTF8;
-    static void WriteCount(ref Span<byte> ws, int count)
-    {
-      var u = unchecked((uint)count); int i = 0;
-      for (; u >= 0x80; u >>= 7) ws[i++] = unchecked((byte)(u | 0x80));
-      ws[i++] = unchecked((byte)u); ws = ws.Slice(i);
-    }
-    static void ReadCount(ref ReadOnlySpan<byte> rs, out int count)
-    {
-      int i = 0; uint u = 0;
-      for (int s = 0; ; s += 7) { uint b = rs[i++]; u |= (b & 0x7F) << s; if ((b & 0x80) == 0) break; }
-      rs = rs.Slice(i); count = unchecked((int)u);
-    }
-    static void Write(ref Span<byte> ws, string? s)
-    {
-      if (s == null) { WriteCount(ref ws, 0); return; }
-      var n = encoding.GetByteCount(s); WriteCount(ref ws, n + 1);
-      ws = ws.Slice(encoding.GetBytes(s, ws));
-    }
-    static void Read(ref ReadOnlySpan<byte> rs, out string? s)
-    {
-      ReadCount(ref rs, out var n); if (n-- <= 0) { s = n == 0 ? string.Empty : null; return; }
-      s = encoding.GetString(rs.Slice(0, n)); rs = rs.Slice(n);
-    }
-    static void Write<T>(ref Span<byte> ws, T v) where T : unmanaged
-    {
-      var rs = new ReadOnlySpan<byte>((byte*)&v, sizeof(T));
-      rs.CopyTo(ws); ws = ws.Slice(rs.Length);
-    }
-    static void Read<T>(ref ReadOnlySpan<byte> rs, out T v) where T : unmanaged
-    {
-      var ss = rs.Slice(0, sizeof(T)); rs = rs.Slice(ss.Length);
-      fixed (T* p = &v) ss.CopyTo(new Span<byte>(p, ss.Length));
-    }
-
     public readonly struct DC
     {
       public Vector2 Viewport
@@ -1372,7 +1325,6 @@ namespace Test
     }
     public readonly struct PC
     {
-      internal PC(DX11Ctrl p) => view = p; readonly DX11Ctrl view;
       public DX11Ctrl View
       {
         get => view;
@@ -1436,6 +1388,8 @@ namespace Test
       {
         view.Invalidate();
       }
+      internal PC(DX11Ctrl p) => view = p;
+      readonly DX11Ctrl view;
     }
 
     public Bitmap Print(int dx, int dy, int samples, uint bkcolor, Action<DC> print)
@@ -1495,6 +1449,52 @@ namespace Test
       return b;
     }
 
+    static Vector3 ToVector3(Vector4 p)
+    {
+      return new Vector3(p.X, p.Y, p.Z) / p.W;
+    }
+    static uint ToUInt(Vector4 s)
+    { //todo: SSE
+      s *= 255; return unchecked((byte)s.Z | ((uint)(byte)s.Y << 8) | ((uint)(byte)s.X << 16) | ((uint)(byte)s.X << 24));
+    }
+    static Vector4 ToVector4(uint s)
+    { //todo: SSE
+      return new Vector4(((s >> 16) & 0xff), ((s >> 8) & 0xff), (s & 0xff), ((s >> 24) & 0xff)) * (1.0f / 255);
+    }
+    static System.Text.Encoding encoding = System.Text.Encoding.UTF8;
+    static void WriteCount(ref Span<byte> ws, int count)
+    {
+      var u = unchecked((uint)count); int i = 0;
+      for (; u >= 0x80; u >>= 7) ws[i++] = unchecked((byte)(u | 0x80));
+      ws[i++] = unchecked((byte)u); ws = ws.Slice(i);
+    }
+    static void ReadCount(ref ReadOnlySpan<byte> rs, out int count)
+    {
+      int i = 0; uint u = 0;
+      for (int s = 0; ; s += 7) { uint b = rs[i++]; u |= (b & 0x7F) << s; if ((b & 0x80) == 0) break; }
+      rs = rs.Slice(i); count = unchecked((int)u);
+    }
+    static void Write(ref Span<byte> ws, string? s)
+    {
+      if (s == null) { WriteCount(ref ws, 0); return; }
+      var n = encoding.GetByteCount(s); WriteCount(ref ws, n + 1);
+      ws = ws.Slice(encoding.GetBytes(s, ws));
+    }
+    static void Read(ref ReadOnlySpan<byte> rs, out string? s)
+    {
+      ReadCount(ref rs, out var n); if (n-- <= 0) { s = n == 0 ? string.Empty : null; return; }
+      s = encoding.GetString(rs.Slice(0, n)); rs = rs.Slice(n);
+    }
+    static void Write<T>(ref Span<byte> ws, T v) where T : unmanaged
+    {
+      var rs = new ReadOnlySpan<byte>((byte*)&v, sizeof(T));
+      rs.CopyTo(ws); ws = ws.Slice(rs.Length);
+    }
+    static void Read<T>(ref ReadOnlySpan<byte> rs, out T v) where T : unmanaged
+    {
+      var ss = rs.Slice(0, sizeof(T)); rs = rs.Slice(ss.Length);
+      fixed (T* p = &v) ss.CopyTo(new Span<byte>(p, ss.Length));
+    }
   }
   //buffer
   unsafe partial class DX11Ctrl
