@@ -1,4 +1,5 @@
-﻿using System.Drawing.Drawing2D;
+﻿using System.ComponentModel;
+using System.Drawing.Drawing2D;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -6,6 +7,7 @@ using System.Security;
 
 namespace Test
 {
+  [DesignerCategory("Code")]
   public unsafe abstract partial class DX11Ctrl : UserControl
   {
     protected static void Initialize(long drv)

@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 namespace Test
 {
+  [DesignerCategory("Code")]
   public partial class TesselatorView : UserControl
   {
     public TesselatorView()

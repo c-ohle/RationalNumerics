@@ -803,7 +803,7 @@
       this.numericUpDownDigits.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.numericUpDownDigits.Location = new System.Drawing.Point(658, 99);
       this.numericUpDownDigits.Maximum = new decimal(new int[] {
-            1000000,
+            1000000000,
             0,
             0,
             0});
@@ -834,8 +834,8 @@
       this.button_rat.Name = "button_rat";
       this.button_rat.Size = new System.Drawing.Size(33, 29);
       this.button_rat.TabIndex = 5;
-      this.button_rat.Text = "ℚ";
-      this.toolTip1.SetToolTip(this.button_rat, "ℚ rational arithmetics\r\nd: double arithmetics");
+      this.button_rat.Text = "ℚ\'";
+      this.toolTip1.SetToolTip(this.button_rat, "ℚ\' rational arithmetics (repetition check on eg. 1 / 3 = \"0.'3\")\r\nℚ rational arithmetics (repetition check off eg. 1 / 3 = \"0.33333…\")\r\nd: double arithmetics\r\n");
       this.button_rat.UseCompatibleTextRendering = true;
       this.button_rat.UseVisualStyleBackColor = false;
       this.button_rat.Click += new System.EventHandler(this.button_rat_Click);

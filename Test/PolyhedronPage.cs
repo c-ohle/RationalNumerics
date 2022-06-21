@@ -74,8 +74,8 @@ namespace Test
     {
       base.OnLoad(e);
       MenuItem.CmdRoot = OnCommand;
-      modelView.Scene = demo1(); modelView.Infos.Add("Hello World!");
-      propsView.Target = modelView; 
+      modelView.Scene = demo1(); // modelView.Infos.Add("Hello World!");
+      propsView.Target = modelView;
       panelStory.VisibleChanged += (_, _) =>
       {
         if (timeLineView != null) return;
@@ -256,10 +256,10 @@ namespace Test
       static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
     }
 
-    void btn_back_Click(object sender, EventArgs e) => timeLineView.gotoT(0);
-    void btn_back__Click(object sender, EventArgs e) { }//this.anix - 1);
-    void btn_forw__Click(object sender, EventArgs e) { }//this.anix + 1);
-    void btn_forw_Click(object sender, EventArgs e) => timeLineView.gotoT(timeLineView.aniset.getendtime());
+    void btn_back_Click(object sender, EventArgs e) => timeLineView.ani(0);
+    void btn_back__Click(object sender, EventArgs e) { }
+    void btn_forw__Click(object sender, EventArgs e) { }
+    void btn_forw_Click(object sender, EventArgs e) => timeLineView.ani(timeLineView.aniset.getendtime());
     void btn_record_Click(object sender, EventArgs e)
     {
       if (btn_record.Checked ^= true) { modelView.UndoChanged += undochanged; }
@@ -267,8 +267,8 @@ namespace Test
     }
     void btn_play_Click(object sender, EventArgs e)
     {
-      if (btn_play.Checked ^= true) { modelView.Animations += animate; }
-      else { modelView.Animations -= animate; }
+      if (btn_play.Checked ^= true) { btn_play.Text = ""; modelView.Animations += animate; }
+      else { modelView.Animations -= animate; btn_play.Text = ""; }
     }
     void btn_stop_Click(object sender, EventArgs e)
     {
@@ -305,30 +305,27 @@ namespace Test
     }
     void btn_clear_Click(object sender, EventArgs e)
     {
-      if (btn_record.Checked || btn_play.Checked) return;
-      timeLineView.Clear();
+      Quat.alt = (btn_clear.Checked ^= true);
+      //{ Quat.alt = true; btn_clear.Text = ""; modelView.Animations += animate; }
+      //else { modelView.Animations -= animate; btn_clear.Text = ""; Quat.alt = false; }
+
+      //if (btn_record.Checked || btn_play.Checked) return;
+      //timeLineView.Clear();
     }
     void btn_save_Click(object sender, EventArgs _)
     {
       var scene = modelView.Scene; if (scene == null) return;
       var a = Models.Save(scene);
-      
       var b = XElement.Parse(a.ToString());
-
       var c = (Models.Scene)Models.Load(b);
-      modelView.Scene = c; timeLineView.Invalidate();
+      modelView.Scene = c; timeLineView.Invalidate(); timeLineView.adjust();
     }
     void animate()
     {
       var aniset = timeLineView.aniset;
-      var time = aniset.time; var endtime = aniset.endtime;
+      var time = aniset.time; var endtime = aniset.maxtime;
       if (time >= endtime) { btn_play.PerformClick(); return; } //stop
-      timeLineView.gotoT(Math.Min(time + 30, endtime));
-
-      //timeLineView.time = time = Math.Min(time + 30, endtime); timeLineView.Invalidate();      
-      //var a = timeLineView.aniset.list; var inf = false;
-      //for (int i = 0; i < a.Count; i++) inf |= a[i].lerp(time);
-      //if (inf) modelView.Invalidate();
+      timeLineView.ani(Math.Min(time + 30, endtime));
     }
 
     void undochanged()
@@ -340,20 +337,17 @@ namespace Test
     void timechange()
     {
       var inf = false; var aniset = timeLineView.aniset;
-      var a = aniset.list; var t = aniset.time;
+      var a = aniset.anilines; var t = aniset.time;
       for (int i = 0; i < a.Count; i++) inf |= a[i].lerp(t);
       if (inf) modelView.Invalidate();
     }
 
     class TimeLineView : UserControl
     {
-      internal void gotoT(int t)
+      internal void ani(int t)
       {
-        var aniset = this.aniset;
-        if (aniset.time == t) return; aniset.time = t; Invalidate();
-        var a = aniset.list; var inf = false;
-        for (int i = 0; i < a.Count; i++) inf |= a[i].lerp(t);
-        if (inf) Target.Invalidate();
+        var aniset = this.aniset; if (aniset.time == t) return; //aniset.time = t; Invalidate();
+        if (aniset.ani(t)) Target.Invalidate(); Invalidate();
       }
 
       internal TimeLineView() { DoubleBuffered = true; AutoScroll = true; }
@@ -362,39 +356,40 @@ namespace Test
       {
         get { return Target.Scene.aniset ??= new(); }
       }
-      float xscale = 0.1f; const int leftofs = 8, dyline = 17;
+      const int leftofs = 8, dyline = 17;
+      float xscale = 0.1f; int wo, st, pcx, ctrl;
       readonly List<int> selection = new();
       internal Action? TimeChange;
       internal void Clear()
       {
-        var aniset = this.aniset; aniset.clear(); 
-        selection.Clear(); AutoScrollMinSize = default; Invalidate();
+        selection.Clear(); aniset.clear(); AutoScrollMinSize = default; Invalidate();
       }
       internal void Add(DX11ModelCtrl.Undo undo)
       {
         var aniset = this.aniset;
         undo.link(aniset, aniset.getendtime());
-        aniset.time = aniset.endtime = aniset.getendtime(); selection.Clear();
+        aniset.time = aniset.maxtime = aniset.getendtime(); selection.Clear();
         adjust(); var o = AutoScrollPosition; var q = AutoScrollMinSize;
         o.X = q.Width; AutoScrollPosition = o; Invalidate();
       }
-      void adjust()
+      internal void adjust()
       {
-        var aniset = this.aniset;
-        AutoScrollMinSize = new Size(64 + (int)(aniset.endtime * xscale), 16 + aniset.list.Count * 16);
-        if (aniset.time > aniset.endtime) { aniset.time = aniset.endtime; Invalidate(); }
+        var aniset = this.aniset; if (aniset.maxtime == 0) aniset.maxtime = aniset.getendtime();
+        AutoScrollMinSize = new Size(64 + (int)(aniset.maxtime * xscale), 16 + aniset.anilines.Count * 16);
+        if (aniset.time > aniset.maxtime) { aniset.time = aniset.maxtime; Invalidate(); }
       }
       protected override void OnPaint(PaintEventArgs e)
       {
         var g = e.Graphics; var s = ClientSize; var o = AutoScrollPosition;
-        g.TranslateTransform(leftofs + o.X, o.Y); var aniset = this.aniset; var list = aniset.list;
-        var xe = (int)(aniset.endtime * xscale); g.DrawLine(Pens.LightGray, xe, 0, xe, s.Height - o.Y);
+        g.TranslateTransform(leftofs + o.X, o.Y); var aniset = this.aniset; var list = aniset.anilines;
+        var xe = (int)(aniset.maxtime * xscale); g.DrawLine(Pens.LightGray, xe, 0, xe, s.Height - o.Y);
         for (int i = 0, y = 0; i < list.Count; i++, y += dyline)
         {
-          var l = list[i]; var tt = l.times;
+          var l = list[i]; var tt = l.times; var se = selection.Contains(0x20000000 | (i << 16));
+          if (se) g.FillRectangle(SystemBrushes.GradientInactiveCaption, 0, y, s.Width - o.X, dyline - 1);
           for (int k = 0; k < tt.Count; k += 2)
           {
-            var t = tt[k]; var dt = tt[k + 1]; var se = selection.Contains((i << 16) | k);
+            var t = tt[k]; var dt = tt[k + 1]; se = selection.Contains(0x40000000 | (i << 16) | k);
             if (se) g.FillRectangle(SystemBrushes.GradientInactiveCaption, t * xscale, y, dt * xscale, dyline - 1);
             g.DrawRectangle(Pens.Black, t * xscale, y, dt * xscale, dyline - 1);
           }
@@ -402,47 +397,78 @@ namespace Test
         }
         var x = (int)(aniset.time * xscale); g.DrawLine(Pens.Red, x, 0, x, s.Height - o.Y);
       }
-      int wo, st, pcx;
 
-      void select(int xy)
+      void select(int wo)
       {
-        if (xy == -1 ? selection.Count == 0 : selection.Count == 1 && selection[0] == xy) return;
-        selection.Clear(); if (xy != -1) selection.Add(xy); Invalidate();
-        Target.extrasel = selection.Count != 0 ?
-          (this, new AniRec(this)) :
-          (this, aniset); //default;
+        if (wo == 1) return; wo &= ~1;
+        if ((ctrl & 2) != 0 && wo != 0) { if ((ctrl & 1) == 0) selection.Add(wo); else selection.Remove(wo); }
+        else
+        {
+          var c = selection.Count; if ((c == 0 && wo == 0) || (c == 1 && selection[0] == wo)) return;
+          selection.Clear(); if (wo != 0) selection.Add(wo);
+        }
+        Invalidate();
+        if (selection.Count > 1)
+        {
+          var a = selection.Select(w => (w & 0x40000000) != 0 ? new AniRec(this, w) : null).OfType<object>().ToArray();
+          if (a.Length > 0) Target.extrasel = (this, a);
+          else Target.extrasel = default;
+          Target.Invalidate(); return;
+        }
+        var w = selection.Count == 1 ? selection[0] : 0;
+        if ((w & 0x20000000) != 0) Target.extrasel = (this, new AniLin(this, selection[0]));
+        else if ((w & 0x40000000) != 0) Target.extrasel = (this, new AniRec(this, selection[0]));
+        else Target.extrasel = default;
         Target.Invalidate();
+      }
+      public class AniLin
+      {
+        public override string ToString() => "Animation Line";
+        internal AniLin(TimeLineView p, int wo)
+        {
+          this.view = p;
+          this.line = p.aniset.anilines[(wo >> 16) & 0x1fff];
+        }
+        readonly TimeLineView view; readonly DX11ModelCtrl.AniLine line;
+        public string? Name { get { return default; } set { } }
       }
       public class AniRec
       {
-        internal AniRec(TimeLineView p) => this.p = p; readonly TimeLineView p;
         public override string ToString() => "Animation Record";
+        internal AniRec(TimeLineView p, int wo)
+        {
+          this.view = p; this.line = p.aniset.anilines[(wo >> 16) & 0x1fff];
+          this.x = wo & 0xffff;
+        }
+        readonly TimeLineView view; readonly DX11ModelCtrl.AniLine line; int x;
         public int Time
         {
-          get { var xy = p.selection[0]; return p.aniset.list[(xy >> 16)].times[xy & 0xffff]; }
+          get { return x < line.times.Count ? line.times[x] : -1; }
           set { }
         }
         public int Delta
         {
-          get { var xy = p.selection[0]; return p.aniset.list[(xy >> 16)].times[(xy & 0xffff) | 1]; }
+          get { return x < line.times.Count ? line.times[x | 1] : -1; }
           set { }
         }
         public float Gamma
         {
-          get { return 0; }
-          set { }
+          get { return x < line.times.Count ? line.get(0, x >> 1) : float.NaN; }
+          set { line.set(0, x >> 1, value); }
         }
       }
 
       protected override void OnMouseDown(MouseEventArgs e)
       {
-        Focus(); if (wo == 0) { select(-1); return; }
-        if ((wo & 0x40000001) == 0x40000000) select(wo & 0x3fffffff);
-        pcx = e.X; st = -1; Capture = true;
+        Focus(); if (wo == 0) select(wo);
+        if (!((wo == 1) || (wo & 0x60000000) != 0)) return;
+        pcx = e.X; st = -1;
+        ctrl = (selection.Contains(wo & ~1) ? 1 : 0) | ((ModifierKeys == Keys.Control) ? 2 : 0);
+        if ((ctrl & 2) == 0) select(wo); Capture = true;
       }
       protected override void OnMouseMove(MouseEventArgs e)
       {
-        var aniset = this.aniset; 
+        var aniset = this.aniset;
         if (!Capture)
         {
           var o = AutoScrollPosition; var x = o.X + leftofs + (int)(aniset.time * xscale);
@@ -450,12 +476,12 @@ namespace Test
           if (wo == 0)
           {
             var i = (e.Y - o.Y) / dyline; var tx = (e.X - leftofs - o.X) / xscale;
-            if (i >= 0 && i < aniset.list.Count)
+            if (i >= 0 && i < aniset.anilines.Count)
             {
-              var a = aniset.list[i].times;
+              var a = aniset.anilines[i].times; wo = 0x20000000 | (i << 16);
               for (int k = a.Count - 2; k >= 0; k -= 2)
               {
-                var t = a[k]; var dt = a[k + 1]; var w = 0x40000000 | k | (i << 16);
+                var t = a[k]; var dt = a[k + 1]; var w = 0x40000000 | (i << 16) | k;
                 if (Math.Abs(tx - (t + dt)) * xscale < 4) { wo = w | 1; break; }
                 if (tx >= t && tx <= t + dt) { wo = w; break; }
               }
@@ -464,34 +490,32 @@ namespace Test
           this.Cursor = wo == 1 ? Cursors.VSplit : (wo & 0x40000001) == 0x40000001 ? Cursors.SizeWE : Cursors.Default; return;
         }
         if (wo == 0) return; var fdt = (e.X - pcx) / xscale;
-        if (wo == 1)
+        if (wo == 1) //time
         {
           if (st == -1) st = aniset.time;
-          var u = Math.Max(0, Math.Min(aniset.endtime, (int)(st + fdt)));
-          if (aniset.time == u) return; aniset.time = u; Invalidate(); Update(); TimeChange?.Invoke();
+          var u = Math.Max(0, Math.Min(aniset.maxtime, (int)(st + fdt)));
+          if (aniset.time == u) return; aniset.time = u; Refresh(); TimeChange?.Invoke();
         }
-        else //if ((wo & 0x40000000) != 0)
+        else if ((wo & 0x40000000) != 0)
         {
-          int x = wo & 0xffff, y = (wo >> 16) & 0x3fff; 
-          var tt = aniset.list[y].times;
-          if (st == -1) { st = tt[x]; }
+          int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
+          var tt = aniset.anilines[y].times;
+          if (st == -1) { st = tt[x]; if ((ctrl & 2) != 0) { ctrl ^= 2; select(wo); } }
           var u = (int)(st + fdt);
           if ((wo & 1) == 0)
           {
             u = Math.Max(0, u);
           }
-          else
-          {
-            u = Math.Max(20, u);
-          }
+          else { u = Math.Max(20, u); }
           if (tt[x] == u) return;
-          var et = aniset.getendtime(); if (et != aniset.endtime) aniset.endtime = et;
-          tt[x] = u; Invalidate(); Update(); TimeChange?.Invoke();
+          var et = aniset.getendtime(); if (et != aniset.maxtime) aniset.maxtime = et;
+          tt[x] = u; Refresh(); TimeChange?.Invoke();
         }
       }
       protected override void OnMouseUp(MouseEventArgs e)
       {
-        Capture = false; if ((wo & 0x40000000) != 0) adjust();
+        Capture = false; if ((wo & 0x60000000) == 0) return;
+        if ((ctrl & 2) != 0) select(wo); adjust();
       }
       protected override void OnMouseWheel(MouseEventArgs e)
       {
@@ -500,10 +524,100 @@ namespace Test
       {
         if (e.KeyCode == Keys.Delete)
         {
+          if (selection.Count == 1)
+          {
+            var wo = selection[0]; var aniset = this.aniset;
+            if ((wo & 0x40000000) != 0)
+            {
+              select(0); int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
+              var line = aniset.anilines[y]; select(0);
+              if (line.times.Count > 2)
+              {
+                line.set(8, x, 0);
+                select(0x40000000 | (y << 16) | Math.Min(x, line.times.Count - 2));
+              }
+              else { aniset.anilines.RemoveAt(y); }
+              aniset.maxtime = 0; adjust();
+              var t = aniset.time; aniset.time = 0; ani(t);
+            }
+            if ((wo & 0x20000000) != 0)
+            {
+
+            }
+          }
           e.Handled = true;
         }
         base.OnKeyDown(e);
       }
+    }
+  }
+  internal unsafe struct Quat
+  {
+    public Vector3 t; Quaternion q; public Vector3 s;
+    public static implicit operator Quat(Matrix4x3 m)
+    {
+      Matrix4x4.Decompose(m, out var s, out var q, out var t);
+      s.X = MathF.Round(s.X, 6); s.Y = MathF.Round(s.Y, 6); s.Z = MathF.Round(s.Z, 6);
+      return new Quat { q = q, s = s, t = t };
+    }
+
+    internal static bool alt;
+    static Quaternion SlerpN(Quaternion a, Quaternion b, float t)
+    {
+      var d = Quaternion.Dot(a, b);
+      if (d < 0.0f) { d = -d; b = -b; }
+      var at = MathF.Acos(d);
+      var st = MathF.Sin(at);
+      var af = MathF.Sin((1.0f - t) * at) / st;
+      var bf = MathF.Sin(t * at) / st;
+      return a * af + b * bf;
+    }
+    static Quaternion SlerpF(Quaternion a, Quaternion b, float t)
+    {
+      var d = Quaternion.Dot(a, b);
+      if (d > 0.0f) { d = -d; b = -b; }
+      var at = MathF.Acos(d);
+      var st = MathF.Sin(at);
+      var af = MathF.Sin((1.0f - t) * at) / st;
+      var bf = MathF.Sin(t * at) / st;
+      return a * af + b * bf;
+    }
+
+    public static Matrix4x3 Lerp(Quat a, Quat b, float f)
+    {
+      return (Matrix4x3)
+      (
+        //Matrix4x4.CreateScale(Vector3.Lerp(a.s, b.s, f)) *
+        Matrix4x4.CreateFromQuaternion(
+          alt ? SlerpF(a.q, b.q, f) : SlerpN(a.q, b.q, f)
+          //Quaternion.Slerp(a.q, b.q, f)
+          ) *
+        Matrix4x4.CreateTranslation(Vector3.Lerp(a.t, b.t, f))
+      );
+    }
+    public int Format(Span<char> w, NumberFormatInfo f)
+    {
+      var m = this; var a = w.Length;
+      var n = m.s != Vector3.One ? 10 : m.q != Quaternion.Identity ? 7 : 3;
+      for (int i = 0; i < n; i++)
+      {
+        if (i != 0) { w[0] = ' '; w = w.Slice(1); }
+        ((float*)&m)[i].TryFormat(w, out var c, default, f); w = w.Slice(c);
+      }
+      return a - w.Length;
+    }
+    public static Quat Parse(ReadOnlySpan<char> sp, NumberFormatInfo fi)
+    {
+      var m = default(Quat);
+      int n = SpanTools.paramcount(sp);
+      for (int i = 0; i < n; i++)
+      {
+        var s = SpanTools.paramread(ref sp);
+        var f = float.Parse(s, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands | NumberStyles.AllowExponent, fi);
+        ((float*)&m)[i] = f;
+      }
+      if (n < 10) { m.s = Vector3.One; if (n < 7) m.q = Quaternion.Identity; }
+      return m;
     }
   }
 
@@ -569,6 +683,7 @@ namespace Test
       MenuItem.onclose(Items);
     }
   }
+  [DesignerCategory("Code")]
   public class DX11PropsCtrl : DX11ModelCtrl.PropsCtrl
   {
   }

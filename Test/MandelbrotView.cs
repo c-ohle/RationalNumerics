@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 
 namespace Test
 {
+  [DesignerCategory("Code")]
   public unsafe class MandelbrotView : UserControl
   {
     public MandelbrotView()

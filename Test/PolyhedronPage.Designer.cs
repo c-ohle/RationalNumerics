@@ -54,6 +54,7 @@
       Test.MenuItem _file_open;
       Test.MenuItem _file_save;
       Test.MenuItem _file_saveas;
+      System.Windows.Forms.ToolStripLabel toolStripLabel1;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
@@ -76,17 +77,16 @@
       this.panel1 = new System.Windows.Forms.Panel();
       this.panelStory = new System.Windows.Forms.Panel();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-      this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
       this.btn_back = new System.Windows.Forms.ToolStripButton();
       this.btn_back_ = new System.Windows.Forms.ToolStripButton();
-      this.btn_record = new System.Windows.Forms.ToolStripButton();
       this.btn_play = new System.Windows.Forms.ToolStripButton();
       this.btn_stop = new System.Windows.Forms.ToolStripButton();
       this.btn_forw_ = new System.Windows.Forms.ToolStripButton();
       this.btn_forw = new System.Windows.Forms.ToolStripButton();
       this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-      this.btn_save = new System.Windows.Forms.ToolStripButton();
+      this.btn_record = new System.Windows.Forms.ToolStripButton();
       this.btn_clear = new System.Windows.Forms.ToolStripButton();
+      this.btn_save = new System.Windows.Forms.ToolStripButton();
       this.label3 = new System.Windows.Forms.Label();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
@@ -113,6 +113,7 @@
       _file_open = new Test.MenuItem();
       _file_save = new Test.MenuItem();
       _file_saveas = new Test.MenuItem();
+      toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
       this.contextMenuView.SuspendLayout();
       this.contextMenuPropsView.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -332,6 +333,12 @@
       _file_saveas.Size = new System.Drawing.Size(190, 26);
       _file_saveas.Text = "Save as...";
       // 
+      // toolStripLabel1
+      // 
+      toolStripLabel1.Name = "toolStripLabel1";
+      toolStripLabel1.Size = new System.Drawing.Size(100, 24);
+      toolStripLabel1.Text = " Storyboard";
+      // 
       // label1
       // 
       this.label1.AutoSize = true;
@@ -541,7 +548,7 @@
       this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
       this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
       this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel1,
+            toolStripLabel1,
             this.btn_back,
             this.btn_back_,
             this.btn_play,
@@ -555,16 +562,9 @@
       this.toolStrip1.Location = new System.Drawing.Point(0, 6);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-      this.toolStrip1.ShowItemToolTips = false;
       this.toolStrip1.Size = new System.Drawing.Size(670, 27);
       this.toolStrip1.TabIndex = 0;
       this.toolStrip1.Text = "toolStrip1";
-      // 
-      // toolStripLabel1
-      // 
-      this.toolStripLabel1.Name = "toolStripLabel1";
-      this.toolStripLabel1.Size = new System.Drawing.Size(100, 24);
-      this.toolStripLabel1.Text = " Storyboard";
       // 
       // btn_back
       // 
@@ -575,7 +575,7 @@
       this.btn_back.Name = "btn_back";
       this.btn_back.Size = new System.Drawing.Size(29, 24);
       this.btn_back.Text = "";
-      this.btn_back.ToolTipText = "Start";
+      this.btn_back.ToolTipText = "Begin";
       this.btn_back.Click += new System.EventHandler(this.btn_back_Click);
       // 
       // btn_back_
@@ -588,20 +588,6 @@
       this.btn_back_.Size = new System.Drawing.Size(29, 24);
       this.btn_back_.Text = "⏪";
       this.btn_back_.Click += new System.EventHandler(this.btn_back__Click);
-      // 
-      // btn_record
-      // 
-      this.btn_record.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
-      this.btn_record.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_record.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-      this.btn_record.ForeColor = System.Drawing.Color.Red;
-      this.btn_record.Image = ((System.Drawing.Image)(resources.GetObject("btn_record.Image")));
-      this.btn_record.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.btn_record.Name = "btn_record";
-      this.btn_record.Size = new System.Drawing.Size(29, 24);
-      this.btn_record.Text = "";
-      this.btn_record.ToolTipText = "Record";
-      this.btn_record.Click += new System.EventHandler(this.btn_record_Click);
       // 
       // btn_play
       // 
@@ -625,6 +611,7 @@
       this.btn_stop.Size = new System.Drawing.Size(29, 24);
       this.btn_stop.Text = "";
       this.btn_stop.ToolTipText = "Stop";
+      this.btn_stop.Visible = false;
       this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
       // 
       // btn_forw_
@@ -655,16 +642,19 @@
       this.toolStripSeparator2.Name = "toolStripSeparator2";
       this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
       // 
-      // btn_save
+      // btn_record
       // 
-      this.btn_save.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_save.Image = ((System.Drawing.Image)(resources.GetObject("btn_save.Image")));
-      this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.btn_save.Name = "btn_save";
-      this.btn_save.Size = new System.Drawing.Size(29, 24);
-      this.btn_save.Text = "";
-      this.btn_save.ToolTipText = "Save";
-      this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
+      this.btn_record.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
+      this.btn_record.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.btn_record.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.btn_record.ForeColor = System.Drawing.Color.Red;
+      this.btn_record.Image = ((System.Drawing.Image)(resources.GetObject("btn_record.Image")));
+      this.btn_record.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_record.Name = "btn_record";
+      this.btn_record.Size = new System.Drawing.Size(29, 24);
+      this.btn_record.Text = "";
+      this.btn_record.ToolTipText = "Record";
+      this.btn_record.Click += new System.EventHandler(this.btn_record_Click);
       // 
       // btn_clear
       // 
@@ -676,6 +666,17 @@
       this.btn_clear.Text = "";
       this.btn_clear.ToolTipText = "Clear";
       this.btn_clear.Click += new System.EventHandler(this.btn_clear_Click);
+      // 
+      // btn_save
+      // 
+      this.btn_save.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.btn_save.Image = ((System.Drawing.Image)(resources.GetObject("btn_save.Image")));
+      this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_save.Name = "btn_save";
+      this.btn_save.Size = new System.Drawing.Size(29, 24);
+      this.btn_save.Text = "";
+      this.btn_save.ToolTipText = "Save";
+      this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
       // 
       // label3
       // 
@@ -731,7 +732,6 @@
     private ToolStripSeparator _4;
     private Panel panelStory;
     private ToolStrip toolStrip1;
-    private ToolStripLabel toolStripLabel1;
     private ToolStripButton btn_stop;
     private ToolStripButton btn_play;
     private ToolStripButton btn_back;

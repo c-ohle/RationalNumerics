@@ -15,7 +15,7 @@ namespace Test
     public MainFrame()
     {
       InitializeComponent();
-      labelDebug.Visible = debug;      
+      labelDebug.Visible = debug;
       //tabControl.SelectedIndex = 2;
     }
 #if DEBUG

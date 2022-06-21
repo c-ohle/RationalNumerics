@@ -160,15 +160,15 @@ namespace Test
       if (kl != 0) return null;
       try
       {
-        var d = button_rat.Text == "d";
+        var f = button_rat.Text; var d = f == "d";
         if (!d && digits > 1000) Cursor.Current = Cursors.WaitCursor;
         var a = 0; var b = state == 2 ? list.Count - 1 : list.Count - 2;
         var r = d ? rnd(parsed(a, b)) : parse(a, b);
-        return r.ToString("S" + (digits + 2));
+        return r.ToString((f == "ℚ" ? "L" : "S") + (digits + 2));
         double rnd(double t) { if (digits <= 15) t = Math.Round(t, digits); return t; }
       }
       catch (Exception) { return "NaN"; }
-      finally { if(digits > 1000) Cursor.Current = Cursors.Default; }
+      finally { if (digits > 1000) Cursor.Current = Cursors.Default; }
     }
     rat parse(int a, int b)
     {
@@ -342,7 +342,7 @@ namespace Test
     {
       digits = (int)numericUpDownDigits.Value;
       numericUpDownDigits.ForeColor = digits > 1000 ? Color.Red : Color.Black;
-      numericUpDownDigits.Update();      
+      numericUpDownDigits.Update();
       var s = parse(); if (s != null) { textBox1.Text = s; Debug.Assert(s.Length == textBox1.Text.Length); }
     }
     void numericUpDownRound_KeyDown(object sender, KeyEventArgs e)
@@ -384,7 +384,7 @@ namespace Test
     }
     void button_rat_Click(object sender, EventArgs e)
     {
-      button_rat.Text = button_rat.Text == "ℚ" ? "d" : "ℚ";
+      var s = button_rat.Text; button_rat.Text = s == "ℚ'" ? "ℚ" : s == "ℚ" ? "d" : "ℚ'";
       numericUpDownRound_ValueChanged(sender, e);
     }
     private void oncopy(object sender, EventArgs e)
@@ -393,7 +393,7 @@ namespace Test
     }
     private void onpaste(object sender, EventArgs e)
     {
-      ProcessDialogKey(Keys.Control|Keys.V);
+      ProcessDialogKey(Keys.Control | Keys.V);
     }
     protected override bool ProcessDialogKey(Keys k)
     {

@@ -14,6 +14,7 @@ using Group = Test.DX11ModelCtrl.Group;
 
 namespace Test
 {
+  [DesignerCategory("Code")]
   public unsafe partial class DX11ModelCtrl : DX11Ctrl
   {
     [Browsable(false)]
@@ -919,7 +920,7 @@ namespace Test
           if (!ws) Select(main); ws = false; if (!AllowDrop) return;
           var png = settings.FileFormat == Settings.XFormat.xxzpng;
           var name = main.Name; if (string.IsNullOrEmpty(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) name = main.GetType().Name;
-          var path = Path.Combine(Path.GetTempPath(), name + (png ? ".xxz.png" : ".xxz"));
+          var path = Path.Combine(Path.GetTempPath(), name + ".xxz" + (png ? ".png" : null));
           var xml = Models.Save(new Models.Scene { Unit = scene.Unit, nodes = selection.ToArray() });
           var ppt = pt; xml.SetAttributeValue("pt", Models.format(new Span<float>(&ppt, 3)));
           var data = new DataObject();
@@ -953,7 +954,7 @@ namespace Test
         {
           var path = list[0];
           if (path.EndsWith(".xxz", true, null)) return loadx(XElement.Load(path), ref pt);
-          if (path.EndsWith(".xxz.png", true, null)) using (var str = new FileStream(path, FileMode.Open)) return loadxpng(str, ref pt);
+          if (path.EndsWith(".png", true, null) && path.Contains(".xxz")) using (var str = new FileStream(path, FileMode.Open)) return loadxpng(str, ref pt);
           //else return null;
         }
         if (data.GetDataPresent("UniformResourceLocatorW"))
@@ -963,7 +964,7 @@ namespace Test
           var par = txt.Split('\0'); if (par.Length == 0) return null;
           var uri = new Uri(par[0]); var path = uri.LocalPath;
           if (!path.EndsWith(".png", true, null)) return null;
-          if (path.EndsWith(".xxz.png", true, null))
+          if (path.EndsWith(".png", true, null) && path.Contains(".xxz"))
           {
             if (uri.IsFile) using (var str = new FileStream(uri.LocalPath, FileMode.Open)) return loadxpng(str, ref pt);
             var client = GetHttpClient();
@@ -1146,11 +1147,49 @@ namespace Test
     }
     public abstract class AniLine
     {
-      public override string ToString() => GetType().Name;//"Animation Line";
       internal abstract Node target { get; }
-      internal readonly List<int> times = new(2);
-      internal abstract bool lerp(int time);
-      protected static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
+      internal readonly List<int> times = new(2); List<float>? gammas;
+      static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
+      internal bool lerp(int time)
+      {
+        int x = 0;
+        for (int i = 0, t, dt; i < times.Count; i += 2, x++)
+        {
+          if (time <= (t = times[i])) break;
+          if (time <= t + (dt = times[i + 1]))
+          {
+            float f = (float)(time - t) / dt, g;
+            if (gammas != null && x < gammas.Count && (g = gammas[x]) != 0)
+              f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, g);
+            if (f < 0) { }
+            if (f > 1) { }
+            return lerp(x, f);
+          }
+        }
+        if (x == times.Count >> 1)
+          return lerp(x - 1, 1);
+        return lerp(x, 0);
+      }
+      internal abstract bool lerp(int x, float f);
+      internal virtual float get(int was, int i)
+      {
+        if (was == 0) { if (gammas != null && i < gammas.Count) return gammas[i]; return 0; }
+        return 0;
+      }
+      internal virtual void set(int was, int i, float v)
+      {
+        if (was == 0)
+        {
+          if (i >= (gammas ??= new()).Count) gammas.AddRange(Enumerable.Repeat(0f, i + 1 - gammas.Count));
+          gammas[i] = v; return;
+        }
+        if (was == 8)
+        {
+          Debug.Assert(times.Count > 2);
+          times.RemoveRange(i, 2);
+          if (gammas != null && (i >> 1) < gammas.Count) gammas.RemoveAt(i >> 1);
+        }
+      }
       protected abstract int write(int i, Span<char> s, NumberFormatInfo f);
       protected abstract void read(ReadOnlySpan<char> s, NumberFormatInfo f);
       protected internal virtual void serial(XElement e, Node? load)
@@ -1174,13 +1213,29 @@ namespace Test
           }
           ts = s.Slice(0, s.Length - w.Length);
           e.SetAttributeValue("line", ts.ToString());
+          if (gammas != null)  //todo: check zeros
+          {
+            w = s;
+            for (int i = 0; i < gammas.Count; i++)
+            {
+              if (i != 0) { w[0] = ' '; w = w.Slice(1); }
+              gammas[i].TryFormat(w, out var c, default, fi); w = w.Slice(c);
+            }
+            ts = s.Slice(0, s.Length - w.Length);
+            e.SetAttributeValue("gammas", ts.ToString());
+          }
         }
         else
         {
-          var a = e.Attribute("times").Value.AsSpan().Trim();
-          while (a.Length != 0) { var t = Models.token(ref a); times.Add(int.Parse(t)); }
-          a = e.Attribute("line").Value.AsSpan().Trim();
-          while (token(ref a, ';', out var b)) read(b, fi);
+          var s = e.Attribute("times").Value.AsSpan().Trim();
+          while (s.Length != 0) { var t = Models.token(ref s); times.Add(int.Parse(t)); }
+          s = e.Attribute("line").Value.AsSpan().Trim();
+          while (token(ref s, ';', out var b)) read(b, fi);
+          if (e.Attribute("gammas") is XAttribute a)
+          {
+            gammas = new(); s = a.Value.AsSpan().Trim();
+            while (s.Length != 0) { var t = Models.token(ref s); gammas.Add(float.Parse(t, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, fi)); }
+          }
           static bool token(ref ReadOnlySpan<char> a, char c, out ReadOnlySpan<char> b)
           {
             if (a.Length == 0) { b = a; return false; }
@@ -1192,31 +1247,29 @@ namespace Test
     }
     public class AniSet
     {
-      internal readonly List<AniLine> list = new();
-      internal int time, endtime;
+      internal readonly List<AniLine> anilines = new();
+      internal int time, maxtime;
       internal int getendtime()
       {
         var max = 0;
-        for (int i = 0; i < list.Count; i++)
+        for (int i = 0; i < anilines.Count; i++)
         {
-          var t = list[i].times;
+          var t = anilines[i].times;
           max = Math.Max(max, t[t.Count - 2] + t[t.Count - 1]);
         }
         return max;
       }
       internal void clear()
       {
-        time = endtime = 0; list.Clear();
+        time = maxtime = 0; anilines.Clear();
       }
-      public override string ToString() => GetType().Name; //"Animation Set";
-      public string? Name { get; set; }
-      public float Gamma { get; set; }
+      internal bool ani(int t)
+      {
+        var inf = false;
+        for (int i = 0, n = anilines.Count; i < n; i++) inf |= anilines[i].lerp(t);
+        time = t; return inf;
+      }
     }
-    //public class AniCtrl
-    //{
-    //  public override string ToString() => GetType().Name;//"Animation Control";
-    //  internal readonly List<AniSet> list = new();
-    //}
     sealed class UndoTrans : Undo
     {
       readonly Group p; Matrix4x3 m;
@@ -1225,7 +1278,7 @@ namespace Test
       internal static UndoTrans? get(Group p, in Matrix4x3 m) => p.Transform != m ? new UndoTrans(p, m) : null;
       internal override void link(AniSet set, int time)
       {
-        var l = set.list;
+        var l = set.anilines;
         for (int i = 0; i < l.Count; i++)
           if (l[i] is Line t && t.p == p)
           {
@@ -1237,31 +1290,15 @@ namespace Test
         pl.times.Add(time); pl.times.Add(900);
         pl.list.Add(m); pl.list.Add(p.Transform); l.Add(pl);
       }
+
       internal class Line : AniLine
       {
         internal override Node target => p;
-        internal Group? p; internal readonly List<Matrix4x3> list = new(2);
-        internal override bool lerp(int time)
+        internal Group? p; internal readonly List<Quat> list = new(2);
+        internal override bool lerp(int x, float f)
         {
-          int x = 0;
-          for (int i = 0, t, dt; i < times.Count; i += 2, x++)
-          {
-            if (time <= (t = times[i])) break;
-            if (time <= t + (dt = times[i + 1]))
-            {
-              var f = (float)(time - t) / dt;
-              if (true) f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, 4);
-              //p.Transform = Matrix4x3.Lerp(matri[x], matri[x + 1], f);              
-              Matrix4x4.Decompose(list[x + 0], out var s1, out var q1, out var t1);
-              Matrix4x4.Decompose(list[x + 1], out var s2, out var q2, out var t2);
-              var tm =
-                Matrix4x4.CreateFromQuaternion(Quaternion.Lerp(q1, q2, f)) *
-                Matrix4x4.CreateTranslation(Vector3.Lerp(t1, t2, f));
-              p.Transform = (Matrix4x3)tm;
-              return true;
-            }
-          }
-          var m = list[x]; if (p.Transform == m) return false;
+          var m = Quat.Lerp(list[x + 0], list[x + 1], f);
+          if (m == p.Transform) return false;
           p.Transform = m; return true;
         }
         protected internal override void serial(XElement e, Node? load)
@@ -1271,11 +1308,21 @@ namespace Test
         }
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
         {
-          list[i].TryFormat(w, out var c, default, f); return c;
+          return list[i].Format(w, f);
+          //list[i].TryFormat(w, out var c, default, f); return c;
         }
         protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f)
         {
-          list.Add(Matrix4x3.Parse(s, f));
+          list.Add(Quat.Parse(s, f));
+        }
+        internal override float get(int was, int i)
+        {
+          return base.get(was, i);
+        }
+        internal override void set(int was, int i, float v)
+        {
+          base.set(was, i, v);
+          if (was == 8) list.RemoveAt(i >> 1);
         }
       }
     }
@@ -1289,7 +1336,7 @@ namespace Test
       }
       internal override void link(AniSet set, int time)
       {
-        var l = set.list;
+        var l = set.anilines;
         var pd = p.GetType().GetProperty(s); var pt = pd.PropertyType;
         if (pt == typeof(Color)) ColorLine.link<ColorLine>(l, p, s, (Color)v, time, 500);
         else if (pt == typeof(float)) FloatLine.link<FloatLine>(l, p, s, (float)v, time, 500);
@@ -1322,22 +1369,10 @@ namespace Test
         internal readonly List<T> list = new(2); PropAcc<T>? acc;
         protected abstract bool equals(T a, T b);
         protected abstract T lerp(T a, T b, float f);
-        internal override bool lerp(int time)
+        internal override bool lerp(int x, float f)
         {
-          int x = 0;
-          for (int i = 0, t, dt; i < times.Count; i += 2, x++)
-          {
-            if (time <= (t = times[i])) break;
-            if (time <= t + (dt = times[i + 1]))
-            {
-              var f = (float)(time - t) / dt;
-              if (true) f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, 4);
-              acc.set(p, lerp(list[x + 0], list[x + 1], f));
-              return true;
-            }
-          }
-          var b = list[x];
-          if (equals(acc.get(p), b)) return false;
+          var a = acc.get(p); var b = lerp(list[x + 0], list[x + 1], f);
+          if (equals(a, b)) return false;
           acc.set(p, b); return true;
         }
         private void setacc(string s)
@@ -1352,13 +1387,22 @@ namespace Test
           else { this.p = load; var a = e.Attribute("prop"); setacc(a.Value); }
           base.serial(e, load);
         }
+        internal override float get(int was, int i)
+        {
+          return base.get(was, i);
+        }
+        internal override void set(int was, int i, float v)
+        {
+          base.set(was, i, v);
+          if (was == 8) list.RemoveAt(i >> 1);
+        }
       }
       internal sealed class ColorLine : PropLine<Color>
       {
         protected override bool equals(Color a, Color b) => a == b;
         protected override Color lerp(Color a, Color b, float f)
         {
-          var v = Vector4.Min(Vector4.Lerp(new Vector4(a.A, a.R, a.G, a.B), new Vector4(b.A, b.R, b.G, b.B), f), new Vector4(255));
+          var v = Vector4.Lerp(new Vector4(a.A, a.R, a.G, a.B), new Vector4(b.A, b.R, b.G, b.B), f);
           return Color.FromArgb((int)v.X, (int)v.Y, (int)v.Z, (int)v.W);
         }
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
@@ -1448,24 +1492,6 @@ namespace Test
           list.Add(int.Parse(s));
         }
       }
-
-      //class Line : AniLine
-      //{
-      //  internal object p; internal System.Reflection.PropertyInfo s;
-      //  internal readonly List<object> list = new(2);
-      //  internal override bool lerp(int time)
-      //  {
-      //    int x = 0;
-      //    for (int i = 0, t, dt; i < times.Count; i += 2, x++)
-      //    {
-      //      if (time <= (t = times[i])) break;
-      //      if (time <= t + (dt = times[i + 1])) return false;
-      //    }
-      //    var a = s.GetValue(p); var b = list[x];
-      //    if (a.Equals(b)) return false;
-      //    s.SetValue(p, b); return true;
-      //  }
-      //}
     }
     sealed class UndoNodes : Undo
     {
@@ -1688,7 +1714,7 @@ namespace Test
         {
           if (btnprops.Checked) return; btnprops.Checked = true;
           btnsetting.Checked = btntoolbox.Checked = false; showtoolbox(false);
-          oninv(); combo.Items.Clear(); grid.Focus();
+          oninv(); combo.Items.Clear(); //grid.Focus();
           //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
         };
         btnsetting.Click += (p, e) =>
@@ -1710,9 +1736,6 @@ namespace Test
         var ts = (ToolStrip)cc[3]; var it = ts.Items; ts.RenderMode = ToolStripRenderMode.Professional;
         it.Add(new ToolStripSeparator());
         it.Add(btnprops); it.Add(btnsetting); it.Add(btnedit); it.Add(btnstory); it.Add(btntoolbox);
-
-        //Target.GotFocus += (_, _) => { if (Target.extrasel.p != null) update = true; };
-        //Target.LostFocus += (_, _) => { if (Target.extrasel.p != null) update = true; };
       }
       protected override void OnVisibleChanged(EventArgs e)
       {
@@ -1734,10 +1757,12 @@ namespace Test
       {
         if (!update) return; update = false; // Debug.WriteLine($"onidle {ms}");
         if (combo.DroppedDown || !btnprops.Checked) return;
+        //if (ContainsFocus) return;
         var list = Target.selection; var ext = Target.extrasel;
+        if (ext.p != null && this.ContainsFocus) return;
         var csel = combo.SelectedItem;
         var disp =
-          (ext.p != null && (ext.view.ContainsFocus || this.ContainsFocus) ? ext.p : null) ??
+          ext.p != null && ext.view.ContainsFocus ? ext.p :
           (list.Count != 0 ? (object)list[list.Count - 1] :
            csel != null && csel is not Node ? csel : Target.Scene);
         if (csel != disp && !combo.ContainsFocus) fillcombo(csel = disp);
@@ -1759,16 +1784,19 @@ namespace Test
         var items = combo.Items; comboupdate = true;
         items.Clear(); var node = disp as Node;
         if (node == null) items.Add(disp); // extrasel
-        items.Add(Target.Scene);
-        if (node != null)
+        else
         {
-          recu(items, node);
-          static void recu(ComboBox.ObjectCollection items, Node node)
+          items.Add(Target.Scene);
+          if (node != null)
           {
-            if (node.parent != null) recu(items, node.parent);
-            var a = node.nodes; if (a == null) return;
-            for (int i = 0, x = items.IndexOf(node); i < a.Length; i++)
-              items.Insert(++x, a[i]);
+            recu(items, node);
+            static void recu(ComboBox.ObjectCollection items, Node node)
+            {
+              if (node.parent != null) recu(items, node.parent);
+              var a = node.nodes; if (a == null) return;
+              for (int i = 0, x = items.IndexOf(node); i < a.Length; i++)
+                items.Insert(++x, a[i]);
+            }
           }
         }
         combo.SelectedItem = disp; combo.Update(); comboupdate = false;
@@ -1788,7 +1816,7 @@ namespace Test
               ScriptErrorsSuppressed = true,
               WebBrowserShortcutsEnabled = false,
               IsWebBrowserContextMenuEnabled = false,
-              ScrollBarsEnabled = false,
+              //ScrollBarsEnabled = false,
               Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat/index.htm"),
               //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat/index.htm"),
             });
@@ -2001,11 +2029,11 @@ namespace Test
             if (unit != 0) e.SetAttributeValue("unit", unit);
             if (ambient != 0) e.SetAttributeValue("ambient", ambient.ToString("X8"));
             if (Shadows) e.SetAttributeValue("shadows", true);
-            if (aniset != null && aniset.list.Count != 0)
+            if (aniset != null && aniset.anilines.Count != 0)
             {
               var set = new XElement("aniset"); int id = 0;
               if (aniset.time != 0) set.SetAttributeValue("time", aniset.time);
-              foreach (var ani in aniset.list)
+              foreach (var ani in aniset.anilines)
               {
                 var dest = find(e, ani.target); if (dest == null) continue;
                 var uid = dest.Attribute("id");
@@ -2034,7 +2062,7 @@ namespace Test
                 var t = find(e, a.Value); if (t == null) continue;
                 var u = s2t(ani.Name.LocalName); if (u == null) continue;
                 var v = (AniLine)Activator.CreateInstance(u);
-                v.serial(ani, t); this.aniset.list.Add(v);
+                v.serial(ani, t); this.aniset.anilines.Add(v);
               }
               static Node? find(XElement root, string id) => root.DescendantsAndSelf().FirstOrDefault(p => (string?)p.Attribute("id") == id)?.Annotation(typeof(Node)) as Node;
             }
@@ -3408,27 +3436,39 @@ namespace Test
       }
       #endregion
     }
-    static class SpanTools
+  }
+
+  static unsafe class SpanTools
+  {
+    internal static Vector3 readv3(ReadOnlySpan<char> s, NumberFormatInfo? fi)
     {
-      internal static Vector3 readv3(ReadOnlySpan<char> s, NumberFormatInfo? fi)
-      {
-        Vector3 v; Models.parse(s.Trim(), new Span<float>(&v, 3)); return v;
-      }
-      internal static Vector2 readv2(ReadOnlySpan<char> s, NumberFormatInfo? fi)
-      {
-        Vector2 v; Models.parse(s.Trim(), new Span<float>(&v, 2)); return v;
-      }
-      internal static int write(Vector2 p, Span<char> w, NumberFormatInfo f)
-      {
-        p.X.TryFormat(w, out var a, default, f); w[a] = ' '; w = w.Slice(a + 1);
-        p.Y.TryFormat(w, out var b, default, f); return a + b + 1;
-      }
-      internal static int write(Vector3 p, Span<char> w, NumberFormatInfo f)
-      {
-        p.X.TryFormat(w, out var a, default, f); w[a] = ' '; w = w.Slice(a + 1);
-        p.Y.TryFormat(w, out var b, default, f); w[b] = ' '; w = w.Slice(b + 1);
-        p.Z.TryFormat(w, out var c, default, f); return a + b + c + 2;
-      }
+      Vector3 v; DX11ModelCtrl.Models.parse(s.Trim(), new Span<float>(&v, 3)); return v;
+    }
+    internal static Vector2 readv2(ReadOnlySpan<char> s, NumberFormatInfo? fi)
+    {
+      Vector2 v; DX11ModelCtrl.Models.parse(s.Trim(), new Span<float>(&v, 2)); return v;
+    }
+    internal static int write(Vector2 p, Span<char> w, NumberFormatInfo f)
+    {
+      p.X.TryFormat(w, out var a, default, f); w[a] = ' '; w = w.Slice(a + 1);
+      p.Y.TryFormat(w, out var b, default, f); return a + b + 1;
+    }
+    internal static int write(Vector3 p, Span<char> w, NumberFormatInfo f)
+    {
+      p.X.TryFormat(w, out var a, default, f); w[a] = ' '; w = w.Slice(a + 1);
+      p.Y.TryFormat(w, out var b, default, f); w[b] = ' '; w = w.Slice(b + 1);
+      p.Z.TryFormat(w, out var c, default, f); return a + b + c + 2;
+    }
+    internal static int paramcount(ReadOnlySpan<char> sp)
+    {
+      Debug.Assert(sp == sp.Trim());
+      var n = 0; for (; sp.Length != 0; paramread(ref sp), n++) ; return n;
+    }
+    internal static ReadOnlySpan<char> paramread(ref ReadOnlySpan<char> sp)
+    {
+      Debug.Assert(sp == sp.Trim());
+      int i = 0; for (; i < sp.Length && !(char.IsWhiteSpace(sp[i])/* || sp[i] == ';'*/); i++) ;
+      var w = sp.Slice(0, i); sp = sp.Slice(i < sp.Length ? i + 1 : i).TrimStart(); return w;
     }
   }
 }
