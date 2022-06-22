@@ -55,19 +55,20 @@
       Test.MenuItem _file_save;
       Test.MenuItem _file_saveas;
       System.Windows.Forms.ToolStripLabel toolStripLabel1;
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
+      Test.MenuItem _ggroup;
+      Test.MenuItem _ungroup;
+      System.Windows.Forms.ToolStripSeparator sep1;
+      Test.MenuItem _band;
+      Test.MenuItem _bdiiff;
+      Test.MenuItem _bint;
+      Test.MenuItem _bhalf;
+      System.Windows.Forms.ToolStripSeparator sep2;
+      Test.MenuItem _center;
+      Test.MenuItem _check;
+      System.Windows.Forms.ToolStripSeparator sep3;
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
       this._model = new Test.MenuItem();
-      this._ggroup = new Test.MenuItem();
-      this._ungroup = new Test.MenuItem();
-      this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-      this._band = new Test.MenuItem();
-      this._bdiiff = new Test.MenuItem();
-      this._bint = new Test.MenuItem();
-      this._bhalf = new Test.MenuItem();
-      this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-      this._center = new Test.MenuItem();
       this._3 = new System.Windows.Forms.ToolStripSeparator();
       this._4 = new System.Windows.Forms.ToolStripSeparator();
       this.modelView = new Test.DX11ModelCtrl();
@@ -114,6 +115,17 @@
       _file_save = new Test.MenuItem();
       _file_saveas = new Test.MenuItem();
       toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+      _ggroup = new Test.MenuItem();
+      _ungroup = new Test.MenuItem();
+      sep1 = new System.Windows.Forms.ToolStripSeparator();
+      _band = new Test.MenuItem();
+      _bdiiff = new Test.MenuItem();
+      _bint = new Test.MenuItem();
+      _bhalf = new Test.MenuItem();
+      sep2 = new System.Windows.Forms.ToolStripSeparator();
+      _center = new Test.MenuItem();
+      _check = new Test.MenuItem();
+      sep3 = new System.Windows.Forms.ToolStripSeparator();
       this.contextMenuView.SuspendLayout();
       this.contextMenuPropsView.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -339,6 +351,86 @@
       toolStripLabel1.Size = new System.Drawing.Size(100, 24);
       toolStripLabel1.Text = " Storyboard";
       // 
+      // _ggroup
+      // 
+      _ggroup.Id = 2006;
+      _ggroup.Name = "_ggroup";
+      _ggroup.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+      _ggroup.Size = new System.Drawing.Size(253, 26);
+      _ggroup.Text = "Group";
+      // 
+      // _ungroup
+      // 
+      _ungroup.Id = 2007;
+      _ungroup.Name = "_ungroup";
+      _ungroup.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
+      _ungroup.Size = new System.Drawing.Size(253, 26);
+      _ungroup.Text = "Ungroup";
+      // 
+      // sep1
+      // 
+      sep1.Name = "sep1";
+      sep1.Size = new System.Drawing.Size(250, 6);
+      // 
+      // _band
+      // 
+      _band.Id = 2050;
+      _band.Name = "_band";
+      _band.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.U)));
+      _band.Size = new System.Drawing.Size(253, 26);
+      _band.Text = "Union A Ս B";
+      // 
+      // _bdiiff
+      // 
+      _bdiiff.Id = 2051;
+      _bdiiff.Name = "_bdiiff";
+      _bdiiff.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D)));
+      _bdiiff.Size = new System.Drawing.Size(253, 26);
+      _bdiiff.Text = "Difference A / B";
+      // 
+      // _bint
+      // 
+      _bint.Id = 2052;
+      _bint.Name = "_bint";
+      _bint.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
+      _bint.Size = new System.Drawing.Size(253, 26);
+      _bint.Text = "Intersection A Ո B";
+      // 
+      // _bhalf
+      // 
+      _bhalf.Id = 2053;
+      _bhalf.Name = "_bhalf";
+      _bhalf.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.H)));
+      _bhalf.Size = new System.Drawing.Size(253, 26);
+      _bhalf.Text = "Halfspace";
+      // 
+      // sep2
+      // 
+      sep2.Name = "sep2";
+      sep2.Size = new System.Drawing.Size(250, 6);
+      // 
+      // _center
+      // 
+      _center.Id = 2056;
+      _center.Name = "_center";
+      _center.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.C)));
+      _center.Size = new System.Drawing.Size(253, 26);
+      _center.Text = "Center";
+      // 
+      // _check
+      // 
+      _check.Id = 2054;
+      _check.Name = "_check";
+      _check.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
+      _check.Size = new System.Drawing.Size(253, 26);
+      _check.Text = "Mesh Info...";
+      // 
+      // sep3
+      // 
+      sep3.Name = "sep3";
+      sep3.Size = new System.Drawing.Size(250, 6);
+      // 
       // label1
       // 
       this.label1.AutoSize = true;
@@ -371,91 +463,26 @@
             this._4,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(232, 340);
+      this.contextMenuView.Size = new System.Drawing.Size(232, 368);
       // 
       // _model
       // 
       this._model.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._ggroup,
-            this._ungroup,
-            this.toolStripSeparator1,
-            this._band,
-            this._bdiiff,
-            this._bint,
-            this._bhalf,
-            this.toolStripSeparator3,
-            this._center});
+            _ggroup,
+            _ungroup,
+            sep1,
+            _band,
+            _bdiiff,
+            _bint,
+            _bhalf,
+            sep2,
+            _center,
+            sep3,
+            _check});
       this._model.Id = 0;
       this._model.Name = "_model";
       this._model.Size = new System.Drawing.Size(231, 24);
       this._model.Text = "Model";
-      // 
-      // _ggroup
-      // 
-      this._ggroup.Id = 2006;
-      this._ggroup.Name = "_ggroup";
-      this._ggroup.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-      this._ggroup.Size = new System.Drawing.Size(253, 26);
-      this._ggroup.Text = "Group";
-      // 
-      // _ungroup
-      // 
-      this._ungroup.Id = 2007;
-      this._ungroup.Name = "_ungroup";
-      this._ungroup.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
-      this._ungroup.Size = new System.Drawing.Size(253, 26);
-      this._ungroup.Text = "Ungroup";
-      // 
-      // toolStripSeparator1
-      // 
-      this.toolStripSeparator1.Name = "toolStripSeparator1";
-      this.toolStripSeparator1.Size = new System.Drawing.Size(250, 6);
-      // 
-      // _band
-      // 
-      this._band.Id = 2050;
-      this._band.Name = "_band";
-      this._band.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.U)));
-      this._band.Size = new System.Drawing.Size(253, 26);
-      this._band.Text = "Union A Ս B";
-      // 
-      // _bdiiff
-      // 
-      this._bdiiff.Id = 2051;
-      this._bdiiff.Name = "_bdiiff";
-      this._bdiiff.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D)));
-      this._bdiiff.Size = new System.Drawing.Size(253, 26);
-      this._bdiiff.Text = "Difference A / B";
-      // 
-      // _bint
-      // 
-      this._bint.Id = 2052;
-      this._bint.Name = "_bint";
-      this._bint.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
-      this._bint.Size = new System.Drawing.Size(253, 26);
-      this._bint.Text = "Intersection A Ո B";
-      // 
-      // _bhalf
-      // 
-      this._bhalf.Id = 2053;
-      this._bhalf.Name = "_bhalf";
-      this._bhalf.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.H)));
-      this._bhalf.Size = new System.Drawing.Size(253, 26);
-      this._bhalf.Text = "Halfspace";
-      // 
-      // toolStripSeparator3
-      // 
-      this.toolStripSeparator3.Name = "toolStripSeparator3";
-      this.toolStripSeparator3.Size = new System.Drawing.Size(250, 6);
-      // 
-      // _center
-      // 
-      this._center.Id = 2056;
-      this._center.Name = "_center";
-      this._center.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.C)));
-      this._center.Size = new System.Drawing.Size(253, 26);
-      this._center.Text = "Center";
       // 
       // _3
       // 
@@ -570,7 +597,7 @@
       // 
       this.btn_back.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_back.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_back.Image = ((System.Drawing.Image)(resources.GetObject("btn_back.Image")));
+      this.btn_back.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
       this.btn_back.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_back.Name = "btn_back";
       this.btn_back.Size = new System.Drawing.Size(29, 24);
@@ -582,7 +609,6 @@
       // 
       this.btn_back_.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.btn_back_.Font = new System.Drawing.Font("Segoe UI Symbol", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-      this.btn_back_.Image = ((System.Drawing.Image)(resources.GetObject("btn_back_.Image")));
       this.btn_back_.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_back_.Name = "btn_back_";
       this.btn_back_.Size = new System.Drawing.Size(29, 24);
@@ -593,7 +619,6 @@
       // 
       this.btn_play.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_play.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_play.Image = ((System.Drawing.Image)(resources.GetObject("btn_play.Image")));
       this.btn_play.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_play.Name = "btn_play";
       this.btn_play.Size = new System.Drawing.Size(29, 24);
@@ -605,7 +630,6 @@
       // 
       this.btn_stop.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_stop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_stop.Image = ((System.Drawing.Image)(resources.GetObject("btn_stop.Image")));
       this.btn_stop.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_stop.Name = "btn_stop";
       this.btn_stop.Size = new System.Drawing.Size(29, 24);
@@ -618,7 +642,6 @@
       // 
       this.btn_forw_.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.btn_forw_.Font = new System.Drawing.Font("Segoe UI Symbol", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-      this.btn_forw_.Image = ((System.Drawing.Image)(resources.GetObject("btn_forw_.Image")));
       this.btn_forw_.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_forw_.Name = "btn_forw_";
       this.btn_forw_.Size = new System.Drawing.Size(29, 24);
@@ -629,7 +652,6 @@
       // 
       this.btn_forw.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
       this.btn_forw.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_forw.Image = ((System.Drawing.Image)(resources.GetObject("btn_forw.Image")));
       this.btn_forw.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_forw.Name = "btn_forw";
       this.btn_forw.Size = new System.Drawing.Size(29, 24);
@@ -648,7 +670,6 @@
       this.btn_record.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
       this.btn_record.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.btn_record.ForeColor = System.Drawing.Color.Red;
-      this.btn_record.Image = ((System.Drawing.Image)(resources.GetObject("btn_record.Image")));
       this.btn_record.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_record.Name = "btn_record";
       this.btn_record.Size = new System.Drawing.Size(29, 24);
@@ -659,7 +680,6 @@
       // btn_clear
       // 
       this.btn_clear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_clear.Image = ((System.Drawing.Image)(resources.GetObject("btn_clear.Image")));
       this.btn_clear.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_clear.Name = "btn_clear";
       this.btn_clear.Size = new System.Drawing.Size(29, 24);
@@ -670,7 +690,6 @@
       // btn_save
       // 
       this.btn_save.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_save.Image = ((System.Drawing.Image)(resources.GetObject("btn_save.Image")));
       this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_save.Name = "btn_save";
       this.btn_save.Size = new System.Drawing.Size(29, 24);
@@ -718,17 +737,8 @@
     private ContextMenu contextMenuPropsView;
     private Panel panel1;
     private Label label3;
-    private MenuItem _ggroup;
-    private MenuItem _ungroup;
-    private ToolStripSeparator toolStripSeparator1;
     private ToolStripSeparator _3;
     private MenuItem _model;
-    private MenuItem _band;
-    private MenuItem _bdiiff;
-    private MenuItem _bint;
-    private MenuItem _bhalf;
-    private ToolStripSeparator toolStripSeparator3;
-    private MenuItem _center;
     private ToolStripSeparator _4;
     private Panel panelStory;
     private ToolStrip toolStrip1;

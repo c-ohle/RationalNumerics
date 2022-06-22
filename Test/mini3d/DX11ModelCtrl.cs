@@ -39,7 +39,7 @@ namespace Test
     Models.Scene? scene; Settings? _settings;
     Models.Camera? camera; Models.Light? light;
     List<Models.Geometry>? transp;
-    List<Group>? selection; internal (Control view, object? p) extrasel;
+    internal List<Group>? selection; internal (Control view, object? p) extrasel;
     internal List<Undo>? undos; internal int undoi;  //todo: private
     Action<DC>? RenderClient; List<string>? infos; //string? adapter;
     int flags = 0x01 | 0x02 | 0x04 | 0x10; // 0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients, 0x20:fps
@@ -95,8 +95,8 @@ namespace Test
         {
           dc.Projection = !camera.GetTransform() *
             Matrix4x4.CreatePerspectiveFieldOfView(camera.Fov * (MathF.PI / 180), size.X / size.Y, camera.Near, camera.Far);
-          var lightdir = light != null ? light.GetTransform()[2] : default;// Vector3.Normalize(new Vector3(+1, -0.5f, -2));
-          var shadows = scene.Shadows;// (scene.flags & 0x20) != 0;// (flags & 0x100) != 0;
+          var lightdir = light != null ? light.GetTransform()[2] : default;
+          var shadows = scene.Shadows;
           dc.Light = shadows ? lightdir * 0.3f : lightdir;
           dc.Ambient = scene.ambient;
           dc.State = State.Default3D;
@@ -286,7 +286,7 @@ namespace Test
         case 2051: return OnIntersect(id, test); // Difference
         case 2052: return OnIntersect(id, test); // Intersection
         case 2053: return OnIntersect(id, test); // Halfspace"
-        case 2054: return OnCheckMash(test);
+        //case 2054: return OnCheckMash(test);
         //case 2055: return OnConvert(test);
         case 2056: return OnCenter(test);
         case 2057: return OnSelectAll(test);
@@ -400,7 +400,7 @@ namespace Test
     {
       if (selection.Count != 1 || selection[0] is not Models.Geometry geo) return 0;
       if (test != null) return 1;
-      check(geo); return 0;
+      check(geo); return 1;
       static void check(Models.Geometry geo)
       {
         Cursor.Current = Cursors.WaitCursor;
@@ -504,6 +504,7 @@ namespace Test
     bool IsSelect(Group node) => selection.Contains(node);
     public void Select(object? p, bool toggle = false)
     {
+      if (extrasel.view == this) { extrasel = default; Invalidate(); } //props
       if (p == null) { if (selection.Count != 0) { selection.Clear(); Invalidate(); } return; }
       if (p is Group node)
       {
@@ -1181,13 +1182,19 @@ namespace Test
         if (was == 0)
         {
           if (i >= (gammas ??= new()).Count) gammas.AddRange(Enumerable.Repeat(0f, i + 1 - gammas.Count));
-          gammas[i] = v; return;
+          gammas[i] = v; gtrim(ref gammas);
         }
         if (was == 8)
         {
           Debug.Assert(times.Count > 2);
           times.RemoveRange(i, 2);
-          if (gammas != null && (i >> 1) < gammas.Count) gammas.RemoveAt(i >> 1);
+          if (gammas != null && (i >> 1) < gammas.Count) gammas.RemoveAt(i >> 1); gtrim(ref gammas);
+        }
+        static void gtrim(ref List<float>? a)
+        {
+          if (a == null) return;
+          for (int x; a.Count != 0 && a[x = a.Count - 1] == 0; a.RemoveAt(x)) ;
+          if (a.Count == 0) a = null;
         }
       }
       protected abstract int write(int i, Span<char> s, NumberFormatInfo f);
@@ -1265,9 +1272,9 @@ namespace Test
       }
       internal bool ani(int t)
       {
-        var inf = false;
+        time = t; var inf = false;
         for (int i = 0, n = anilines.Count; i < n; i++) inf |= anilines[i].lerp(t);
-        time = t; return inf;
+        return inf;
       }
     }
     sealed class UndoTrans : Undo
@@ -1297,7 +1304,7 @@ namespace Test
         internal Group? p; internal readonly List<Quat> list = new(2);
         internal override bool lerp(int x, float f)
         {
-          var m = Quat.Lerp(list[x + 0], list[x + 1], f);
+          var m = Quat.Slerp(list[x + 0], list[x + 1], f);
           if (m == p.Transform) return false;
           p.Transform = m; return true;
         }
@@ -1323,6 +1330,10 @@ namespace Test
         {
           base.set(was, i, v);
           if (was == 8) list.RemoveAt(i >> 1);
+          if (was == 5)
+          {
+            list[i] = p.Transform;
+          }
         }
       }
     }
@@ -1528,6 +1539,25 @@ namespace Test
     }
     #endregion
 
+    AniSet? running;
+    void animate()
+    {
+      if (running.ani(Math.Min(running.time + 30, running.maxtime))) Invalidate();
+      if (running.time == running.maxtime) RunningAnimation = null;
+    }
+    internal AniSet? RunningAnimation
+    {
+      get => running;
+      set
+      {
+        if (value == running) return;
+        if (running != null) { Animations -= animate; running = null; }
+        if (value == null) return;
+        if (value.maxtime == 0) value.maxtime = value.getendtime();
+        running = value; Animations += animate;
+      }
+    }
+
     public class Settings
     {
       internal Settings(DX11ModelCtrl p) { this.p = p; }
@@ -1536,27 +1566,27 @@ namespace Test
       [Category("\t\t\tSelection"), DisplayName("Bounding Box"), DefaultValue(true)]
       public bool sel_box
       {
-        get => (p.flags & 0x01) != 0; set { p.flags = (p.flags & ~0x01) | (value ? 0x01 : 0); p.Inval(); }
+        get => (p.flags & 0x01) != 0; set { p.flags = (p.flags & ~0x01) | (value ? 0x01 : 0); p.Invaliated(); }
       }
       [Category("\t\t\tSelection"), DisplayName("Pivot Coords"), DefaultValue(true)]
       public bool sel_pivot
       {
-        get => (p.flags & 0x02) != 0; set { p.flags = (p.flags & ~0x02) | (value ? 0x02 : 0); p.Inval(); }
+        get => (p.flags & 0x02) != 0; set { p.flags = (p.flags & ~0x02) | (value ? 0x02 : 0); p.Invaliated(); }
       }
       [Category("\t\t\tSelection"), DisplayName("Wireframe"), DefaultValue(false)]
       public bool sel_wire
       {
-        get => (p.flags & 0x04) != 0; set { p.flags = (p.flags & ~0x04) | (value ? 0x04 : 0); p.Inval(); }
+        get => (p.flags & 0x04) != 0; set { p.flags = (p.flags & ~0x04) | (value ? 0x04 : 0); p.Invaliated(); }
       }
       [Category("\t\t\tSelection"), DisplayName("Normals"), DefaultValue(false)]
       public bool sel_normals
       {
-        get => (p.flags & 0x08) != 0; set { p.flags = (p.flags & ~0x08) | (value ? 0x08 : 0); p.Inval(); }
+        get => (p.flags & 0x08) != 0; set { p.flags = (p.flags & ~0x08) | (value ? 0x08 : 0); p.Invaliated(); }
       }
       [Category("\t\t\tSelection"), DisplayName("Tool Points"), DefaultValue(true)]
       public bool sel_points
       {
-        get => (p.flags & 0x10) != 0; set { p.flags = (p.flags & ~0x10) | (value ? 0x10 : 0); p.Inval(); }
+        get => (p.flags & 0x10) != 0; set { p.flags = (p.flags & ~0x10) | (value ? 0x10 : 0); p.Invaliated(); }
       }
 
       [Category("\t\tModel Tools"), DefaultValue(0.001f)]
@@ -1597,7 +1627,7 @@ namespace Test
       [Category("Display Driver"), DisplayName("Show Fps"), DefaultValue(false)]
       public bool show_fps
       {
-        get => (p.flags & 0x20) != 0; set { p.flags = (p.flags & ~0x20) | (value ? 0x20 : 0); p.Inval(); }
+        get => (p.flags & 0x20) != 0; set { p.flags = (p.flags & ~0x20) | (value ? 0x20 : 0); p.Invaliated(); }
       }
 
       [Category("Registry"), DefaultValue(false)]
@@ -1742,11 +1772,11 @@ namespace Test
         base.OnVisibleChanged(e); if (Target == null || grid == null) return;
         if (Visible)
         {
-          Target.Animations += onidle; Target.Inval += oninv; update = true;
+          Target.Animations += onidle; Target.Invaliated += oninv; update = true;
         }
         else
         {
-          Target.Animations -= onidle; Target.Inval -= oninv;
+          Target.Animations -= onidle; Target.Invaliated -= oninv;
           grid.SelectedObject = null; combo.Items.Clear();
         }
       }
@@ -1755,16 +1785,16 @@ namespace Test
       bool comboupdate, update; object? lastpd; WebBrowser? wb;
       void onidle()
       {
-        if (!update) return; update = false; // Debug.WriteLine($"onidle {ms}");
+        if (!update) return; update = false;
         if (combo.DroppedDown || !btnprops.Checked) return;
-        //if (ContainsFocus) return;
         var list = Target.selection; var ext = Target.extrasel;
-        if (ext.p != null && this.ContainsFocus) return;
         var csel = combo.SelectedItem;
+        if (ext.p != null && this.ContainsFocus && csel is not Node) return;
         var disp =
           ext.p != null && ext.view.ContainsFocus ? ext.p :
           (list.Count != 0 ? (object)list[list.Count - 1] :
            csel != null && csel is not Node ? csel : Target.Scene);
+        //if (ext.p != null && ext.view.ContainsFocus && (ext.view != Target || ext.p.Equals(disp))) disp = ext.p;
         if (csel != disp && !combo.ContainsFocus) fillcombo(csel = disp);
         if (grid.SelectedObject != csel)
         {
@@ -1842,11 +1872,6 @@ namespace Test
       internal string? name;
       internal Group[]? nodes;
       internal Node? parent;
-      public Group[] Nodes
-      {
-        get => nodes ?? Array.Empty<Group>();
-        set => nodes = value.Length != 0 ? value : null;
-      }
       internal protected virtual unsafe void Serialize(XElement e, bool storing)
       {
         e.AddAnnotation(this);
@@ -1992,6 +2017,7 @@ namespace Test
       public class Scene : Node
       {
         internal DX11Ctrl? root;
+        internal AniSet? aniset;
         public enum Units { Meter = 1, Centimeter = 2, Millimeter = 3, Micron = 4, Foot = 5, Inch = 6 }
         Units unit; internal uint ambient;
         [Category("\t\tGeneral")]
@@ -2018,9 +2044,6 @@ namespace Test
           get => (flags & 0x20) != 0;
           set { flags = (flags & ~0x20) | (value ? 0x20 : 0); }
         }
-
-        internal AniSet? aniset;
-
         protected internal override void Serialize(XElement e, bool storing)
         {
           base.Serialize(e, storing);
@@ -2075,13 +2098,6 @@ namespace Test
           if (t == typeof(DX11ModelCtrl)) return root;
           return base.GetService(t);
         }
-
-        //Dictionary<Base, int>? dict;        
-        //internal int getid(Base p, bool create)
-        //{
-        //  if (!create) return dict != null && dict.TryGetValue(p, out var x) ? x : 0;
-        //  if (!(dict ??= new()).TryGetValue(p, out var id)) dict.Add(p, id = dict.Count + 1); return id;
-        //}
       }
 
       public class Camera : Group
@@ -2113,9 +2129,25 @@ namespace Test
 
       public class Light : Group
       {
+        internal uint color = 0xffffffff;
         protected internal override void Serialize(XElement e, bool storing)
         {
           base.Serialize(e, storing);
+          if (storing)
+          {
+            if (color != 0xffffffff) e.SetAttributeValue("color", color.ToString("X8"));
+          }
+          else
+          {
+            XAttribute a;
+            if ((a = e.Attribute("color")) != null) color = uint.Parse(a.Value, NumberStyles.HexNumber);
+          }
+        }
+        [Category("Light")]
+        public Color Color
+        {
+          get => Color.FromArgb(unchecked((int)color));
+          set { color = unchecked((uint)value.ToArgb()); }
         }
       }
 
@@ -2155,7 +2187,6 @@ namespace Test
       [TypeConverter(typeof(GTC))]
       public abstract class Geometry : Group
       {
-        int current;
         [Category("Material"), TypeConverter(typeof(MTC)), DefaultValue(0)]
         public int Current
         {
@@ -2211,7 +2242,7 @@ namespace Test
 
         internal protected Vector3[]? vertices;
         internal protected ushort[]? indices;
-        internal (int count, Material material)[]? ranges;
+        internal (int count, Material material)[]? ranges; int current;
         internal DX11Ctrl.VertexBuffer? vb;
         internal DX11Ctrl.IndexBuffer? ib;
         internal unsafe void checkbuild(int skip)
@@ -2355,17 +2386,6 @@ namespace Test
             return new StandardValuesCollection(Enumerable.Range(0, n).ToArray());
           }
         }
-
-        //[Category("Geometry"), TypeConverter(typeof(ExpandableObjectConverter))]
-        //public Info MeshInfo => new Info(this);
-        //public readonly struct Info
-        //{
-        //  internal Info(Geometry p) => this.p = p; readonly Geometry p;
-        //  public override string ToString() => p.GetType().Name;
-        //  public int VertexCount => p.vertices.Length;
-        //  public int IndexCount => p.indices.Length;
-        //}
-
       }
 
       public class MeshGeometry : Geometry
@@ -3305,7 +3325,7 @@ namespace Test
       }
 
       #region xml
-      public static readonly XNamespace ns = XNamespace.None;//"file://C:/Users/cohle/Desktop/Mini3d";
+      public static readonly XNamespace ns = XNamespace.None; //todo: 
       internal static Type? s2t(string s)
       {
         switch (s)
@@ -3459,16 +3479,16 @@ namespace Test
       p.Y.TryFormat(w, out var b, default, f); w[b] = ' '; w = w.Slice(b + 1);
       p.Z.TryFormat(w, out var c, default, f); return a + b + c + 2;
     }
-    internal static int paramcount(ReadOnlySpan<char> sp)
-    {
-      Debug.Assert(sp == sp.Trim());
-      var n = 0; for (; sp.Length != 0; paramread(ref sp), n++) ; return n;
-    }
-    internal static ReadOnlySpan<char> paramread(ref ReadOnlySpan<char> sp)
+    internal static ReadOnlySpan<char> pread(ref ReadOnlySpan<char> sp)
     {
       Debug.Assert(sp == sp.Trim());
       int i = 0; for (; i < sp.Length && !(char.IsWhiteSpace(sp[i])/* || sp[i] == ';'*/); i++) ;
       var w = sp.Slice(0, i); sp = sp.Slice(i < sp.Length ? i + 1 : i).TrimStart(); return w;
+    }
+    internal static int pcount(ReadOnlySpan<char> sp)
+    {
+      Debug.Assert(sp == sp.Trim());
+      var n = 0; for (; sp.Length != 0; pread(ref sp), n++) ; return n;
     }
   }
 }

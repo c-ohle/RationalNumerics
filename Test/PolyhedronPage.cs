@@ -1,5 +1,7 @@
 ﻿#pragma warning disable CS8602
 using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing.Design;
 using System.Globalization;
 using System.Xml.Linq;
 using Group = Test.DX11ModelCtrl.Group;
@@ -9,7 +11,38 @@ namespace Test
 {
   public partial class PolyhedronPage : UserControl
   {
-    Models.Scene demo1()
+    public PolyhedronPage()
+    {
+      InitializeComponent();
+    }
+    protected override void OnLoad(EventArgs e)
+    {
+      base.OnLoad(e);
+      MenuItem.CmdRoot = OnCommand;
+      //this.path = Path.GetFullPath("templ\\testcase2.xxd");
+      var path = Path.GetFullPath("templ\\testcase2.xxd");
+      modelView.Scene = (Models.Scene)Models.Load(XElement.Load(path)); //demo1(); 
+      propsView.Target = modelView;
+      //modelView.Infos.Add("Hello World!");
+      panelStory.VisibleChanged += (_, _) =>
+      {
+        if (panelStory.Visible)
+        {
+          if (timeLineView == null)
+          {
+            timeLineView = new TimeLineView(modelView) { Dock = DockStyle.Fill };
+            panelStory.Controls.Add(timeLineView); timeLineView.BringToFront();
+          }
+          modelView.Animations += maintick;
+        }
+        else
+        {
+          modelView.Animations -= maintick;
+        }
+      };
+    }
+#if false
+    Models.Scene demo1()  //todo: remove
     {
       return new Models.Scene
       {
@@ -65,32 +98,14 @@ namespace Test
         return model;
       }
     }
-
-    public PolyhedronPage()
-    {
-      InitializeComponent();
-    }
-    protected override void OnLoad(EventArgs e)
-    {
-      base.OnLoad(e);
-      MenuItem.CmdRoot = OnCommand;
-      modelView.Scene = demo1(); // modelView.Infos.Add("Hello World!");
-      propsView.Target = modelView;
-      panelStory.VisibleChanged += (_, _) =>
-      {
-        if (timeLineView != null) return;
-        timeLineView = new TimeLineView { Dock = DockStyle.Fill, Target = modelView };
-        panelStory.Controls.Add(timeLineView); timeLineView.BringToFront();
-        timeLineView.TimeChange += timechange;
-      };
-    }
+#endif
     TimeLineView? timeLineView; string? path;
 
     int OnCommand(int id, object? test)
     {
       try
       {
-        var x = this.modelView.OnCmd(id, test);
+        var x = modelView.OnCmd(id, test);
         if (x != 0) return x;
         switch (id)
         {
@@ -101,6 +116,7 @@ namespace Test
           case 2008: return OnProperties(test);
           //case 2009: return OnToolbox(test);
           case 2010: return OnStoryBoard(test);
+          case 2054: return OnCheckMash(test);
         }
       }
       catch (Exception e)
@@ -116,6 +132,7 @@ namespace Test
       var scene = (Models.Scene)Models.Load(doc); //var last = view.Scene != null; if (last && !AskSave()) return; 
       timeLineView?.Refresh();
       modelView.Scene = scene; this.path = path; // UpdateTitle(); if (last && path != null) mru(path, path);
+      if (timeLineView != null) { timeLineView.adjust(); timeLineView.Invalidate(); }
     }
     int OnNew(object? test)
     {
@@ -158,22 +175,22 @@ namespace Test
     {
       var scene = modelView.Scene; if (scene == null) return 0;
       if (test != null) return 1;
-      var s = default(string); // path;
-      if (saveas || s == null)
+      var path = this.path;
+      if (saveas || path == null)
       {
-        var dlg = new SaveFileDialog() { Filter = "xxd files|*.xxd;*.xxd.png", DefaultExt = "xxd", FileName = s };
-        if (dlg.ShowDialog(this) != DialogResult.OK) return 1; s = dlg.FileName;
+        var dlg = new SaveFileDialog() { Filter = "xxd files|*.xxd;*.xxd.png", DefaultExt = "xxd", FileName = path };
+        if (dlg.ShowDialog(this) != DialogResult.OK) return 1; path = dlg.FileName;
       }
-      if (s == null) return 0;
-      var e = Models.Save(scene); e.Save(s); // if (path != s) { path = s; UpdateTitle(); mru(path, path); }
-      modelView.IsModified = false; return 1;
+      if (path == null) return 0; Cursor.Current = Cursors.WaitCursor;
+      try { var e = Models.Save(scene); e.Save(path); modelView.IsModified = false; this.path = path; Thread.Sleep(100); }
+      finally { Cursor.Current = Cursors.Default; }
+      return 1;
     }
     int OnProperties(object? test)
     {
       if (test != null) return 1;
       if (propsView.Visible && !propsView.btnprops.Checked) { propsView.btnprops.PerformClick(); return 1; }
-      var t = propsView.IsHandleCreated;
-      propsView.Visible ^= true;
+      var t = propsView.IsHandleCreated; propsView.Visible ^= true;
       if (!t) propsView.btnstory.Click += (_, _) => panelStory.Visible = (propsView.btnstory.Checked ^= true);
       return 1;
     }
@@ -182,6 +199,63 @@ namespace Test
       if (test != null) return 1;
       var x = propsView.IsHandleCreated; if (!x) OnProperties(null);
       propsView.btnstory.PerformClick(); if (!x) OnProperties(null); return 1;
+    }
+    int OnCheckMash(object? test)
+    {
+      if (modelView.selection.Count != 1 || modelView.selection[0] is not Models.Geometry geo) return 0;
+      if (test != null) return 1;
+      if (!propsView.Visible || !propsView.btnprops.Checked) OnProperties(null);
+      modelView.extrasel = new(modelView, new MeshInfo(geo)); modelView.Invalidate();
+      return 1;
+    }
+    class MeshInfo
+    {
+      internal MeshInfo(Models.Geometry geo) => this.geo = geo; readonly Models.Geometry geo;
+      public override string ToString() => "Mesh Info";
+      [Category("\t\tGeneral")]
+      public string Name => geo.Name;
+      [Category("\t\tGeneral")]//, Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
+      public string Status { get => "ok"; } //set { } }
+      [Category("Mesh")]
+      public int Vertices => geo.vertices.Length;
+      [Category("Mesh")]
+      public int Polygones => geo.indices.Length / 3;
+      [Category("Mesh")]
+      public int Edges
+      {
+        get { calc(); return edges; }
+      }
+      [Category("Mesh")]
+      public int Euler => Vertices - Edges + Polygones;
+      [Category("Polyhedron")]
+      public int Planes
+      {
+        get { calc(); return ee.Length; }
+      }
+      [Category("Polyhedron")]
+      public int Edges_
+      {
+        get { calc(); return hedges; }
+      }
+      Vector3R[]? pp; (PlaneR e, int[] kk)[]? ee; int edges, hedges;
+      void calc()
+      {
+        if (this.pp != null) return;
+        var xp = geo.GetVertices();
+        this.pp = xp as Vector3R[] ?? ((Vector3[])xp).Select(p => (Vector3R)p).ToArray();
+        var ii = geo.indices;
+        this.ee = Enumerable.Range(0, ii.Length / 3).
+          Where(i => Math.Max(Math.Max(ii[i * 3], ii[i * 3 + 1]), ii[i * 3 + 2]) < pp.Length).
+          Select(i => (k: i *= 3, e: PlaneR.FromVertices(pp[ii[i]], pp[ii[i + 1]], pp[ii[i + 2]]))).
+          GroupBy(p => p.e, p => p.k).Select(p => (e: p.Key, kk: p.ToArray())).ToArray();
+        this.hedges = this.ee.Sum(e =>
+        {
+          var tt = e.kk.SelectMany(k => Enumerable.Range(k, 3)).Select(i => (a: ii[i], b: ii[i % 3 != 2 ? i + 1 : i - 2])).ToArray();
+          return tt.Count(p => !tt.Contains((p.b, p.a)));
+        }) >> 1;
+        var eb = Enumerable.Range(0, ii.Length).Select(i => (a: ii[i], b: ii[i % 3 != 2 ? i + 1 : i - 2])).ToHashSet();
+        this.edges = eb.Count(p => p.a < p.b && eb.Contains((p.b, p.a)));
+      }
     }
 
     int tv;
@@ -216,44 +290,10 @@ namespace Test
 
     void btn_run_Click(object sender, EventArgs e)
     {
-      var scene = modelView.Scene; if (scene == null) return;
-      var cam = scene.Find("Camera1") as Models.Camera; if (cam == null) return;
-      var obj = scene.Find("Extrusion1") as Group; if (obj == null) return;
-
-      //var m1 = cam.Transform;
-      //var m2 = Matrix4x3.CreateTranslation(0, 0, -2) * cam.Transform;
-      var m1 = Matrix4x3.Parse("1 0 -0 0 0.7071068 0.7071068 0 -0.7071068 0.7071068 0 -5.0000005 5.0000005", CultureInfo.InvariantCulture);
-      var m2 = Matrix4x3.Parse("0.7429419 0.66935587 0 -0.5006389 0.55567694 0.66376495 0.44429496 -0.4931388 0.74794126 2.0379539 -2.396401 3.3004177", CultureInfo.InvariantCulture);
-
-      modelView.Animations +=
-        animate(modelView, obj,
-          Matrix4x3.Identity,
-          Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
-        animate(modelView, obj,
-          Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
-          Matrix4x3.CreateRotationY(MathF.PI) * Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
-        animate(modelView, obj,
-          Matrix4x3.CreateRotationY(MathF.PI) * Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2),
-          Matrix4x3.CreateRotationX(MathF.PI / 2) * Matrix4x3.CreateTranslation(0, 0, 2))
-        //animate(modelView, cam, m1, m2))
-        ));
-
-      static Action animate(DX11Ctrl view, Group node, Matrix4x3 m1, Matrix4x3 m2, Action? next = null)
-      {
-        Matrix4x4.Decompose(m1, out _, out var q1, out var t1);
-        Matrix4x4.Decompose(m2, out _, out var q2, out var t2);
-        int count = 0; return zoom;
-        void zoom()
-        {
-          var f = MathF.Min(1, sigmoid(++count / 20f, 4));
-          var m = (Matrix4x3)(
-            Matrix4x4.CreateFromQuaternion(Quaternion.Lerp(q1, q2, f)) *
-            Matrix4x4.CreateTranslation(Vector3.Lerp(t1, t2, f)));
-          node.Transform = m; view.Invalidate();
-          if (f == 1) { view.Animations -= zoom; view.Animations += next; }
-        }
-      }
-      static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
+      var aniset = modelView.Scene.aniset; if (aniset == null) return;
+      //if (modelView.RunningAnimation != null) return;
+      modelView.RunningAnimation = null;
+      aniset.time = 0; modelView.RunningAnimation = aniset;
     }
 
     void btn_back_Click(object sender, EventArgs e) => timeLineView.ani(0);
@@ -267,9 +307,18 @@ namespace Test
     }
     void btn_play_Click(object sender, EventArgs e)
     {
-      if (btn_play.Checked ^= true) { btn_play.Text = ""; modelView.Animations += animate; }
-      else { modelView.Animations -= animate; btn_play.Text = ""; }
+      var aniset = timeLineView.aniset;
+      modelView.RunningAnimation = !btn_play.Checked ? aniset : null;
     }
+    int showtime;
+    void maintick()
+    {
+      var t = timeLineView.Target.RunningAnimation; //if (t != timeLineView.aniset) return;
+      if (t == timeLineView.aniset && showtime != t.time) { showtime = t.time; timeLineView.Invalidate(); }
+      if (btn_play.Checked != (modelView.RunningAnimation == timeLineView.aniset))
+        btn_play.Text = (btn_play.Checked ^= true) ? "" : "";
+    }
+
     void btn_stop_Click(object sender, EventArgs e)
     {
       //if (!btn_stop.Enabled) return;
@@ -305,27 +354,11 @@ namespace Test
     }
     void btn_clear_Click(object sender, EventArgs e)
     {
-      Quat.alt = (btn_clear.Checked ^= true);
-      //{ Quat.alt = true; btn_clear.Text = ""; modelView.Animations += animate; }
-      //else { modelView.Animations -= animate; btn_clear.Text = ""; Quat.alt = false; }
-
-      //if (btn_record.Checked || btn_play.Checked) return;
-      //timeLineView.Clear();
+      //Quat.alt = (btn_clear.Checked ^= true);
     }
     void btn_save_Click(object sender, EventArgs _)
     {
-      var scene = modelView.Scene; if (scene == null) return;
-      var a = Models.Save(scene);
-      var b = XElement.Parse(a.ToString());
-      var c = (Models.Scene)Models.Load(b);
-      modelView.Scene = c; timeLineView.Invalidate(); timeLineView.adjust();
-    }
-    void animate()
-    {
-      var aniset = timeLineView.aniset;
-      var time = aniset.time; var endtime = aniset.maxtime;
-      if (time >= endtime) { btn_play.PerformClick(); return; } //stop
-      timeLineView.ani(Math.Min(time + 30, endtime));
+      timeLineView.rec();
     }
 
     void undochanged()
@@ -334,36 +367,19 @@ namespace Test
       var undo = modelView.undos[modelView.undoi - 1];
       timeLineView.Add(undo);
     }
-    void timechange()
-    {
-      var inf = false; var aniset = timeLineView.aniset;
-      var a = aniset.anilines; var t = aniset.time;
-      for (int i = 0; i < a.Count; i++) inf |= a[i].lerp(t);
-      if (inf) modelView.Invalidate();
-    }
 
     class TimeLineView : UserControl
     {
-      internal void ani(int t)
+      internal TimeLineView(DX11ModelCtrl view)
       {
-        var aniset = this.aniset; if (aniset.time == t) return; //aniset.time = t; Invalidate();
-        if (aniset.ani(t)) Target.Invalidate(); Invalidate();
+        DoubleBuffered = true; AutoScroll = true;
+        Target = view; aniset = view.Scene.aniset ??= new();
       }
-
-      internal TimeLineView() { DoubleBuffered = true; AutoScroll = true; }
-      internal DX11ModelCtrl? Target;
-      internal DX11ModelCtrl.AniSet aniset
-      {
-        get { return Target.Scene.aniset ??= new(); }
-      }
+      internal readonly DX11ModelCtrl Target;
+      internal readonly DX11ModelCtrl.AniSet aniset;
       const int leftofs = 8, dyline = 17;
       float xscale = 0.1f; int wo, st, pcx, ctrl;
       readonly List<int> selection = new();
-      internal Action? TimeChange;
-      internal void Clear()
-      {
-        selection.Clear(); aniset.clear(); AutoScrollMinSize = default; Invalidate();
-      }
       internal void Add(DX11ModelCtrl.Undo undo)
       {
         var aniset = this.aniset;
@@ -377,6 +393,11 @@ namespace Test
         var aniset = this.aniset; if (aniset.maxtime == 0) aniset.maxtime = aniset.getendtime();
         AutoScrollMinSize = new Size(64 + (int)(aniset.maxtime * xscale), 16 + aniset.anilines.Count * 16);
         if (aniset.time > aniset.maxtime) { aniset.time = aniset.maxtime; Invalidate(); }
+      }
+      internal void ani(int t)
+      {
+        var aniset = this.aniset; if (aniset.time == t) return;
+        if (aniset.ani(t & ~0x40000000)) Target.Invalidate(); Invalidate();
       }
       protected override void OnPaint(PaintEventArgs e)
       {
@@ -398,6 +419,12 @@ namespace Test
         var x = (int)(aniset.time * xscale); g.DrawLine(Pens.Red, x, 0, x, s.Height - o.Y);
       }
 
+      internal void rec()
+      {
+        var wo = selection.Count == 1 ? selection[0] : 0; if ((wo & 0x40000000) == 0) return;
+        int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
+        aniset.anilines[y].set(5, (x >> 1) + 1, 0);
+      }
       void select(int wo)
       {
         if (wo == 1) return; wo &= ~1;
@@ -451,10 +478,17 @@ namespace Test
           get { return x < line.times.Count ? line.times[x | 1] : -1; }
           set { }
         }
+        [DefaultValue(0f)]
         public float Gamma
         {
           get { return x < line.times.Count ? line.get(0, x >> 1) : float.NaN; }
           set { line.set(0, x >> 1, value); }
+        }
+        [DefaultValue(false)]
+        public bool LongWay
+        {
+          get { return x < line.times.Count ? line.get(1, x >> 1) != 0 : false; }
+          set { line.set(1, x >> 1, value ? 1 : 0); }
         }
       }
 
@@ -493,8 +527,8 @@ namespace Test
         if (wo == 1) //time
         {
           if (st == -1) st = aniset.time;
-          var u = Math.Max(0, Math.Min(aniset.maxtime, (int)(st + fdt)));
-          if (aniset.time == u) return; aniset.time = u; Refresh(); TimeChange?.Invoke();
+          var u = Math.Max(0, Math.Min(aniset.maxtime, (int)(st + fdt))); if (u == aniset.time) return;
+          ani(u); //Target.Invalidate(); //props
         }
         else if ((wo & 0x40000000) != 0)
         {
@@ -509,7 +543,7 @@ namespace Test
           else { u = Math.Max(20, u); }
           if (tt[x] == u) return;
           var et = aniset.getendtime(); if (et != aniset.maxtime) aniset.maxtime = et;
-          tt[x] = u; Refresh(); TimeChange?.Invoke();
+          tt[x] = u; ani(aniset.time | 0x40000000); Target.Invalidate(); //props
         }
       }
       protected override void OnMouseUp(MouseEventArgs e)
@@ -538,11 +572,10 @@ namespace Test
               }
               else { aniset.anilines.RemoveAt(y); }
               aniset.maxtime = 0; adjust();
-              var t = aniset.time; aniset.time = 0; ani(t);
+              ani(aniset.time | 0x40000000);
             }
             if ((wo & 0x20000000) != 0)
             {
-
             }
           }
           e.Handled = true;
@@ -551,7 +584,8 @@ namespace Test
       }
     }
   }
-  internal unsafe struct Quat
+
+  unsafe struct Quat
   {
     public Vector3 t; Quaternion q; public Vector3 s;
     public static implicit operator Quat(Matrix4x3 m)
@@ -560,7 +594,7 @@ namespace Test
       s.X = MathF.Round(s.X, 6); s.Y = MathF.Round(s.Y, 6); s.Z = MathF.Round(s.Z, 6);
       return new Quat { q = q, s = s, t = t };
     }
-
+    /*
     internal static bool alt;
     static Quaternion SlerpN(Quaternion a, Quaternion b, float t)
     {
@@ -582,16 +616,13 @@ namespace Test
       var bf = MathF.Sin(t * at) / st;
       return a * af + b * bf;
     }
-
-    public static Matrix4x3 Lerp(Quat a, Quat b, float f)
+    */
+    public static Matrix4x3 Slerp(Quat a, Quat b, float f)
     {
       return (Matrix4x3)
       (
         //Matrix4x4.CreateScale(Vector3.Lerp(a.s, b.s, f)) *
-        Matrix4x4.CreateFromQuaternion(
-          alt ? SlerpF(a.q, b.q, f) : SlerpN(a.q, b.q, f)
-          //Quaternion.Slerp(a.q, b.q, f)
-          ) *
+        Matrix4x4.CreateFromQuaternion(Quaternion.Slerp(a.q, b.q, f)) *
         Matrix4x4.CreateTranslation(Vector3.Lerp(a.t, b.t, f))
       );
     }
@@ -609,10 +640,10 @@ namespace Test
     public static Quat Parse(ReadOnlySpan<char> sp, NumberFormatInfo fi)
     {
       var m = default(Quat);
-      int n = SpanTools.paramcount(sp);
+      int n = SpanTools.pcount(sp);
       for (int i = 0; i < n; i++)
       {
-        var s = SpanTools.paramread(ref sp);
+        var s = SpanTools.pread(ref sp);
         var f = float.Parse(s, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands | NumberStyles.AllowExponent, fi);
         ((float*)&m)[i] = f;
       }
