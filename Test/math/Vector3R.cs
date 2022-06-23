@@ -133,16 +133,16 @@ namespace System.Numerics.Rational
     public static Vector3R Min(in Vector3R a, in Vector3R b)
     {
       return new Vector3R(
-        BigRational.Min(a.X, b.X),
-        BigRational.Min(a.Y, b.Y),
-        BigRational.Min(a.Z, b.Z));
+        MathR.Min(a.X, b.X),
+        MathR.Min(a.Y, b.Y),
+        MathR.Min(a.Z, b.Z));
     }
     public static Vector3R Max(in Vector3R a, in Vector3R b)
     {
       return new Vector3R(
-        BigRational.Max(a.X, b.X),
-        BigRational.Max(a.Y, b.Y),
-        BigRational.Max(a.Z, b.Z));
+        MathR.Max(a.X, b.X),
+        MathR.Max(a.Y, b.Y),
+        MathR.Max(a.Z, b.Z));
     }
     public static Vector3R Transform(in Vector3R a, in Matrix4x3R b)
     {

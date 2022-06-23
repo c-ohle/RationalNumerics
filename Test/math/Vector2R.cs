@@ -110,14 +110,14 @@ namespace System.Numerics.Rational
     public static Vector2R Min(in Vector2R a, in Vector2R b)
     {
       return new Vector2R(
-        BigRational.Min(a.X, b.X),
-        BigRational.Min(a.Y, b.Y));
+        MathR.Min(a.X, b.X),
+        MathR.Min(a.Y, b.Y));
     }
     public static Vector2R Max(in Vector2R a, in Vector2R b)
     {
       return new Vector2R(
-        BigRational.Max(a.X, b.X),
-        BigRational.Max(a.Y, b.Y));
+        MathR.Max(a.X, b.X),
+        MathR.Max(a.Y, b.Y));
     }
   }
 }

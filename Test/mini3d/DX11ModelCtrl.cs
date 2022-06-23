@@ -1220,7 +1220,7 @@ namespace Test
           }
           ts = s.Slice(0, s.Length - w.Length);
           e.SetAttributeValue("line", ts.ToString());
-          if (gammas != null)  //todo: check zeros
+          if (gammas != null)  //check: check zeros
           {
             w = s;
             for (int i = 0; i < gammas.Count; i++)

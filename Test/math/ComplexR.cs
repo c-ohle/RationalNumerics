@@ -69,7 +69,7 @@ namespace System.Numerics.Rational
     public static ComplexR operator /(ComplexR a, ComplexR b)
     {
       //todo: optimize
-      if (BigRational.Abs(b.Imaginary) < BigRational.Abs(b.Real))
+      if (MathR.Abs(b.Imaginary) < MathR.Abs(b.Real))
       {
         var doc = b.Imaginary / b.Real;
         return new ComplexR(

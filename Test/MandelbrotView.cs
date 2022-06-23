@@ -299,9 +299,9 @@ namespace Test
           var p2 = Cursor.Position;
           mx = x1 - (2 * (p2.X - p1.X)) * scale / dy;
           my = y1 - (2 * (p2.Y - p1.Y)) * scale / dy;
-          var l = BigRational.ILog10(scale);
-          mx = BigRational.Round(mx, 4 - l);
-          my = BigRational.Round(my, 4 - l);
+          var l = MathR.ILog10(scale);
+          mx = MathR.Round(mx, 4 - l);
+          my = MathR.Round(my, 4 - l);
           if (bmp != null)
             using (var g = Graphics.FromImage(bmp))
             {
@@ -346,11 +346,11 @@ namespace Test
       var p = e.Location;
       var d = 1 - e.Delta * (0.1f / 120);
       var t = scale; scale *= d;
-      var l = BigRational.ILog10(scale);
-      scale = BigRational.Round(scale, 5 - l);
+      var l = MathR.ILog10(scale);
+      scale = MathR.Round(scale, 5 - l);
       t = (scale - t) / dy;
-      mx += t * (dx - p.X * 2); mx = BigRational.Round(mx, 4 - l);
-      my += t * (dy - p.Y * 2); my = BigRational.Round(my, 4 - l);
+      mx += t * (dx - p.X * 2); mx = MathR.Round(mx, 4 - l);
+      my += t * (dy - p.Y * 2); my = MathR.Round(my, 4 - l);
       if (bmp != null)
         using (var g = Graphics.FromImage(bmp))
         {

@@ -110,7 +110,7 @@ namespace System.Numerics
             case 'F':
             case 'L': // like F without trailing zeros
               if (round == -1) round = info.NumberDecimalDigits;
-              digs = Math.Max(0, ILog10(this)) + 1 + round;
+              digs = Math.Max(0, MathR.ILog10(this)) + 1 + round;
               if (digs > destination.Length && destination.Length == 100) { charsWritten = digs; return false; } //hint for ToString(,)
               emin = -(emax = int.MaxValue); goto def;
             case 'E':
@@ -118,7 +118,7 @@ namespace System.Numerics
               if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
               emax = -(emin = int.MaxValue); goto def;
           }
-        var e = ILog10(this);
+        var e = MathR.ILog10(this);
         if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
         if (e <= 308) return ((double)this).TryFormat(destination, out charsWritten, format, provider);
       }
@@ -127,7 +127,7 @@ namespace System.Numerics
       var ts = stackalloc char[pb != null ? 0 : digs];
       var ss = pb != null ? pb.AsSpan().Slice(0, digs) : new Span<char>(ts, digs);
       var cpu = task_cpu; cpu.push(this);
-      if (round >= 0) cpu.rnd(fc == 'E' ? Math.Max(0, round - ILog10(this)) : round);
+      if (round >= 0) cpu.rnd(fc == 'E' ? Math.Max(0, round - MathR.ILog10(this)) : round);
       cpu.tos(ss, out var ns, out var exp, out var rep, round == -1);
       var ofl = ns == ss.Length && round == -1;
       ss = ss.Slice(0, ns); var ws = destination;
@@ -152,11 +152,10 @@ namespace System.Numerics
         }
         if (exp < 0 && exp >= emin) // 0.00123, 0.0012'3
         {
-          apc(ref ws, '0', 1);
-          aps(ref ws, info.NumberDecimalSeparator);
-          apc(ref ws, '0', -exp - 1);
+          int u = -exp - 1, v = 0; if (rep != -1) while (u - v > 0 && ss[ss.Length - 1 - v] == '0') v++; //prime reciprocals, 1/17 0,0'58..70
+          apc(ref ws, '0', 1); aps(ref ws, info.NumberDecimalSeparator); apc(ref ws, '0', u - v);
           if (rep == -1) { aps(ref ws, ss); if (fc == 'F') apc(ref ws, '0', round - (ns - exp - 1)); }
-          else { aps(ref ws, ss.Slice(0, rep)); apc(ref ws, '\'', 1); aps(ref ws, ss.Slice(rep)); }
+          else { aps(ref ws, ss.Slice(0, rep)); apc(ref ws, '\'', 1); apc(ref ws, '0', v); aps(ref ws, ss.Slice(rep, ss.Length - rep - v)); }
           if (ofl) apc(ref ws, '…', 1); goto ret;
         }
       }
@@ -609,7 +608,7 @@ namespace System.Numerics
     /// </summary>
     /// <remarks>
     /// The result is truncated to integer by default.<br/>
-    /// Consider rounding the value before using one of the <see cref="BigRational.Round"/> methods.
+    /// Consider rounding the value before using <see cref="MathR.Round(BigRational)"/>, <see cref="MathR.Round(BigRational, int)"/>  or <see cref="MathR.Round(BigRational, int, MidpointRounding)"/> methods.
     /// </remarks>
     /// <param name="value">The value to convert to a <see cref="BigInteger"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="BigInteger"/>.</returns>
@@ -1020,335 +1019,7 @@ namespace System.Numerics
       if (a.p == null) return false;
       fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
     }
-    /// <summary>
-    /// Gets the integer base 10 logarithm of a <see cref="BigRational"/> number.
-    /// </summary>
-    /// <remarks>
-    /// The integer base 10 logarithm is identical with the exponent in the scientific notation of the number.<br/> 
-    /// eg. <b>3</b> for 1000 (1E+<b>03</b>) or <b>-3</b> for 0.00123 (1.23E-<b>03</b>)
-    /// </remarks>
-    /// <param name="a">A <see cref="BigRational"/> number as value.</param>
-    /// <returns>The integer base 10 logarithm of the <see cref="BigRational"/> number.</returns>
-    public static int ILog10(BigRational a)
-    {
-      var cpu = task_cpu; cpu.push(a);
-      cpu.tos(default, out _, out var e, out _, false); return e;
-    }
-    /// <summary>
-    /// Gets the absolute value of a <see cref="BigRational"/> number.
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number as value.</param>
-    /// <returns>The absolute value of the <see cref="BigRational"/> number.</returns>
-    public static BigRational Abs(BigRational a)
-    {
-      return Sign(a) >= 0 ? a : -a;
-    }
-    /// <summary>
-    /// Returns the larger of two <see cref="BigRational"/> numbers.
-    /// </summary>
-    /// <param name="a">The first value to compare.</param>
-    /// <param name="b">The second value to compare.</param>
-    /// <returns>The a or b parameter, whichever is larger.</returns>
-    public static BigRational Min(BigRational a, BigRational b)
-    {
-      return a.CompareTo(b) <= 0 ? a : b;
-    }
-    /// <summary>
-    /// Returns the smaller of two <see cref="BigRational"/> numbers.
-    /// </summary>
-    /// <param name="a">The first value to compare.</param>
-    /// <param name="b">The second value to compare.</param>
-    /// <returns>The a or b parameter, whichever is smaller.</returns>
-    public static BigRational Max(BigRational a, BigRational b)
-    {
-      return a.CompareTo(b) >= 0 ? a : b;
-    }
-    /// <summary>
-    /// Calculates the integral part of the <see cref="BigRational"/> number.
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number as value to truncate.</param>
-    /// <returns>
-    /// The integral part of the <see cref="BigRational"/> number.<br/> 
-    /// This is the number that remains after any fractional digits have been discarded.
-    /// </returns>
-    public static BigRational Truncate(BigRational a)
-    {
-      var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0, 0); return cpu.popr();
-    }
-    /// <summary>
-    /// Rounds a specified <see cref="BigRational"/> number to the closest integer toward negative infinity.
-    /// </summary>
-    /// The <see cref="BigRational"/> number to round.
-    /// <returns>
-    /// If <paramref name="a"/> has a fractional part, the next whole number toward negative
-    /// infinity that is less than <paramref name="a"/>.<br/>
-    /// or if <paramref name="a"/> doesn't have a fractional part, <paramref name="a"/> is returned unchanged.<br/>
-    /// </returns>
-    public static BigRational Floor(BigRational a)
-    {
-      var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0, cpu.sign() >= 0 ? 0 : 4); return cpu.popr();
-    }
-    /// <summary>
-    /// Returns the smallest integral value that is greater than or equal to the specified number.
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number.</param>
-    /// <returns>
-    /// The smallest integral value that is greater than or equal to the <paramref name="a"/> parameter.
-    /// </returns>
-    public static BigRational Ceiling(BigRational a)
-    {
-      var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0, cpu.sign() < 0 ? 0 : 4); return cpu.popr();
-    }
-    /// <summary>
-    /// Rounds a <see cref="BigRational"/> number to the nearest integral value
-    /// and rounds midpoint values to the nearest even number.
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number to be rounded.</param>
-    /// <returns></returns>
-    public static BigRational Round(BigRational a)
-    {
-      var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(0, 1); return cpu.popr();
-    }
-    /// <summary>
-    /// Rounds a <see cref="BigRational"/> number to a specified number of fractional
-    /// digits, and rounds midpoint values to the nearest even number. 
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number to be rounded.</param>
-    /// <param name="digits">The number of fractional digits in the return value.</param>
-    /// <returns>The <see cref="BigRational"/> number nearest to value that contains a number of fractional digits equal to digits.</returns>
-    public static BigRational Round(BigRational a, int digits = 30)
-    {
-      //var e = Pow10(digits); return Round(a * e) / e;
-      var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(digits); return cpu.popr();
-    }
-    /// <summary>
-    /// Rounds a <see cref="BigRational"/> number to a specified number of fractional digits 
-    /// using the specified rounding convention.
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number to be rounded.</param>
-    /// <param name="digits">The number of decimal places in the return value.</param>
-    /// <param name="mode">One of the enumeration values that specifies which rounding strategy to use.</param>
-    /// <returns>
-    /// The <see cref="BigRational"/> number with decimals fractional digits that the value is rounded to.<br/> 
-    /// If the number has fewer fractional digits than decimals, the number is returned unchanged.
-    /// </returns>
-    public static BigRational Round(BigRational a, int digits, MidpointRounding mode)
-    {
-      int f = 1;
-      switch (mode)
-      {
-        case MidpointRounding.ToZero: f = 0; break;
-        case MidpointRounding.ToPositiveInfinity: if (Sign(a) < 0) f = 0; else f = 4; break;
-        case MidpointRounding.ToNegativeInfinity: if (Sign(a) > 0) f = 0; else f = 4; break;
-      }
-      var cpu = task_cpu; cpu.push(a);
-      cpu.rnd(digits, f); return cpu.popr();
-    }
-    /// <summary>
-    /// Returns a specified number raised to the specified power.
-    /// </summary>
-    /// <param name="a">A <see cref="int"/> number to be raised to a power.</param>
-    /// <param name="b">A <see cref="int"/> number that specifies a power.</param>
-    /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
-    public static BigRational Pow(int a, int b)
-    {
-      var cpu = task_cpu; cpu.pow(a, b); return cpu.popr();
-    }
-    /// <summary>
-    /// Returns a specified number raised to the specified power.
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational "/> number to be raised to a power.</param>
-    /// <param name="b">A <see cref="int"/> number that specifies a power.</param>
-    /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
-    public static BigRational Pow(BigRational a, int b)
-    {
-      var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.popr();
-    }
-    /// <summary>
-    /// Returns a specified number raised to the specified power.<br/>
-    /// For fractional exponents, the result is rounded to the specified number of decimal places.
-    /// </summary>
-    /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
-    /// <param name="y">A <see cref="BigRational"/> number that specifies a power.</param>
-    /// <param name="digits">The number of fractional decimal digits in the return value.</param>
-    /// <returns>The <see cref="BigRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="x"/> is less zero and <paramref name="y"/> is fractional..</exception>
-    public static BigRational Pow(BigRational x, BigRational y, int digits = 30)
-    {
-      //return Exp(y * Log(x, digits), digits);
-      var s = Sign(x); if (s == 0) return 0;
-      if (s < 0)
-      {
-        if (IsInt(y)) return Round(Pow(x, (int)y), digits); //todo: inline, cases
-        throw new ArgumentException(nameof(x));
-      }
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.push(x); cpu.log(c);
-      cpu.push(y); cpu.mul(); cpu.exp(c);
-      cpu.rnd(digits);
-      return cpu.popr();
-    }
-    /// <summary>
-    /// Returns the square root of a specified number.
-    /// </summary>
-    /// <remarks>
-    /// For fractional roots, the result is rounded to the specified number of decimal places.
-    /// </remarks>
-    /// <param name="a">The number whose square root is to be found.</param>
-    /// <param name="digits">The maximum number of fractional digits in the return value.</param>
-    /// <returns>Zero or positive – The positive square root of <paramref name="a"/>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="a"/> is less zero.</exception>
-    public static BigRational Sqrt(BigRational a, int digits = 30)
-    {
-      if (Sign(a) < 0) throw new ArgumentException(nameof(a));
-      var cpu = task_cpu; //var x = Math.ILogB(Math.Pow(10, digits)) + 1;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop(); //if (x != c) { }
-      cpu.push(a); cpu.sqrt(c); cpu.rnd(digits);
-      return cpu.popr();
-    }
-    /// <summary>
-    /// Returns the natural base 2 logarithm of a specified number.
-    /// </summary>
-    /// <param name="x">The number whose logarithm is to be found.</param>
-    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
-    /// <returns>The base 2 logarithm of <paramref name="x"/>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static BigRational Log2(BigRational x, int digits = 30)
-    {
-      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.push(x); cpu.log2(c);
-      cpu.rnd(digits); return cpu.popr();
-    }
-    public static BigRational Log10(BigRational x, int digits = 30)
-    {
-      return Round(Log2(x, digits) / Log2(10, digits), digits); //todo: inline
-    }
-    /// <summary>
-    /// Returns the natural (base e) logarithm of a specified number.
-    /// </summary>
-    /// <param name="x">The number whose logarithm is to be found.</param>
-    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
-    /// <returns>The natural logarithm of <paramref name="x"/>; that is, <c>ln <paramref name="x"/></c>, or <c>log e <paramref name="x"/></c>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static BigRational Log(BigRational x, int digits = 30)
-    {
-      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.push(x); cpu.log(c);
-      cpu.rnd(digits); return cpu.popr();
-    }
-    /// <summary>
-    /// Returns e raised to the specified power.
-    /// </summary>
-    /// <param name="x">A number specifying a power.</param>
-    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
-    /// <returns>The number e raised to the power <paramref name="x"/>.</returns>
-    public static BigRational Exp(BigRational x, int digits = 30)
-    {
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.push(x); cpu.exp(c);
-      cpu.rnd(digits); return cpu.popr();
-    }
-    /// <summary>
-    /// Calculates π rounded to the specified number of decimal digits.<br/>
-    /// </summary>
-    /// <remarks>
-    /// Represents the ratio of the circumference of a circle to its diameter, specified by the constant, π.
-    /// </remarks>
-    /// <param name="digits">The number of decimal digits to calculate.</param>
-    /// <returns>π rounded to the specified number of decimal digits.</returns>
-    public static BigRational Pi(int digits = 30)
-    {
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.pi(c); cpu.rnd(digits); return cpu.popr();
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="x">An angle, measured in radians.</param>
-    /// <param name="digits">The number of decimal digits to calculate.</param>
-    /// <returns>The sine of <paramref name="x"/>.</returns>
-    public static BigRational Sin(BigRational x, int digits = 30)
-    {
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.push(x); cpu.sin(c, false);
-      cpu.rnd(digits); return cpu.popr();
-    }
-    /// <summary>
-    /// Returns the cosine of the specified angle.
-    /// </summary>
-    /// <param name="x">An angle, measured in radians.</param>
-    /// <param name="digits">The number of decimal digits to calculate.</param>
-    /// <returns>The cosine of <paramref name="x"/>.</returns>
-    public static BigRational Cos(BigRational x, int digits = 30)
-    {
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.push(x); cpu.sin(c, true);
-      cpu.rnd(digits); return cpu.popr();
-    }
-    /// <summary>
-    /// Returns the tangent of the specified angle.
-    /// </summary>
-    /// <param name="x">An angle, measured in radians.</param>
-    /// <param name="digits">The number of decimal digits to calculate.</param>
-    /// <returns>The tangent of <paramref name="x"/>.</returns>
-    public static BigRational Tan(BigRational x, int digits = 30)
-    {
-      return Sin(x, digits) / Cos(x, digits); //todo: inline
-    }
-    /// <summary>
-    /// Returns the angle whose sine is the specified number.
-    /// </summary>
-    /// <param name="x">A number representing a sine, where d must be greater than or equal to -1, but less than or equal to 1.</param>
-    /// <param name="digits">The number of decimal digits to calculate.</param>
-    /// <returns>
-    /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
-    /// -or- NaN if <paramref name="x"/> &lt; -1 or <paramref name="x"/> &gt; 1.
-    /// </returns>
-    public static BigRational Asin(BigRational x, int digits = 30)
-    {
-      return Atan(x / Sqrt(1 - x * x, digits), digits); //todo: inline
-    }
-    /// <summary>
-    /// Returns the angle whose cosine is the specified number.
-    /// </summary>
-    /// <param name="x">A number representing a cosine, where d must be greater than or equal to -1, but less than or equal to 1.</param>
-    /// <param name="digits">The number of decimal digits to calculate.</param>
-    /// <returns>
-    /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
-    /// -or- NaN if <paramref name="x"/> &lt; -1 or <paramref name="x"/> &gt; 1.
-    /// </returns>
-    public static BigRational Acos(BigRational x, int digits = 30)
-    {
-      return Atan(Sqrt(1 - x * x, digits) / x, digits); //todo: inline
-    }
-    /// <summary>
-    /// Returns the angle whose tangent is the specified number.
-    /// </summary>
-    /// <param name="x">A number representing a tangent.</param>
-    /// <param name="digits">The number of decimal digits to calculate.</param>
-    /// <returns>An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2.</returns>
-    public static BigRational Atan(BigRational x, int digits = 30)
-    {
-      var cpu = task_cpu;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-      cpu.push(x); cpu.atan(c);
-      cpu.rnd(digits); return cpu.popr();
-    }
-
+  
     /// <summary>
     /// Represents a stack machine for rational arithmetics.
     /// </summary>
@@ -1572,9 +1243,6 @@ namespace System.Numerics
           *(ulong*)(p + c + 1) = 0x100000001;
         }
       }
-
-      // static BigRational[] cache = new BigRational[33]; //-16..16
-      // static ulong[] cachehits = new ulong[33];
       /// <summary>
       /// Converts the value at absolute position i on stack to a 
       /// always normalized <see cref="BigRational"/> number and returns it.
@@ -1592,8 +1260,12 @@ namespace System.Numerics
           if (isz(p)) { v = default; return; }
           if ((p[0] & 0x40000000) != 0) norm(p);
           uint n = len(p);
-          // var c = n == 4 && p[1] <= 15 && p[3] == 1 ? p[1] + (p[0] >> 31 << 4) : 0;
-          // if (c != 0 && cache[c].p != null) { v = cache[c]; cachehits[c]++; return; }
+          //check: experimental
+          if (n == 4 && ((ulong*)p)[0] == 0x100000001 && ((ulong*)p)[1] == 0x100000001)
+          {
+            v = cachx(p, n, 1); return;
+          }
+          //
           var a = new uint[n]; fixed (uint* s = a) copy(s, p, n);
           v = new BigRational(a); // if (c != 0) cache[c] = v;
         }
@@ -1626,7 +1298,6 @@ namespace System.Numerics
       {
         v = (float)new BigRational(p[i]);
       }
-
       /// <summary>
       /// Removes the value currently on top of the stack, 
       /// convert and returns it as always normalized <see cref="BigRational"/> number.<br/>
@@ -2625,7 +2296,7 @@ namespace System.Numerics
         if (reps)
         {
           nr = unchecked((int)(this.p[this.i - 3][0] & 0x3fffffff)) + 1;
-          var l = (long)sp.Length * nr; var need = unchecked((int)l);                  
+          var l = (long)sp.Length * nr; var need = unchecked((int)l);
           if (l >= (int.MaxValue >> 3)) reps = false;
           else if (l <= 0x8000) { var t = stackalloc uint[need]; rr = t; }
           else rr = (uint*)(mem = Marshal.AllocCoTaskMem(need << 2));
@@ -3290,6 +2961,16 @@ namespace System.Numerics
       {
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
       }
+      //check: experimental
+      static uint[][]? cache;
+      static BigRational cachx(uint* s, uint n, uint x)
+      {
+        var p = cache != null ? cache[x] : null;
+        if (p == null) lock (string.Empty)
+            fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n])
+              copy(d, s, n);
+        return new BigRational(p);
+      }
     }
     /// <summary>
     /// Thread static instance of a <see cref="CPU"/> for general use.
@@ -3337,6 +3018,8 @@ namespace System.Numerics
         }
       }
       //public static int DebugDigits { get; set; } = 32;
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+      internal int mathdigits; //only used by MathR to avoid another threadlocal root 
     }
     #endregion
   }

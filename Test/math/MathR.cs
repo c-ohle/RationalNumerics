@@ -5,7 +5,7 @@ namespace System.Numerics.Rational
   /// Implementation of some common mathematical functions for <see cref="BigRational"/>.<br/>
   /// <i>These are just non-optimal example implementations for testing!</i>
   /// </summary>
-  public static class MathR
+  public static class oldMathR
   {
     /// <summary>
     /// Returns the numerator of the specified number.
