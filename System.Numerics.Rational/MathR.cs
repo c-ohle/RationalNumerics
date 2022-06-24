@@ -191,8 +191,7 @@ namespace System.Numerics
     /// <remarks>
     /// <b>Currently under construction, not optimized.</b>
     /// </remarks>
-    /// <param name="a">A <see cref="BigRational"/> number to be raised to a power.</param>
-    /// <param name="b">A <see cref="BigRational"/> number that specifies a power.</param>
+    /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
@@ -294,7 +293,13 @@ namespace System.Numerics
     /// <param name="x">A number specifying a power.</param>
     /// The maximum number of fractional decimal digits in the return value.<br/>
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
-    /// <returns>The number e raised to the power <paramref name="x"/>.</returns>
+    /// <param name="digits">
+    /// The maximum number of fractional decimal digits in the return value.<br/>
+    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
+    /// </param>
+    /// <returns>
+    /// The number e raised to the power <paramref name="x"/>.
+    /// </returns>
     public static BigRational Exp(BigRational x, int digits = 0)
     {
       var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);

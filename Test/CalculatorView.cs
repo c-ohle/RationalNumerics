@@ -164,6 +164,12 @@ namespace Test
         if (!d && digits > 1000) Cursor.Current = Cursors.WaitCursor;
         var a = 0; var b = state == 2 ? list.Count - 1 : list.Count - 2;
         var r = d ? rnd(parsed(a, b)) : parse(a, b);
+        if (btn_dec.Text[0] == 'C')
+        {
+          var t1 = MathRex.GetContinuedFraction(r);
+          var t2 = MathRex.ParseContinuedFraction(t1); Debug.Assert(r == t2); //cross check
+          return t1;
+        }
         return r.ToString((f == "ℚ" ? "L" : "S") + (digits + 2));
         double rnd(double t) { if (digits <= 15) t = Math.Round(t, digits); return t; }
       }
@@ -178,7 +184,9 @@ namespace Test
         {
           case "π": return MathR.Pi(digits);
           case "℮": return MathR.Exp(1, digits);
-          default: return rat.Parse(h);
+          default:
+            if (h[0] == '[') return MathRex.ParseContinuedFraction(h);
+            return rat.Parse(h);
         }
       for (int l = 0; l < 3; l++)
         for (int k = 0, i = b; i >= a; i--)
@@ -236,7 +244,9 @@ namespace Test
         {
           case "π": return Math.PI;
           case "℮": return Math.E;
-          default: return (double)BigRational.Parse(h);
+          default:
+            if (h[0] == '[') return (double)MathRex.ParseContinuedFraction(h);
+            return (double)BigRational.Parse(h);
         }
       for (int l = 0; l < 3; l++)
         for (int k = 0, i = b; i >= a; i--)
@@ -386,6 +396,14 @@ namespace Test
     {
       var s = button_rat.Text; button_rat.Text = s == "ℚ'" ? "ℚ" : s == "ℚ" ? "d" : "ℚ'";
       numericUpDownRound_ValueChanged(sender, e);
+    }
+    void btn_dec_Click(object sender, EventArgs e)
+    {
+      if (kl != 0) return;
+      var s = btn_dec.Text; btn_dec.Text = s == "DEC" ? "CF" : "DEC"; //HEX...
+      if (state == 3) list.Remove("=");
+      if (state == 0) list.Add(textBox1.Text); state = 2;
+      s = parse(); if (s != null) textBox1.Text = s; else { } // else state = t;
     }
     private void oncopy(object sender, EventArgs e)
     {

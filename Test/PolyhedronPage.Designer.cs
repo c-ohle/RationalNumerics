@@ -66,6 +66,7 @@
       Test.MenuItem _center;
       Test.MenuItem _check;
       System.Windows.Forms.ToolStripSeparator sep3;
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
       this._model = new Test.MenuItem();
@@ -81,14 +82,13 @@
       this.btn_back = new System.Windows.Forms.ToolStripButton();
       this.btn_back_ = new System.Windows.Forms.ToolStripButton();
       this.btn_play = new System.Windows.Forms.ToolStripButton();
-      this.btn_stop = new System.Windows.Forms.ToolStripButton();
       this.btn_forw_ = new System.Windows.Forms.ToolStripButton();
       this.btn_forw = new System.Windows.Forms.ToolStripButton();
       this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
       this.btn_record = new System.Windows.Forms.ToolStripButton();
-      this.btn_clear = new System.Windows.Forms.ToolStripButton();
-      this.btn_save = new System.Windows.Forms.ToolStripButton();
+      this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
       this.label3 = new System.Windows.Forms.Label();
+      this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
       undo_back = new Test.MenuItem();
@@ -463,7 +463,7 @@
             this._4,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(232, 368);
+      this.contextMenuView.Size = new System.Drawing.Size(232, 340);
       // 
       // _model
       // 
@@ -579,13 +579,12 @@
             this.btn_back,
             this.btn_back_,
             this.btn_play,
-            this.btn_stop,
             this.btn_forw_,
             this.btn_forw,
             this.toolStripSeparator2,
             this.btn_record,
-            this.btn_clear,
-            this.btn_save});
+            this.toolStripButton1,
+            this.toolStripButton2});
       this.toolStrip1.Location = new System.Drawing.Point(0, 6);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -626,18 +625,6 @@
       this.btn_play.ToolTipText = "Play";
       this.btn_play.Click += new System.EventHandler(this.btn_play_Click);
       // 
-      // btn_stop
-      // 
-      this.btn_stop.AccessibleRole = System.Windows.Forms.AccessibleRole.RadioButton;
-      this.btn_stop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_stop.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.btn_stop.Name = "btn_stop";
-      this.btn_stop.Size = new System.Drawing.Size(29, 24);
-      this.btn_stop.Text = "";
-      this.btn_stop.ToolTipText = "Stop";
-      this.btn_stop.Visible = false;
-      this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
-      // 
       // btn_forw_
       // 
       this.btn_forw_.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -673,29 +660,21 @@
       this.btn_record.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_record.Name = "btn_record";
       this.btn_record.Size = new System.Drawing.Size(29, 24);
-      this.btn_record.Text = "";
+      this.btn_record.Text = "⦁";
       this.btn_record.ToolTipText = "Record";
       this.btn_record.Click += new System.EventHandler(this.btn_record_Click);
       // 
-      // btn_clear
+      // toolStripButton1
       // 
-      this.btn_clear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_clear.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.btn_clear.Name = "btn_clear";
-      this.btn_clear.Size = new System.Drawing.Size(29, 24);
-      this.btn_clear.Text = "";
-      this.btn_clear.ToolTipText = "Clear";
-      this.btn_clear.Click += new System.EventHandler(this.btn_clear_Click);
-      // 
-      // btn_save
-      // 
-      this.btn_save.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.btn_save.Name = "btn_save";
-      this.btn_save.Size = new System.Drawing.Size(29, 24);
-      this.btn_save.Text = "";
-      this.btn_save.ToolTipText = "Save";
-      this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
+      this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+      this.toolStripButton1.AutoToolTip = false;
+      this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton1.Name = "toolStripButton1";
+      this.toolStripButton1.Size = new System.Drawing.Size(29, 24);
+      this.toolStripButton1.Text = "⨯";
+      this.toolStripButton1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      this.toolStripButton1.Click += new System.EventHandler(this.btn_close_Click);
       // 
       // label3
       // 
@@ -706,6 +685,17 @@
       this.label3.Size = new System.Drawing.Size(142, 20);
       this.label3.TabIndex = 0;
       this.label3.Text = "(under construction)";
+      // 
+      // toolStripButton2
+      // 
+      this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.toolStripButton2.Font = new System.Drawing.Font("Segoe UI Symbol", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+      this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton2.Name = "toolStripButton2";
+      this.toolStripButton2.Size = new System.Drawing.Size(29, 24);
+      this.toolStripButton2.Text = "⚒";
+      this.toolStripButton2.Visible = false;
       // 
       // PolyhedronPage
       // 
@@ -742,7 +732,6 @@
     private ToolStripSeparator _4;
     private Panel panelStory;
     private ToolStrip toolStrip1;
-    private ToolStripButton btn_stop;
     private ToolStripButton btn_play;
     private ToolStripButton btn_back;
     private ToolStripButton btn_forw;
@@ -750,8 +739,8 @@
     private ToolStripSeparator toolStripSeparator6;
     private ToolStripButton btn_back_;
     private ToolStripButton btn_forw_;
-    private ToolStripButton btn_clear;
-    private ToolStripButton btn_save;
     private ToolStripSeparator toolStripSeparator2;
+    private ToolStripButton toolStripButton1;
+    private ToolStripButton toolStripButton2;
   }
 }

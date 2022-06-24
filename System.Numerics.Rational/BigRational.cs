@@ -92,16 +92,15 @@ namespace System.Numerics
     /// <returns>true if the formatting operation succeeds; false otherwise.</returns>
     public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
     {
-      //if (isnan(this.p)) return float.NaN.TryFormat(destination, out charsWritten, null, provider);
       int digs = 32, round = -1, emin = -4, emax = +16; char fc = '\0', tc = fc;
-      //if (format != default && format.Length == 0) digs = CPU.DebugDigits;
+      //if (format != default && format.Length == 0) digs = CPU.DebugDigits; //todo: syn MathR.DefaultDigits
       var info = NumberFormatInfo.GetInstance(provider);
       if (format.Length != 0)
       {
         if (char.IsLetter(tc = format[0]) && (format.Length == 1 || (char.IsNumber(format[1]) && int.TryParse(format.Slice(1), out round))))
           switch (fc = char.ToUpper(tc))
           {
-            case 'Q': fc = 'R'; digs = 0; round = -1; goto def; // fractions "1/3"
+            case 'Q': fc = 'R'; digs = 0; round = -1; goto def; // fraction form "1/3"
             case 'R':
             case 'S':
               if (round == -1) goto def; digs = round; round = -1;
@@ -425,7 +424,7 @@ namespace System.Numerics
     /// <c>var x = (<see cref="BigRational"/>)0.1;</c><br/>
     /// results in <c>0.1</c> as this function implicitly rounds to the precision of significant bits of <see cref="double"/>.
     /// </remarks>
-    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <param name="v">The value to convert to a <see cref="BigRational"/>.</param>
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public BigRational(double v)
     {
@@ -1019,7 +1018,7 @@ namespace System.Numerics
       if (a.p == null) return false;
       fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
     }
-  
+
     /// <summary>
     /// Represents a stack machine for rational arithmetics.
     /// </summary>
@@ -1412,7 +1411,7 @@ namespace System.Numerics
       /// </summary>
       /// <remarks>
       /// Since dup-operations always require memory copies, 
-      /// it is more efficient to use <see cref="swp"/> when possible.
+      /// it is more efficient to use <see cref="swp()"/> when possible.
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
       /// <param name="a">Absolute index of a stack entry.</param>
@@ -1746,7 +1745,8 @@ namespace System.Numerics
       /// also called the reciprocal. <c>x = 1 / x;</c> 
       /// </summary>
       /// <remarks>
-      /// It's a fast operation and should be used for <c>1 / x</c> instead of a equivalent <see cref="div"/> operations.
+      /// It's a fast operation and should be used for <c>1 / x</c> instead of a equivalent <see cref="div()"/> operations.<br/>
+      /// Inversion of rational 0 values (0 / 1 => 1 / 0) results in NaN values which can be ignored for all bit-level operations.
       /// </remarks>
       /// <param name="i">Relative index of a stack entry.</param>
       public void inv(int i = 0)
@@ -1799,7 +1799,8 @@ namespace System.Numerics
       /// </summary>
       /// <remarks>
       /// Shifts the numerator value only, which is a fast alternative to divisions by powers of two.<br/>
-      /// To shift the denominator is possible by calling <see cref="inv"/> before and after.
+      /// Manipulating denominators is possible by calling <see cref="inv"/> beforehand.<br/>
+      /// Inversion of rational 0 values (0 / 1 => 1 / 0) results in NaN values which can be ignored for all bit-level operations.
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
@@ -1818,6 +1819,10 @@ namespace System.Numerics
       /// Bitwise logical AND of the numerators<br/>
       /// of the first two values on top of the stack and replaces them with the result.
       /// </summary>
+      /// <remarks>
+      /// Manipulating denominators is possible by calling <see cref="inv"/> beforehand.<br/>
+      /// Inversion of rational 0 values (0 / 1 => 1 / 0) results in NaN values which can be ignored for all bit-level operations.
+      /// </remarks>
       public void and()
       {
         fixed (uint* u = this.p[this.i - 1])
@@ -1833,6 +1838,10 @@ namespace System.Numerics
       /// Bitwise logical OR of the numerators<br/>
       /// of the first two values on top of the stack and replaces them with the result.
       /// </summary>
+      /// <remarks>
+      /// Manipulating denominators is possible by calling <see cref="inv"/> beforehand.<br/>
+      /// Inversion of rational 0 values (0 / 1 => 1 / 0) results in NaN values which can be ignored for all bit-level operations.
+      /// </remarks>
       public void or()
       {
         fixed (uint* u = this.p[this.i - 1])
@@ -1847,6 +1856,10 @@ namespace System.Numerics
       /// Bitwise logical XOR of the numerators<br/>
       /// of the first two values on top of the stack and replaces them with the result.
       /// </summary>
+      /// <remarks>
+      /// Manipulating denominators is possible by calling <see cref="inv"/> beforehand.<br/>
+      /// Inversion of rational 0 values (0 / 1 => 1 / 0) results in NaN values which can be ignored for all bit-level operations.
+      /// </remarks>
       public void xor()
       {
         fixed (uint* u = this.p[this.i - 1])
@@ -2192,7 +2205,7 @@ namespace System.Numerics
       /// The hash value returned is identical with the hash value returned from <see cref="BigRational.GetHashCode"/> for same values.<br/>
       /// see: <see cref="mark()"/> for absolute indices. 
       /// </remarks>
-      /// <param name="b">Absolute index of a stack entry.</param>
+      /// <param name="i">Absolute index of a stack entry.</param>
       /// <returns>A <see cref="uint"/> value as hash value.</returns>
       public uint hash(uint i)
       {
@@ -2487,7 +2500,7 @@ namespace System.Numerics
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
-      public void e(uint c) // todo: cache
+      public void e(uint c) // todo: check e from [2;1,2,1,1,4,1,1,6,...
       {
         push(1u); exp(c); // todo: inline
       }
@@ -2975,6 +2988,9 @@ namespace System.Numerics
     /// <summary>
     /// Thread static instance of a <see cref="CPU"/> for general use.
     /// </summary>
+    /// <remarks>
+    /// Recomandation add to Watch for Debug 
+    /// </remarks>
     public static CPU task_cpu
     {
       get { return cpu ??= new CPU(); }
@@ -3017,9 +3033,7 @@ namespace System.Numerics
           }
         }
       }
-      //public static int DebugDigits { get; set; } = 32;
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-      internal int mathdigits; //only used by MathR to avoid another threadlocal root 
+      [DebuggerHidden] internal int mathdigits { get; set; } // only used by MathR to avoid another threadlocal root 
     }
     #endregion
   }

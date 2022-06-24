@@ -70,6 +70,7 @@
       System.Windows.Forms.Button button29;
       System.Windows.Forms.Button button31;
       System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+      this.btn_dec = new System.Windows.Forms.Button();
       this.button12 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.contextMenuEdit = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -638,7 +639,7 @@
       button38.TabIndex = 41;
       button38.Tag = "\'";
       button38.Text = "\'";
-      this.toolTip1.SetToolTip(button38, "repetition");
+      this.toolTip1.SetToolTip(button38, "Repetition start mark \'\r\nlike 0.\'3 for 1/3");
       button38.UseCompatibleTextRendering = true;
       button38.UseVisualStyleBackColor = false;
       button38.Click += new System.EventHandler(this.button_Click);
@@ -725,6 +726,23 @@
       toolStripMenuItem1.Size = new System.Drawing.Size(163, 24);
       toolStripMenuItem1.Text = "Copy";
       toolStripMenuItem1.Click += new System.EventHandler(this.oncopy);
+      // 
+      // btn_dec
+      // 
+      this.btn_dec.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btn_dec.BackColor = System.Drawing.SystemColors.Control;
+      this.btn_dec.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.btn_dec.Location = new System.Drawing.Point(511, 96);
+      this.btn_dec.Name = "btn_dec";
+      this.btn_dec.Size = new System.Drawing.Size(106, 29);
+      this.btn_dec.TabIndex = 4;
+      this.btn_dec.Tag = "";
+      this.btn_dec.Text = "DEC";
+      this.toolTip1.SetToolTip(this.btn_dec, "DEC: Decimal\r\nCF: Continued fraction\r\n\r\nunder construction:\r\nHEX: Hexadecimal\r\nOC" +
+        "T: Octal\r\nBIN: Binary\r\n");
+      this.btn_dec.UseCompatibleTextRendering = true;
+      this.btn_dec.UseVisualStyleBackColor = false;
+      this.btn_dec.Click += new System.EventHandler(this.btn_dec_Click);
       // 
       // button12
       // 
@@ -816,7 +834,8 @@
       this.numericUpDownDigits.Size = new System.Drawing.Size(75, 26);
       this.numericUpDownDigits.TabIndex = 6;
       this.numericUpDownDigits.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.toolTip1.SetToolTip(this.numericUpDownDigits, "decimal digits");
+      this.toolTip1.SetToolTip(this.numericUpDownDigits, "Decimal digits to calculate.\r\nWith thousands of digits it can get very slow! \r\nBu" +
+        "t this is intended to test the functions.");
       this.numericUpDownDigits.Value = new decimal(new int[] {
             32,
             0,
@@ -835,7 +854,9 @@
       this.button_rat.Size = new System.Drawing.Size(33, 29);
       this.button_rat.TabIndex = 5;
       this.button_rat.Text = "ℚ\'";
-      this.toolTip1.SetToolTip(this.button_rat, "ℚ\' rational arithmetics (repetition check on eg. 1 / 3 = \"0.'3\")\r\nℚ rational arithmetics (repetition check off eg. 1 / 3 = \"0.33333…\")\r\nd: double arithmetics\r\n");
+      this.toolTip1.SetToolTip(this.button_rat, "ℚ\' BigRational arithmetics (repetition check on eg. 1 / 3 = \"0.\'3\")\r\nℚ BigRationa" +
+        "l arithmetics (repetition check off eg. 1 / 3 = \"0.33333…\")\r\nd: System.Double ar" +
+        "ithmetics\r\n");
       this.button_rat.UseCompatibleTextRendering = true;
       this.button_rat.UseVisualStyleBackColor = false;
       this.button_rat.Click += new System.EventHandler(this.button_rat_Click);
@@ -899,6 +920,7 @@
       this.AutoScroll = true;
       this.Controls.Add(this.label3);
       this.Controls.Add(this.label2);
+      this.Controls.Add(this.btn_dec);
       this.Controls.Add(this.button32);
       this.Controls.Add(this.btn_rad);
       this.Controls.Add(this.button_rat);
@@ -971,5 +993,6 @@
     private Label label3;
     private ContextMenuStrip contextMenuEdit;
     private ToolStripMenuItem mi_paste;
+    private Button btn_dec;
   }
 }

@@ -433,7 +433,7 @@
   <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_shr_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.shr(System.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1806">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1807">View Source</a>
 </span>
 <a id="System_Numerics_BigRational_CPU_shr_" data-uid="System.Numerics.BigRational.CPU.shr*"></a>
 <h4 id="System_Numerics_BigRational_CPU_shr_System_Int32_System_Int32_" data-uid="System.Numerics.BigRational.CPU.shr(System.Int32,System.Int32)">shr(Int32, Int32)</h4>
@@ -471,7 +471,8 @@ Shifts the numerator value to the right (in zeros) by the specified number of bi
 </table>
 <h5 id="System_Numerics_BigRational_CPU_shr_System_Int32_System_Int32__remarks">Remarks</h5>
 <div class="markdown level1 remarks"><p>Shifts the numerator value only, which is a fast alternative to divisions by powers of two.<br>
-To shift the denominator is possible by calling <a class="xref" href="System.Numerics.BigRational.CPU.inv.html#System_Numerics_BigRational_CPU_inv_System_Int32_">inv(Int32)</a> before and after.</p>
+Manipulating denominators is possible by calling <a class="xref" href="System.Numerics.BigRational.CPU.inv.html#System_Numerics_BigRational_CPU_inv_System_Int32_">inv(Int32)</a> beforehand.<br>
+Inversion of rational 0 values (0 / 1 =&gt; 1 / 0) results in NaN values which can be ignored for all bit-level operations.</p>
 </div>
 </article>
           </div>
@@ -484,7 +485,7 @@ To shift the denominator is possible by calling <a class="xref" href="System.Num
                     <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_shr_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.shr*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1806" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1807" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

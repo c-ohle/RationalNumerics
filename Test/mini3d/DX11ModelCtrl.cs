@@ -304,13 +304,13 @@ namespace Test
     int OnRedo(object? test)
     {
       if (undos == null || undoi >= undos.Count) return 0;
-      if (test == null) { undos[undoi++].exec(); Invalidate(); Focus(); UndoChanged?.Invoke(); }
+      if (test == null) { undos[undoi++].exec(); Invalidate(); Focus(); /*UndoChanged?.Invoke();*/ }
       return 1;
     }
     int OnUndo(object? test)
     {
       if (undos == null || undoi == 0) return 0;
-      if (test == null) { undos[--undoi].exec(); Invalidate(); Focus(); UndoChanged?.Invoke(); }
+      if (test == null) { undos[--undoi].exec(); Invalidate(); Focus(); /*UndoChanged?.Invoke();*/ }
       return 1;
     }
     int OnCut(object? test)
@@ -536,9 +536,8 @@ namespace Test
       if (p == null) return;
       if (undos == null) undos = new List<Undo>();
       undos.RemoveRange(undoi, undos.Count - undoi);
-      undos.Add(p); undoi = undos.Count; UndoChanged?.Invoke();
+      undos.Add(p); undoi = undos.Count; //UndoChanged?.Invoke();
     }
-    public Action? UndoChanged;
     public void Execute(Undo a)
     {
       if (a == null) return;
@@ -1130,7 +1129,6 @@ namespace Test
     public abstract class Undo
     {
       internal abstract void exec();
-      internal virtual void link(AniSet set, int time) { }
       internal static Undo? join(params object[] a) // Ani, IEnumerable<Ani>, null
       {
         static Undo? join(object[] p)
@@ -1145,16 +1143,16 @@ namespace Test
         }
         return join(a);
       }
+      internal virtual int link(AniSet set, int time) => 0;
     }
     public abstract class AniLine
     {
       internal abstract Node target { get; }
       internal readonly List<int> times = new(2); List<float>? gammas;
-      static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
       internal bool lerp(int time)
       {
         int x = 0;
-        for (int i = 0, t, dt; i < times.Count; i += 2, x++)
+        for (int i = 0, t, dt; i < times.Count; i += 2, x++) //todo: cach i 
         {
           if (time <= (t = times[i])) break;
           if (time <= t + (dt = times[i + 1]))
@@ -1162,14 +1160,12 @@ namespace Test
             float f = (float)(time - t) / dt, g;
             if (gammas != null && x < gammas.Count && (g = gammas[x]) != 0)
               f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, g);
-            if (f < 0) { }
-            if (f > 1) { }
             return lerp(x, f);
           }
         }
-        if (x == times.Count >> 1)
-          return lerp(x - 1, 1);
+        if (x == times.Count >> 1) return lerp(x - 1, 1);
         return lerp(x, 0);
+        static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
       }
       internal abstract bool lerp(int x, float f);
       internal virtual float get(int was, int i)
@@ -1283,7 +1279,7 @@ namespace Test
       internal UndoTrans(Group p, in Matrix4x3 m) { this.p = p; this.m = m; }
       internal override void exec() { var t = p.Transform; p.Transform = m; m = t; }
       internal static UndoTrans? get(Group p, in Matrix4x3 m) => p.Transform != m ? new UndoTrans(p, m) : null;
-      internal override void link(AniSet set, int time)
+      internal override int link(AniSet set, int time)
       {
         var l = set.anilines;
         for (int i = 0; i < l.Count; i++)
@@ -1291,13 +1287,13 @@ namespace Test
           {
             t.times.Add(time); t.times.Add(900);
             t.list.Add(p.Transform);
-            return;
+            return 0x40000000 | (i << 16) | (t.times.Count - 2);
           }
         var pl = new Line { p = p };
         pl.times.Add(time); pl.times.Add(900);
         pl.list.Add(m); pl.list.Add(p.Transform); l.Add(pl);
+        return 0x40000000 | ((l.Count - 1) << 16);
       }
-
       internal class Line : AniLine
       {
         internal override Node target => p;
@@ -1330,10 +1326,7 @@ namespace Test
         {
           base.set(was, i, v);
           if (was == 8) list.RemoveAt(i >> 1);
-          if (was == 5)
-          {
-            list[i] = p.Transform;
-          }
+          if (was == 5) { list[i] = p.Transform; }
         }
       }
     }
@@ -1345,35 +1338,34 @@ namespace Test
       {
         var pd = p.GetType().GetProperty(s); var t = pd.GetValue(p); pd.SetValue(p, v); v = t;
       }
-      internal override void link(AniSet set, int time)
+      internal override int link(AniSet set, int time)
       {
         var l = set.anilines;
         var pd = p.GetType().GetProperty(s); var pt = pd.PropertyType;
-        if (pt == typeof(Color)) ColorLine.link<ColorLine>(l, p, s, (Color)v, time, 500);
-        else if (pt == typeof(float)) FloatLine.link<FloatLine>(l, p, s, (float)v, time, 500);
-        else if (pt == typeof(Vector2)) Vector2Line.link<Vector2Line>(l, p, s, (Vector2)v, time, 500);
-        else if (pt == typeof(Vector3)) Vector3Line.link<Vector3Line>(l, p, s, (Vector3)v, time, 500);
-        else if (pt == typeof(bool)) BoolLine.link<BoolLine>(l, p, s, (bool)v, time, 100);
-        else if (pt == typeof(string)) StringLine.link<StringLine>(l, p, s, v as string, time, 100);
-        else if (pt == typeof(int) || pt.IsEnum) IntLine.link<IntLine>(l, p, s, (int)v, time, 100);
-        else
-        {
-        }
+        if (pt == typeof(Color)) return ColorLine.link<ColorLine>(l, p, s, (Color)v, time, 500);
+        if (pt == typeof(float)) return FloatLine.link<FloatLine>(l, p, s, (float)v, time, 500);
+        if (pt == typeof(Vector2)) return Vector2Line.link<Vector2Line>(l, p, s, (Vector2)v, time, 500);
+        if (pt == typeof(Vector3)) return Vector3Line.link<Vector3Line>(l, p, s, (Vector3)v, time, 500);
+        if (pt == typeof(bool)) return BoolLine.link<BoolLine>(l, p, s, (bool)v, time, 100);
+        if (pt == typeof(string)) return StringLine.link<StringLine>(l, p, s, v as string, time, 100);
+        if (pt == typeof(int) || pt.IsEnum) return IntLine.link<IntLine>(l, p, s, (int)v, time, 100);
+        return 0;
       }
       internal abstract class PropLine<T> : AniLine
       {
-        internal static void link<TC>(List<AniLine> l, object p, string s, T v, int time, int dt) where TC : PropLine<T>, new()
+        internal static int link<TC>(List<AniLine> l, object p, string s, T v, int time, int dt) where TC : PropLine<T>, new()
         {
           for (int i = 0; i < l.Count; i++)
             if (l[i] is TC t && t.p == p && t.name == s)
             {
               t.times.Add(time); t.times.Add(dt);
               t.list.Add(t.acc.get(p));
-              return;
+              return 0x40000000 | (i << 16) | (t.times.Count - 2);
             }
           var tc = new TC(); tc.p = (Node)p; tc.setacc(s);
           tc.times.Add(time); tc.times.Add(dt);
           tc.list.Add(v); tc.list.Add(tc.acc.get(p)); l.Add(tc);
+          return 0x40000000 | ((l.Count - 1) << 16);
         }
         internal string name => acc.get.Method.Name;
         internal override Node target => p; Node? p;
@@ -1562,7 +1554,6 @@ namespace Test
     {
       internal Settings(DX11ModelCtrl p) { this.p = p; }
       readonly DX11ModelCtrl p; float raster = 0.001f, angelgrid = 0.01f;
-
       [Category("\t\t\tSelection"), DisplayName("Bounding Box"), DefaultValue(true)]
       public bool sel_box
       {
@@ -1666,199 +1657,6 @@ namespace Test
           return (context.PropertyDescriptor.PropertyType == typeof(uint) ? m1 : m2).
             DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(p => p.Text.Equals(value))?.Tag;
         }
-      }
-    }
-  }
-
-  //Props
-  public unsafe partial class DX11ModelCtrl
-  {
-    public abstract class PropsCtrl : UserControl
-    {
-      public DX11ModelCtrl? Target; // { get; set; }
-      protected override void OnLoad(EventArgs e)
-      {
-        base.OnLoad(e);
-        combo = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList, DrawMode = DrawMode.OwnerDrawFixed };
-        combo.DrawItem += (p, e) =>
-        {
-          e.DrawBackground(); var i = e.Index; if (i < 0) return;
-          var g = e.Graphics; var o = combo.Items[e.Index]; var r = e.Bounds;
-          var node = o as Node; var font = Font;
-          if ((e.State & DrawItemState.ComboBoxEdit) == 0 && node != null)
-          {
-            for (var t = node.parent; t != null; t = t.parent) r.X += 16;
-            if (node.nodes != null)
-            {
-              var ss = Target.selection; var s = default(Node);
-              if (ss.Count != 0) //for (int x = 0; x < ss.Count && ms == null; x++)
-                for (s = ss[ss.Count - 1]; s != null && s != node; s = s.parent) ;
-              TextRenderer.DrawText(g, s != null ? "" : "", font, // ˃ ˅
-                new Rectangle(r.X - 15, r.Y - 2, r.Width, r.Height), e.ForeColor, TextFormatFlags.Left);
-            }
-          }
-          var sn = node != null ? node.name : o.ToString();
-          if (sn != null)
-          {
-            TextRenderer.DrawText(g, sn, bold ??= new System.Drawing.Font(font, FontStyle.Bold), r, e.ForeColor, TextFormatFlags.Left);
-            r.X += TextRenderer.MeasureText(sn, bold).Width;
-          }
-          if (node != null) TextRenderer.DrawText(g, o.GetType().Name, font, r, e.ForeColor, TextFormatFlags.Left);
-          e.DrawFocusRectangle();
-        };
-        combo.SelectedIndexChanged += (_, e) =>
-        {
-          if (!btnprops.Checked) return;
-          if (!combo.Focused || comboupdate) return;
-          var p = combo.SelectedItem;
-          fillcombo(p);
-          Target.Select(p as Group); update = true;
-        };
-        grid = new PropertyGrid { Dock = DockStyle.Fill, TabIndex = 1 };
-        grid.PropertySort = PropertySort.Categorized;
-        grid.PropertySortChanged += (p, e) =>
-        {
-          if (grid.PropertySort == PropertySort.CategorizedAlphabetical)
-            grid.PropertySort = PropertySort.Categorized;
-        };
-        grid.PropertyValueChanged += (_, e) =>
-        {
-          var d = e.ChangedItem.PropertyDescriptor; //if (d.PropertyType == typeof(Type)) return;
-          var o = e.ChangedItem.GetType().GetProperty("Instance").GetValue(e.ChangedItem);
-          var s = d.Name; var v = e.OldValue;
-          Target.Invalidate(); if (o is not Node ba) return;
-          if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
-          var t = o.GetType().GetProperty(s).GetValue(o);
-          if (object.Equals(v, t)) return;
-          Target.AddUndo(new UndoProp(ba, s, v));
-        };
-        var a = Controls; a.Add(grid); a.Add(combo);
-        var cc = grid.Controls; view = cc[2]; info = cc[0];
-
-        btnprops = new ToolStripButton() { Text = "", ToolTipText = "Properties", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Checked = true };
-        btnsetting = new ToolStripButton() { Text = "", ToolTipText = "Settings", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
-        btnedit = new ToolStripButton() { Text = "", ToolTipText = "Edit", Enabled = false, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
-        btntoolbox = new ToolStripButton() { Text = "⚒", Font = new System.Drawing.Font(this.Font.FontFamily, 7.5f), ToolTipText = "Toolbox", AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Alignment = ToolStripItemAlignment.Right };
-        btnstory = new ToolStripButton() { Text = "", ToolTipText = "Storyboard", AccessibleRole = AccessibleRole.CheckButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
-        btnprops.Click += (p, e) =>
-        {
-          if (btnprops.Checked) return; btnprops.Checked = true;
-          btnsetting.Checked = btntoolbox.Checked = false; showtoolbox(false);
-          oninv(); combo.Items.Clear(); //grid.Focus();
-          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
-        };
-        btnsetting.Click += (p, e) =>
-        {
-          if (btnsetting.Checked) return; btnsetting.Checked = true;
-          btnprops.Checked = btntoolbox.Checked = false; showtoolbox(false);
-          grid.SelectedObject = Target.settings;
-          combo.Items.Clear(); combo.Items.Add("Settings"); combo.SelectedIndex = 0;
-          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = false;
-        };
-        btntoolbox.Click += (p, e) =>
-        {
-          btntoolbox.Checked = true;
-          btnprops.Checked = btnsetting.Checked = false;
-          combo.Items.Clear(); combo.Items.Add("Toolbox"); combo.SelectedIndex = 0;
-          showtoolbox(true);
-        };
-
-        var ts = (ToolStrip)cc[3]; var it = ts.Items; ts.RenderMode = ToolStripRenderMode.Professional;
-        it.Add(new ToolStripSeparator());
-        it.Add(btnprops); it.Add(btnsetting); it.Add(btnedit); it.Add(btnstory); it.Add(btntoolbox);
-      }
-      protected override void OnVisibleChanged(EventArgs e)
-      {
-        base.OnVisibleChanged(e); if (Target == null || grid == null) return;
-        if (Visible)
-        {
-          Target.Animations += onidle; Target.Invaliated += oninv; update = true;
-        }
-        else
-        {
-          Target.Animations -= onidle; Target.Invaliated -= oninv;
-          grid.SelectedObject = null; combo.Items.Clear();
-        }
-      }
-      PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
-      Control? view, info; internal ToolStripButton? btnprops, btnsetting, btnedit, btntoolbox, btnstory;
-      bool comboupdate, update; object? lastpd; WebBrowser? wb;
-      void onidle()
-      {
-        if (!update) return; update = false;
-        if (combo.DroppedDown || !btnprops.Checked) return;
-        var list = Target.selection; var ext = Target.extrasel;
-        var csel = combo.SelectedItem;
-        if (ext.p != null && this.ContainsFocus && csel is not Node) return;
-        var disp =
-          ext.p != null && ext.view.ContainsFocus ? ext.p :
-          (list.Count != 0 ? (object)list[list.Count - 1] :
-           csel != null && csel is not Node ? csel : Target.Scene);
-        //if (ext.p != null && ext.view.ContainsFocus && (ext.view != Target || ext.p.Equals(disp))) disp = ext.p;
-        if (csel != disp && !combo.ContainsFocus) fillcombo(csel = disp);
-        if (grid.SelectedObject != csel)
-        {
-          grid.SelectedObject = csel;
-          Models.propref = false; lastpd = null;
-          if (grid.PropertySort == PropertySort.NoSort) grid.PropertySort = PropertySort.Categorized;
-        }
-        else
-        {
-          if (Models.propref) { Models.propref = false; grid.Refresh(); return; }
-          combo.Invalidate(); if (ContainsFocus) return;
-          view.Invalidate(true); view.Refresh();
-        }
-      }
-      void fillcombo(object disp)
-      {
-        var items = combo.Items; comboupdate = true;
-        items.Clear(); var node = disp as Node;
-        if (node == null) items.Add(disp); // extrasel
-        else
-        {
-          items.Add(Target.Scene);
-          if (node != null)
-          {
-            recu(items, node);
-            static void recu(ComboBox.ObjectCollection items, Node node)
-            {
-              if (node.parent != null) recu(items, node.parent);
-              var a = node.nodes; if (a == null) return;
-              for (int i = 0, x = items.IndexOf(node); i < a.Length; i++)
-                items.Insert(++x, a[i]);
-            }
-          }
-        }
-        combo.SelectedItem = disp; combo.Update(); comboupdate = false;
-      }
-      void oninv() { update = true; }
-      void showtoolbox(bool on)
-      {
-        if (on == (wb != null && wb.Visible)) return;
-        if (on)
-        {
-          if (wb == null)
-            view.Controls.Add(wb = new WebBrowser()
-            {
-              Visible = false,
-              Dock = DockStyle.Fill,
-              AllowNavigation = false,
-              ScriptErrorsSuppressed = true,
-              WebBrowserShortcutsEnabled = false,
-              IsWebBrowserContextMenuEnabled = false,
-              //ScrollBarsEnabled = false,
-              Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat/index.htm"),
-              //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat/index.htm"),
-            });
-          info.Visible = false;
-          wb.Visible = true;
-          wb.BringToFront(); wb.Focus();
-        }
-        else
-        {
-          wb.Visible = false; info.Visible = true;
-        }
-        grid.Height++; grid.Height--;
       }
     }
   }
@@ -2237,6 +2035,53 @@ namespace Test
           {
             var m = ranges[Current].material.Transform; m.Translation = new Vector3(value, 0);
             ranges[Current].material.Transform = m;
+          }
+        }
+        [Category("Geometry")]
+        public MeshInfo Mesh => MeshInfo.get(this);
+
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public class MeshInfo
+        {
+          static MeshInfo? cache; readonly Geometry p; MeshInfo(Geometry p) => this.p = p;
+          internal static MeshInfo get(Geometry p) => cache?.p == p ? cache : cache = new MeshInfo(p);
+          public override string ToString() { return "ok"; } // "errors"
+          public int MeshVertices => p.vertices.Length;
+          public int MeshPolygones => p.indices.Length / 3;
+          public int MeshEdges
+          {
+            get { calc(); return edges; }
+          }
+          public int MeshEuler => MeshVertices - MeshEdges + MeshPolygones;
+          public int PolyhedronPlanes
+          {
+            get { calc(); return ee.Length; }
+          }
+          public int PolyhedronEdges
+          {
+            get { calc(); return hedges; }
+          }
+          //public int PolyhedronEuler => MeshVertices - MeshEdges + MeshPolygones;
+          public int Errors => 0;
+          Vector3R[]? pp; (PlaneR e, int[] kk)[]? ee; int hash, edges, hedges;
+          void calc()
+          {
+            var hash = p.vertices.Length ^ p.indices.Length;
+            if (hash != this.hash) { this.hash = hash; this.pp = null; }
+            if (this.pp != null) return; //Console.Beep(4000, 100);
+            var ii = p.indices; var xp = p.GetVertices();
+            this.pp = xp as Vector3R[] ?? ((Vector3[])xp).Select(p => (Vector3R)p).ToArray();
+            this.ee = Enumerable.Range(0, ii.Length / 3).
+              Where(i => Math.Max(Math.Max(ii[i * 3], ii[i * 3 + 1]), ii[i * 3 + 2]) < pp.Length).
+              Select(i => (k: i *= 3, e: PlaneR.FromVertices(pp[ii[i]], pp[ii[i + 1]], pp[ii[i + 2]]))).
+              GroupBy(p => p.e, p => p.k).Select(p => (e: p.Key, kk: p.ToArray())).ToArray();
+            this.hedges = this.ee.Sum(e =>
+            {
+              var tt = e.kk.SelectMany(k => Enumerable.Range(k, 3)).Select(i => (a: ii[i], b: ii[i % 3 != 2 ? i + 1 : i - 2])).ToArray();
+              return tt.Count(p => !tt.Contains((p.b, p.a)));
+            }) >> 1;
+            var eb = Enumerable.Range(0, ii.Length).Select(i => (a: ii[i], b: ii[i % 3 != 2 ? i + 1 : i - 2])).ToHashSet();
+            this.edges = eb.Count(p => p.a < p.b && eb.Contains((p.b, p.a)));
           }
         }
 
@@ -3491,4 +3336,200 @@ namespace Test
       var n = 0; for (; sp.Length != 0; pread(ref sp), n++) ; return n;
     }
   }
+
+  //Props
+  public unsafe partial class DX11ModelCtrl
+  {
+    public abstract class PropsCtrl : UserControl
+    {
+      public DX11ModelCtrl? Target; // { get; set; }
+      protected override void OnLoad(EventArgs e)
+      {
+        base.OnLoad(e);
+        combo = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList, DrawMode = DrawMode.OwnerDrawFixed };
+        combo.DrawItem += (p, e) =>
+        {
+          e.DrawBackground(); var i = e.Index; if (i < 0) return;
+          var g = e.Graphics; var o = combo.Items[e.Index]; var r = e.Bounds;
+          var node = o as Node; var font = Font;
+          if ((e.State & DrawItemState.ComboBoxEdit) == 0 && node != null)
+          {
+            for (var t = node.parent; t != null; t = t.parent) r.X += 16;
+            if (node.nodes != null)
+            {
+              var ss = Target.selection; var s = default(Node);
+              if (ss.Count != 0) //for (int x = 0; x < ss.Count && ms == null; x++)
+                for (s = ss[ss.Count - 1]; s != null && s != node; s = s.parent) ;
+              TextRenderer.DrawText(g, s != null ? "" : "", font, // ˃ ˅
+                new Rectangle(r.X - 15, r.Y - 2, r.Width, r.Height), e.ForeColor, TextFormatFlags.Left);
+            }
+          }
+          var sn = node != null ? node.name : o.ToString();
+          if (sn != null)
+          {
+            TextRenderer.DrawText(g, sn, bold ??= new System.Drawing.Font(font, FontStyle.Bold), r, e.ForeColor, TextFormatFlags.Left);
+            r.X += TextRenderer.MeasureText(sn, bold).Width;
+          }
+          if (node != null) TextRenderer.DrawText(g, o.GetType().Name, font, r, e.ForeColor, TextFormatFlags.Left);
+          e.DrawFocusRectangle();
+        };
+        combo.SelectedIndexChanged += (_, e) =>
+        {
+          if (!btnprops.Checked) return;
+          if (!combo.Focused || comboupdate) return;
+          var p = combo.SelectedItem;
+          fillcombo(p);
+          Target.Select(p as Group); update = true;
+        };
+        grid = new PropertyGrid { Dock = DockStyle.Fill, TabIndex = 1 };
+        grid.PropertySort = PropertySort.Categorized;
+        grid.PropertySortChanged += (p, e) =>
+        {
+          if (grid.PropertySort == PropertySort.CategorizedAlphabetical)
+            grid.PropertySort = PropertySort.Categorized;
+        };
+        grid.PropertyValueChanged += (_, e) =>
+        {
+          var d = e.ChangedItem.PropertyDescriptor; //if (d.PropertyType == typeof(Type)) return;
+          var o = e.ChangedItem.GetType().GetProperty("Instance").GetValue(e.ChangedItem);
+          var s = d.Name; var v = e.OldValue;
+          Target.Invalidate(); if (o is not Node ba) return;
+          if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
+          var t = o.GetType().GetProperty(s).GetValue(o); if (object.Equals(v, t)) return;
+          Target.AddUndo(new UndoProp(ba, s, v)); grid.Update();
+        };
+        var a = Controls; a.Add(grid); a.Add(combo);
+        var cc = grid.Controls; view = cc[2]; info = cc[0];
+
+        var f = new System.Drawing.Font("Segoe UI Symbol", Font.Size); var al = ContentAlignment.TopCenter;
+        btnprops = new ToolStripButton() { Text = "", ToolTipText = "Properties", Font = f, TextAlign = al, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text, Checked = true };
+        btnsetting = new ToolStripButton() { Text = "", ToolTipText = "Settings", Font = f, TextAlign = al, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        //btnedit = new ToolStripButton() { Text = "", ToolTipText = "Edit", Enabled = false, Font = f, TextAlign = al,AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        btntoolbox = new ToolStripButton() { Text = "⚒", ToolTipText = "Toolbox", Font = f, TextAlign = al, AccessibleRole = AccessibleRole.RadioButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        btnstory = new ToolStripButton() { Text = "", ToolTipText = "Storyboard", Font = f, TextAlign = al, AccessibleRole = AccessibleRole.CheckButton, DisplayStyle = ToolStripItemDisplayStyle.Text };
+        var btnclose = new ToolStripButton() { Text = "⨯", ToolTipText = "Close", Font = f, TextAlign = al, Alignment = ToolStripItemAlignment.Right };
+
+        btnclose.Click += (p, e) => { this.Visible = false; };
+        btnprops.Click += (p, e) =>
+        {
+          if (btnprops.Checked) return; btnprops.Checked = true;
+          btnsetting.Checked = btntoolbox.Checked = false; showtoolbox(false);
+          update = true; combo.Items.Clear(); //grid.Focus();
+          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = true;
+        };
+        btnsetting.Click += (p, e) =>
+        {
+          if (btnsetting.Checked) return; btnsetting.Checked = true;
+          btnprops.Checked = btntoolbox.Checked = false; showtoolbox(false);
+          grid.SelectedObject = Target.settings;
+          combo.Items.Clear(); combo.Items.Add("Settings"); combo.SelectedIndex = 0;
+          //var cm = ContextMenuStrip; if (cm != null) cm.Enabled = false;
+        };
+        btntoolbox.Click += (p, e) =>
+        {
+          btntoolbox.Checked = true;
+          btnprops.Checked = btnsetting.Checked = false;
+          combo.Items.Clear(); combo.Items.Add("Toolbox"); combo.SelectedIndex = 0;
+          showtoolbox(true);
+        };
+        var ts = (ToolStrip)cc[3]; var it = ts.Items; ts.RenderMode = ToolStripRenderMode.Professional;
+        it.Add(new ToolStripSeparator());
+        it.Add(btnprops); it.Add(btnsetting); /*it.Add(btnedit);*/
+        it.Add(btntoolbox); it.Add(btnstory); it.Add(btnclose);
+      }
+      protected override void OnVisibleChanged(EventArgs e)
+      {
+        base.OnVisibleChanged(e); if (Target == null || grid == null) return;
+        if (Visible)
+        {
+          Target.Animations += onidle; Target.Invaliated += oninv; update = true;
+        }
+        else
+        {
+          Target.Animations -= onidle; Target.Invaliated -= oninv;
+          grid.SelectedObject = null; combo.Items.Clear();
+        }
+        void oninv() => update = true;
+      }
+      PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
+      Control? view, info; internal ToolStripButton? btnprops, btnsetting, btntoolbox, btnstory;
+      bool comboupdate, update; object? lastpd; WebBrowser? wb;
+      void onidle()
+      {
+        if (!update) return; update = false;
+        if (combo.DroppedDown || !btnprops.Checked) return;
+        var list = Target.selection; var ext = Target.extrasel;
+        var csel = combo.SelectedItem;
+        if (ext.p != null && grid.ContainsFocus && csel is not Node) return;
+        var disp =
+          ext.p != null && ext.view.ContainsFocus ? ext.p :
+          (list.Count != 0 ? (object)list[list.Count - 1] :
+           csel != null && csel is not Node ? csel : Target.Scene);
+        if (csel != disp && !combo.ContainsFocus) fillcombo(csel = disp);
+        if (grid.SelectedObject != csel)
+        {
+          grid.SelectedObject = csel;
+          Models.propref = false; lastpd = null;
+          if (grid.PropertySort == PropertySort.NoSort) grid.PropertySort = PropertySort.Categorized;
+        }
+        else
+        {
+          if (Models.propref) { Models.propref = false; grid.Refresh(); return; }
+          combo.Invalidate(); //if (ContainsFocus) { update = true; return; }
+          grid.Invalidate(); grid.Refresh();
+        }
+      }
+      void fillcombo(object disp)
+      {
+        var items = combo.Items; comboupdate = true;
+        items.Clear(); var node = disp as Node;
+        if (node == null) items.Add(disp); // extrasel
+        else
+        {
+          items.Add(Target.Scene);
+          if (node != null)
+          {
+            recu(items, node);
+            static void recu(ComboBox.ObjectCollection items, Node node)
+            {
+              if (node.parent != null) recu(items, node.parent);
+              var a = node.nodes; if (a == null) return;
+              for (int i = 0, x = items.IndexOf(node); i < a.Length; i++)
+                items.Insert(++x, a[i]);
+            }
+          }
+        }
+        combo.SelectedItem = disp; combo.Update(); comboupdate = false;
+      }
+      void showtoolbox(bool on)
+      {
+        if (on == (wb != null && wb.Visible)) return;
+        if (on)
+        {
+          if (wb == null)
+            view.Controls.Add(wb = new WebBrowser()
+            {
+              Visible = false,
+              Dock = DockStyle.Fill,
+              AllowNavigation = false,
+              ScriptErrorsSuppressed = true,
+              WebBrowserShortcutsEnabled = false,
+              IsWebBrowserContextMenuEnabled = false,
+              //ScrollBarsEnabled = false,
+              Url = new Uri("https://c-ohle.github.io/RationalNumerics/web/cat/index.htm"),
+              //Url = new Uri("file://C:/Users/cohle/Desktop/RationalNumericsDoc/web/cat/index.htm"),
+            });
+          info.Visible = false;
+          wb.Visible = true;
+          wb.BringToFront(); wb.Focus();
+        }
+        else
+        {
+          wb.Visible = false; info.Visible = true;
+        }
+        grid.Height++; grid.Height--;
+      }
+    }
+  }
+
 }

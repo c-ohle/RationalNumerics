@@ -189,9 +189,12 @@ namespace Test
     int OnProperties(object? test)
     {
       if (test != null) return 1;
-      if (propsView.Visible && !propsView.btnprops.Checked) { propsView.btnprops.PerformClick(); return 1; }
-      var t = propsView.IsHandleCreated; propsView.Visible ^= true;
-      if (!t) propsView.btnstory.Click += (_, _) => panelStory.Visible = (propsView.btnstory.Checked ^= true);
+      if (propsView.Visible) { if (!propsView.btnprops.Checked) { propsView.btnprops.PerformClick(); return 1; } }
+      else
+      {
+        var c = propsView.IsHandleCreated; propsView.Visible = true;
+        if (!c) propsView.btnstory.Click += (_, _) => panelStory.Visible = (propsView.btnstory.Checked ^= true);
+      }
       return 1;
     }
     int OnStoryBoard(object? test)
@@ -300,11 +303,8 @@ namespace Test
     void btn_back__Click(object sender, EventArgs e) { }
     void btn_forw__Click(object sender, EventArgs e) { }
     void btn_forw_Click(object sender, EventArgs e) => timeLineView.ani(timeLineView.aniset.getendtime());
-    void btn_record_Click(object sender, EventArgs e)
-    {
-      if (btn_record.Checked ^= true) { modelView.UndoChanged += undochanged; }
-      else { modelView.UndoChanged -= undochanged; }
-    }
+    void btn_record_Click(object sender, EventArgs e) => timeLineView.rec();
+
     void btn_play_Click(object sender, EventArgs e)
     {
       var aniset = timeLineView.aniset;
@@ -313,59 +313,14 @@ namespace Test
     int showtime;
     void maintick()
     {
-      var t = timeLineView.Target.RunningAnimation; //if (t != timeLineView.aniset) return;
+      var t = timeLineView.view.RunningAnimation; //if (t != timeLineView.aniset) return;
       if (t == timeLineView.aniset && showtime != t.time) { showtime = t.time; timeLineView.Invalidate(); }
       if (btn_play.Checked != (modelView.RunningAnimation == timeLineView.aniset))
         btn_play.Text = (btn_play.Checked ^= true) ? "" : "";
     }
-
-    void btn_stop_Click(object sender, EventArgs e)
+    void btn_close_Click(object sender, EventArgs e)
     {
-      //if (!btn_stop.Enabled) return;
-      //if (btn_play.Checked)
-      //{
-      //  modelView.Animations -= animate;
-      //
-      //  //btn_play.Checked = false;
-      //  //btn_stop.Enabled = false;
-      //  //btn_record.Enabled = true;
-      //  //btn_back.Enabled = btn_back_.Enabled = false;// this.anix != 0;
-      //  //btn_forw.Enabled = btn_forw_.Enabled = false;// this.anix < this.anis.Length;
-      //}
-      //else if (btn_record.Checked)
-      //{
-      //  btn_record.Checked = false; modelView.UndoChanged -= undochanged;
-      //  btn_stop.Enabled = false;
-      //  //btn_stop.Enabled = btn_stop.Visible = !(btn_play.Visible = true);
-      //  //if (modelView.undos == null || modelView.undoi <= undoab) return;
-      //  //listView1.Items.Add("*");
-      //  btn_back.Enabled = btn_back_.Enabled = true;
-      //
-      //  //this.anis = modelView.undos.Skip(undoab).ToArray(); this.anix = this.anis.Length;
-      //  //anilines = new List<DX11ModelCtrl.AniLine>();
-      //  //for (int i = 0; i < this.anis.Length; i++)
-      //  //{
-      //  //  var tm = getmaxt(anilines);
-      //  //  this.anis[i].link(anilines, tm + 100);// i * 1000);
-      //  //}
-      //  return;
-      //  //this.records.Save("C:\\Users\\cohle\\Desktop\\rec.xml");
-      //}
-    }
-    void btn_clear_Click(object sender, EventArgs e)
-    {
-      //Quat.alt = (btn_clear.Checked ^= true);
-    }
-    void btn_save_Click(object sender, EventArgs _)
-    {
-      timeLineView.rec();
-    }
-
-    void undochanged()
-    {
-      if (modelView.undoi == 0) return;
-      var undo = modelView.undos[modelView.undoi - 1];
-      timeLineView.Add(undo);
+      OnStoryBoard(null);
     }
 
     class TimeLineView : UserControl
@@ -373,21 +328,14 @@ namespace Test
       internal TimeLineView(DX11ModelCtrl view)
       {
         DoubleBuffered = true; AutoScroll = true;
-        Target = view; aniset = view.Scene.aniset ??= new();
+        this.view = view; aniset = view.Scene.aniset ??= new();
+        undoi = view.undoi; adjust();
       }
-      internal readonly DX11ModelCtrl Target;
+      internal readonly DX11ModelCtrl view; int undoi;
       internal readonly DX11ModelCtrl.AniSet aniset;
       const int leftofs = 8, dyline = 17;
       float xscale = 0.1f; int wo, st, pcx, ctrl;
       readonly List<int> selection = new();
-      internal void Add(DX11ModelCtrl.Undo undo)
-      {
-        var aniset = this.aniset;
-        undo.link(aniset, aniset.getendtime());
-        aniset.time = aniset.maxtime = aniset.getendtime(); selection.Clear();
-        adjust(); var o = AutoScrollPosition; var q = AutoScrollMinSize;
-        o.X = q.Width; AutoScrollPosition = o; Invalidate();
-      }
       internal void adjust()
       {
         var aniset = this.aniset; if (aniset.maxtime == 0) aniset.maxtime = aniset.getendtime();
@@ -397,7 +345,7 @@ namespace Test
       internal void ani(int t)
       {
         var aniset = this.aniset; if (aniset.time == t) return;
-        if (aniset.ani(t & ~0x40000000)) Target.Invalidate(); Invalidate();
+        if (aniset.ani(t & ~0x40000000)) view.Invalidate(); Invalidate();
       }
       protected override void OnPaint(PaintEventArgs e)
       {
@@ -421,10 +369,31 @@ namespace Test
 
       internal void rec()
       {
-        var wo = selection.Count == 1 ? selection[0] : 0; if ((wo & 0x40000000) == 0) return;
-        int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
-        aniset.anilines[y].set(5, (x >> 1) + 1, 0);
+        var wo = selection.Count == 1 ? selection[0] : 0;
+        if ((wo & 0x40000000) != 0)
+        {
+          int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
+          aniset.anilines[y].set(5, (x >> 1) + 1, 0);
+        }
+        else if ((wo & 0x20000000) != 0)
+        {
+        }
+        else
+        {
+          if (view.undoi == 0 || undoi == view.undoi) return;
+          var undo = view.undos[(undoi = view.undoi) - 1];
+          Add(undo);
+        }
       }
+      internal void Add(DX11ModelCtrl.Undo undo)
+      {
+        var aniset = this.aniset;
+        var wo = undo.link(aniset, aniset.getendtime());
+        aniset.time = aniset.maxtime = aniset.getendtime(); select(wo);//selection.Clear();
+        adjust(); var o = AutoScrollPosition; var q = AutoScrollMinSize;
+        o.X = q.Width; AutoScrollPosition = o; Invalidate();
+      }
+
       void select(int wo)
       {
         if (wo == 1) return; wo &= ~1;
@@ -438,15 +407,15 @@ namespace Test
         if (selection.Count > 1)
         {
           var a = selection.Select(w => (w & 0x40000000) != 0 ? new AniRec(this, w) : null).OfType<object>().ToArray();
-          if (a.Length > 0) Target.extrasel = (this, a);
-          else Target.extrasel = default;
-          Target.Invalidate(); return;
+          if (a.Length > 0) view.extrasel = (this, a);
+          else view.extrasel = default;
+          view.Invalidate(); return;
         }
         var w = selection.Count == 1 ? selection[0] : 0;
-        if ((w & 0x20000000) != 0) Target.extrasel = (this, new AniLin(this, selection[0]));
-        else if ((w & 0x40000000) != 0) Target.extrasel = (this, new AniRec(this, selection[0]));
-        else Target.extrasel = default;
-        Target.Invalidate();
+        if ((w & 0x20000000) != 0) view.extrasel = (this, new AniLin(this, selection[0]));
+        else if ((w & 0x40000000) != 0) view.extrasel = (this, new AniRec(this, selection[0]));
+        else view.extrasel = default;
+        view.Invalidate();
       }
       public class AniLin
       {
@@ -457,7 +426,9 @@ namespace Test
           this.line = p.aniset.anilines[(wo >> 16) & 0x1fff];
         }
         readonly TimeLineView view; readonly DX11ModelCtrl.AniLine line;
-        public string? Name { get { return default; } set { } }
+        [Category("Line")]
+        public string Target => line.target.name ?? line.target.GetType().Name;
+        //public string Was => line.
       }
       public class AniRec
       {
@@ -468,23 +439,27 @@ namespace Test
           this.x = wo & 0xffff;
         }
         readonly TimeLineView view; readonly DX11ModelCtrl.AniLine line; int x;
+        [Category("Line")]
+        public string Target => line.target.name ?? line.target.GetType().Name;
+        [Category("Record")]
         public int Time
         {
           get { return x < line.times.Count ? line.times[x] : -1; }
           set { }
         }
+        [Category("Record")]
         public int Delta
         {
           get { return x < line.times.Count ? line.times[x | 1] : -1; }
           set { }
         }
-        [DefaultValue(0f)]
+        [Category("Record"), DefaultValue(0f)]
         public float Gamma
         {
           get { return x < line.times.Count ? line.get(0, x >> 1) : float.NaN; }
           set { line.set(0, x >> 1, value); }
         }
-        [DefaultValue(false)]
+        [Category("Record"), DefaultValue(false)]
         public bool LongWay
         {
           get { return x < line.times.Count ? line.get(1, x >> 1) != 0 : false; }
@@ -543,7 +518,7 @@ namespace Test
           else { u = Math.Max(20, u); }
           if (tt[x] == u) return;
           var et = aniset.getendtime(); if (et != aniset.maxtime) aniset.maxtime = et;
-          tt[x] = u; ani(aniset.time | 0x40000000); Target.Invalidate(); //props
+          tt[x] = u; ani(aniset.time | 0x40000000); view.Invalidate(); //props
         }
       }
       protected override void OnMouseUp(MouseEventArgs e)

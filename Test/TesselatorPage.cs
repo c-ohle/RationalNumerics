@@ -58,7 +58,7 @@ namespace Test
         midpoint + new Vector2(MathF.Cos(i * f), MathF.Sin(i * f)) * radii);
       a.counts.Add((ushort)(a.points.Count - c));
     }
-    internal static void demo1((List<Vector2> points, List<ushort> counts) a)
+    static void demo1((List<Vector2> points, List<ushort> counts) a)
     {
       add_ellipse(a, new Vector2(300, 200), new Vector2(100), 100);
       add_ellipse(a, new Vector2(400, 200), new Vector2(100), 100);
@@ -74,7 +74,7 @@ namespace Test
       v.Points.Clear(); v.Counts.Clear(); 
       demo1((v.Points, v.Counts));
     }
-    private void buttonReset_Click(object sender, EventArgs e)
+    void buttonReset_Click(object sender, EventArgs e)
     {
       setdemo1();
       tesselatorView1.Reset(); 

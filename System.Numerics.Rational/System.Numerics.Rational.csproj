@@ -11,22 +11,29 @@
     <NoWin32Manifest>true</NoWin32Manifest>
     <IsPublishable>False</IsPublishable>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-    <Company>Christian Ohle</Company>
+    <Company></Company>
     <Copyright>© Christian Ohle</Copyright>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageId>RationalNumerics</PackageId>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>BigRational</PackageId>
     <Authors>Christian Ohle</Authors>
-    <Description>.NET library for rational arithmetic based on a stack machine.</Description>
-    <PackageProjectUrl>https://c-ohle.github.io/RationalNumerics/</PackageProjectUrl>
-    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <Description>BigRational based on a specialized stack machine to create an arbitrary-precision rational number type.
+MathR provides constants and static methods for trigonometric, logarithmic, and other
+common mathematical functions for BigRational.</Description>
+    <PackageProjectUrl>https://github.com/c-ohle/RationalNumerics</PackageProjectUrl>
+    <PackageReadmeFile></PackageReadmeFile>
     <RepositoryUrl>https://github.com/c-ohle/RationalNumerics</RepositoryUrl>
-    <PackageTags>C#;Rational</PackageTags>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <PackageTags>C#;BigRational;MathR;rational;rational-numbers;arbitrary-precision;fractions;numerics;csharp</PackageTags>
+    <AssemblyVersion></AssemblyVersion>
     <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
     <AnalysisLevel>none</AnalysisLevel>
+    <PackageIcon></PackageIcon>
+    <Version>1.0.0.2</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType></RepositoryType>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
