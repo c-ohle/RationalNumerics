@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="templ\benchmarks1.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="templ\testcase1.xxd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

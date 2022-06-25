@@ -150,7 +150,7 @@ namespace Test
     public new void Invalidate()
     {
       if (inval) return;
-      inval = true; Invaliated?.Invoke();      
+      inval = true; Invaliated?.Invoke();
     }
     public string Adapter
     {
@@ -2150,8 +2150,9 @@ namespace Test
       int x = 0; Matrix3x2 gm, ma; var m2 = (int*)&ma; m2[0] = m2[3] = 0x10000; //MAT2
       for (int i = 0; i < ns; i++)
       {
+        var c = ss[i]; if (c < ' ') { act(3, c, 0); if (c == '\n') x = 0; continue; }
         var ph = pph; //TTPOLYGONHEADER
-        int nc = GetGlyphOutlineW(wdc, ss[i], 2, &gm, maxstack >> 1, ph, m2); // GGO_NATIVE
+        int nc = GetGlyphOutlineW(wdc, c, 2, &gm, maxstack >> 1, ph, m2); // GGO_NATIVE
         for (; ph - pph < nc; ph = ph + ((int*)ph)[0])
         {
           act(0, x, 0); //BeginContour at x
@@ -2188,7 +2189,7 @@ namespace Test
       }
       SelectObject(wdc, po);
       DeleteObject(hfont);
-      static void qspline(Action<int, int, int> act, (int x, int y)* qs, int pixs)
+      static void qspline(Action<int, int, int> act, (int x, int y)* qs, int pixs) //todo: qspline SSE
       {
         int ax = qs[0].x >> 10, ay = qs[0].y >> 10;
         int bx = qs[1].x >> 10, by = qs[1].y >> 10;
@@ -2237,7 +2238,7 @@ namespace Test
     public record class PropAcc<T>(Func<object, T> get, Action<object, T> set);
     public static PropAcc<T> GetPropAcc<T>(System.Reflection.PropertyInfo pi)
     {
-      Debug.Assert(pi.DeclaringType == pi.ReflectedType); // pi.DeclaringType.GetProperty(pi.Name) !!!
+      Debug.Assert(pi.DeclaringType == pi.ReflectedType); // better: pi.DeclaringType.GetProperty(pi.Name) !!!
       if (!(propdict ??= new()).TryGetValue(pi, out var p))
       {
         var t0 = Expression.Parameter(typeof(object));

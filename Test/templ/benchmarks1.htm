@@ -1,0 +1,65 @@
+<html>
+<head>
+  <title>Benchmarks1</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=11" />
+  <style type="text/css">
+    body {
+      font-family: Cascadia Mono;
+      font-size: 10pt
+    }
+
+    table, th, td {
+      border: 1px solid gray;
+      border-collapse: collapse;
+      padding: 2pt;
+      font-size: 10pt;
+      vertical-align: top
+    }
+
+    th {
+      background-color: #eeeeee
+    }
+
+    h1 {
+      font-size: 14pt
+    }
+  </style>
+</head>
+<body>
+  <h1>Environment</h1>
+  <p>BigRational Version: <span id="1"></span> ImageRuntime: <span id="2"></span></p>
+  <p>Processor: <span id="3"></span></p>
+  <p id="4" style="color: red">
+    Application is in debug or a debugger is attached - benchmarks are not realistic!
+  </p>
+  <p id="5">
+    <svg xmlns="http://www.w3.org/2000/svg" width="750" height="250">
+      <defs>
+        <pattern id="smallgrid" patternUnits="userSpaceOnUse" width="10" height="10">
+          <path fill="none" stroke="gray" stroke-width="0.5" d="M 10 0 L 0 0 L 0 10" />
+        </pattern>
+        <pattern id="grid" patternUnits="userSpaceOnUse" width="100" height="100">
+          <rect fill="url(#smallgrid)" width="100" height="100" />
+          <path fill="none" stroke="gray" stroke-width="1" d="M 100 0 L 0 0 L 0 100" />
+        </pattern>
+      </defs>
+      <g transform="translate(10 237) scale(1 -1)">
+        <rect fill="url(#grid)" width="740" height="237" />
+      </g>
+      <polyline id="10" fill="none" stroke="blue" points="10,235.432 33,68.9098 56,106.304 79,68.9236 102,236.021 125,130.053 148,160.407 171,102.399 194,72.1085 217,154.555 240,217.523 263,142.124 286,171.434 309,120.333 332,227.517 355,149.203 378,180.124 401,119.097 424,158.946 447,170.609 470,104.501 493,168.102 516,106.989 539,171.285 562,85.5113 585,223.575 608,215.071 631,183.457 654,75.3748 677,128.232 700,155.23 723,233.479" />
+      <polyline id="11" fill="none" stroke="red" points="10,109.137 33,169.932 56,233.517 79,215.599 102,233.979 125,191.771 148,198.427 171,226.871 194,217.036 217,140.512 240,224.608 263,123.752 286,75.414 309,83.8518 332,184.373 355,78.1845 378,140.488 401,220.387 424,221.349 447,120.033 470,115.244 493,129.343 516,174.577 539,129.33 562,198.921 585,172.019 608,220.412 631,74.4457 654,151.982 677,213.951 700,89.0239 723,180.877" />
+      <text transform="translate(0 250) scale(0.7)">0</text>
+      <text transform="translate(110 250) scale(0.7)">1</text>
+      <text transform="translate(210 250) scale(0.7)">2</text>
+      <text transform="translate(310 250) scale(0.7)">3</text>
+      <text transform="translate(410 250) scale(0.7)">4</text>
+      <text transform="translate(510 250) scale(0.7)">5</text>
+      <text transform="translate(610 250) scale(0.7)">6</text>
+      <text transform="translate(710 250) scale(0.7)">7</text>
+      <text transform="translate(0 137) scale(0.7)">1</text>
+      <text transform="translate(0 37) scale(0.7)">2</text>
+    </svg>
+  </p>
+  <h6>...</h6>
+</body>
+</html>

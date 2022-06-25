@@ -2973,9 +2973,8 @@ namespace System.Numerics
       static int sig(uint* p)
       {
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
-      }
-      //check: experimental
-      static uint[][]? cache;
+      }      
+      static uint[][]? cache; //todo: cache experimental
       static BigRational cachx(uint* s, uint n, uint x)
       {
         var p = cache != null ? cache[x] : null;

@@ -2,7 +2,9 @@
 using System.Buffers;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data;
+using System.Drawing.Design;
 using System.Globalization;
 using System.IO.Compression;
 using System.Linq.Expressions;
@@ -1144,10 +1146,24 @@ namespace Test
         return join(a);
       }
       internal virtual int link(AniSet set, int time) => 0;
+      internal protected (AniLine line, int wo) getline(AniSet set, int time, Type type, Node target)
+      {
+        var l = set.anilines; AniLine t;
+        for (int i = 0; i < l.Count; i++)
+          if ((t = l[i]).GetType() == type && t.getset(0, null) == target)
+          {
+            t.times.Add(time); t.times.Add(900); //t.list.Add(coll);
+            return (t, 0x40000000 | (i << 16) | (t.times.Count - 2));
+          }
+        t = (AniLine)Activator.CreateInstance(type);
+        t.times.Add(time); t.times.Add(1000); //t.p = target;
+        //pl.list.Add(coll); pl.list.Add(coll /*this.p.nodes*/); 
+        l.Add(t); return (t, 0x40000000 | ((l.Count - 1) << 16));
+      }
     }
     public abstract class AniLine
     {
-      internal abstract Node target { get; }
+      internal abstract object? getset(int id, object? v);
       internal readonly List<int> times = new(2); List<float>? gammas;
       internal bool lerp(int time)
       {
@@ -1251,6 +1267,7 @@ namespace Test
     public class AniSet
     {
       internal readonly List<AniLine> anilines = new();
+      internal string? name;
       internal int time, maxtime;
       internal int getendtime()
       {
@@ -1262,13 +1279,9 @@ namespace Test
         }
         return max;
       }
-      internal void clear()
-      {
-        time = maxtime = 0; anilines.Clear();
-      }
       internal bool ani(int t)
       {
-        time = t; var inf = false;
+        time = t; var inf = false; //todo: ref
         for (int i = 0, n = anilines.Count; i < n; i++) inf |= anilines[i].lerp(t);
         return inf;
       }
@@ -1281,26 +1294,27 @@ namespace Test
       internal static UndoTrans? get(Group p, in Matrix4x3 m) => p.Transform != m ? new UndoTrans(p, m) : null;
       internal override int link(AniSet set, int time)
       {
-        var l = set.anilines;
-        for (int i = 0; i < l.Count; i++)
-          if (l[i] is Line t && t.p == p)
-          {
-            t.times.Add(time); t.times.Add(900);
-            t.list.Add(p.Transform);
-            return 0x40000000 | (i << 16) | (t.times.Count - 2);
-          }
-        var pl = new Line { p = p };
-        pl.times.Add(time); pl.times.Add(900);
-        pl.list.Add(m); pl.list.Add(p.Transform); l.Add(pl);
-        return 0x40000000 | ((l.Count - 1) << 16);
+        var c = getline(set, time, typeof(Line), this.p); var line = (Line)c.line;
+        if (line.p == null) { line.p = this.p; line.list.Add(m); }
+        line.list.Add(p.Transform); return c.wo;
       }
       internal class Line : AniLine
       {
-        internal override Node target => p;
+        internal override object? getset(int id, object? v)
+        {
+          switch (id)
+          {
+            case 0: return p;
+            default: return null;
+          }
+        }
         internal Group? p; internal readonly List<Quat> list = new(2);
         internal override bool lerp(int x, float f)
         {
-          var m = Quat.Slerp(list[x + 0], list[x + 1], f);
+          var m =
+            f <= 0 ? (Matrix4x3)list[x + 0] :
+            f >= 1 ? (Matrix4x3)list[x + 1] :
+            Quat.Slerp(list[x + 0], list[x + 1], f);
           if (m == p.Transform) return false;
           p.Transform = m; return true;
         }
@@ -1332,16 +1346,35 @@ namespace Test
     }
     sealed class UndoProp : Undo
     {
-      object p; string s; object v;
-      internal UndoProp(object p, string s, object v) { this.p = p; this.s = s; this.v = v; }
+      Node p; string s; object v;
+      internal UndoProp(Node p, string s, object v) { this.p = p; this.s = s; this.v = v; }
       internal override void exec()
       {
         var pd = p.GetType().GetProperty(s); var t = pd.GetValue(p); pd.SetValue(p, v); v = t;
       }
+      static Type? t2t(Type pt)
+      {
+        if (pt == typeof(Color)) return typeof(ColorLine);
+        if (pt == typeof(float)) return typeof(FloatLine);
+        if (pt == typeof(Vector2)) return typeof(Vector2Line);
+        if (pt == typeof(Vector3)) return typeof(Vector3Line);
+        if (pt == typeof(bool)) return typeof(BoolLine);
+        if (pt == typeof(string)) return typeof(StringLine);
+        if (pt == typeof(int) || pt.IsEnum) return typeof(IntLine);
+        return null;
+      }
       internal override int link(AniSet set, int time)
       {
+        var pd = this.p.GetType().GetProperty(s); var pt = pd.PropertyType;
+
+        // var lt = t2t(pt); if (lt == null) return 0;
+        // var c = getline(set, time, lt, this.p);
+        // c.line.set(7, 0, 0); return c.wo;
+        // //var line = (PropLine<int>)c.line;
+        // //if (line.p == null) { line.p = this.p; line.list.Add(m); }
+        // //line.list.Add(p.Transform); return c.wo;
+
         var l = set.anilines;
-        var pd = p.GetType().GetProperty(s); var pt = pd.PropertyType;
         if (pt == typeof(Color)) return ColorLine.link<ColorLine>(l, p, s, (Color)v, time, 500);
         if (pt == typeof(float)) return FloatLine.link<FloatLine>(l, p, s, (float)v, time, 500);
         if (pt == typeof(Vector2)) return Vector2Line.link<Vector2Line>(l, p, s, (Vector2)v, time, 500);
@@ -1351,8 +1384,22 @@ namespace Test
         if (pt == typeof(int) || pt.IsEnum) return IntLine.link<IntLine>(l, p, s, (int)v, time, 100);
         return 0;
       }
+      static List<Type> tc = new();
+      static void prechache(Type t) //init internal caches to keep props order
+      {
+        if (t == typeof(Node) || tc.Contains(t)) return;
+        prechache(t.BaseType); var a = t.GetProperties(); tc.Add(t); //Debug.WriteLine("prechache " + t);
+      }
       internal abstract class PropLine<T> : AniLine
       {
+        internal override object? getset(int id, object? v)
+        {
+          switch (id)
+          {
+            case 0: return p;
+            default: return null;
+          }
+        }
         internal static int link<TC>(List<AniLine> l, object p, string s, T v, int time, int dt) where TC : PropLine<T>, new()
         {
           for (int i = 0; i < l.Count; i++)
@@ -1367,29 +1414,10 @@ namespace Test
           tc.list.Add(v); tc.list.Add(tc.acc.get(p)); l.Add(tc);
           return 0x40000000 | ((l.Count - 1) << 16);
         }
-        internal string name => acc.get.Method.Name;
-        internal override Node target => p; Node? p;
+        internal string name => acc.get.Method.Name; Node? p;
         internal readonly List<T> list = new(2); PropAcc<T>? acc;
         protected abstract bool equals(T a, T b);
         protected abstract T lerp(T a, T b, float f);
-        internal override bool lerp(int x, float f)
-        {
-          var a = acc.get(p); var b = lerp(list[x + 0], list[x + 1], f);
-          if (equals(a, b)) return false;
-          acc.set(p, b); return true;
-        }
-        private void setacc(string s)
-        {
-          var pi = p.GetType().GetProperty(s, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
-          if (pi.DeclaringType != pi.ReflectedType) pi = pi.DeclaringType.GetProperty(pi.Name);
-          acc = GetPropAcc<T>(pi);
-        }
-        protected internal override void serial(XElement e, Node? load)
-        {
-          if (load == null) e.SetAttributeValue("prop", name.ToLower());
-          else { this.p = load; var a = e.Attribute("prop"); setacc(a.Value); }
-          base.serial(e, load);
-        }
         internal override float get(int was, int i)
         {
           return base.get(was, i);
@@ -1398,6 +1426,26 @@ namespace Test
         {
           base.set(was, i, v);
           if (was == 8) list.RemoveAt(i >> 1);
+          if (was == 5) list[i] = acc.get(p);
+        }
+        internal override bool lerp(int x, float f)
+        {
+          var a = acc.get(p); var b = lerp(list[x + 0], list[x + 1], f);
+          if (equals(a, b)) return false;
+          acc.set(p, b); return true;
+        }
+        protected internal override void serial(XElement e, Node? load)
+        {
+          if (load == null) e.SetAttributeValue("prop", name.ToLower());
+          else { this.p = load; var a = e.Attribute("prop"); setacc(a.Value); }
+          base.serial(e, load);
+        }
+        void setacc(string s)
+        {
+          var t = this.p.GetType(); prechache(t);
+          var p = t.GetProperty(s, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
+          if (p.DeclaringType != p.ReflectedType) p = p.DeclaringType.GetProperty(p.Name);
+          acc = GetPropAcc<T>(p);
         }
       }
       internal sealed class ColorLine : PropLine<Color>
@@ -1405,8 +1453,17 @@ namespace Test
         protected override bool equals(Color a, Color b) => a == b;
         protected override Color lerp(Color a, Color b, float f)
         {
-          var v = Vector4.Lerp(new Vector4(a.A, a.R, a.G, a.B), new Vector4(b.A, b.R, b.G, b.B), f);
-          return Color.FromArgb((int)v.X, (int)v.Y, (int)v.Z, (int)v.W);
+          if (f <= 0) return a; if (f >= 1) return b;
+          //var v = Vector4.Lerp(new Vector4(a.A, a.R, a.G, a.B), new Vector4(b.A, b.R, b.G, b.B), f);
+          //return Color.FromArgb((int)v.X, (int)v.Y, (int)v.Z, (int)v.W);
+          var v1 = new Vector3(a.R, a.G, a.B); var u1 = new Vector2(v1.Length(), a.A);
+          var v2 = new Vector3(b.R, b.G, b.B); var u2 = new Vector2(v2.Length(), b.A);
+          var q1 = Quaternion.Normalize(new Quaternion(v1, 1));
+          var q2 = Quaternion.Normalize(new Quaternion(v2, 1));
+          var q3 = Quaternion.Slerp(q1, q2, f);
+          var v3 = Vector2.Lerp(u1, u2, f);
+          var v4 = Vector4.Min(new Vector4(new Vector3(q3.X, q3.Y, q3.Z) * v3.X, v3.Y), new Vector4(255));
+          return Color.FromArgb((int)v4.W, (int)v4.X, (int)v4.Y, (int)v4.Z);
         }
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
         {
@@ -1459,7 +1516,7 @@ namespace Test
       internal sealed class BoolLine : PropLine<bool>
       {
         protected override bool equals(bool a, bool b) => a == b;
-        protected override bool lerp(bool a, bool b, float f) => a;
+        protected override bool lerp(bool a, bool b, float f) => f <= 0 ? a : b;
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
         {
           w[0] = list[i] ? '1' : '0'; return 1;
@@ -1472,20 +1529,23 @@ namespace Test
       internal sealed class StringLine : PropLine<string>
       {
         protected override bool equals(string a, string b) => a == b;
-        protected override string lerp(string a, string b, float f) => a;
+        protected override string lerp(string a, string b, float f) => f <= 0 ? a : b;
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
         {
-          throw new Exception();//todo:...
+          //var s = list[i].Replace(';', '\t');
+          var s = System.Xml.XmlConvert.EncodeName(list[i]);
+          s.TryCopyTo(w); return s.Length;
         }
         protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f)
         {
-          throw new Exception();//todo:...
+          //var a = s.ToString(); a=a.Replace('\t', ';'); list.Add(a);
+          list.Add(System.Xml.XmlConvert.DecodeName(s.ToString()));
         }
       }
       internal sealed class IntLine : PropLine<int>
       {
         protected override bool equals(int a, int b) => a == b;
-        protected override int lerp(int a, int b, float f) => a;
+        protected override int lerp(int a, int b, float f) => f <= 0 ? a : b;
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
         {
           list[i].TryFormat(w, out var c); return c;
@@ -1499,20 +1559,136 @@ namespace Test
     sealed class UndoNodes : Undo
     {
       Node p; Group[]? b;
-      internal UndoNodes(Node p, Group[]? b) { this.p = p; this.b = b; }
+      internal UndoNodes(Node p, Group[]? b)
+      {
+        this.p = p; this.b = b;
+      }
       internal override void exec()
       {
         if (b != null) for (int i = 0, n = b.Length; i < n; i++) b[i].parent = p;
         var t = p.nodes; p.nodes = b; b = t;
       }
+      internal override int link(AniSet set, int time)
+      {
+        var c = getline(set, time, typeof(Line), this.p); var line = (Line)c.line;
+        if (line.p == null) { line.p = this.p; line.list.Add(this.b); }
+        line.list.Add(this.p.nodes); return c.wo;
+      }
+      internal class Line : AniLine
+      {
+        internal override object? getset(int id, object? v)
+        {
+          switch (id)
+          {
+            case 0: return p;
+            default: return null;
+          }
+        }
+        internal Node? p; internal readonly List<Group[]> list = new(2);
+        internal override float get(int was, int i)
+        {
+          return base.get(was, i);
+        }
+        internal override void set(int was, int i, float v)
+        {
+          base.set(was, i, v);
+          //if (was == 8) list.RemoveAt(i >> 1);
+          //if (was == 5) { list[i] = p.Transform; }
+        }
+        internal override bool lerp(int x, float f)
+        {
+          var a = f <= 0 ? list[x + 0] : list[x + 1];
+          if (p.nodes == a) return false; //var t = p.nodes;
+          p.nodes = a; return true;
+        }
+        protected internal override void serial(XElement e, Node? load)
+        {
+          //if (load != null) p = (Group)load;
+          //base.serial(e, load);
+        }
+        protected override int write(int i, Span<char> w, NumberFormatInfo f)
+        {
+          return 0;
+          //return list[i].Format(w, f);
+          //list[i].TryFormat(w, out var c, default, f); return c;
+        }
+        protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f)
+        {
+          //list.Add(Quat.Parse(s, f));
+        }
+      }
     }
     sealed class UndoSet : Undo
     {
-      Undo[] a;
-      internal UndoSet(Undo[] a) => this.a = a;
+      internal UndoSet(Undo[] a) => this.a = a; readonly Undo[] a;
       internal override void exec()
       {
         for (int i = 0; i < a.Length; i++) a[i].exec(); Array.Reverse(a);
+      }
+      internal override int link(AniSet set, int time)
+      {
+        var recu = set.name == string.Empty;
+        var coll = recu ? set : new AniSet() { name = string.Empty };
+        for (int i = 0; i < a.Length; i++) a[i].link(coll, 0);
+        if (recu) return 0;        
+        var scene = default(Models.Scene);
+        for (int i = 0; i < coll.anilines.Count; i++)
+        {
+          var b = coll.anilines[i]; b.times[1] = 0;
+          if (scene == null && b.getset(0, null) is Node x)
+            scene = x.GetService(typeof(Models.Scene)) as Models.Scene;
+        }
+        var c = getline(set, time, typeof(Line), scene); var line = (Line)c.line;
+        if (line.p == null) { line.p = scene; line.list.Add(coll); }
+        line.list.Add(coll); return c.wo;
+      }
+      internal class Line : AniLine
+      {
+        internal override object? getset(int id, object? v)
+        {
+          switch (id)
+          {
+            case 0: return p;
+            default: return null;
+          }
+        }
+        internal Models.Scene? p; internal readonly List<AniSet> list = new(2);
+        internal override float get(int was, int i)
+        {
+          return base.get(was, i);
+        }
+        internal override void set(int was, int i, float v)
+        {
+          base.set(was, i, v);
+          //if (was == 8) list.RemoveAt(i >> 1);
+          //if (was == 5) { list[i] = p.Transform; }
+        }
+        internal override bool lerp(int x, float f)
+        {
+          f = f <= 0 ? 0 : 1; var inf = false;
+          var aniset = list[x + 0];
+          for (int i = 0; i < aniset.anilines.Count; i++)
+          {
+            var ani = aniset.anilines[i];
+            inf |= ani.lerp(0, f);
+          }
+          return inf;
+        }
+        protected internal override void serial(XElement e, Node? load)
+        {
+          //if (load != null) p = (Group)load;
+          //base.serial(e, load);
+        }
+        protected override int write(int i, Span<char> w, NumberFormatInfo f)
+        {
+          return 0;
+          //return list[i].Format(w, f);
+          //list[i].TryFormat(w, out var c, default, f); return c;
+        }
+        protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f)
+        {
+          //list.Add(Quat.Parse(s, f));
+        }
       }
     }
     sealed class UndoSel : Undo
@@ -1853,10 +2029,11 @@ namespace Test
             if (aniset != null && aniset.anilines.Count != 0)
             {
               var set = new XElement("aniset"); int id = 0;
+              if (aniset.name != null) set.SetAttributeValue("name", aniset.name);
               if (aniset.time != 0) set.SetAttributeValue("time", aniset.time);
               foreach (var ani in aniset.anilines)
               {
-                var dest = find(e, ani.target); if (dest == null) continue;
+                var dest = find(e, (Node)ani.getset(0, null)); if (dest == null) continue;
                 var uid = dest.Attribute("id");
                 if (uid == null) dest.Add(uid = new XAttribute("id", ++id));
                 var line = new XElement(o2s(ani)); line.SetAttributeValue("pid", uid.Value);
@@ -1876,6 +2053,7 @@ namespace Test
             if (aniset != null)
             {
               this.aniset = new();
+              if ((a = aniset.Attribute("name")) != null) this.aniset.name = a.Value;
               if ((a = aniset.Attribute("time")) != null) this.aniset.time = (int)a;
               foreach (var ani in aniset.Elements())
               {
@@ -3097,7 +3275,7 @@ namespace Test
       {
         string text = string.Empty; System.Drawing.Font? font;
         float height = 1, depth; int flat = 8;
-        [Category("Geometry")]
+        [Category("Geometry"), Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
         public string Text { get => text; set { text = value; Invalidate(); } }
         [Category("Geometry")]
         public System.Drawing.Font Font
@@ -3154,14 +3332,15 @@ namespace Test
           tess.Options = TesselatorR.Option.Fill | TesselatorR.Option.Delaunay | TesselatorR.Option.Trim |
             (depth != 0 ? TesselatorR.Option.OutlinePrecise : 0);
           tess.BeginPolygon();
-          float xx = 0, sc = (1f / 0x10000 * 0.0113f) * height;
+          var o = new Vector2(); float sc = (0.0113f / 0x10000) * height;
           fixed (char* p = text) DX11Ctrl.GlyphContour(p, text.Length, Font, Flat, (id, x, y) =>
           {
             switch (id)
             {
-              case 0: tess.BeginContour(); xx = (float)x * 0x10000; break;
-              case 1: tess.AddVertex(new Vector2(xx + x, y) * sc); break;
+              case 0: tess.BeginContour(); o.X = (float)x * 0x10000; break;
+              case 1: tess.AddVertex((o + new Vector2(x, y)) * sc); break;
               case 2: tess.EndContour(); break;
+              case 3: if (x == '\n') o.Y -= font.GetHeight(96) * 0x10000; break;
             }
           });
           tess.EndPolygon();
@@ -3386,7 +3565,7 @@ namespace Test
         grid.PropertySortChanged += (p, e) =>
         {
           if (grid.PropertySort == PropertySort.CategorizedAlphabetical)
-            grid.PropertySort = PropertySort.Categorized;
+            grid.PropertySort = PropertySort.Categorized; //NoSort
         };
         grid.PropertyValueChanged += (_, e) =>
         {
@@ -3470,7 +3649,8 @@ namespace Test
         {
           grid.SelectedObject = csel;
           Models.propref = false; lastpd = null;
-          if (grid.PropertySort == PropertySort.NoSort) grid.PropertySort = PropertySort.Categorized;
+          if (grid.PropertySort == PropertySort.NoSort)
+            grid.PropertySort = PropertySort.Categorized;
         }
         else
         {
