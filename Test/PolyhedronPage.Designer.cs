@@ -87,8 +87,8 @@
       this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
       this.btn_record = new System.Windows.Forms.ToolStripButton();
       this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-      this.label3 = new System.Windows.Forms.Label();
       this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+      this.label3 = new System.Windows.Forms.Label();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
       undo_back = new Test.MenuItem();
@@ -676,16 +676,6 @@
       this.toolStripButton1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       this.toolStripButton1.Click += new System.EventHandler(this.btn_close_Click);
       // 
-      // label3
-      // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(11, 569);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(142, 20);
-      this.label3.TabIndex = 0;
-      this.label3.Text = "(under construction)";
-      // 
       // toolStripButton2
       // 
       this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -696,6 +686,16 @@
       this.toolStripButton2.Size = new System.Drawing.Size(29, 24);
       this.toolStripButton2.Text = "⚒";
       this.toolStripButton2.Visible = false;
+      // 
+      // label3
+      // 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(11, 569);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(142, 20);
+      this.label3.TabIndex = 0;
+      this.label3.Text = "(under construction)";
       // 
       // PolyhedronPage
       // 

@@ -251,7 +251,7 @@ namespace Test
     void btn_back__Click(object sender, EventArgs e) { }
     void btn_forw__Click(object sender, EventArgs e) { }
     void btn_forw_Click(object sender, EventArgs e) => timeLineView.ani(timeLineView.aniset.getendtime());
-    void btn_record_Click(object sender, EventArgs e) => timeLineView.rec();
+    void btn_record_Click(object sender, EventArgs e) => timeLineView.record();
 
     void btn_play_Click(object sender, EventArgs e)
     {
@@ -264,6 +264,7 @@ namespace Test
       if (t == timeLineView.aniset && showtime != t.time) { showtime = t.time; timeLineView.Invalidate(); }
       if (btn_play.Checked != (modelView.RunningAnimation == timeLineView.aniset))
         btn_play.Text = (btn_play.Checked ^= true) ? "" : "";
+      btn_record.Enabled = timeLineView.recundo() != null;
     }
 
     class TimeLineView : UserControl
@@ -273,20 +274,19 @@ namespace Test
         DoubleBuffered = true; AutoScroll = true;
         this.view = view; this.aniset = adjust();
       }
-      internal readonly DX11ModelCtrl view; int undoi;
+      internal readonly DX11ModelCtrl view; DX11ModelCtrl.Undo? lastu;
       internal DX11ModelCtrl.AniSet aniset;
-      const int leftofs = 8, dyline = 17;
+      const int leftofs = 3, dyline = 17;
       float xscale = 0.1f; int wo, st, pcx, ctrl;
       readonly List<int> selection = new();
       internal DX11ModelCtrl.AniSet adjust()
       {
         if (this.aniset == null || this.aniset != view.Scene.aniset)
         {
-          this.aniset = view.Scene.aniset ??= new();
-          this.undoi = view.undoi;
+          this.aniset = view.Scene.aniset ??= new(); this.lastu = null;
         }
         var aniset = this.aniset; if (aniset.maxtime == 0) aniset.maxtime = aniset.getendtime();
-        AutoScrollMinSize = new Size(64 + (int)(aniset.maxtime * xscale), 16 + aniset.anilines.Count * 16);
+        AutoScrollMinSize = new Size(64 + (int)(aniset.maxtime * xscale), 16 + aniset.lines.Count * 16);
         if (aniset.time > aniset.maxtime) { aniset.time = aniset.maxtime; Invalidate(); }
         return this.aniset;
       }
@@ -298,7 +298,7 @@ namespace Test
       protected override void OnPaint(PaintEventArgs e)
       {
         var g = e.Graphics; var s = ClientSize; var o = AutoScrollPosition;
-        g.TranslateTransform(leftofs + o.X, o.Y); var aniset = this.aniset; var list = aniset.anilines;
+        g.TranslateTransform(leftofs + o.X, o.Y); var aniset = this.aniset; var list = aniset.lines;
         var xe = (int)(aniset.maxtime * xscale); g.DrawLine(Pens.LightGray, xe, 0, xe, s.Height - o.Y);
         for (int i = 0, y = 0; i < list.Count; i++, y += dyline)
         {
@@ -315,30 +315,48 @@ namespace Test
         var x = (int)(aniset.time * xscale); g.DrawLine(Pens.Red, x, 0, x, s.Height - o.Y);
       }
 
-      internal void rec()
+      internal DX11ModelCtrl.Undo? recundo()
       {
-        var wo = selection.Count == 1 ? selection[0] : 0;
-        if ((wo & 0x40000000) != 0)
+        var p = view.undoi != 0 && view.undoi == view.undos.Count ? view.undos[view.undoi - 1] : null;
+        return p != lastu ? p : null;
+      }
+      internal void record()
+      {
+        var undo = recundo(); if (undo == null) return;
+        var test = undo.record(aniset, -1); //if (test == default) return;
+        var times = test.line?.times; int dt = 250, ddt, xxx = 0, split = -1;
+        var t = aniset.time; if (t >= dt) t -= dt;
+        if (times != null)
         {
-          int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
-          aniset.anilines[y].set(5, (x >> 1) + 1, 0);
+          for (int i = 0; i < times.Count; i += 2)
+          {
+            var t1 = times[i]; if (t1 >= t + dt) continue;
+            var t2 = t1 + times[i + 1]; if (t2 <= t) continue;
+            if (i == times.Count - 2 && t2 <= aniset.time) { t = aniset.time; break; } // add last
+            // intersection            
+            if ((ddt = aniset.time - t1) < 10 || (dt = t2 - aniset.time) < 10) return;
+            split = i; t = aniset.time; xxx = times[split + 1]; times[split + 1] = ddt; break;
+          }
         }
-        //else if ((wo & 0x20000000) != 0)
-        //{
-        //}
-        else
-        {
-          if (view.undoi == 0 || undoi == view.undoi) return;
-          var undo = view.undos[(undoi = view.undoi) - 1];
-          var wo1 = undo.link(aniset, aniset.getendtime());
-          if (wo1 == 0) return;
-          aniset.time = aniset.maxtime = aniset.getendtime(); select(wo1);
-          adjust(); var o = AutoScrollPosition; var q = AutoScrollMinSize;
-          o.X = q.Width; o.Y = ((wo1 >> 16) & 0x1fff) * (dyline + 2);
-          AutoScrollPosition = o; Invalidate();
-        }
+        var w = undo.record(aniset, t); if (w.line == null) { times[split + 1] = xxx; return; }
+        if (split != -1) { w.line.set(5, (split >> 1) + 1, 1); times[split + 3] = dt; dt = 0; }
+        if (t + dt > aniset.time) { aniset.maxtime = 0; aniset.ani(t + dt); }
+        adjust(); select(w.wo); lastu = undo;
+        var r = r2s(w.wo); var o = AutoScrollPosition; var q = new Point(-o.X, -o.Y); var rs = ClientRectangle;
+        if (r.X < 0) q.X += r.X; else if (r.Right > rs.Right) q.X += r.Right - rs.Right;
+        if (r.Y < 0) q.Y += r.Y; else if (r.Bottom > rs.Bottom) q.Y += r.Bottom - rs.Bottom;
+        AutoScrollPosition = q; Invalidate();
       }
 
+      Rectangle r2s(int w)
+      {
+        var i = (w >> 16) & 0x1fff; var k = w & 0xfffe;
+        var o = AutoScrollPosition;
+        var a = aniset.lines[i].times;
+        return new Rectangle(
+          o.X + leftofs + (int)(a[k] * xscale),
+          o.Y + i * dyline, (int)(a[k + 1] * xscale), dyline);
+      }
       void select(int wo)
       {
         if (wo == 1) return; wo &= ~1;
@@ -357,9 +375,10 @@ namespace Test
           view.Invalidate(); return;
         }
         var w = selection.Count == 1 ? selection[0] : 0;
-        if ((w & 0x20000000) != 0) view.extrasel = (this, new AniLin(this, selection[0]));
-        else if ((w & 0x40000000) != 0) view.extrasel = (this, new AniRec(this, selection[0]));
-        else view.extrasel = (this, new AniSet(this)); // default;
+        if ((w & 0x40000000) != 0) view.extrasel = (this, new AniRec(this, selection[0]));
+        //else if ((w & 0x20000000) != 0) view.extrasel = (this, new AniLin(this, selection[0]));
+        //else view.extrasel = (this, new AniSet(this));
+        else view.extrasel = default;
         view.Invalidate();
       }
 
@@ -381,9 +400,9 @@ namespace Test
           if (wo == 0)
           {
             var i = (e.Y - o.Y) / dyline; var tx = (e.X - leftofs - o.X) / xscale;
-            if (i >= 0 && i < aniset.anilines.Count)
+            if (i >= 0 && i < aniset.lines.Count)
             {
-              var a = aniset.anilines[i].times; wo = 0x20000000 | (i << 16);
+              var a = aniset.lines[i].times; wo = 0x20000000 | (i << 16);
               for (int k = a.Count - 2; k >= 0; k -= 2)
               {
                 var t = a[k]; var dt = a[k + 1]; var w = 0x40000000 | (i << 16) | k;
@@ -404,14 +423,19 @@ namespace Test
         else if ((wo & 0x40000000) != 0)
         {
           int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
-          var tt = aniset.anilines[y].times;
+          var tt = aniset.lines[y].times;
           if (st == -1) { st = tt[x]; if ((ctrl & 2) != 0) { ctrl ^= 2; select(wo); } }
           var u = (int)(st + fdt);
           if ((wo & 1) == 0)
           {
-            u = Math.Max(0, u);
+            u = Math.Max(u, x == 0 ? 0 : tt[x - 2] + tt[x - 1]);
+            if (x + 2 < tt.Count) u = Math.Min(u, tt[x + 2] - tt[x + 1]);
           }
-          else { u = Math.Max(20, u); }
+          else
+          {
+            u = Math.Max(20, u);
+            if (x + 1 < tt.Count) u = Math.Min(u, tt[x + 1] - tt[x - 1]);
+          }
           if (tt[x] == u) return;
           var et = aniset.getendtime(); if (et != aniset.maxtime) aniset.maxtime = et;
           tt[x] = u; ani(aniset.time | 0x40000000); view.Invalidate(); //props
@@ -422,7 +446,7 @@ namespace Test
         Capture = false; if ((wo & 0x60000000) == 0) return;
         if ((ctrl & 2) != 0) select(wo); adjust();
       }
-      protected override void OnMouseWheel(MouseEventArgs e)
+      protected override void OnMouseWheel(MouseEventArgs e) //todo:
       {
       }
       protected override void OnKeyDown(KeyEventArgs e)
@@ -435,13 +459,13 @@ namespace Test
             if ((wo & 0x40000000) != 0)
             {
               select(0); int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
-              var line = aniset.anilines[y]; select(0);
+              var line = aniset.lines[y]; select(0);
               if (line.times.Count > 2)
               {
                 line.set(8, x, 0);
                 select(0x40000000 | (y << 16) | Math.Min(x, line.times.Count - 2));
               }
-              else { aniset.anilines.RemoveAt(y); }
+              else { aniset.lines.RemoveAt(y); }
               aniset.maxtime = 0; adjust();
               ani(aniset.time | 0x40000000);
             }
@@ -476,7 +500,7 @@ namespace Test
         internal AniLin(TimeLineView p, int wo)
         {
           this.view = p;
-          this.line = p.aniset.anilines[(wo >> 16) & 0x1fff];
+          this.line = p.aniset.lines[(wo >> 16) & 0x1fff];
         }
         readonly TimeLineView view; readonly DX11ModelCtrl.AniLine line;
         [Category("Line")]
@@ -487,7 +511,12 @@ namespace Test
         [Category("Line")]
         public string? Type
         {
-          get => line.GetType().FullName;
+          get => line.GetType().Name;
+        }
+        [Category("Line")]
+        public string? Prop
+        {
+          get => line.getset(1) as string;
         }
       }
       public class AniRec
@@ -495,10 +524,24 @@ namespace Test
         public override string ToString() => "Animation Record";
         internal AniRec(TimeLineView p, int wo)
         {
-          this.view = p; this.line = p.aniset.anilines[(wo >> 16) & 0x1fff];
+          this.view = p; this.line = p.aniset.lines[(wo >> 16) & 0x1fff];
           this.x = wo & 0xffff;
         }
         readonly TimeLineView view; readonly DX11ModelCtrl.AniLine line; int x;
+        [Category("\tSet")]
+        public string? Name
+        {
+          get => view.aniset.name ?? String.Empty;
+          set => view.aniset.name = value != null && (value = value.Trim()).Length != 0 ? value : null;
+        }
+        [Category("\tSet")]
+        public int AniTime
+        {
+          get => view.aniset.time;
+          set { }
+        }
+        [Category("\tSet")]
+        public int MaxTime => view.aniset.maxtime;
         [Category("Line")]
         public string Target
         {
@@ -507,7 +550,12 @@ namespace Test
         [Category("Line")]
         public string? Type
         {
-          get => line.GetType().FullName;
+          get => line.GetType().Name;
+        }
+        [Category("Line")]
+        public string? Prop
+        {
+          get => line.getset(1) as string;
         }
         [Category("Record")]
         public int Time
@@ -537,7 +585,7 @@ namespace Test
     }
   }
 
-  unsafe struct Quat
+  unsafe struct Quat //todo: sort in
   {
     public Vector3 t; Quaternion q; public Vector3 s;
     public static implicit operator Quat(Matrix4x3 m) //todo: SSE impl 

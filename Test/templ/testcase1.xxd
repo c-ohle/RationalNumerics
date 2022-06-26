@@ -1,20 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <scene name="Scene1" unit="Meter" ambient="00404040" shadows="true">
-  <camera name="Camera1" transform="1 0 0 0 0.7071068 0.70710677 0 -0.70710677 0.7071068 0 -5.0000005 5.0000005" fov="30" near="0.1" far="1000" id="1" />
+  <camera name="Camera1" transform="0.8865308 -0.46266958 0 0.1258563 0.24115583 0.9622912 -0.4452228 -0.8531007 0.27202195 -3.4044535 -4.1659884 1.4373336" fov="30" near="0.1" far="1000" />
   <light name="Light1" transform="-0.83205026 0.5547002 0 0.4754573 0.71318597 0.5150787 0.2857143 0.4285714 -0.8571429 0 0 0" />
   <box name="Ground" fixed="true" color="FFD3D3D3" texture="https://c-ohle.github.io/RationalNumerics/web/tex/millis.png" x1="-10" y1="-10" z1="-0.1" x2="10" y2="10" />
-  <box name="Plate1" transform="0 1 0 -1 0 0 0 0 1 1.606 -1.647 0" color="FFFFD700" x2="1" y2="1" z2="0.2" id="2" />
+  <box name="Plate1" transform="0 1 0 -1 0 0 0 0 2 1.606 -1.647 0" visible="false" color="FFFFD700" x2="1" y2="1" z2="0.2" />
   <cylinder name="Cylinder" transform="1 0 0 0 1 0 0 0 1 -2.198 1.349 0" color="FFFFD700" seg="32" radius="0.5" height="0.2" />
-  <text name="Text1" transform="1 2.9802322E-08 0 -2.9802322E-08 1 0 0 0 1 -2.968 -0.538 0" color="FFFFD700" text="Text" height="1" depth="0.2" id="3" />
-  <cylinder name="Cylinder" transform="1 0 0 0 1 0 0 0 1 -2.294 -1.293 0" color="FFFE0000" seg="32" radius="0.5" height="0.2" id="4" />
+  <text name="Text1" transform="1 2.9802322E-08 0 -2.9802322E-08 1 0 0 0 1 -2.968 -0.538 0" color="FFFFD700" text="Text 3;" height="1" depth="0.2" />
+  <cylinder name="Cylinder" transform="1 0 0 0 1 0 0 0 1 -0.85 -1.403 0" color="FFFFFF00" seg="32" radius="0.5" height="0.2" id="1" />
+  <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -1.734 -2.339 0" color="FF00C000" x2="0.2" y2="0.2" z2="0.2" />
+  <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -1.233 -2.331 0" color="FF0000FF" x2="0.2" y2="0.2" z2="0.2" />
   <aniset name="main">
-    <at pid="1" times="0 550 580 570" line="0 -5.0000005 5.0000005 0.38268346 0 0 0.92387956; -0.17589623 -4.031857 5.8178396 0.1747761 0 0 0.98460823; -0.12728766 -2.4962554 5.8178396 0.1747761 0 0 0.98460823" gammas="0 4" />
-    <at pid="2" times="1200 380" line="1.606 -1.647 0; 1.623 -1.814 0" />
-    <a3 pid="2" prop="max" times="1580 500" line="1 1 0.2; 1 1 0.4" />
-    <ab pid="2" prop="visible" times="2240 100 2440 100" line="1; 0; 1" />
-    <a3 pid="2" prop="rotation" times="2660 500" line="0 0 90; 0 0 45" />
-    <as pid="3" prop="text" times="3300 100 3520 100 3740 100 3960 100 4190 100" line="Text; Text_x0020_1; Text_x0020_2; Text_x0020_3; Text_x0020_3_x003B_; Text_x0020_3_x003B__x000D__x000A_newline" />
-    <ac pid="4" prop="colordiffuse" times="390 1020 1640 500 2350 500 3020 500" line="FFFF0000; FF00FF00; FFFF8000; FF000000; FFC0FFFF" />
-    <at pid="3" times="4080 190" line="-2.968 -0.538 0 0 0 1.4901161E-08 1; -1.189 1.115 0 0 0 1.4901161E-08 1" />
+    <ac pid="1" prop="colordiffuse" times="330 540 1420 870 2790 750" line="FFFFFF00; FF0000FF; FFFF0000; FFFFFF00" />
+    <at pid="1" times="160 250 690 440 1130 630 1880 250 2130 250 2580 530 3110 530 3790 250" line="-0.85 -1.403 0; -0.85 -1.403 0.403; -0.614 2.093 0.53557086; -1.4616407 -1.3753353 0.839; -1.4616407 -1.375335 0.839 0.70710677 0 0 0.70710677; -1.461641 -1.375335 0.839 -2.9802326E-08 0 0 1; -2.467 -2.552 0.69799995 -2.9802326E-08 0 0 1; -1.971 -1.242 0.557 -2.9802326E-08 0 0 1; -2.066 -1.348 0" gammas="3 3 0 3 3 3 0 3" />
   </aniset>
 </scene>

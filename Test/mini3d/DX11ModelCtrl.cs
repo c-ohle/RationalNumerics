@@ -1145,26 +1145,33 @@ namespace Test
         }
         return join(a);
       }
-      internal virtual int link(AniSet set, int time) => 0;
-      internal protected (AniLine line, int wo) getline(AniSet set, int time, Type type, Node target)
+      internal virtual (AniLine? line, int wo) record(AniSet set, int time) => default;
+      protected (AniLine? line, int wo) getline(AniSet set, int time, Type type, Node target, object? prop)
       {
-        var l = set.anilines; AniLine t;
-        for (int i = 0; i < l.Count; i++)
-          if ((t = l[i]).GetType() == type && t.getset(0, null) == target)
+        var lines = set.lines; AniLine t = null;
+        for (int i = 0, x = 0; i < lines.Count; i++)
+          if ((t = lines[i]).GetType() == type && t.getset(0) == target && t.getset(1) == prop)
           {
-            t.times.Add(time); t.times.Add(900); //t.list.Add(coll);
-            return (t, 0x40000000 | (i << 16) | (t.times.Count - 2));
+            if (time != -1)
+            {
+              for (; x < t.times.Count && t.times[x] + t.times[x + 1] <= time; x += 2) ;
+              t.times.Insert(x, time); t.times.Insert(x + 1, 250);
+              if (t.gammas != null && (x >> 1) < t.gammas.Count) t.gammas.Insert(x >> 1, 0);
+            }
+            return (t, 0x40000000 | (i << 16) | x); // (t.times.Count - 2));
           }
+        if (time == -1) return default;
         t = (AniLine)Activator.CreateInstance(type);
-        t.times.Add(time); t.times.Add(1000); //t.p = target;
-        //pl.list.Add(coll); pl.list.Add(coll /*this.p.nodes*/); 
-        l.Add(t); return (t, 0x40000000 | ((l.Count - 1) << 16));
+        t.times.Add(time); t.times.Add(250); lines.Add(t);
+        return (t, 0x40000000 | ((lines.Count - 1) << 16));
       }
     }
     public abstract class AniLine
     {
-      internal abstract object? getset(int id, object? v);
-      internal readonly List<int> times = new(2); List<float>? gammas;
+      //internal virtual long disp(int id, long v) { return 0; }
+      //internal virtual object? disp(int id, object? v) { return 0; }
+      internal abstract object? getset(int id, object? v = null);
+      internal readonly List<int> times = new(2); internal List<float>? gammas;
       internal bool lerp(int time)
       {
         int x = 0;
@@ -1266,15 +1273,15 @@ namespace Test
     }
     public class AniSet
     {
-      internal readonly List<AniLine> anilines = new();
+      internal readonly List<AniLine> lines = new();
       internal string? name;
       internal int time, maxtime;
       internal int getendtime()
       {
         var max = 0;
-        for (int i = 0; i < anilines.Count; i++)
+        for (int i = 0; i < lines.Count; i++)
         {
-          var t = anilines[i].times;
+          var t = lines[i].times;
           max = Math.Max(max, t[t.Count - 2] + t[t.Count - 1]);
         }
         return max;
@@ -1282,7 +1289,7 @@ namespace Test
       internal bool ani(int t)
       {
         time = t; var inf = false; //todo: ref
-        for (int i = 0, n = anilines.Count; i < n; i++) inf |= anilines[i].lerp(t);
+        for (int i = 0, n = lines.Count; i < n; i++) inf |= lines[i].lerp(t);
         return inf;
       }
     }
@@ -1292,11 +1299,12 @@ namespace Test
       internal UndoTrans(Group p, in Matrix4x3 m) { this.p = p; this.m = m; }
       internal override void exec() { var t = p.Transform; p.Transform = m; m = t; }
       internal static UndoTrans? get(Group p, in Matrix4x3 m) => p.Transform != m ? new UndoTrans(p, m) : null;
-      internal override int link(AniSet set, int time)
+      internal override (AniLine? line, int wo) record(AniSet set, int time)
       {
-        var c = getline(set, time, typeof(Line), this.p); var line = (Line)c.line;
+        var c = getline(set, time, typeof(Line), this.p, null);
+        if (time == -1) return c; var line = (Line)c.line;
         if (line.p == null) { line.p = this.p; line.list.Add(m); }
-        line.list.Add(p.Transform); return c.wo;
+        line.list.Insert(((c.wo & 0xffff) >> 1) + 1, p.Transform); return c;
       }
       internal class Line : AniLine
       {
@@ -1339,8 +1347,8 @@ namespace Test
         internal override void set(int was, int i, float v)
         {
           base.set(was, i, v);
+          if (was == 5) { /*if (v == 1)*/ list[i + 1] = list[i]; list[i] = p.Transform; }
           if (was == 8) list.RemoveAt(i >> 1);
-          if (was == 5) { list[i] = p.Transform; }
         }
       }
     }
@@ -1363,59 +1371,37 @@ namespace Test
         if (pt == typeof(int) || pt.IsEnum) return typeof(IntLine);
         return null;
       }
-      internal override int link(AniSet set, int time)
+      internal override (AniLine? line, int wo) record(AniSet set, int time)
       {
-        var pd = this.p.GetType().GetProperty(s); var pt = pd.PropertyType;
-
-        // var lt = t2t(pt); if (lt == null) return 0;
-        // var c = getline(set, time, lt, this.p);
-        // c.line.set(7, 0, 0); return c.wo;
-        // //var line = (PropLine<int>)c.line;
-        // //if (line.p == null) { line.p = this.p; line.list.Add(m); }
-        // //line.list.Add(p.Transform); return c.wo;
-
-        var l = set.anilines;
-        if (pt == typeof(Color)) return ColorLine.link<ColorLine>(l, p, s, (Color)v, time, 500);
-        if (pt == typeof(float)) return FloatLine.link<FloatLine>(l, p, s, (float)v, time, 500);
-        if (pt == typeof(Vector2)) return Vector2Line.link<Vector2Line>(l, p, s, (Vector2)v, time, 500);
-        if (pt == typeof(Vector3)) return Vector3Line.link<Vector3Line>(l, p, s, (Vector3)v, time, 500);
-        if (pt == typeof(bool)) return BoolLine.link<BoolLine>(l, p, s, (bool)v, time, 100);
-        if (pt == typeof(string)) return StringLine.link<StringLine>(l, p, s, v as string, time, 100);
-        if (pt == typeof(int) || pt.IsEnum) return IntLine.link<IntLine>(l, p, s, (int)v, time, 100);
-        return 0;
+        var pd = this.p.GetType().GetProperty(s);
+        var lt = t2t(pd.PropertyType); if (lt == null) return default;
+        var c = getline(set, time, lt, this.p, s); if (time == -1) return c;
+        c.line.getset(c.wo, this); return c;
       }
       static List<Type> tc = new();
-      static void prechache(Type t) //init internal caches to keep props order
+      static void prechache(Type t) //init internal caches, speed and keep props order
       {
         if (t == typeof(Node) || tc.Contains(t)) return;
         prechache(t.BaseType); var a = t.GetProperties(); tc.Add(t); //Debug.WriteLine("prechache " + t);
       }
       internal abstract class PropLine<T> : AniLine
       {
-        internal override object? getset(int id, object? v)
+        internal override object? getset(int id, object? v = null)
         {
           switch (id)
           {
             case 0: return p;
-            default: return null;
+            case 1: return acc.get.Method.Name;
           }
+          if ((id & 0x40000000) != 0 && v is UndoProp a)
+          {
+            if (p == null) { p = a.p; setacc(a.s); list.Add((T)a.v); }
+            list.Insert(((id & 0xffff) >> 1) + 1, acc.get(p)); return p;
+          }
+          return null;
         }
-        internal static int link<TC>(List<AniLine> l, object p, string s, T v, int time, int dt) where TC : PropLine<T>, new()
-        {
-          for (int i = 0; i < l.Count; i++)
-            if (l[i] is TC t && t.p == p && t.name == s)
-            {
-              t.times.Add(time); t.times.Add(dt);
-              t.list.Add(t.acc.get(p));
-              return 0x40000000 | (i << 16) | (t.times.Count - 2);
-            }
-          var tc = new TC(); tc.p = (Node)p; tc.setacc(s);
-          tc.times.Add(time); tc.times.Add(dt);
-          tc.list.Add(v); tc.list.Add(tc.acc.get(p)); l.Add(tc);
-          return 0x40000000 | ((l.Count - 1) << 16);
-        }
-        internal string name => acc.get.Method.Name; Node? p;
-        internal readonly List<T> list = new(2); PropAcc<T>? acc;
+        Node? p; PropAcc<T>? acc;
+        internal readonly List<T> list = new(2);
         protected abstract bool equals(T a, T b);
         protected abstract T lerp(T a, T b, float f);
         internal override float get(int was, int i)
@@ -1425,8 +1411,8 @@ namespace Test
         internal override void set(int was, int i, float v)
         {
           base.set(was, i, v);
+          if (was == 5) { /*if (v == 1)*/ list[i + 1] = list[i]; list[i] = acc.get(p); }
           if (was == 8) list.RemoveAt(i >> 1);
-          if (was == 5) list[i] = acc.get(p);
         }
         internal override bool lerp(int x, float f)
         {
@@ -1436,7 +1422,7 @@ namespace Test
         }
         protected internal override void serial(XElement e, Node? load)
         {
-          if (load == null) e.SetAttributeValue("prop", name.ToLower());
+          if (load == null) e.SetAttributeValue("prop", ((string)this.getset(1)).ToLower());
           else { this.p = load; var a = e.Attribute("prop"); setacc(a.Value); }
           base.serial(e, load);
         }
@@ -1568,11 +1554,12 @@ namespace Test
         if (b != null) for (int i = 0, n = b.Length; i < n; i++) b[i].parent = p;
         var t = p.nodes; p.nodes = b; b = t;
       }
-      internal override int link(AniSet set, int time)
+      internal override (AniLine? line, int wo) record(AniSet set, int time)
       {
-        var c = getline(set, time, typeof(Line), this.p); var line = (Line)c.line;
+        var c = getline(set, time, typeof(Line), this.p, null);
+        if (time == -1) return c; var line = (Line)c.line;
         if (line.p == null) { line.p = this.p; line.list.Add(this.b); }
-        line.list.Add(this.p.nodes); return c.wo;
+        line.list.Insert(((c.wo & 0xffff) >> 1) + 1, this.p.nodes); return c;
       }
       internal class Line : AniLine
       {
@@ -1592,8 +1579,8 @@ namespace Test
         internal override void set(int was, int i, float v)
         {
           base.set(was, i, v);
-          //if (was == 8) list.RemoveAt(i >> 1);
-          //if (was == 5) { list[i] = p.Transform; }
+          if (was == 5) { /*if (v == 1)*/ list[i + 1] = list[i]; list[i] = p.nodes; }
+          if (was == 8) list.RemoveAt(i >> 1);
         }
         internal override bool lerp(int x, float f)
         {
@@ -1625,22 +1612,24 @@ namespace Test
       {
         for (int i = 0; i < a.Length; i++) a[i].exec(); Array.Reverse(a);
       }
-      internal override int link(AniSet set, int time)
+      internal override (AniLine? line, int wo) record(AniSet set, int time)
       {
+        //if (time == -1) return getline(set, time, typeof(Line), scene, null);
         var recu = set.name == string.Empty;
         var coll = recu ? set : new AniSet() { name = string.Empty };
-        for (int i = 0; i < a.Length; i++) a[i].link(coll, 0);
-        if (recu) return 0;        
+        for (int i = 0; i < a.Length; i++) a[i].record(coll, 0);
+        if (recu) return default;
         var scene = default(Models.Scene);
-        for (int i = 0; i < coll.anilines.Count; i++)
+        for (int i = 0; i < coll.lines.Count; i++)
         {
-          var b = coll.anilines[i]; b.times[1] = 0;
+          var b = coll.lines[i]; b.times[1] = 0;
           if (scene == null && b.getset(0, null) is Node x)
             scene = x.GetService(typeof(Models.Scene)) as Models.Scene;
         }
-        var c = getline(set, time, typeof(Line), scene); var line = (Line)c.line;
+        var c = getline(set, time, typeof(Line), scene, null);
+        if (time == -1) return c; var line = (Line)c.line;
         if (line.p == null) { line.p = scene; line.list.Add(coll); }
-        line.list.Add(coll); return c.wo;
+        line.list.Insert(((c.wo & 0xffff) >> 1) + 1, coll); return c;
       }
       internal class Line : AniLine
       {
@@ -1660,16 +1649,20 @@ namespace Test
         internal override void set(int was, int i, float v)
         {
           base.set(was, i, v);
-          //if (was == 8) list.RemoveAt(i >> 1);
-          //if (was == 5) { list[i] = p.Transform; }
+          if (was == 5)
+          {
+            //if (was == 5) { /*if (v == 1)*/ list[i + 1] = list[i]; list[i] = p.nodes; }
+            throw new Exception(); //todo: catch before   
+          }
+          if (was == 8) list.RemoveAt(i >> 1);
         }
         internal override bool lerp(int x, float f)
         {
           f = f <= 0 ? 0 : 1; var inf = false;
           var aniset = list[x + 0];
-          for (int i = 0; i < aniset.anilines.Count; i++)
+          for (int i = 0; i < aniset.lines.Count; i++)
           {
-            var ani = aniset.anilines[i];
+            var ani = aniset.lines[i];
             inf |= ani.lerp(0, f);
           }
           return inf;
@@ -2026,14 +2019,14 @@ namespace Test
             if (unit != 0) e.SetAttributeValue("unit", unit);
             if (ambient != 0) e.SetAttributeValue("ambient", ambient.ToString("X8"));
             if (Shadows) e.SetAttributeValue("shadows", true);
-            if (aniset != null && aniset.anilines.Count != 0)
+            if (aniset != null && aniset.lines.Count != 0)
             {
               var set = new XElement("aniset"); int id = 0;
               if (aniset.name != null) set.SetAttributeValue("name", aniset.name);
               if (aniset.time != 0) set.SetAttributeValue("time", aniset.time);
-              foreach (var ani in aniset.anilines)
+              foreach (var ani in aniset.lines)
               {
-                var dest = find(e, (Node)ani.getset(0, null)); if (dest == null) continue;
+                var dest = find(e, (Node)ani.getset(0)); if (dest == null) continue;
                 var uid = dest.Attribute("id");
                 if (uid == null) dest.Add(uid = new XAttribute("id", ++id));
                 var line = new XElement(o2s(ani)); line.SetAttributeValue("pid", uid.Value);
@@ -2061,7 +2054,7 @@ namespace Test
                 var t = find(e, a.Value); if (t == null) continue;
                 var u = s2t(ani.Name.LocalName); if (u == null) continue;
                 var v = (AniLine)Activator.CreateInstance(u);
-                v.serial(ani, t); this.aniset.anilines.Add(v);
+                v.serial(ani, t); this.aniset.lines.Add(v);
               }
               static Node? find(XElement root, string id) => root.DescendantsAndSelf().FirstOrDefault(p => (string?)p.Attribute("id") == id)?.Annotation(typeof(Node)) as Node;
             }
