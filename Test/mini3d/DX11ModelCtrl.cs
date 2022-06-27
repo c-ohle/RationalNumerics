@@ -1150,7 +1150,7 @@ namespace Test
       {
         var lines = set.lines; AniLine t = null;
         for (int i = 0, x = 0; i < lines.Count; i++)
-          if ((t = lines[i]).GetType() == type && t.getset(0) == target && t.getset(1) == prop)
+          if ((t = lines[i]).GetType() == type && t.disp(0) == target && t.disp(1) == prop)
           {
             if (time != -1)
             {
@@ -1170,7 +1170,23 @@ namespace Test
     {
       //internal virtual long disp(int id, long v) { return 0; }
       //internal virtual object? disp(int id, object? v) { return 0; }
-      internal abstract object? getset(int id, object? v = null);
+      internal virtual object? disp(int id, object? v = null)
+      {
+        switch (id)
+        {
+          case 2:
+            {
+              var f = (Func<Node, string?>)v; var s = f((Node)disp(0));
+              var e = new XElement(Models.o2s(this)); e.SetAttributeValue("pid", s); return e;
+            }
+          case 3:
+            {
+              var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>();
+              var a = e.Attribute("pid"); return a != null ? f(a.Value) : null;
+            }
+        }
+        return null;
+      }
       internal readonly List<int> times = new(2); internal List<float>? gammas;
       internal bool lerp(int time)
       {
@@ -1292,6 +1308,34 @@ namespace Test
         for (int i = 0, n = lines.Count; i < n; i++) inf |= lines[i].lerp(t);
         return inf;
       }
+      internal object? getset(int id, object? v)
+      {
+        switch (id)
+        {
+          case 2:
+            {
+              var e = new XElement("aniset"); var getid = (Func<Node, string?>)v;
+              if (name != null) e.SetAttributeValue("name", name);
+              if (time != 0) e.SetAttributeValue("time", time);
+              for (int i = 0; i < lines.Count; i++) e.Add((XElement)lines[i].disp(id, getid));
+              return e;
+            }
+          case 3:
+            {
+              var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>(); var a = default(XAttribute);
+              if ((a = e.Attribute("name")) != null) name = a.Value; //todo: trim
+              if ((a = e.Attribute("time")) != null) time = (int)a;
+              foreach (var ani in e.Elements())
+              {
+                var type = Models.s2t(ani.Name.LocalName); if (type == null) continue;
+                var line = (AniLine)Activator.CreateInstance(type);
+                ani.AddAnnotation(f); line.disp(3, ani); lines.Add(line);
+              }
+              return this;
+            }
+          default: return null;
+        }
+      }
     }
     sealed class UndoTrans : Undo
     {
@@ -1308,12 +1352,14 @@ namespace Test
       }
       internal class Line : AniLine
       {
-        internal override object? getset(int id, object? v)
+        internal override object? disp(int id, object? v)
         {
           switch (id)
           {
             case 0: return p;
-            default: return null;
+            case 2: { var e = (XElement)base.disp(id, v); serial(e, null); return e; }
+            case 3: serial((XElement)v, p = (Group)base.disp(id, v)); return this;
+            default: return base.disp(id, v);
           }
         }
         internal Group? p; internal readonly List<Quat> list = new(2);
@@ -1376,7 +1422,7 @@ namespace Test
         var pd = this.p.GetType().GetProperty(s);
         var lt = t2t(pd.PropertyType); if (lt == null) return default;
         var c = getline(set, time, lt, this.p, s); if (time == -1) return c;
-        c.line.getset(c.wo, this); return c;
+        c.line.disp(c.wo, this); return c;
       }
       static List<Type> tc = new();
       static void prechache(Type t) //init internal caches, speed and keep props order
@@ -1386,19 +1432,21 @@ namespace Test
       }
       internal abstract class PropLine<T> : AniLine
       {
-        internal override object? getset(int id, object? v = null)
+        internal override object? disp(int id, object? v = null)
         {
           switch (id)
           {
             case 0: return p;
             case 1: return acc.get.Method.Name;
+            case 2: { var e = (XElement)base.disp(id, v); serial(e, null); return e; }
+            case 3: serial((XElement)v, p = (Node)base.disp(id, v)); return this;
           }
           if ((id & 0x40000000) != 0 && v is UndoProp a)
           {
             if (p == null) { p = a.p; setacc(a.s); list.Add((T)a.v); }
             list.Insert(((id & 0xffff) >> 1) + 1, acc.get(p)); return p;
           }
-          return null;
+          return base.disp(id, v);
         }
         Node? p; PropAcc<T>? acc;
         internal readonly List<T> list = new(2);
@@ -1422,7 +1470,7 @@ namespace Test
         }
         protected internal override void serial(XElement e, Node? load)
         {
-          if (load == null) e.SetAttributeValue("prop", ((string)this.getset(1)).ToLower());
+          if (load == null) e.SetAttributeValue("prop", ((string)this.disp(1)).ToLower());
           else { this.p = load; var a = e.Attribute("prop"); setacc(a.Value); }
           base.serial(e, load);
         }
@@ -1558,17 +1606,33 @@ namespace Test
       {
         var c = getline(set, time, typeof(Line), this.p, null);
         if (time == -1) return c; var line = (Line)c.line;
-        if (line.p == null) { line.p = this.p; line.list.Add(this.b); }
+        if (line.p == null) { line.p = this.p; line.list.Add(this.b); } //(Group[])this.p.nodes.Clone()
         line.list.Insert(((c.wo & 0xffff) >> 1) + 1, this.p.nodes); return c;
       }
       internal class Line : AniLine
       {
-        internal override object? getset(int id, object? v)
+        internal override object? disp(int id, object? v)
         {
           switch (id)
           {
             case 0: return p;
-            default: return null;
+            case 2:
+              {
+                var e = (XElement)base.disp(id, v); serial(e, null); //todo: skip line output  line="; " 
+                var f = (Func<Node, string?>)v;
+                e.SetAttributeValue("line", string.Join("; ", list.Select(y => string.Join(' ', y.Select(x => f(x))))));
+                return e;
+              }
+            case 3:
+              {
+                var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>();
+                serial((XElement)v, p = (Node)base.disp(id, v)); //todo: skip line read
+                list.AddRange(((string)e.Attribute("line")).Split(';').
+                  Select(y => y.Split(' ', StringSplitOptions.RemoveEmptyEntries).
+                  Select(x => f(x)).OfType<Group>().ToArray()));
+                return this;
+              }
+            default: return base.disp(id, v);
           }
         }
         internal Node? p; internal readonly List<Group[]> list = new(2);
@@ -1590,14 +1654,11 @@ namespace Test
         }
         protected internal override void serial(XElement e, Node? load)
         {
-          //if (load != null) p = (Group)load;
-          //base.serial(e, load);
+          base.serial(e, load);
         }
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
         {
           return 0;
-          //return list[i].Format(w, f);
-          //list[i].TryFormat(w, out var c, default, f); return c;
         }
         protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f)
         {
@@ -1614,7 +1675,6 @@ namespace Test
       }
       internal override (AniLine? line, int wo) record(AniSet set, int time)
       {
-        //if (time == -1) return getline(set, time, typeof(Line), scene, null);
         var recu = set.name == string.Empty;
         var coll = recu ? set : new AniSet() { name = string.Empty };
         for (int i = 0; i < a.Length; i++) a[i].record(coll, 0);
@@ -1622,23 +1682,36 @@ namespace Test
         var scene = default(Models.Scene);
         for (int i = 0; i < coll.lines.Count; i++)
         {
-          var b = coll.lines[i]; b.times[1] = 0;
-          if (scene == null && b.getset(0, null) is Node x)
+          var b = coll.lines[i]; //b.times[1] = 0;
+          if (scene == null && b.disp(0, null) is Node x)
             scene = x.GetService(typeof(Models.Scene)) as Models.Scene;
         }
         var c = getline(set, time, typeof(Line), scene, null);
         if (time == -1) return c; var line = (Line)c.line;
-        if (line.p == null) { line.p = scene; line.list.Add(coll); }
-        line.list.Insert(((c.wo & 0xffff) >> 1) + 1, coll); return c;
+        if (line.p == null) { line.p = scene; coll.name = null; line.list.Add(coll); }
+        else line.list.Insert(((c.wo & 0xffff) >> 1), coll); return c;
+        //line.list.Insert(((c.wo & 0xffff) >> 1) + 1, coll); return c;
       }
       internal class Line : AniLine
       {
-        internal override object? getset(int id, object? v)
+        internal override object? disp(int id, object? v)
         {
           switch (id)
           {
             case 0: return p;
-            default: return null;
+            case 2:
+              {
+                var e = (XElement)base.disp(id, v); var f = (Func<Node, string?>)v;
+                for (int i = 0; i < list.Count; i++) e.Add(list[i].getset(2, f) as XElement);
+                return e;
+              }
+            case 3:
+              {
+                p = (Models.Scene)base.disp(id, v); var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>();
+                foreach (var c in e.Elements()) { var a = new AniSet(); c.AddAnnotation(f); a.getset(3, c); list.Add(a); }
+                return this;
+              }
+            default: return base.disp(id, v);
           }
         }
         internal Models.Scene? p; internal readonly List<AniSet> list = new(2);
@@ -1652,7 +1725,7 @@ namespace Test
           if (was == 5)
           {
             //if (was == 5) { /*if (v == 1)*/ list[i + 1] = list[i]; list[i] = p.nodes; }
-            throw new Exception(); //todo: catch before   
+            throw new Exception("todo"); //todo: catch before   
           }
           if (was == 8) list.RemoveAt(i >> 1);
         }
@@ -1670,7 +1743,7 @@ namespace Test
         protected internal override void serial(XElement e, Node? load)
         {
           //if (load != null) p = (Group)load;
-          //base.serial(e, load);
+          base.serial(e, load);
         }
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
         {
@@ -2021,19 +2094,13 @@ namespace Test
             if (Shadows) e.SetAttributeValue("shadows", true);
             if (aniset != null && aniset.lines.Count != 0)
             {
-              var set = new XElement("aniset"); int id = 0;
-              if (aniset.name != null) set.SetAttributeValue("name", aniset.name);
-              if (aniset.time != 0) set.SetAttributeValue("time", aniset.time);
-              foreach (var ani in aniset.lines)
+              int id = 0; Func<Node, string?> f = p =>
               {
-                var dest = find(e, (Node)ani.getset(0)); if (dest == null) continue;
-                var uid = dest.Attribute("id");
-                if (uid == null) dest.Add(uid = new XAttribute("id", ++id));
-                var line = new XElement(o2s(ani)); line.SetAttributeValue("pid", uid.Value);
-                ani.serial(line, null); set.Add(line);
-              }
-              e.Add(set);
-              static XElement find(XElement root, Node node) => root.DescendantsAndSelf().FirstOrDefault(p => p.Annotation<Node>() == node);
+                var t1 = e.DescendantsAndSelf().FirstOrDefault(x => x.Annotation<Node>() == p); if (t1 == null) return null;
+                var t2 = t1.Attribute("id"); if (t2 == null) t1.Add(t2 = new XAttribute("id", ++id));
+                return t2.Value;
+              };
+              e.Add((XElement)aniset.getset(2, f));
             }
           }
           else
@@ -2045,18 +2112,10 @@ namespace Test
             var aniset = e.Element("aniset");
             if (aniset != null)
             {
-              this.aniset = new();
-              if ((a = aniset.Attribute("name")) != null) this.aniset.name = a.Value;
-              if ((a = aniset.Attribute("time")) != null) this.aniset.time = (int)a;
-              foreach (var ani in aniset.Elements())
-              {
-                if ((a = ani.Attribute("pid")) == null) continue;
-                var t = find(e, a.Value); if (t == null) continue;
-                var u = s2t(ani.Name.LocalName); if (u == null) continue;
-                var v = (AniLine)Activator.CreateInstance(u);
-                v.serial(ani, t); this.aniset.lines.Add(v);
-              }
-              static Node? find(XElement root, string id) => root.DescendantsAndSelf().FirstOrDefault(p => (string?)p.Attribute("id") == id)?.Annotation(typeof(Node)) as Node;
+              Func<string, Node?> f = pid => e.DescendantsAndSelf().
+                FirstOrDefault(a => (string?)a.Attribute("id") == pid)?.
+                Annotation(typeof(Node)) as Node;
+              aniset.AddAnnotation(f); (this.aniset = new()).getset(3, aniset);
             }
           }
         }
@@ -2401,6 +2460,58 @@ namespace Test
             var n = ((Geometry)context.Instance).ranges.Length;
             return new StandardValuesCollection(Enumerable.Range(0, n).ToArray());
           }
+        }
+      }
+
+      public sealed class ScriptGeometry : Geometry
+      {
+        [Category("Geometry"), Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
+        public string? Code
+        {
+          get { return code; }
+          set
+          {
+            if (value != null)
+            {              
+              var expr = ExpressionsCompiler.Compile(GetType(), code);
+              var ctor = expr.Compile();
+              var inst = ctor(this);
+              var func = inst.OfType<Func<int, int>>().FirstOrDefault(); //.Where(p => p.MethodInfo.Name == "test")
+              if (func != null)
+              {
+                var y = func(123);
+              }
+            }
+            code = value;
+          }
+        }
+        string? code;
+        internal protected override void Serialize(XElement e, bool storing)
+        {
+          base.Serialize(e, storing);
+          if (storing) { if (code != null) e.SetAttributeValue("code", code); }
+          else { XAttribute p; if ((p = e.Attribute("code")) != null) code = p.Value; }
+        }
+        protected internal override void Build()
+        {
+          var p1 = new Vector3(-0.1f); var p2 = new Vector3(+0.1f);
+          Array.Resize(ref vertices, 8);
+          Array.Resize(ref indices, 36);
+          vertices[0] = new Vector3(p1.X, p1.Y, p1.Z);
+          vertices[1] = new Vector3(p2.X, p1.Y, p1.Z);
+          vertices[2] = new Vector3(p2.X, p2.Y, p1.Z);
+          vertices[3] = new Vector3(p1.X, p2.Y, p1.Z);
+          vertices[4] = new Vector3(p1.X, p1.Y, p2.Z);
+          vertices[5] = new Vector3(p2.X, p1.Y, p2.Z);
+          vertices[6] = new Vector3(p2.X, p2.Y, p2.Z);
+          vertices[7] = new Vector3(p1.X, p2.Y, p2.Z);
+          indices[00] = 0; indices[01] = 2; indices[02] = 1; indices[03] = 2; indices[04] = 0; indices[05] = 3;
+          indices[06] = 4; indices[07] = 5; indices[08] = 6; indices[09] = 6; indices[10] = 7; indices[11] = 4;
+          indices[12] = 0; indices[13] = 1; indices[14] = 5; indices[15] = 5; indices[16] = 4; indices[17] = 0;
+          indices[18] = 1; indices[19] = 2; indices[20] = 6; indices[21] = 6; indices[22] = 5; indices[23] = 1;
+          indices[24] = 2; indices[25] = 3; indices[26] = 7; indices[27] = 7; indices[28] = 6; indices[29] = 2;
+          indices[30] = 3; indices[31] = 0; indices[32] = 4; indices[33] = 4; indices[34] = 7; indices[35] = 3;
+          if (p1.X < p2.X ^ p1.Y < p2.Y ^ p1.Z < p2.Z) invert();
         }
       }
 
@@ -3359,6 +3470,7 @@ namespace Test
           case "light": case "Light": return typeof(Light);
           case "camera": case "Camera": return typeof(Camera);
           case "scene": case "Scene": return typeof(Scene);
+          case "script": return typeof(ScriptGeometry);
           case "at": return typeof(UndoTrans.Line);
           case "ac": return typeof(UndoProp.ColorLine);
           case "af": return typeof(UndoProp.FloatLine);
@@ -3367,6 +3479,8 @@ namespace Test
           case "ab": return typeof(UndoProp.BoolLine);
           case "ai": return typeof(UndoProp.IntLine);
           case "as": return typeof(UndoProp.StringLine);
+          case "aa": return typeof(UndoSet.Line);
+          case "an": return typeof(UndoNodes.Line);
           default: return null;
         }
       }
@@ -3390,6 +3504,7 @@ namespace Test
         if (t == typeof(Light)) return "light";
         if (t == typeof(Camera)) return "camera";
         if (t == typeof(Scene)) return "scene";
+        if (t == typeof(ScriptGeometry)) return "script";
         if (t == typeof(UndoTrans.Line)) return "at";
         if (t == typeof(UndoProp.ColorLine)) return "ac";
         if (t == typeof(UndoProp.FloatLine)) return "af";
@@ -3398,6 +3513,8 @@ namespace Test
         if (t == typeof(UndoProp.BoolLine)) return "ab";
         if (t == typeof(UndoProp.IntLine)) return "ai";
         if (t == typeof(UndoProp.StringLine)) return "as";
+        if (t == typeof(UndoSet.Line)) return "aa";
+        if (t == typeof(UndoNodes.Line)) return "an";
         throw new Exception();
       }
 

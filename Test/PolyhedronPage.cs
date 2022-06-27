@@ -20,8 +20,8 @@ namespace Test
       base.OnLoad(e);
       MenuItem.CmdRoot = OnCommand;
       //this.path = Path.GetFullPath("templ\\testcase2.xxd");
-      var path = Path.GetFullPath("templ\\testcase2.xxd");
-      modelView.Scene = (Models.Scene)Models.Load(XElement.Load(path)); //demo1(); 
+      var path = Path.GetFullPath("templ\\testcase1.xxd");
+      modelView.Scene = (Models.Scene)Models.Load(XElement.Load(path));
       propsView.Target = modelView;
       //modelView.Infos.Add("Hello World!");
       panelStory.VisibleChanged += (_, _) =>
@@ -346,6 +346,12 @@ namespace Test
         if (r.X < 0) q.X += r.X; else if (r.Right > rs.Right) q.X += r.Right - rs.Right;
         if (r.Y < 0) q.Y += r.Y; else if (r.Bottom > rs.Bottom) q.Y += r.Bottom - rs.Bottom;
         AutoScrollPosition = q; Invalidate();
+        //if (view.Scene != null)
+        //{
+        //  var t1 = DX11ModelCtrl.Models.Save(view.Scene);
+        //  var t2 = DX11ModelCtrl.Models.Load(XElement.Parse(t1.ToString()));
+        //  var t3 = DX11ModelCtrl.Models.Save(t2);
+        //}
       }
 
       Rectangle r2s(int w)
@@ -506,7 +512,7 @@ namespace Test
         [Category("Line")]
         public string Target
         {
-          get { var t = (DX11ModelCtrl.Node?)line.getset(0, null); return t.name ?? t.GetType().Name; }
+          get { var t = (DX11ModelCtrl.Node?)line.disp(0, null); return t.name ?? t.GetType().Name; }
         }
         [Category("Line")]
         public string? Type
@@ -516,7 +522,7 @@ namespace Test
         [Category("Line")]
         public string? Prop
         {
-          get => line.getset(1) as string;
+          get => line.disp(1) as string;
         }
       }
       public class AniRec
@@ -545,7 +551,7 @@ namespace Test
         [Category("Line")]
         public string Target
         {
-          get { var t = (DX11ModelCtrl.Node?)line.getset(0, null); return t.name ?? t.GetType().Name; }
+          get { var t = (DX11ModelCtrl.Node?)line.disp(0, null); return t.name ?? t.GetType().Name; }
         }
         [Category("Line")]
         public string? Type
@@ -555,7 +561,7 @@ namespace Test
         [Category("Line")]
         public string? Prop
         {
-          get => line.getset(1) as string;
+          get => line.disp(1) as string;
         }
         [Category("Record")]
         public int Time
@@ -723,62 +729,3 @@ namespace Test
   {
   }
 }
-
-#if false
-    Models.Scene demo1()  //todo: remove
-    {
-      return new Models.Scene
-      {
-        Unit = Models.Scene.Units.Meter,
-        Ambient = Color.FromArgb(0x00404040),
-        Shadows = true,
-        nodes = new Group[] {
-            new Models.Camera {
-              Name = "Camera1", Fov = 30, Near = 0.1f, Far = 1000,
-              Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(
-                //new Vector3(0, -7, 2), new Vector3(), new Vector3(0, 0, 1)),
-                new Vector3(0, -5, 5), new Vector3(), new Vector3(0, 0, 1)),
-            },
-            new Models.Light {
-              Name = "Light1",
-              Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(
-                new Vector3(), new Vector3(-1, -1.5f, 3), new Vector3(0, 0, 1)),
-            },
-            new Models.BoxGeometry {
-              Name = "Ground", Fixed = true,
-              Transform = Matrix4x3.CreateTranslation(0, 0, 0),
-              p1 = new Vector3(-10, -10, -0.1f), p2 = new Vector3(+10, +10, 0),
-              ranges = new (int, Models.Material)[] { (0, new Models.Material {
-                Diffuse = (uint)Color.LightGray.ToArgb(),
-                Texture = DX11ModelCtrl.GetTexture("https://c-ohle.github.io/RationalNumerics/web/tex/millis.png"),
-              }) },
-            },
-            //new Models.BoxGeometry {
-            //  Name="Box1",
-            //  Transform = Matrix4x3.CreateTranslation(0, 0, 0),
-            //  p2 = new Vector3(1, 1, 1),
-            //  ranges = new (int, Models.Material)[] { (0, new Models.Material {
-            //    Diffuse = (uint)Color.Gold.ToArgb(), /*Texture = tex2*/ } ) },
-            //},
-            extdemo(),
-          }
-      };
-      static Models.ExtrusionGeometry extdemo()
-      {
-        var pp = new List<Vector2>(); var cc = new List<ushort>();
-        TesselatorPage.demo1((pp, cc));
-        for (int i = 0; i < pp.Count; i++) pp[i] = (pp[i] - new Vector2(350, 200)) * (-1.0f / 100);
-        var model = new Models.ExtrusionGeometry
-        {
-          Name = "Extrusion1",
-          Transform = Matrix4x3.Identity,
-          points = pp.ToArray(),
-          counts = cc.ToArray(),
-          Height = 0.2f,
-          ranges = new (int, Models.Material)[] { (0, new Models.Material {
-          Diffuse = (uint)Color.Gold.ToArgb(), }) }
-        };
-        return model;
-      }
-    }
-#endif
