@@ -284,6 +284,7 @@ namespace Test
         if (this.aniset == null || this.aniset != view.Scene.aniset)
         {
           this.aniset = view.Scene.aniset ??= new(); this.lastu = null;
+          selection.Clear();
         }
         var aniset = this.aniset; if (aniset.maxtime == 0) aniset.maxtime = aniset.getendtime();
         AutoScrollMinSize = new Size(64 + (int)(aniset.maxtime * xscale), 16 + aniset.lines.Count * 16);
@@ -325,43 +326,57 @@ namespace Test
         var undo = recundo(); if (undo == null) return;
         var test = undo.record(aniset, -1); //if (test == default) return;
         var times = test.line?.times; int dt = 250, ddt, xxx = 0, split = -1;
-        var t = aniset.time; if (t >= dt) t -= dt;
-        if (times != null)
+        var t = aniset.time;
+        if (times != null && t != aniset.maxtime)
         {
+          if (t >= dt) t -= dt;
           for (int i = 0; i < times.Count; i += 2)
           {
             var t1 = times[i]; if (t1 >= t + dt) continue;
             var t2 = t1 + times[i + 1]; if (t2 <= t) continue;
             if (i == times.Count - 2 && t2 <= aniset.time) { t = aniset.time; break; } // add last
-            // intersection            
             if ((ddt = aniset.time - t1) < 10 || (dt = t2 - aniset.time) < 10) return;
             split = i; t = aniset.time; xxx = times[split + 1]; times[split + 1] = ddt; break;
           }
         }
         var w = undo.record(aniset, t); if (w.line == null) { times[split + 1] = xxx; return; }
-        if (split != -1) { w.line.set(5, (split >> 1) + 1, 1); times[split + 3] = dt; dt = 0; }
+        if (split != -1) { w.line.disp(5, ((split >> 1) + 1)); times[split + 3] = dt; dt = 0; }
         if (t + dt > aniset.time) { aniset.maxtime = 0; aniset.ani(t + dt); }
         adjust(); select(w.wo); lastu = undo;
-        var r = r2s(w.wo); var o = AutoScrollPosition; var q = new Point(-o.X, -o.Y); var rs = ClientRectangle;
+        var r = r2s(w.wo); r.Width += 32; r.Height += 16;
+        var o = AutoScrollPosition; var q = new Point(-o.X, -o.Y); var rs = ClientRectangle;
         if (r.X < 0) q.X += r.X; else if (r.Right > rs.Right) q.X += r.Right - rs.Right;
         if (r.Y < 0) q.Y += r.Y; else if (r.Bottom > rs.Bottom) q.Y += r.Bottom - rs.Bottom;
         AutoScrollPosition = q; Invalidate();
-        //if (view.Scene != null)
-        //{
-        //  var t1 = DX11ModelCtrl.Models.Save(view.Scene);
-        //  var t2 = DX11ModelCtrl.Models.Load(XElement.Parse(t1.ToString()));
-        //  var t3 = DX11ModelCtrl.Models.Save(t2);
-        //}
+        //if (false)
+        //  if (view.Scene != null)
+        //  {
+        //    var t1 = DX11ModelCtrl.Models.Save(view.Scene);
+        //    var t2 = DX11ModelCtrl.Models.Load(XElement.Parse(t1.ToString()));
+        //    var t3 = DX11ModelCtrl.Models.Save(t2);
+        //  }
       }
 
+      Point p2s(Point p)
+      {
+        var o = AutoScrollPosition;
+        return new Point((int)(p.X * xscale) + (o.X + leftofs), p.Y + o.Y);
+      }
+      Point s2p(Point p)
+      {
+        var o = AutoScrollPosition;
+        return new Point((int)((p.X - (o.X + leftofs)) / xscale), p.Y - (o.Y));
+      }
       Rectangle r2s(int w)
       {
-        var i = (w >> 16) & 0x1fff; var k = w & 0xfffe;
-        var o = AutoScrollPosition;
-        var a = aniset.lines[i].times;
-        return new Rectangle(
-          o.X + leftofs + (int)(a[k] * xscale),
-          o.Y + i * dyline, (int)(a[k + 1] * xscale), dyline);
+        var y = (w >> 16) & 0x1fff; var x = w & 0xfffe;
+        var times = aniset.lines[y].times;
+        var s = p2s(new Point(times[x], y * dyline));
+        return new Rectangle(s.X, s.Y, (int)(times[x + 1] * xscale), dyline);
+        //var o = AutoScrollPosition;
+        //return new Rectangle(
+        //  o.X + leftofs + (int)(a[x] * xscale),
+        //  o.Y + y * dyline, (int)(a[x + 1] * xscale), dyline);
       }
       void select(int wo)
       {
@@ -442,9 +457,9 @@ namespace Test
             u = Math.Max(20, u);
             if (x + 1 < tt.Count) u = Math.Min(u, tt[x + 1] - tt[x - 1]);
           }
-          if (tt[x] == u) return;
-          var et = aniset.getendtime(); if (et != aniset.maxtime) aniset.maxtime = et;
-          tt[x] = u; ani(aniset.time | 0x40000000); view.Invalidate(); //props
+          if (tt[x] == u) return; // if (et != aniset.maxtime) aniset.maxtime = et;
+          tt[x] = u; aniset.maxtime = aniset.getendtime();
+          ani(aniset.time | 0x40000000); view.Invalidate(); //props
         }
       }
       protected override void OnMouseUp(MouseEventArgs e)
@@ -454,34 +469,50 @@ namespace Test
       }
       protected override void OnMouseWheel(MouseEventArgs e) //todo:
       {
+        var p = e.Location; var v = s2p(p);
+        var d = Math.Max(0.01f, Math.Min(10, xscale * (1 + e.Delta * (0.1f / 120))));
+        if (xscale == d) return; xscale = d; Invalidate(); adjust();
+        var o = AutoScrollPosition; var s = p2s(v);
+        AutoScrollPosition = new Point(-(o.X - (s.X - p.X)), -(o.Y - (s.Y - p.Y)));
       }
-      protected override void OnKeyDown(KeyEventArgs e)
+      protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
       {
-        if (e.KeyCode == Keys.Delete)
+        if (selection.Count != 1) return;
+        var wo = selection[0]; int y = (wo >> 16) & 0x1fff, x = wo & 0xffff;
+        var lines = this.aniset.lines; var line = lines[y];
+        if ((e.KeyCode == Keys.Left || e.KeyCode == Keys.Right) && (wo & 0x40000000) != 0)
         {
-          if (selection.Count == 1)
+          var u = e.KeyCode == Keys.Left ? x - 2 : x + 2;
+          if (u >= 0 && u < line.times.Count)
           {
-            var wo = selection[0]; var aniset = this.aniset;
-            if ((wo & 0x40000000) != 0)
-            {
-              select(0); int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
-              var line = aniset.lines[y]; select(0);
-              if (line.times.Count > 2)
-              {
-                line.set(8, x, 0);
-                select(0x40000000 | (y << 16) | Math.Min(x, line.times.Count - 2));
-              }
-              else { aniset.lines.RemoveAt(y); }
-              aniset.maxtime = 0; adjust();
-              ani(aniset.time | 0x40000000);
-            }
-            if ((wo & 0x20000000) != 0)
-            {
-            }
+            select(0x40000000 | (y << 16) | u); return;
           }
-          e.Handled = true;
         }
-        base.OnKeyDown(e);
+        if ((e.KeyCode == Keys.Up || e.KeyCode == Keys.Down) && (wo & 0x20000000) != 0)
+        {
+          var v = e.KeyCode == Keys.Up ? y - 1 : y + 1;
+          if (v >= 0 && v < lines.Count)
+          {
+            if (e.Shift)
+            {
+              var t = lines[y]; lines[y] = lines[v]; lines[v] = t;
+              this.ani(aniset.time | 0x40000000);
+            }
+            select(0x20000000 | (v << 16)); return;
+          }
+        }
+        if (e.KeyCode == Keys.Delete && (wo & 0x40000000) != 0)
+        {
+          select(0);          
+          if (line.times.Count > 2)
+          {
+            line.disp(8, x); 
+            select(0x40000000 | (y << 16) | Math.Min(x, line.times.Count - 2));
+          }
+          else lines.RemoveAt(y);
+          aniset.maxtime = 0; adjust();
+          ani(aniset.time | 0x40000000);
+        }
       }
 
       public class AniSet
@@ -512,7 +543,7 @@ namespace Test
         [Category("Line")]
         public string Target
         {
-          get { var t = (DX11ModelCtrl.Node?)line.disp(0, null); return t.name ?? t.GetType().Name; }
+          get { var t = (DX11ModelCtrl.Node?)line.disp(0); return t.name ?? t.GetType().Name; }
         }
         [Category("Line")]
         public string? Type
@@ -551,7 +582,7 @@ namespace Test
         [Category("Line")]
         public string Target
         {
-          get { var t = (DX11ModelCtrl.Node?)line.disp(0, null); return t.name ?? t.GetType().Name; }
+          get { var t = (DX11ModelCtrl.Node?)line.disp(0); return t.name ?? t.GetType().Name; }
         }
         [Category("Line")]
         public string? Type
@@ -578,15 +609,15 @@ namespace Test
         [Category("Record"), DefaultValue(0f)]
         public float Gamma
         {
-          get { return x < line.times.Count ? line.get(0, x >> 1) : float.NaN; }
-          set { line.set(0, x >> 1, value); }
+          get { return x < line.times.Count && line.disp(9, x >> 1) is float g ? g : 0; }
+          set { line.disp(9, x >> 1, value); }
         }
-        [Category("Record"), DefaultValue(false)]
-        public bool LongWay
-        {
-          get { return x < line.times.Count ? line.get(1, x >> 1) != 0 : false; }
-          set { line.set(1, x >> 1, value ? 1 : 0); }
-        }
+        //[Category("Record"), DefaultValue(false)]
+        //public bool LongWay
+        //{
+        //  get { return x < line.times.Count ? line.getgamma(1, x >> 1) != 0 : false; }
+        //  set { line.setgamma(1, x >> 1, value ? 1 : 0); }
+        //}
       }
     }
   }

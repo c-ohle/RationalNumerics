@@ -5,18 +5,27 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace System.Linq.Expressions
+namespace Test
 {
   /// <summary>
-  /// Helpful small extension for Linq.Expressions
+  /// Helpful small extension for System.Linq.Expressions
   /// </summary>
   public static class ExpressionsCompiler
   {
-    public static Expression<Creator> Compile(Type @this, string code, Debugger? dbg = null)
+    /// <summary>
+    /// Compile
+    /// </summary>
+    /// <param name="code">C# code to compile.</param>
+    /// <param name="this">Type of a class to extend; default null for static.</param>
+    /// <param name="usings">default usings.</param>
+    /// <param name="dbg">generate debug infos.</param>
+    /// <returns>Factory object that to create instances.</returns>
+    public static Expression<Creator> Compile(string code, Type @this = null, string[]? usings = null, Debugger? dbg = null)
     {
-      //return new Engine().Compile(@this, code, dbg);
-      if (Compiler.wr?.Target is not Compiler p) Compiler.wr = new WeakReference(p = new Compiler());
-      return p.Compile(@this, code, dbg);
+      //return new Compiler().Compile(@this, code, dbg);
+      if (Compiler.wr?.Target is not Compiler p)
+        Compiler.wr = new WeakReference(p = new Compiler());
+      return p.Compile(@this ?? typeof(object), code, usings, dbg);
     }
     public delegate object[] Creator(object @this);
     public delegate object Exchange(string name, object value);
@@ -30,15 +39,15 @@ namespace System.Linq.Expressions
       List<object> usings = new List<object>();
       List<Expression> list = new List<Expression>();
       Assembly[] assemblys; Type[] extensions;
-      internal Expression<Creator> Compile(Type @this, string code, Debugger dbg)
+      internal Expression<Creator> Compile(Type @this, string code, string[]? usings, Debugger dbg)
       {
-        if (this.code != null) { this.Clear(); usings.Clear(); list.Clear(); npub = nfix = nusings = 0; }
+        if (this.code != null) { this.Clear(); this.usings.Clear(); list.Clear(); npub = nfix = nusings = 0; }
         var n = code.Length; var mem = Marshal.AllocCoTaskMem((n + 1) << 1);
         var s = this.code = (char*)mem.ToPointer();
         try
         {
           fixed (char* p = code) //Native.memcpy(s, p, (n + 1) << 1); 
-          for (int i = 0; i <= n; i++) s[i] = p[i];                                                                        
+            for (int i = 0; i <= n; i++) s[i] = p[i];
           #region remove comments
           for (int i = 0, l = n - 1; i < l; i++)
           {
@@ -53,12 +62,16 @@ namespace System.Linq.Expressions
           this.Add(Expression.Parameter(typeof(object), "this"));
           this.@this = Expression.Variable(@this, "this");
           this.dbg = dbg;
+          if (usings != null) { this.usings.AddRange(usings); this.nusings = this.usings.Count; }
           this.npub = 1; this.Parse(a, null, null, null, 0x08 | 0x04);
           var t1 = this.Parse(a, null, null, null, 0x01);
           var t2 = Expression.Lambda<Creator>(t1, ".ctor", this.Take(1));
           return t2;
         }
-        catch (System.Exception ex) { ex.Data.Add("pos", (unchecked((int)(this.epo.s - s)), this.epo.n)); throw; }
+        catch (System.Exception ex)
+        {
+          ex.Data.Add("pos", (unchecked((int)(this.epo.s - s)), this.epo.n)); throw;
+        }
         finally { Marshal.FreeCoTaskMem(mem); }
       }
       Expression Parse(Span span, LabelTarget @return, LabelTarget @break, LabelTarget @continue, int flags)
@@ -66,15 +79,19 @@ namespace System.Linq.Expressions
         var list = this.list; int stackab = (flags & 1) != 0 ? 1 : this.Count, listab = list.Count, ifunc = 0; var ep = this.epo;
         if ((flags & 0x01) != 0)
         {
-          // Exchange extension
-          var t1 = Expression.Parameter(typeof(Exchange));
-          var t2 = typeof(Compiler).GetMethod(nameof(Compiler.disp), BindingFlags.Static | BindingFlags.NonPublic);
-          var t3 = this.Skip(npub).Where(p => p.Name[0] != '_' && !p.Type.IsSubclassOf(typeof(Delegate))).Select(p =>
-            Expression.Call(null, t2.MakeGenericMethod(p.Type), t1, Expression.Constant(p.Name), p));
-          var t4 = Expression.Lambda<Accessor>(Expression.Block(t3), "#", Enumerable.Repeat(t1, 1));
-          var t5 = Expression.Variable(typeof(Accessor), t4.Name);
-          list.Add(Expression.Assign(t5, t4)); this.Insert(1, t5); npub++;
-          //
+          if (dbg != null) // general access to locals and for debug
+          {
+            var ex = this.Skip(npub).Where(p => /*p.Name[0] != '_' &&*/ !p.Type.IsSubclassOf(typeof(Delegate)));
+            if (ex.Any())
+            {
+              var t1 = Expression.Parameter(typeof(Exchange));
+              var t2 = typeof(Compiler).GetMethod(nameof(Compiler.disp), BindingFlags.Static | BindingFlags.NonPublic);
+              var t3 = ex.Select(p => Expression.Call(null, t2.MakeGenericMethod(p.Type), t1, Expression.Constant(p.Name), p));
+              var t4 = Expression.Lambda<Accessor>(Expression.Block(t3), "#", Enumerable.Repeat(t1, 1));
+              var t5 = Expression.Variable(typeof(Accessor), t4.Name);
+              list.Add(Expression.Assign(t5, t4)); this.Insert(1, t5); npub++;
+            }
+          }
           this.Add(this.@this); list.Add(Expression.Assign(this.@this, Expression.Convert(this[0], this.@this.Type)));
           this.nfix = this.Count;
         }
@@ -400,7 +417,8 @@ namespace System.Linq.Expressions
           for (a = b; b.n != 0 && b.s[0] != '(' && b.s[0] != '[' && b.s[0] != '{'; b.next()) ;
           a.n = (int)(b.s - a.s); a.trim(); var t = GetType(a); a = b.next(); var tc = a.s[0]; a.trim(1, 1);
           if (tc == '[') while (a.n == 0 && b.s[0] == '[') { t = t.MakeArrayType(); a = b.next(); a.trim(1, 1); }
-          var ab = this.list.Count; if (tc != '{') for (; a.n != 0;) this.list.Add(Parse(a.next(','), null));
+          var ab
+            = this.list.Count; if (tc != '{') for (; a.n != 0;) this.list.Add(Parse(a.next(','), null));
           if (tc == '[')
           {
             if (ab != this.list.Count) left = Expression.NewArrayBounds(t, this.list.Skip(ab));
