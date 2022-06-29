@@ -522,6 +522,10 @@ namespace System.Numerics
     /// <summary>
     /// Defines an explicit conversion of a <see cref="string"/> object to a <see cref="BigRational"/> value.
     /// </summary>
+    /// <remarks>
+    /// Shortcut for <c>Parse</c> allows simple syntax like:<br/>
+    /// <c>var x = (<see cref="BigRational"/>)"1.23'456e+1000";</c>
+    /// </remarks>
     /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public static explicit operator BigRational(string value)
@@ -3032,7 +3036,8 @@ namespace System.Numerics
           }
         }
       }
-      [DebuggerHidden] internal int mathdigits { get; set; } // only used by MathR to avoid another threadlocal root 
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+      internal int mathdigits { get; set; } // only used by MathR to avoid another threadlocal root 
     }
     #endregion
   }

@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <scene name="Scene1" unit="Meter" ambient="00404040" shadows="true">
-  <camera name="Camera1" transform="0.82853097 -0.55994326 -1.4901161E-07 0.15788071 0.23361105 0.95942664 -0.53722453 -0.7949147 0.28195822 -3.4646168 -3.5021896 1.111607" fov="30" near="0.1" far="1000" id="3" />
+  <camera name="Camera1" transform="0.99998796 -0.0049128123 -6.909249E-08 0.0049028452 0.9979583 0.06368008 -0.00031277933 -0.06367931 0.99797034 -0.5461408 -0.80393857 11.689028" fov="30" near="0.1" far="1000" id="3" />
   <light name="Light1" transform="-0.83205026 0.5547002 0 0.4754573 0.71318597 0.5150787 0.2857143 0.4285714 -0.8571429 0 0 0" />
   <box name="Ground" fixed="true" color="FFD3D3D3" texture="https://c-ohle.github.io/RationalNumerics/web/tex/millis.png" x1="-10" y1="-10" z1="-0.1" x2="10" y2="10" />
   <box name="Plate1" transform="0 1 0 -1 0 0 0 0 2 1.606 -1.647 0" visible="false" color="FFFFD700" x2="1" y2="1" z2="0.2" />
   <cylinder name="Cylinder" transform="1 0 0 0 1 0 0 0 1 -2.198 1.349 0" color="FFFFD700" seg="32" radius="0.5" height="0.2" />
-  <text name="Text1" transform="1 -4.001039E-08 6.429774E-08 -6.4297744E-08 -1.1920929E-07 0.99999994 -4.0010384E-08 -0.99999994 -1.1920929E-07 -2.705 -0.056 0.1695" color="FFFFD700" text="BigRational" height="0.6" depth="0.2" id="2" />
-  <cylinder name="Cylinder" transform="1 0 0 0 1 0 0 0 1 -2.051 -1.51 0" color="FFFFFF00" seg="32" radius="0.5" height="0.2" id="1" />
+  <text name="Text1" transform="1 2.9802322E-08 0 -2.9802322E-08 1 0 0 0 1 -2.974 -0.535 0" color="FFFFD700" text="BigRational" height="0.6" depth="0.2" id="2" />
+  <cylinder name="Cylinder" transform="1 0 0 0 1 0 0 0 1 -0.85 -1.403 0" color="FFFFFF00" seg="32" radius="0.5" height="0.2" id="1" />
   <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -1.734 -2.339 0" color="FF00C000" x2="0.2" y2="0.2" z2="0.2" />
   <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -1.233 -2.331 0" color="FF0000FF" x2="0.2" y2="0.2" z2="0.2" />
   <script name="Script1" transform="1 0 0 0 1 0 0 0 1 -1.997 -2.214 0" color="FFFF8000" code="public void Build(List&lt;Vector3&gt; pp, List&lt;int&gt; ii)&#xD;&#xA;{&#xD;&#xA;  var p1 = new Vector3(-0.1f);&#xD;&#xA;  var p2 = new Vector3(+0.1f);&#xD;&#xA;  pp.Add(new Vector3(p1.X, p1.Y, p1.Z));&#xD;&#xA;  pp.Add(new Vector3(p2.X, p1.Y, p1.Z));&#xD;&#xA;  pp.Add(new Vector3(p2.X, p2.Y, p1.Z));&#xD;&#xA;  pp.Add(new Vector3(p1.X, p2.Y, p1.Z));&#xD;&#xA;  pp.Add(new Vector3(p1.X, p1.Y, p2.Z));&#xD;&#xA;  pp.Add(new Vector3(p2.X, p1.Y, p2.Z));&#xD;&#xA;  pp.Add(new Vector3(p2.X, p2.Y, p2.Z));&#xD;&#xA;  pp.Add(new Vector3(p1.X, p2.Y, p2.Z));&#xD;&#xA;  ii.Add(0); ii.Add(2); ii.Add(1); ii.Add(2); ii.Add(0); ii.Add(3);&#xD;&#xA;  ii.Add(4); ii.Add(5); ii.Add(6); ii.Add(6); ii.Add(7); ii.Add(4);&#xD;&#xA;  ii.Add(0); ii.Add(1); ii.Add(5); ii.Add(5); ii.Add(4); ii.Add(0);&#xD;&#xA;  ii.Add(1); ii.Add(2); ii.Add(6); ii.Add(6); ii.Add(5); ii.Add(1);&#xD;&#xA;  ii.Add(2); ii.Add(3); ii.Add(7); ii.Add(7); ii.Add(6); ii.Add(2);&#xD;&#xA;  ii.Add(3); ii.Add(0); ii.Add(4); ii.Add(4); ii.Add(7); ii.Add(3);&#xD;&#xA;}" />
-  <aniset name="main" time="5960">
+  <aniset name="main">
     <ac pid="1" prop="colordiffuse" times="330 540 1420 870 2790 750" line="FFFFFF00; FF0000FF; FFFF0000; FFFFFF00" />
     <at pid="1" times="160 250 690 440 1130 630 1880 250 2130 250 2580 530 3110 530 3790 250 4770 1190" line="-0.85 -1.403 0; -0.85 -1.403 0.403; -0.614 2.093 0.53557086; -1.4616407 -1.3753353 0.839; -1.4616407 -1.375335 0.839 0.70710677 0 0 0.70710677; -1.461641 -1.375335 0.839 -2.9802326E-08 0 0 1; -2.467 -2.552 0.69799995 -2.9802326E-08 0 0 1; -1.971 -1.242 0.557 -2.9802326E-08 0 0 1; 0.134 2.939 0; -2.051 -1.51 0" gammas="3 3 0 3 3 3 0 3 5" />
     <at pid="2" times="4030 690 4720 490 5210 470" line="-2.974 -0.535 0 0 0 1.4901161E-08 1; -4.196 -2.649 0.534 0.7071068 -1.580507E-08 8.870886E-09 0.7071067; -3.588 -2.835 0.534 0.6832359 0.18217812 0.18217811 0.6832357; -2.705 -0.056 0.1695 0.7071068 -3.6878493E-08 8.586876E-09 0.7071067" gammas="4 4 4" />

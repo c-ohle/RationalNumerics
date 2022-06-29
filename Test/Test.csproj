@@ -27,6 +27,9 @@
     <None Update="templ\testcase1.xxd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="templ\testcase3.xxd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="templ\testcase2.xxd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

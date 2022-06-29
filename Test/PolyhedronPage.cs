@@ -20,7 +20,7 @@ namespace Test
       base.OnLoad(e);
       MenuItem.CmdRoot = OnCommand;
       //this.path = Path.GetFullPath("templ\\testcase2.xxd");
-      var path = Path.GetFullPath("templ\\testcase1.xxd");
+      var path = Path.GetFullPath("templ\\testcase2.xxd");
       modelView.Scene = (Models.Scene)Models.Load(XElement.Load(path));
       propsView.Target = modelView;
       //modelView.Infos.Add("Hello World!");
@@ -42,8 +42,6 @@ namespace Test
       };
       btn_run_Click(null, null);
     }
-    internal void onopen() { }
-
     TimeLineView? timeLineView; string? path; int tv, showtime;
 
     int OnCommand(int id, object? test)
@@ -244,7 +242,7 @@ namespace Test
       var aniset = modelView.Scene.aniset; if (aniset == null) return;
       //if (modelView.RunningAnimation != null) return;
       modelView.RunningAnimation = null;
-      aniset.time = 0; modelView.RunningAnimation = aniset;
+      aniset.ani(0); modelView.RunningAnimation = aniset;
     }
 
     void btn_back_Click(object sender, EventArgs e) => timeLineView.ani(0);
@@ -348,13 +346,14 @@ namespace Test
         if (r.X < 0) q.X += r.X; else if (r.Right > rs.Right) q.X += r.Right - rs.Right;
         if (r.Y < 0) q.Y += r.Y; else if (r.Bottom > rs.Bottom) q.Y += r.Bottom - rs.Bottom;
         AutoScrollPosition = q; Invalidate();
-        //if (false)
-        //  if (view.Scene != null)
-        //  {
-        //    var t1 = DX11ModelCtrl.Models.Save(view.Scene);
-        //    var t2 = DX11ModelCtrl.Models.Load(XElement.Parse(t1.ToString()));
-        //    var t3 = DX11ModelCtrl.Models.Save(t2);
-        //  }
+
+        if (view.Scene != null)
+        {
+          var t1 = DX11ModelCtrl.Models.Save(view.Scene);
+          var t2 = t1.ToString(); File.WriteAllText(@"C:\Users\cohle\Desktop\rec.xml", t2);
+          var t3 = DX11ModelCtrl.Models.Load(XElement.Parse(t2.ToString()));
+          var t4 = DX11ModelCtrl.Models.Save(t3);
+        }
       }
 
       Point p2s(Point p)
@@ -503,10 +502,10 @@ namespace Test
         }
         if (e.KeyCode == Keys.Delete && (wo & 0x40000000) != 0)
         {
-          select(0);          
+          select(0);
           if (line.times.Count > 2)
           {
-            line.disp(8, x); 
+            line.disp(8, x);
             select(0x40000000 | (y << 16) | Math.Min(x, line.times.Count - 2));
           }
           else lines.RemoveAt(y);
@@ -624,7 +623,7 @@ namespace Test
 
   unsafe struct Quat //todo: sort in
   {
-    public Vector3 t; Quaternion q; public Vector3 s;
+    public Vector3 t; Quaternion q; public Vector3 s; // keep order!
     public static implicit operator Quat(Matrix4x3 m) //todo: SSE impl 
     {
       Matrix4x4.Decompose(m, out var s, out var q, out var t);

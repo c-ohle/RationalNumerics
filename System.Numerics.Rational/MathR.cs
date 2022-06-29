@@ -163,6 +163,9 @@ namespace System.Numerics
     /// Returns a specified number raised to the specified power.<br/>
     /// For fractional exponents, the result is rounded to the specified number of decimal places.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
     /// <param name="y">A <see cref="BigRational"/> number that specifies a power.</param>
     /// <param name="digits">
@@ -189,7 +192,7 @@ namespace System.Numerics
     /// Returns a specified number raised to the specified power.
     /// </summary>
     /// <remarks>
-    /// <b>Currently under construction, not optimized.</b>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
     /// </remarks>
     /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
     /// <param name="digits">
@@ -225,6 +228,9 @@ namespace System.Numerics
     /// <summary>
     /// Returns the base 2 logarithm of a specified number.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="x">The number whose logarithm is to be found.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
@@ -248,7 +254,7 @@ namespace System.Numerics
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
-    /// <b>Currently under construction, not optimized.</b>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
     /// </remarks>
     /// <returns>The base 10 logarithm of <paramref name="x"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
@@ -273,6 +279,9 @@ namespace System.Numerics
     /// <summary>
     /// Returns the natural (base e) logarithm of a specified number.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="x">The number whose logarithm is to be found.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
@@ -290,6 +299,9 @@ namespace System.Numerics
     /// <summary>
     /// Returns e raised to the specified power.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="x">A number specifying a power.</param>
     /// The maximum number of fractional decimal digits in the return value.<br/>
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
@@ -339,6 +351,9 @@ namespace System.Numerics
     /// <summary>
     /// Returns the sine of the specified angle.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
@@ -354,6 +369,9 @@ namespace System.Numerics
     /// <summary>
     /// Returns the cosine of the specified angle.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
@@ -369,6 +387,9 @@ namespace System.Numerics
     /// <summary>
     /// Returns the tangent of the specified angle.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
@@ -388,7 +409,7 @@ namespace System.Numerics
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
-    /// <b>Currently under construction, not optimized.</b>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
     /// </remarks>
     /// <returns>
     /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
@@ -407,7 +428,7 @@ namespace System.Numerics
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
-    /// <b>Currently under construction, not optimized.</b>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
     /// </remarks>
     /// <returns>
     /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
@@ -420,6 +441,9 @@ namespace System.Numerics
     /// <summary>
     /// Returns the angle whose tangent is the specified number.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="x">A number representing a tangent.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
@@ -435,15 +459,15 @@ namespace System.Numerics
     /// <summary>
     /// Returns the angle whose tangent is the quotient of two specified numbers.
     /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// </remarks>
     /// <param name="y">The y coordinate of a point.</param>
     /// <param name="x">The x coordinate of a point.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
-    /// <remarks>
-    /// <b>Currently under construction, not optimized.</b>
-    /// </remarks>
     /// <returns>
     /// An angle, θ, measured in radians, such that -π ≤ θ ≤ π, and tan(θ) = y / x, where
     /// (x, y) is a point in the Cartesian plane.<br/>Observe the following:<br/>
@@ -475,14 +499,13 @@ namespace System.Numerics
     /// </summary>
     /// <remarks>
     /// This is a thread static property.
-    /// </remarks>
-    
+    /// </remarks>  
     public static int DefaultDigits
     {
       get { var cpu = rat.task_cpu; return cpu.mathdigits != 0 ? cpu.mathdigits : 30; }
       set { var cpu = rat.task_cpu; cpu.mathdigits = value; }
     }
-    static (uint c, int d) getprec(rat.CPU cpu, int digits)
+    static (uint c, int d) getprec(rat.CPU cpu, int digits) //todo: find better solution or cache
     {
       if (digits == 0) digits = cpu.mathdigits != 0 ? cpu.mathdigits : 30;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop(); return (c, digits);

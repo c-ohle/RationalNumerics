@@ -1211,27 +1211,53 @@ namespace Test
         return null;
       }
       internal readonly List<int> times = new(2); internal List<float>? gammas;
-      internal bool lerp(int time)
+
+      internal bool ani(int t1, int t2)
       {
-        int x = 0;
-        for (int i = 0, t, dt; i < times.Count; i += 2, x++) //todo: cach i 
+        var inf = false;
+        for (int k, t, dt, n = times.Count, i = 0; i < n; i += 2)
         {
-          if (time <= (t = times[i])) break;
-          if (time <= t + (dt = times[i + 1]))
+          if (t1 <= t2)
           {
-            float f = (float)(time - t) / dt, g;
-            if (gammas != null && x < gammas.Count && (g = gammas[x]) != 0)
-              f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, g);
-            return lerp(x, f);
+            if ((t = times[k = i]) > t2) break;
+            if (t + (dt = times[i + 1]) < t1) continue;
           }
+          else
+          {
+            if ((t = times[k = n - i - 2]) > t1) continue;
+            if (t + (dt = times[k + 1]) < t2) break;
+          }
+          float f = (float)(t2 - t) / dt, g; k >>= 1;
+          if (f <= 0) f = 0;
+          else if (f >= 1) f = 1;
+          else
+          {
+            if (gammas != null && k < gammas.Count && (g = gammas[k]) != 0)
+              f = ((1 / MathF.Atan(g)) * MathF.Atan(g * (2 * f - 1)) + 1) * 0.5f;
+          }
+          inf |= lerp(k, f);
         }
-        if (x == times.Count >> 1) return lerp(x - 1, 1);
-        return lerp(x, 0);
-        static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
+        return inf;
       }
+      //internal bool ani2(int t1, int t2)
+      //{
+      //  int x = 0;
+      //  for (int i = 0, t, dt; i < times.Count; i += 2, x++) //todo: cach i 
+      //  {
+      //    if (t2 <= (t = times[i])) break;
+      //    if (t2 <= t + (dt = times[i + 1]))
+      //    {
+      //      float f = (float)(t2 - t) / dt, g;
+      //      if (gammas != null && x < gammas.Count && (g = gammas[x]) != 0)
+      //        f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, g);
+      //      return lerp(x, f);
+      //    }
+      //  }
+      //  if (x == times.Count >> 1) return lerp(x - 1, 1);
+      //  return lerp(x, 0);
+      //  static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
+      //}
       internal abstract bool lerp(int x, float f);
-      protected abstract int write(int i, Span<char> s, NumberFormatInfo f);
-      protected abstract void read(ReadOnlySpan<char> s, NumberFormatInfo f);
       protected internal virtual void serial(XElement e, Node? load)
       {
         var fi = NumberFormatInfo.InvariantInfo;
@@ -1284,13 +1310,14 @@ namespace Test
           }
         }
       }
+      protected abstract int write(int i, Span<char> s, NumberFormatInfo f);
+      protected abstract void read(ReadOnlySpan<char> s, NumberFormatInfo f);
     }
     public class AniSet
     {
-      //internal AniSet() { } internal Models.Scene? parent;
       internal readonly List<AniLine> lines = new();
       internal string? name;
-      internal int time, maxtime;
+      internal int time, maxtime; int lt;
       internal int getendtime()
       {
         var max = 0;
@@ -1303,11 +1330,12 @@ namespace Test
       }
       internal bool ani(int t)
       {
-        time = t; var inf = false; //todo: ref
-        for (int i = 0, n = lines.Count; i < n; i++) inf |= lines[i].lerp(t);
+        lt = time; time = t; var inf = false; //todo: ref
+        for (int n = lines.Count, i = 0; i < n; i++)
+          inf |= lines[i /*lt <= time ? i : n - i - 1*/].ani(lt, time);
         return inf;
       }
-      internal object? getset(int id, object? v)
+      internal object? disp(int id, object? v)
       {
         switch (id)
         {
@@ -1364,15 +1392,6 @@ namespace Test
           return base.disp(id, wp, v);
         }
         internal Group? p; internal readonly List<Quat> list = new(2);
-        internal override bool lerp(int x, float f)
-        {
-          var m =
-            f <= 0 ? (Matrix4x3)list[x + 0] :
-            f >= 1 ? (Matrix4x3)list[x + 1] :
-            Quat.Slerp(list[x + 0], list[x + 1], f);
-          if (m == p.Transform) return false;
-          p.Transform = m; return true;
-        }
         protected internal override void serial(XElement e, Node? load)
         {
           if (load != null) p = (Group)load;
@@ -1381,11 +1400,19 @@ namespace Test
         protected override int write(int i, Span<char> w, NumberFormatInfo f)
         {
           return list[i].Format(w, f);
-          //list[i].TryFormat(w, out var c, default, f); return c;
         }
         protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f)
         {
           list.Add(Quat.Parse(s, f));
+        }
+        internal override bool lerp(int x, float f)
+        {
+          var m =
+            f <= 0 ? (Matrix4x3)list[x + 0] :
+            f >= 1 ? (Matrix4x3)list[x + 1] :
+            Quat.Slerp(list[x + 0], list[x + 1], f);
+          if (m == p.Transform) return false;
+          p.Transform = m; return true;
         }
       }
     }
@@ -1681,13 +1708,13 @@ namespace Test
             case 2:
               {
                 var e = (XElement)base.disp(id, 0, v); var f = (Func<Node, string?>)v;
-                for (int i = 0; i < list.Count; i++) e.Add(list[i].getset(2, f) as XElement);
+                for (int i = 0; i < list.Count; i++) e.Add(list[i].disp(2, f) as XElement);
                 return e;
               }
             case 3:
               {
                 p = (Models.Scene)base.disp(id, 0, v); var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>();
-                foreach (var c in e.Elements()) { var a = new AniSet(); c.AddAnnotation(f); a.getset(3, c); list.Add(a); }
+                foreach (var c in e.Elements()) { var a = new AniSet(); c.AddAnnotation(f); a.disp(3, c); list.Add(a); }
                 return this;
               }
             case 5:
@@ -1699,30 +1726,19 @@ namespace Test
           }
           return base.disp(id, wp, v);
         }
+        protected internal override void serial(XElement e, Node? load) { base.serial(e, load); }
+        protected override int write(int i, Span<char> w, NumberFormatInfo f) { return 0; }
+        protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f) { }
+        //float trig = -1;
         internal override bool lerp(int x, float f)
         {
-          f = f <= 0 ? 0 : 1; var inf = false;
-          var aniset = list[x + 0];
+          f = f <= 0 ? 0 : 1; //if (trig == f) return false; trig = f;
+          var aniset = list[x]; var inf = false;
           for (int i = 0; i < aniset.lines.Count; i++)
           {
             var p = aniset.lines[i]; inf |= p.lerp(0, f);
           }
           return inf;
-        }
-        protected internal override void serial(XElement e, Node? load)
-        {
-          //if (load != null) p = (Group)load;
-          base.serial(e, load);
-        }
-        protected override int write(int i, Span<char> w, NumberFormatInfo f)
-        {
-          return 0;
-          //return list[i].Format(w, f);
-          //list[i].TryFormat(w, out var c, default, f); return c;
-        }
-        protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f)
-        {
-          //list.Add(Quat.Parse(s, f));
         }
       }
     }
@@ -2069,7 +2085,7 @@ namespace Test
                 var t2 = t1.Attribute("id"); if (t2 == null) t1.Add(t2 = new XAttribute("id", ++id));
                 return t2.Value;
               };
-              e.Add((XElement)aniset.getset(2, f));
+              e.Add((XElement)aniset.disp(2, f));
             }
           }
           else
@@ -2084,7 +2100,7 @@ namespace Test
               Func<string, Node?> f = pid => e.DescendantsAndSelf().
                 FirstOrDefault(a => (string?)a.Attribute("id") == pid)?.
                 Annotation(typeof(Node)) as Node;
-              aniset.AddAnnotation(f); (this.aniset = new()).getset(3, aniset);
+              aniset.AddAnnotation(f); (this.aniset = new()).disp(3, aniset);
             }
           }
         }
@@ -2473,26 +2489,6 @@ namespace Test
               if (func != null) func(pp, ii);
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
-
-          //if (pp.Count == 0)
-          //{
-          //  var p1 = new Vector3(-0.1f);
-          //  var p2 = new Vector3(+0.1f);
-          //  pp.Add(new Vector3(p1.X, p1.Y, p1.Z));
-          //  pp.Add(new Vector3(p2.X, p1.Y, p1.Z));
-          //  pp.Add(new Vector3(p2.X, p2.Y, p1.Z));
-          //  pp.Add(new Vector3(p1.X, p2.Y, p1.Z));
-          //  pp.Add(new Vector3(p1.X, p1.Y, p2.Z));
-          //  pp.Add(new Vector3(p2.X, p1.Y, p2.Z));
-          //  pp.Add(new Vector3(p2.X, p2.Y, p2.Z));
-          //  pp.Add(new Vector3(p1.X, p2.Y, p2.Z));
-          //  ii.Add(0); ii.Add(2); ii.Add(1); ii.Add(2); ii.Add(0); ii.Add(3);
-          //  ii.Add(4); ii.Add(5); ii.Add(6); ii.Add(6); ii.Add(7); ii.Add(4);
-          //  ii.Add(0); ii.Add(1); ii.Add(5); ii.Add(5); ii.Add(4); ii.Add(0);
-          //  ii.Add(1); ii.Add(2); ii.Add(6); ii.Add(6); ii.Add(5); ii.Add(1);
-          //  ii.Add(2); ii.Add(3); ii.Add(7); ii.Add(7); ii.Add(6); ii.Add(2);
-          //  ii.Add(3); ii.Add(0); ii.Add(4); ii.Add(4); ii.Add(7); ii.Add(3);
-          //}
           vertices = pp.ToArray();
           indices = ii.Select(p => (ushort)p).ToArray();
         }
