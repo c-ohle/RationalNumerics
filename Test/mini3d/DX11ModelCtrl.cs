@@ -1729,7 +1729,6 @@ namespace Test
         protected internal override void serial(XElement e, Node? load) { base.serial(e, load); }
         protected override int write(int i, Span<char> w, NumberFormatInfo f) { return 0; }
         protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f) { }
-        //float trig = -1;
         internal override bool lerp(int x, float f)
         {
           f = f <= 0 ? 0 : 1; //if (trig == f) return false; trig = f;
@@ -2256,7 +2255,7 @@ namespace Test
         public MeshInfo Mesh => MeshInfo.get(this);
 
         [TypeConverter(typeof(ExpandableObjectConverter))]
-        public class MeshInfo
+        public class MeshInfo //todo: remove
         {
           static MeshInfo? cache; readonly Geometry p; MeshInfo(Geometry p) => this.p = p;
           internal static MeshInfo get(Geometry p) => cache?.p == p ? cache : cache = new MeshInfo(p);
@@ -3592,16 +3591,16 @@ namespace Test
       p.Y.TryFormat(w, out var b, default, f); w[b] = ' '; w = w.Slice(b + 1);
       p.Z.TryFormat(w, out var c, default, f); return a + b + c + 2;
     }
-    internal static ReadOnlySpan<char> pread(ref ReadOnlySpan<char> sp)
+    internal static ReadOnlySpan<char> param_slice(ref ReadOnlySpan<char> sp)
     {
       Debug.Assert(sp == sp.Trim());
-      int i = 0; for (; i < sp.Length && !(char.IsWhiteSpace(sp[i])/* || sp[i] == ';'*/); i++) ;
+      int i = 0; for (; i < sp.Length && !(char.IsWhiteSpace(sp[i]) || sp[i] == ';'); i++) ;
       var w = sp.Slice(0, i); sp = sp.Slice(i < sp.Length ? i + 1 : i).TrimStart(); return w;
     }
-    internal static int pcount(ReadOnlySpan<char> sp)
+    internal static int param_count(ReadOnlySpan<char> sp)
     {
       Debug.Assert(sp == sp.Trim());
-      var n = 0; for (; sp.Length != 0; pread(ref sp), n++) ; return n;
+      var n = 0; for (; sp.Length != 0; param_slice(ref sp), n++) ; return n;
     }
   }
 

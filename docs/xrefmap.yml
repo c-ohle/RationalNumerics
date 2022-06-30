@@ -373,6 +373,15 @@ references:
   fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.Numerics.BigRational)
   nameWithType: BigRational.CPU.get(UInt32, out BigRational)
   nameWithType.vb: BigRational.CPU.get(UInt32, ByRef BigRational)
+- uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)
+  name: get(UInt32, out ReadOnlySpan<UInt32>)
+  href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___
+  commentId: M:System.Numerics.BigRational.CPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)
+  name.vb: get(UInt32, ByRef ReadOnlySpan(Of UInt32))
+  fullName: System.Numerics.BigRational.CPU.get(System.UInt32, out System.ReadOnlySpan<System.UInt32>)
+  fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.ReadOnlySpan(Of System.UInt32))
+  nameWithType: BigRational.CPU.get(UInt32, out ReadOnlySpan<UInt32>)
+  nameWithType.vb: BigRational.CPU.get(UInt32, ByRef ReadOnlySpan(Of UInt32))
 - uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.Single@)
   name: get(UInt32, out Single)
   href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Single__
@@ -736,6 +745,15 @@ references:
   commentId: M:System.Numerics.BigRational.CPU.push(System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.CPU.push(System.Numerics.BigRational)
   nameWithType: BigRational.CPU.push(BigRational)
+- uid: System.Numerics.BigRational.CPU.push(System.ReadOnlySpan{System.UInt32})
+  name: push(ReadOnlySpan<UInt32>)
+  href: api/System.Numerics.BigRational.CPU.push.html#System_Numerics_BigRational_CPU_push_System_ReadOnlySpan_System_UInt32__
+  commentId: M:System.Numerics.BigRational.CPU.push(System.ReadOnlySpan{System.UInt32})
+  name.vb: push(ReadOnlySpan(Of UInt32))
+  fullName: System.Numerics.BigRational.CPU.push(System.ReadOnlySpan<System.UInt32>)
+  fullName.vb: System.Numerics.BigRational.CPU.push(System.ReadOnlySpan(Of System.UInt32))
+  nameWithType: BigRational.CPU.push(ReadOnlySpan<UInt32>)
+  nameWithType.vb: BigRational.CPU.push(ReadOnlySpan(Of UInt32))
 - uid: System.Numerics.BigRational.CPU.push(System.Single)
   name: push(Single)
   href: api/System.Numerics.BigRational.CPU.push.html#System_Numerics_BigRational_CPU_push_System_Single_
@@ -910,6 +928,21 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.swp
   fullName: System.Numerics.BigRational.CPU.swp
   nameWithType: BigRational.CPU.swp
+- uid: System.Numerics.BigRational.CPU.tor(System.ReadOnlySpan{System.Char},System.Int32,System.Char)
+  name: tor(ReadOnlySpan<Char>, Int32, Char)
+  href: api/System.Numerics.BigRational.CPU.tor.html#System_Numerics_BigRational_CPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char_
+  commentId: M:System.Numerics.BigRational.CPU.tor(System.ReadOnlySpan{System.Char},System.Int32,System.Char)
+  name.vb: tor(ReadOnlySpan(Of Char), Int32, Char)
+  fullName: System.Numerics.BigRational.CPU.tor(System.ReadOnlySpan<System.Char>, System.Int32, System.Char)
+  fullName.vb: System.Numerics.BigRational.CPU.tor(System.ReadOnlySpan(Of System.Char), System.Int32, System.Char)
+  nameWithType: BigRational.CPU.tor(ReadOnlySpan<Char>, Int32, Char)
+  nameWithType.vb: BigRational.CPU.tor(ReadOnlySpan(Of Char), Int32, Char)
+- uid: System.Numerics.BigRational.CPU.tor*
+  name: tor
+  href: api/System.Numerics.BigRational.CPU.tor.html
+  commentId: Overload:System.Numerics.BigRational.CPU.tor
+  fullName: System.Numerics.BigRational.CPU.tor
+  nameWithType: BigRational.CPU.tor
 - uid: System.Numerics.BigRational.CPU.tos(System.Span{System.Char},System.Int32@,System.Int32@,System.Int32@,System.Boolean)
   name: tos(Span<Char>, out Int32, out Int32, out Int32, Boolean)
   href: api/System.Numerics.BigRational.CPU.tos.html#System_Numerics_BigRational_CPU_tos_System_Span_System_Char__System_Int32__System_Int32__System_Int32__System_Boolean_

@@ -323,6 +323,9 @@
                                   <a href="System.Numerics.BigRational.CPU.swp.html" title="swp" class="">swp</a>
                                 </li>
                                 <li class="">
+                                  <a href="System.Numerics.BigRational.CPU.tor.html" title="tor" class="">tor</a>
+                                </li>
+                                <li class="">
                                   <a href="System.Numerics.BigRational.CPU.tos.html" title="tos" class="">tos</a>
                                 </li>
                                 <li class="">
@@ -743,7 +746,7 @@ of the first two values on top of the stack and replaces them with the result.</
         <td id="System_Numerics_BigRational_CPU_get_System_UInt32_System_Double__" data-uid="System.Numerics.BigRational.CPU.get(System.UInt32,System.Double@)">
           <a class="xref" href="System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Double__">get(UInt32, out Double)</a>
         </td>
-        <td class="markdown level1 summary"><p>Converts the value at absolute position i on stack to a
+        <td class="markdown level1 summary"><p>Converts the value at absolute position <code data-dev-comment-type="paramref" class="paramref">i</code> on stack to a
 <span class="xref">System.Double</span> value and returns it.</p>
 </td>
       </tr>
@@ -751,15 +754,22 @@ of the first two values on top of the stack and replaces them with the result.</
         <td id="System_Numerics_BigRational_CPU_get_System_UInt32_System_Numerics_BigRational__" data-uid="System.Numerics.BigRational.CPU.get(System.UInt32,System.Numerics.BigRational@)">
           <a class="xref" href="System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Numerics_BigRational__">get(UInt32, out BigRational)</a>
         </td>
-        <td class="markdown level1 summary"><p>Converts the value at absolute position i on stack to a
+        <td class="markdown level1 summary"><p>Converts the value at absolute position <code data-dev-comment-type="paramref" class="paramref">i</code> on stack to a
 always normalized <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number and returns it.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="System_Numerics_BigRational_CPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___" data-uid="System.Numerics.BigRational.CPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)">
+          <a class="xref" href="System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___">get(UInt32, out ReadOnlySpan&lt;UInt32&gt;)</a>
+        </td>
+        <td class="markdown level1 summary"><p>Exposes the internal data representation of the value at absolute position i on the stack.<br></p>
 </td>
       </tr>
       <tr>
         <td id="System_Numerics_BigRational_CPU_get_System_UInt32_System_Single__" data-uid="System.Numerics.BigRational.CPU.get(System.UInt32,System.Single@)">
           <a class="xref" href="System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Single__">get(UInt32, out Single)</a>
         </td>
-        <td class="markdown level1 summary"><p>Converts the value at absolute position i on stack to a
+        <td class="markdown level1 summary"><p>Converts the value at absolute position <code data-dev-comment-type="paramref" class="paramref">i</code> on stack to a
 <span class="xref">System.Single</span> value and returns it.</p>
 </td>
       </tr>
@@ -1053,6 +1063,13 @@ using a bit-exact conversion without rounding.</p>
 </td>
       </tr>
       <tr>
+        <td id="System_Numerics_BigRational_CPU_push_System_ReadOnlySpan_System_UInt32__" data-uid="System.Numerics.BigRational.CPU.push(System.ReadOnlySpan{System.UInt32})">
+          <a class="xref" href="System.Numerics.BigRational.CPU.push.html#System_Numerics_BigRational_CPU_push_System_ReadOnlySpan_System_UInt32__">push(ReadOnlySpan&lt;UInt32&gt;)</a>
+        </td>
+        <td class="markdown level1 summary"><p>Pushes the supplied value onto the stack.<br></p>
+</td>
+      </tr>
+      <tr>
         <td id="System_Numerics_BigRational_CPU_push_System_Single_" data-uid="System.Numerics.BigRational.CPU.push(System.Single)">
           <a class="xref" href="System.Numerics.BigRational.CPU.push.html#System_Numerics_BigRational_CPU_push_System_Single_">push(Single)</a>
         </td>
@@ -1196,6 +1213,13 @@ and pushes the result on top of the stack.</p>
 </td>
       </tr>
       <tr>
+        <td id="System_Numerics_BigRational_CPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char_" data-uid="System.Numerics.BigRational.CPU.tor(System.ReadOnlySpan{System.Char},System.Int32,System.Char)">
+          <a class="xref" href="System.Numerics.BigRational.CPU.tor.html#System_Numerics_BigRational_CPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char_">tor(ReadOnlySpan&lt;Char&gt;, Int32, Char)</a>
+        </td>
+        <td class="markdown level1 summary"><p>Converts a string to a rational number and pushes the result on the stack.</p>
+</td>
+      </tr>
+      <tr>
         <td id="System_Numerics_BigRational_CPU_tos_System_Span_System_Char__System_Int32__System_Int32__System_Int32__System_Boolean_" data-uid="System.Numerics.BigRational.CPU.tos(System.Span{System.Char},System.Int32@,System.Int32@,System.Int32@,System.Boolean)">
           <a class="xref" href="System.Numerics.BigRational.CPU.tos.html#System_Numerics_BigRational_CPU_tos_System_Span_System_Char__System_Int32__System_Int32__System_Int32__System_Boolean_">tos(Span&lt;Char&gt;, out Int32, out Int32, out Int32, Boolean)</a>
         </td>
@@ -1223,7 +1247,7 @@ of the first two values on top of the stack and replaces them with the result.</
                     <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L3021" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L3077" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

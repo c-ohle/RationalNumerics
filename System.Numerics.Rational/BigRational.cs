@@ -224,53 +224,17 @@ namespace System.Numerics
     /// <returns>A value that is equivalent to the number specified in the value parameter.</returns>
     public static BigRational Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
     {
+      //int a = 0, ba = 10; //driven types can do using the cpu.tor()
+      //for (; a < value.Length - 1;) 
+      //{
+      //  var c = value[a]; if (c <= ' ') { a++; continue; }
+      //  if (c != '0') break; c = (char)(value[a + 1] | 0x20);
+      //  if (c == 'x') { ba = 16; value = value.Slice(1); break; }
+      //  if (c == 'b') { ba = 02; value = value.Slice(1); break; }
+      //  break;
+      //}
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
-      int a = 0, ba = 10; for (; a < value.Length - 1;)
-      {
-        var c = value[a]; if (c <= ' ') { a++; continue; }
-        if (c != '0') break; c = (char)(value[a + 1] | 0x20);
-        if (c == 'x') { ba = 16; a++; break; }
-        if (c == 'b') { ba = 02; a++; break; }
-        break;
-      }
-      var cpu = task_cpu;
-      cpu.push(); cpu.push(); cpu.push(); cpu.push(1u); // rat p = 0, a = 0, b = 0, e = 1;
-      for (int i = value.Length - 1; i >= a; i--)
-      {
-        var c = value[i];
-        if (c >= '0' && c <= '9' || (ba == 16 && (c | 0x20) >= 'a' && (c | 0x20) <= 'f'))
-        {
-          if (c > '9') c = (char)((c | 0x20) + ('9' + 1 - 'a'));
-          if (c != '0') { cpu.push(unchecked((uint)(c - '0'))); cpu.mul(0, 1); cpu.add(3, 0); cpu.pop(); } // a += (c - '0') * e;
-          if (i > a) { cpu.push(ba); cpu.mul(); }
-          continue; // e *= ba;
-        }
-        if (c == '.' || c == ',')
-        {
-          if (info != null && info.NumberGroupSeparator[0] == c) continue;
-          cpu.dup(); cpu.swp(2); cpu.pop(); continue; // b = e; 
-        }
-        if (c == '+') continue;
-        if (c == '-') { cpu.neg(2); continue; } // a = -a;
-        if ((c | 0x20) == 'e')
-        {
-          cpu.pop(2); cpu.pow(10, cpu.popi()); cpu.swp(); // p = pow10(a); 
-          cpu.push(); cpu.push(1u); continue; // b = 0; e = 1;
-        }
-        if (c == '\'')
-        {
-          cpu.dup(); cpu.dup(); cpu.push(1u); cpu.sub(); // a *= e / (e - 1);
-          cpu.div(); cpu.mul(3, 0); cpu.pop(); continue;
-        }
-        if (c == '/') // 1 / 3    
-        {
-          //if (cpu.sig(1) != 0) throw new FormatException();
-          cpu.swp(1, 2); cpu.pop(); cpu.push(1u); continue;
-        }
-        continue;
-      }
-      cpu.pop(); if (cpu.sign() != 0) cpu.div(); else cpu.pop(); // if (b.sign != 0) a /= b;
-      cpu.swp(); if (cpu.sign() != 0) cpu.mul(); else cpu.pop(); // if (p.sign != 0) a *= p; 
+      var cpu = task_cpu; cpu.tor(value, 10, info != null ? info.NumberDecimalSeparator[0] : default);
       return cpu.popr();
     }
     /// <summary>
@@ -1247,7 +1211,29 @@ namespace System.Numerics
         }
       }
       /// <summary>
-      /// Converts the value at absolute position i on stack to a 
+      /// Pushes the supplied value onto the stack.<br/>
+      /// </summary>
+      /// <remarks>
+      /// <b>Note</b>: The Span must contain valid data based on the specification:<br/>
+      /// <seealso href="https://c-ohle.github.io/RationalNumerics/#data-layout"/><br/>
+      /// For performance reasons, there are no validation checks at this layer.<br/><br/> 
+      /// Together with <see cref="get(uint, out ReadOnlySpan{uint})"/> the operation represent a low level interface for direct access in form of the internal data representation.<br/> 
+      /// This is intended to allow:<br/>
+      /// 1. custom algorithms working on bitlevel<br/>
+      /// 2. custom binary serialization<br/>
+      /// 3. custom types like vectors with own storage managemend.<br/>
+      /// </remarks>
+      /// <param name="s"></param>
+      public void push(ReadOnlySpan<uint> s)
+      {
+        fixed (uint* a = s)
+        {
+          var n = (uint)s.Length;
+          fixed (uint* b = rent(n)) copy(b, a, n);
+        }
+      }
+      /// <summary>
+      /// Converts the value at absolute position <paramref name="i"/> on stack to a 
       /// always normalized <see cref="BigRational"/> number and returns it.
       /// </summary>
       /// <remarks>
@@ -1274,7 +1260,7 @@ namespace System.Numerics
         }
       }
       /// <summary>
-      /// Converts the value at absolute position i on stack to a 
+      /// Converts the value at absolute position <paramref name="i"/> on stack to a 
       /// <see cref="double"/> value and returns it.
       /// </summary>
       /// <remarks>
@@ -1288,7 +1274,7 @@ namespace System.Numerics
         v = (double)new BigRational(p[i]);
       }
       /// <summary>
-      /// Converts the value at absolute position i on stack to a 
+      /// Converts the value at absolute position <paramref name="i"/> on stack to a 
       /// <see cref="float"/> value and returns it.
       /// </summary>
       /// <remarks>
@@ -1301,6 +1287,27 @@ namespace System.Numerics
       {
         v = (float)new BigRational(p[i]);
       }
+      /// <summary>
+      /// Exposes the internal data representation of the value at absolute position i on the stack.<br/>
+      /// </summary>
+      /// <remarks>
+      /// Apply <see cref="norm(int)"/> beforehand to ensure the fraction is normalized in its binary form, if required.<br/>
+      /// <b>Note</b>: The returned data is only valid solong the stack entry is not changed by a subsequent cpu operation.<br/><br/>
+      /// Together with <see cref="push(ReadOnlySpan{uint})"/> the operation represent a low level interface for direct access in form of the internal data representation.<br/> 
+      /// This is intended to allow:<br/>
+      /// 1. custom algorithms working on bitlevel<br/>
+      /// 2. custom binary serialization<br/>
+      /// 3. custom types like vectors with own storage managemend.<br/><br/>
+      /// For absolute positions see: <see cref="mark"/>
+      /// </remarks>
+      /// <param name="i">Absolute index of the value to get.</param>
+      /// <param name="v">Returns the value.</param>
+      public void get(uint i, out ReadOnlySpan<uint> v)
+      {
+        var p = this.p[i];
+        fixed (uint* u = p) v = new ReadOnlySpan<uint>(p).Slice(0, unchecked((int)len(u)));
+      }
+
       /// <summary>
       /// Removes the value currently on top of the stack, 
       /// convert and returns it as always normalized <see cref="BigRational"/> number.<br/>
@@ -1342,7 +1349,6 @@ namespace System.Numerics
           pop(); return i;
         }
       }
-
       /// <summary>
       /// Removes the value currently on top of the stack.
       /// </summary>
@@ -2343,6 +2349,56 @@ namespace System.Numerics
         if (mem != default) Marshal.FreeCoTaskMem(mem);
       }
       /// <summary>
+      /// Converts a string to a rational number and pushes the result on the stack.
+      /// </summary>
+      /// <remarks>
+      /// Support of the rational specific formats like "1.234'567e-1000" or "1/3"<br/>
+      /// <b>Note</b>: There is no check for invalid chars at this layer, 
+      /// non-number specific chars, spaces etc. are simply ignored.<br/>
+      /// </remarks>
+      /// <param name="sp">A Span that preserves the digits.</param>
+      /// <param name="bas">The number base, 1 to 10 or 16.<br/>For decimal a value of 10 is recommanded.</param>
+      /// <param name="sep">A specific (decimal) seperator; otherwise default: '.' or ','.</param>
+      public void tor(ReadOnlySpan<char> sp, int bas = 10, char sep = default)
+      {
+        push(); push(); push(); push(1u); // rat p = 0, a = 0, b = 0, e = 1;
+        for (int i = sp.Length - 1; i >= 0; i--)
+        {
+          var c = sp[i];
+          if (c >= '0' && c <= '9' || (bas == 16 && (c | 0x20) >= 'a' && (c | 0x20) <= 'f'))
+          {
+            if (c > '9') c = (char)((c | 0x20) + ('9' + 1 - 'a'));
+            if (c != '0') { push(unchecked((uint)(c - '0'))); mul(0, 1); add(3, 0); pop(); } // a += (c - '0') * e;
+            if (i > 0) { push(bas); mul(); }
+            continue; // e *= ba;
+          }
+          if (c == '.' || c == ',')
+          {
+            if (sep != default && sep != c) continue;
+            dup(); swp(2); pop(); continue; // b = e; 
+          }
+          if (c == '+') continue;
+          if (c == '-') { neg(2); continue; } // a = -a;
+          if ((c | 0x20) == 'e')
+          {
+            pop(2); pow(10, popi()); swp(); // p = pow10(a); 
+            push(); push(1u); continue; // b = 0; e = 1;
+          }
+          if (c == '\'')
+          {
+            dup(); dup(); push(1u); sub(); // a *= e / (e - 1);
+            div(); mul(3, 0); pop(); continue;
+          }
+          if (c == '/') // 1 / 3    
+          {
+            swp(1, 2); pop(); push(1u); continue;
+          }
+          continue;
+        }
+        pop(); if (sign() != 0) div(); else pop(); // if (b.sign != 0) a /= b;
+        swp(); if (sign() != 0) mul(); else pop(); // if (p.sign != 0) a *= p; 
+      }
+      /// <summary>
       /// Replaces the value on top of the stack with it's square root.<b/>
       /// Negative values result in NaN.
       /// </summary>
@@ -2977,7 +3033,7 @@ namespace System.Numerics
       static int sig(uint* p)
       {
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
-      }      
+      }
       static uint[][]? cache; //todo: cache experimental
       static BigRational cachx(uint* s, uint n, uint x)
       {
@@ -3037,7 +3093,7 @@ namespace System.Numerics
         }
       }
       [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-      internal int mathdigits { get; set; } // only used by MathR to avoid another threadlocal root 
+      internal int mathdigits { get; set; } // used by MathR only to avoid another threadlocal root 
     }
     #endregion
   }

@@ -31,7 +31,10 @@ namespace System.Numerics.Rational
     }
     public static Vector3R Parse(ref ReadOnlySpan<char> s)
     {
-      return new Vector3R(BigRational.Parse(s.token()), BigRational.Parse(s.token()), BigRational.Parse(s.token()));
+      return new Vector3R(
+        BigRational.Parse(s.token()), 
+        BigRational.Parse(s.token()), 
+        BigRational.Parse(s.token()));
     }
     public readonly void WriteToBytes(ref Span<byte> ws)
     {

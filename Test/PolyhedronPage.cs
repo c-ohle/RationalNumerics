@@ -346,7 +346,7 @@ namespace Test
         if (r.X < 0) q.X += r.X; else if (r.Right > rs.Right) q.X += r.Right - rs.Right;
         if (r.Y < 0) q.Y += r.Y; else if (r.Bottom > rs.Bottom) q.Y += r.Bottom - rs.Bottom;
         AutoScrollPosition = q; Invalidate();
-
+#if false
         if (view.Scene != null)
         {
           var t1 = DX11ModelCtrl.Models.Save(view.Scene);
@@ -354,6 +354,7 @@ namespace Test
           var t3 = DX11ModelCtrl.Models.Load(XElement.Parse(t2.ToString()));
           var t4 = DX11ModelCtrl.Models.Save(t3);
         }
+#endif
       }
 
       Point p2s(Point p)
@@ -657,10 +658,10 @@ namespace Test
     public static Quat Parse(ReadOnlySpan<char> sp, NumberFormatInfo fi)
     {
       var m = default(Quat);
-      int n = SpanTools.pcount(sp);
+      int n = SpanTools.param_count(sp);
       for (int i = 0; i < n; i++)
       {
-        var s = SpanTools.pread(ref sp);
+        var s = SpanTools.param_slice(ref sp);
         var f = float.Parse(s, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands | NumberStyles.AllowExponent, fi);
         ((float*)&m)[i] = f;
       }

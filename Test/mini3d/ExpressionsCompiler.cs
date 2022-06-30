@@ -13,7 +13,7 @@ namespace Test
   public static class ExpressionsCompiler
   {
     /// <summary>
-    /// Compile
+    /// Compiles C# synatx scripts to System.Linq.Expression tree to generate runtime class extensions.
     /// </summary>
     /// <param name="code">C# code to compile.</param>
     /// <param name="this">Type of a class to extend; default null for static.</param>

@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Method pi
+    <title>Method tor
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Method pi
+    <meta name="title" content="Method tor
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -274,8 +274,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.or.html" title="or" class="">or</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.CPU.pi.html" title="pi" class="active">pi</a>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.CPU.pi.html" title="pi" class="">pi</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.pop.html" title="pop" class="">pop</a>
@@ -322,8 +322,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.swp.html" title="swp" class="">swp</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.BigRational.CPU.tor.html" title="tor" class="">tor</a>
+                                <li class="active">
+                                  <a href="System.Numerics.BigRational.CPU.tor.html" title="tor" class="active">tor</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.tos.html" title="tos" class="">tos</a>
@@ -424,29 +424,28 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.pi*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.tor*">
 
-<h1 id="System_Numerics_BigRational_CPU_pi_" data-uid="System.Numerics.BigRational.CPU.pi*">Method pi
+<h1 id="System_Numerics_BigRational_CPU_tor_" data-uid="System.Numerics.BigRational.CPU.tor*">Method tor
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_pi_System_UInt32_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.pi(System.UInt32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.tor(System.ReadOnlySpan%7BSystem.Char%7D%2CSystem.Int32%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2533">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2362">View Source</a>
 </span>
-<a id="System_Numerics_BigRational_CPU_pi_" data-uid="System.Numerics.BigRational.CPU.pi*"></a>
-<h4 id="System_Numerics_BigRational_CPU_pi_System_UInt32_" data-uid="System.Numerics.BigRational.CPU.pi(System.UInt32)">pi(UInt32)</h4>
-<div class="markdown level1 summary"><p>Calculates <code>π</code> (PI) to the desired precision and push it to the stack.<br>
-Represents the ratio of the circumference of a circle to its diameter.</p>
+<a id="System_Numerics_BigRational_CPU_tor_" data-uid="System.Numerics.BigRational.CPU.tor*"></a>
+<h4 id="System_Numerics_BigRational_CPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char_" data-uid="System.Numerics.BigRational.CPU.tor(System.ReadOnlySpan{System.Char},System.Int32,System.Char)">tor(ReadOnlySpan&lt;Char&gt;, Int32, Char)</h4>
+<div class="markdown level1 summary"><p>Converts a string to a rational number and pushes the result on the stack.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void pi(uint c)</code></pre>
+  <pre><code class="lang-csharp hljs">public void tor(ReadOnlySpan&lt;char&gt; sp, int bas = 10, char sep = '\0')</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -459,19 +458,29 @@ Represents the ratio of the circumference of a circle to its diameter.</p>
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.UInt32</span></td>
-      <td><span class="parametername">c</span></td>
-      <td><p>The desired precision.</p>
+      <td><span class="xref">System.ReadOnlySpan</span>&lt;<span class="xref">System.Char</span>&gt;</td>
+      <td><span class="parametername">sp</span></td>
+      <td><p>A Span that preserves the digits.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.Int32</span></td>
+      <td><span class="parametername">bas</span></td>
+      <td><p>The number base, 1 to 10 or 16.<br>For decimal a value of 10 is recommanded.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.Char</span></td>
+      <td><span class="parametername">sep</span></td>
+      <td><p>A specific (decimal) seperator; otherwise default: '.' or ','.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 id="System_Numerics_BigRational_CPU_pi_System_UInt32__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>The desired precision is controlled by the parameter <code data-dev-comment-type="paramref" class="paramref">c</code>
-where <code data-dev-comment-type="paramref" class="paramref">c</code> represents a break criteria of the internal iteration.<br>
-For a desired precesission of decimal digits <code data-dev-comment-type="paramref" class="paramref">c</code> can be calculated as:<br>
-<code>msb(pow(10, digits))</code>.<br>
-The result however has to be rounded explicitely to get an exact decimal representation.</p>
+<h5 id="System_Numerics_BigRational_CPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>Support of the rational specific formats like &quot;1.234'567e-1000&quot; or &quot;1/3&quot;<br>
+<strong>Note</strong>: There is no check for invalid chars at this layer,
+non-number specific chars, spaces etc. are simply ignored.<br></p>
 </div>
 </article>
           </div>
@@ -481,10 +490,10 @@ The result however has to be rounded explicitely to get an exact decimal represe
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_pi_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.pi*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_tor_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.tor*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2533" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2362" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>
