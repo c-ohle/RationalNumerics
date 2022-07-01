@@ -164,7 +164,7 @@ namespace System.Numerics
     /// For fractional exponents, the result is rounded to the specified number of decimal places.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
     /// <param name="y">A <see cref="BigRational"/> number that specifies a power.</param>
@@ -192,7 +192,7 @@ namespace System.Numerics
     /// Returns a specified number raised to the specified power.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
     /// <param name="digits">
@@ -229,7 +229,7 @@ namespace System.Numerics
     /// Returns the base 2 logarithm of a specified number.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">The number whose logarithm is to be found.</param>
     /// <param name="digits">
@@ -254,7 +254,7 @@ namespace System.Numerics
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <returns>The base 10 logarithm of <paramref name="x"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
@@ -280,7 +280,7 @@ namespace System.Numerics
     /// Returns the natural (base e) logarithm of a specified number.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">The number whose logarithm is to be found.</param>
     /// <param name="digits">
@@ -300,7 +300,7 @@ namespace System.Numerics
     /// Returns e raised to the specified power.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">A number specifying a power.</param>
     /// The maximum number of fractional decimal digits in the return value.<br/>
@@ -352,7 +352,7 @@ namespace System.Numerics
     /// Returns the sine of the specified angle.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
@@ -370,7 +370,7 @@ namespace System.Numerics
     /// Returns the cosine of the specified angle.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
@@ -388,7 +388,7 @@ namespace System.Numerics
     /// Returns the tangent of the specified angle.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
@@ -409,7 +409,7 @@ namespace System.Numerics
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <returns>
     /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
@@ -428,7 +428,7 @@ namespace System.Numerics
     /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <returns>
     /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
@@ -442,7 +442,7 @@ namespace System.Numerics
     /// Returns the angle whose tangent is the specified number.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">A number representing a tangent.</param>
     /// <param name="digits">
@@ -460,7 +460,7 @@ namespace System.Numerics
     /// Returns the angle whose tangent is the quotient of two specified numbers.
     /// </summary>
     /// <remarks>
-    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits is not yet guaranteed!
+    /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="y">The y coordinate of a point.</param>
     /// <param name="x">The x coordinate of a point.</param>

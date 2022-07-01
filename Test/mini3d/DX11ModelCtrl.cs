@@ -648,7 +648,7 @@ namespace Test
     {
       ////setplane(dc, 0); wp?
       var wp = Vector3.Transform(pc.Point, pc.Transform); //Debug.WriteLine(wp.Z);
-      var ma = Matrix4x4.CreateTranslation(0, 0, wp.Z); pc.SetPlane(ma);
+      var ma = Matrix4x4.CreateTranslation(0, 0, wp.Z + 0.0005f); pc.SetPlane(ma);
       var p1 = pc.Pick(); var p2 = p1;
       //var ca = pc.ViewPort.Camera;
       RenderClient += draw; return tool;
@@ -1169,17 +1169,18 @@ namespace Test
     }
     public abstract class AniLine
     {
-      //2:save, 3:load, 5:cap x, 8:del x, 9:gamma x
+      //0:tag 1:prop 2:save 3:load 5:cap x 8:del x 9:gamma x
       internal virtual object? disp(int id, int wp = 0, object? lp = null)
       {
         switch (id)
         {
-          case 2:
+          case 2: //save
             {
-              var f = (Func<Node, string?>)lp; var s = f((Node)disp(0, 0));
-              var e = new XElement(Models.o2s(this)); e.SetAttributeValue("pid", s); return e;
+              var e = new XElement(Models.o2s(this));
+              var f = (Func<Node, string?>)lp;
+              e.SetAttributeValue("pid", f((Node)disp(0, 0))); return e;
             }
-          case 3:
+          case 3: //load
             {
               var e = (XElement)lp; var f = e.Annotation<Func<string, Node?>>();
               var a = e.Attribute("pid"); return a != null ? f(a.Value) : null;
@@ -1239,24 +1240,6 @@ namespace Test
         }
         return inf;
       }
-      //internal bool ani2(int t1, int t2)
-      //{
-      //  int x = 0;
-      //  for (int i = 0, t, dt; i < times.Count; i += 2, x++) //todo: cach i 
-      //  {
-      //    if (t2 <= (t = times[i])) break;
-      //    if (t2 <= t + (dt = times[i + 1]))
-      //    {
-      //      float f = (float)(t2 - t) / dt, g;
-      //      if (gammas != null && x < gammas.Count && (g = gammas[x]) != 0)
-      //        f = f <= 0 ? 0 : f >= 1 ? 1 : sigmoid(f, g);
-      //      return lerp(x, f);
-      //    }
-      //  }
-      //  if (x == times.Count >> 1) return lerp(x - 1, 1);
-      //  return lerp(x, 0);
-      //  static float sigmoid(float t, float gamma) => ((1 / MathF.Atan(gamma)) * MathF.Atan(gamma * (2 * t - 1)) + 1) * 0.5f;
-      //}
       internal abstract bool lerp(int x, float f);
       protected internal virtual void serial(XElement e, Node? load)
       {
@@ -1270,8 +1253,8 @@ namespace Test
             if (i != 0) { w[0] = ' '; w = w.Slice(1); }
             times[i].TryFormat(w, out var c, default, fi); w = w.Slice(c);
           }
-          var ts = s.Slice(0, s.Length - w.Length);
-          e.SetAttributeValue("times", ts.ToString()); w = s;
+          var ts = s.Slice(0, s.Length - w.Length); if (n == 0) n = 2;
+          if (ts.Length != 0) e.SetAttributeValue("times", ts.ToString()); w = s; 
           for (int i = 0, l = (n >> 1) + 1; i < l; i++)
           {
             if (i != 0) { w[0] = ';'; w[1] = ' '; w = w.Slice(2); }
@@ -1293,11 +1276,12 @@ namespace Test
         }
         else
         {
-          var s = e.Attribute("times").Value.AsSpan().Trim();
+          var a = e.Attribute("times");
+          var s = a != null ? a.Value.AsSpan().Trim() : default;
           while (s.Length != 0) { var t = Models.token(ref s); times.Add(int.Parse(t)); }
-          s = e.Attribute("line").Value.AsSpan().Trim();
+          if ((a = e.Attribute("line")) != null) s = a.Value.AsSpan().Trim(); else return; //aninodes
           while (token(ref s, ';', out var b)) read(b, fi);
-          if (e.Attribute("gammas") is XAttribute a)
+          if ((a = e.Attribute("gammas")) != null)
           {
             gammas = new(); s = a.Value.AsSpan().Trim();
             while (s.Length != 0) { var t = Models.token(ref s); gammas.Add(float.Parse(t, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, fi)); }
@@ -1332,7 +1316,7 @@ namespace Test
       {
         lt = time; time = t; var inf = false; //todo: ref
         for (int n = lines.Count, i = 0; i < n; i++)
-          inf |= lines[i /*lt <= time ? i : n - i - 1*/].ani(lt, time);
+          inf |= lines[i].ani(lt, time);
         return inf;
       }
       internal object? disp(int id, object? v)
@@ -1341,7 +1325,7 @@ namespace Test
         {
           case 2:
             {
-              var e = new XElement("aniset"); var getid = (Func<Node, string?>)v;
+              var e = new XElement(Models.ns + "aniset"); var getid = (Func<Node, string?>)v;
               if (name != null) e.SetAttributeValue("name", name);
               if (time != 0) e.SetAttributeValue("time", time);
               for (int i = 0; i < lines.Count; i++) e.Add((XElement)lines[i].disp(id, 0, getid));
@@ -1384,7 +1368,7 @@ namespace Test
           switch (id)
           {
             case 0: return p;
-            case 2: { var e = (XElement)base.disp(id, wp, v); serial(e, null); return e; }
+            case 2: { var e = (XElement)base.disp(id, wp, v); base.serial(e, null); return e; }
             case 3: serial((XElement)v, p = (Group)base.disp(id, wp, v)); return this;
             case 5: { var x = wp; list[x + 1] = list[x]; list[x] = p.Transform; } break; //splitt trans
             case 8: list.RemoveAt(wp == 0 ? 0 : (wp >> 1) + 1); break; //del trans
@@ -1455,7 +1439,7 @@ namespace Test
           switch (id)
           {
             case 0: return p;
-            case 1: return acc.get.Method.Name;
+            case 1: return acc.get.Method.Name;// wp == 0 ? acc.get.Method.Name : wp == 1 ? "⍾" : default;
             case 2: { var e = (XElement)base.disp(id, wp, v); serial(e, null); return e; }
             case 3: serial((XElement)v, p = (Node)base.disp(id, 0, v)); return this;
             case 5: { var x = wp; list[x + 1] = list[x]; list[x] = acc.get(p); } break;
@@ -1627,14 +1611,14 @@ namespace Test
           switch (id)
           {
             case 0: return p;
-            case 2:
+            case 2: //save
               {
                 var e = (XElement)base.disp(id, 0, v); serial(e, null); //todo: skip line output  line="; " 
                 var f = (Func<Node, string?>)v;
                 e.SetAttributeValue("line", string.Join("; ", list.Select(y => string.Join(' ', y.Select(x => f(x))))));
                 return e;
               }
-            case 3:
+            case 3: //load
               {
                 var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>();
                 serial((XElement)v, p = (Node)base.disp(id, 0, v)); //todo: skip line read
@@ -1660,12 +1644,10 @@ namespace Test
         {
           var a = f <= 0 ? list[x + 0] : list[x + 1];
           if (p.nodes == a) return false; //var t = p.nodes;
-          Debug.Assert(!p.nodes.SequenceEqual(a));
-
+          //Debug.Assert(!p.nodes.SequenceEqual(a)); //if (Enumerable.SequenceEqual(p.nodes, a)) { return false; }          
           var v = (DX11ModelCtrl)p.GetService(typeof(DX11ModelCtrl));
           foreach (var t in p.nodes.Except(a)) if (v.IsSelect(t)) v.Select(t, true);
           foreach (var t in a.Except(p.nodes)) if (!v.IsSelect(t)) v.Select(t, true);
-
           p.nodes = a;
           return true;
         }
@@ -1685,15 +1667,17 @@ namespace Test
         for (int i = 0; i < a.Length; i++) a[i].record(coll, 0);
         if (recu) return default;
         var scene = default(Models.Scene);
+        coll.name = null;
         for (int i = 0; i < coll.lines.Count; i++)
         {
-          var b = coll.lines[i]; //b.times[1] = 0;
+          var b = coll.lines[i]; //b.times[1] = 0; //
+          b.times.Clear(); b.times.TrimExcess();
           if (scene == null && b.disp(0) is Node x)
             scene = x.GetService(typeof(Models.Scene)) as Models.Scene;
         }
         var c = getline(set, time, typeof(Line), scene, null);
         if (time == -1) return c; var line = (Line)c.line;
-        if (line.p == null) { line.p = scene; coll.name = null; line.list.Add(coll); }
+        if (line.p == null) { line.p = scene; line.list.Add(coll); }
         else line.list.Insert(((c.wo & 0xffff) >> 1), coll); return c;
         //line.list.Insert(((c.wo & 0xffff) >> 1) + 1, coll); return c;
       }
@@ -1705,16 +1689,24 @@ namespace Test
           switch (id)
           {
             case 0: return p;
-            case 2:
+            case 2: //save
               {
-                var e = (XElement)base.disp(id, 0, v); var f = (Func<Node, string?>)v;
+                var e = (XElement)base.disp(id, 0, v); //pid
+                base.serial(e, null); e.SetAttributeValue("line", null); //times, line
+                var f = (Func<Node, string?>)v;
                 for (int i = 0; i < list.Count; i++) e.Add(list[i].disp(2, f) as XElement);
                 return e;
               }
-            case 3:
+            case 3: //load
               {
-                p = (Models.Scene)base.disp(id, 0, v); var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>();
-                foreach (var c in e.Elements()) { var a = new AniSet(); c.AddAnnotation(f); a.disp(3, c); list.Add(a); }
+                p = (Models.Scene)base.disp(id, 0, v);
+                var e = (XElement)v; base.serial(e, p); //times
+                var f = e.Annotation<Func<string, Node?>>();
+                foreach (var c in e.Elements())
+                {
+                  var a = new AniSet(); c.AddAnnotation(f); a.disp(3, c);
+                  list.Add(a);
+                }
                 return this;
               }
             case 5:
@@ -2078,13 +2070,30 @@ namespace Test
             if (Shadows) e.SetAttributeValue("shadows", true);
             if (aniset != null && aniset.lines.Count != 0)
             {
-              int id = 0; Func<Node, string?> f = p =>
+              var res = default(XElement);
+              int id = 0; Func<Node, string?> f = null; f = p =>
               {
-                var t1 = e.DescendantsAndSelf().FirstOrDefault(x => x.Annotation<Node>() == p); if (t1 == null) return null;
-                var t2 = t1.Attribute("id"); if (t2 == null) t1.Add(t2 = new XAttribute("id", ++id));
+                var t1 = e.DescendantsAndSelf().FirstOrDefault(x => x.Annotation<Node>() == p);
+                if (t1 == null)
+                {
+                  t1 = res?.Elements().FirstOrDefault(x => x.Annotation<Node>() == p);
+                  if (t1 == null)
+                  {
+                    var t = p.nodes; p.nodes = null;
+                    (res ??= new("res")).Add(t1 = Save(p)); p.nodes = t;
+                    if (t != null) t1.SetAttributeValue("cc", string.Join(" ", t.Select(x => f(x))));
+                  }
+                }
+                var t2 = t1.Attribute("id");
+                if (t2 == null)
+                {
+                  t1.Add(t2 = new XAttribute("id", ++id));
+                  for (XAttribute t; (t = t1.FirstAttribute) != t2; t.Remove(), t1.Add(t)) ;
+                }
                 return t2.Value;
               };
               e.Add((XElement)aniset.disp(2, f));
+              if (res != null) e.Add(res);
             }
           }
           else
@@ -2093,12 +2102,27 @@ namespace Test
             if ((a = e.Attribute("unit")) != null) unit = Enum.Parse<Units>(a.Value);
             if ((a = e.Attribute("ambient")) != null) ambient = uint.Parse(a.Value, NumberStyles.HexNumber);
             if ((a = e.Attribute("shadows")) != null) Shadows = (bool)a;
-            var aniset = e.Element("aniset");
+            var aniset = e.Element(ns + "aniset");
             if (aniset != null)
             {
-              Func<string, Node?> f = pid => e.DescendantsAndSelf().
-                FirstOrDefault(a => (string?)a.Attribute("id") == pid)?.
-                Annotation(typeof(Node)) as Node;
+              var res = default(XElement);
+              Func<string, Node?> f = null; f = pid =>
+              {
+                var p = e.DescendantsAndSelf().
+                  FirstOrDefault(a => (string?)a.Attribute("id") == pid)?.
+                  Annotation(typeof(Node)) as Node;
+                if (p != null) return p;
+                var x = (res ??= e.Element(ns + "res")).Elements().
+                  First(a => (string?)a.Attribute("id") == pid);
+                if ((p = x.Annotation(typeof(Node)) as Node) == null)
+                {
+                  p = Load(x); var a = x.Attribute("cc");
+                  if (a != null) p.nodes = a.Value.
+                    Split(' ', StringSplitOptions.RemoveEmptyEntries).
+                    Select(x => f(x)).OfType<Group>().ToArray();
+                }
+                return p;
+              };
               aniset.AddAnnotation(f); (this.aniset = new()).disp(3, aniset);
             }
           }
@@ -3499,14 +3523,12 @@ namespace Test
       public static XElement Save(Node node)
       {
         var e = new XElement(ns + o2s(node));
-        node.Serialize(e, true);
-        return e;
+        node.Serialize(e, true); return e;
       }
       public static Node Load(XElement e)
       {
         var node = (Node)s2o(e.Name.LocalName); // (Base)Activator.CreateInstance(typeof(Models).GetNestedType(e.Name.LocalName));
-        node.Serialize(e, false);
-        return node;
+        node.Serialize(e, false); return node;
       }
       internal static string format(ReadOnlySpan<float> sp)
       {

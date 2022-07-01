@@ -13,6 +13,7 @@ namespace Test
       ApplicationConfiguration.Initialize(); //test();
       Application.Run(new MainFrame());
     }
+
 #if false
     static void test()
     {

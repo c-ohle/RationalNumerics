@@ -2238,7 +2238,7 @@ namespace Test
     public record class PropAcc<T>(Func<object, T> get, Action<object, T> set);
     public static PropAcc<T> GetPropAcc<T>(System.Reflection.PropertyInfo pi)
     {
-      Debug.Assert(pi.DeclaringType == pi.ReflectedType); // better: pi.DeclaringType.GetProperty(pi.Name) !!!
+      Debug.Assert(pi.DeclaringType == pi.ReflectedType); // better before: pi.DeclaringType.GetProperty(pi.Name) to avoid duplicate PropAcc<T> rt methodes
       if (!(propdict ??= new()).TryGetValue(pi, out var p))
       {
         var t0 = Expression.Parameter(typeof(object));

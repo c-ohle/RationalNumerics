@@ -868,7 +868,7 @@ using a bit-exact conversion without rounding.</p>
   <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_push_System_ReadOnlySpan_System_UInt32__.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.push(System.ReadOnlySpan%7BSystem.UInt32%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1227">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1228">View Source</a>
 </span>
 <a id="System_Numerics_BigRational_CPU_push_" data-uid="System.Numerics.BigRational.CPU.push*"></a>
 <h4 id="System_Numerics_BigRational_CPU_push_System_ReadOnlySpan_System_UInt32__" data-uid="System.Numerics.BigRational.CPU.push(System.ReadOnlySpan{System.UInt32})">push(ReadOnlySpan&lt;UInt32&gt;)</h4>
@@ -877,7 +877,7 @@ using a bit-exact conversion without rounding.</p>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void push(ReadOnlySpan&lt;uint&gt; s)</code></pre>
+  <pre><code class="lang-csharp hljs">public void push(ReadOnlySpan&lt;uint&gt; v)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -891,7 +891,7 @@ using a bit-exact conversion without rounding.</p>
   <tbody>
     <tr>
       <td><span class="xref">System.ReadOnlySpan</span>&lt;<span class="xref">System.UInt32</span>&gt;</td>
-      <td><span class="parametername">s</span></td>
+      <td><span class="parametername">v</span></td>
       <td></td>
     </tr>
   </tbody>
@@ -899,8 +899,9 @@ using a bit-exact conversion without rounding.</p>
 <h5 id="System_Numerics_BigRational_CPU_push_System_ReadOnlySpan_System_UInt32___remarks">Remarks</h5>
 <div class="markdown level1 remarks"><p><strong>Note</strong>: The Span must contain valid data based on the specification:<br>
 <a href="https://c-ohle.github.io/RationalNumerics/#data-layout">https://c-ohle.github.io/RationalNumerics/#data-layout</a><br>
+(exception: it does not have to be a normalized fraction.)<br>
 For performance reasons, there are no validation checks at this layer.<br><br>
-Together with <a class="xref" href="System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___">get(UInt32, out ReadOnlySpan&lt;UInt32&gt;)</a> the operation represent a low level interface for direct access in form of the internal data representation.<br>
+Together with <a class="xref" href="System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___">get(UInt32, out ReadOnlySpan&lt;UInt32&gt;)</a> the operation represent a fast low level interface for direct access in form of the internal data representation.<br>
 This is intended to allow:<br></p>
 <ol>
 <li>custom algorithms working on bitlevel<br></li>

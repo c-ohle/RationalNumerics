@@ -52,6 +52,7 @@
       this.buttonReset = new System.Windows.Forms.Button();
       this.numericUpDownRound = new System.Windows.Forms.NumericUpDown();
       this.label10 = new System.Windows.Forms.Label();
+      this.gcSpyControl1 = new Test.GCSpyControl();
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
       this.splitContainer1.Panel1.SuspendLayout();
       this.splitContainer1.Panel2.SuspendLayout();
@@ -154,7 +155,7 @@
       // label6
       // 
       this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label6.Location = new System.Drawing.Point(168, 14);
+      this.label6.Location = new System.Drawing.Point(166, 14);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(304, 24);
       this.label6.TabIndex = 7;
@@ -167,7 +168,7 @@
       this.checkBoxActive2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxActive2.Checked = true;
       this.checkBoxActive2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxActive2.Location = new System.Drawing.Point(247, 437);
+      this.checkBoxActive2.Location = new System.Drawing.Point(245, 437);
       this.checkBoxActive2.Name = "checkBoxActive2";
       this.checkBoxActive2.Size = new System.Drawing.Size(225, 24);
       this.checkBoxActive2.TabIndex = 7;
@@ -192,7 +193,7 @@
       this.mandelbrotView2.Name = "mandelbrotView2";
       this.mandelbrotView2.PropChanged = null;
       this.mandelbrotView2.Scaling = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.Scaling")));
-      this.mandelbrotView2.Size = new System.Drawing.Size(467, 391);
+      this.mandelbrotView2.Size = new System.Drawing.Size(465, 391);
       this.mandelbrotView2.StateChanged = null;
       this.mandelbrotView2.TabIndex = 3;
       this.mandelbrotView2.TabStop = false;
@@ -380,8 +381,19 @@
       this.label10.Text = "lim:";
       this.label10.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
+      // gcSpyControl1
+      // 
+      this.gcSpyControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.gcSpyControl1.Location = new System.Drawing.Point(0, 489);
+      this.gcSpyControl1.Name = "gcSpyControl1";
+      this.gcSpyControl1.Size = new System.Drawing.Size(155, 25);
+      this.gcSpyControl1.TabIndex = 7;
+      this.gcSpyControl1.Text = null;
+      this.gcSpyControl1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      // 
       // MandelbrotPage
       // 
+      this.Controls.Add(this.gcSpyControl1);
       this.Controls.Add(this.buttonReset);
       this.Controls.Add(this.numericUpDownRound);
       this.Controls.Add(this.numericUpDownIter);
@@ -436,5 +448,6 @@
     private Label label6;
     private NumericUpDown numericUpDownRound;
     private Label label10;
+    private GCSpyControl gcSpyControl1;
   }
 }

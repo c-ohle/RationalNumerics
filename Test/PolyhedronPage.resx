@@ -169,7 +169,7 @@
     <value>False</value>
   </metadata>
   <metadata name="contextMenuView.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>41, 15</value>
+    <value>41, 25</value>
   </metadata>
   <metadata name="contextMenuPropsView.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>229, 21</value>

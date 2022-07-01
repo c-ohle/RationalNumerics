@@ -208,13 +208,13 @@ namespace Test
     {
       OnStoryBoard(null);
     }
-    void panelStory_MouseDown(object sender, MouseEventArgs e)
+    void panel_MouseDown(object sender, MouseEventArgs e)
     {
       var p = (Control)sender; p.Capture = true;
       tv = p.Dock == DockStyle.Bottom ? p.Height + Cursor.Position.Y : p.Width + Cursor.Position.X;
       p.Cursor = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
     }
-    void panelStory_MouseMove(object sender, MouseEventArgs e)
+    void panel_MouseMove(object sender, MouseEventArgs e)
     {
       var p = (Control)sender;
       if (!p.Capture) Cursor.Current = p.Dock == DockStyle.Bottom ? Cursors.SizeNS : Cursors.SizeWE;
@@ -227,28 +227,36 @@ namespace Test
         p.Parent.Update();
       }
     }
-    void panelStory_MouseUp(object sender, MouseEventArgs e)
+    void panel_MouseUp(object sender, MouseEventArgs e)
     {
       var p = (Control)sender; p.Capture = false;
       p.Cursor = Cursors.Default;
     }
-    void panelStory_MouseLeave(object sender, EventArgs e)
+    void panel_MouseLeave(object sender, EventArgs e)
     {
       ((Control)sender).Cursor = Cursors.Default;
     }
 
     void btn_run_Click(object? sender, EventArgs? e)
     {
+      //if (sender == null) return;
       var aniset = modelView.Scene.aniset; if (aniset == null) return;
       //if (modelView.RunningAnimation != null) return;
       modelView.RunningAnimation = null;
       aniset.ani(0); modelView.RunningAnimation = aniset;
     }
 
-    void btn_back_Click(object sender, EventArgs e) => timeLineView.ani(0);
+    void btn_back_Click(object sender, EventArgs e) { timeLineView.ani(0); timeLineView.scrtime(); }
     void btn_back__Click(object sender, EventArgs e) { }
-    void btn_forw__Click(object sender, EventArgs e) { }
-    void btn_forw_Click(object sender, EventArgs e) => timeLineView.ani(timeLineView.aniset.getendtime());
+    void btn_forw__Click(object sender, EventArgs e)
+    {
+      var scene = timeLineView.view.Scene; if (scene == null) return;
+      var t1 = DX11ModelCtrl.Models.Save(scene);
+      var t2 = t1.ToString(); //File.WriteAllText(@"C:\Users\cohle\Desktop\rec.xml", t2);
+      var t3 = DX11ModelCtrl.Models.Load(XElement.Parse(t2.ToString()));
+      var t4 = DX11ModelCtrl.Models.Save(t3);
+    }
+    void btn_forw_Click(object sender, EventArgs e) { timeLineView.ani(timeLineView.aniset.getendtime()); timeLineView.scrtime(); }
     void btn_record_Click(object sender, EventArgs e) => timeLineView.record();
 
     void btn_play_Click(object sender, EventArgs e)
@@ -259,7 +267,10 @@ namespace Test
     void maintick()
     {
       var t = timeLineView.view.RunningAnimation; //if (t != timeLineView.aniset) return;
-      if (t == timeLineView.aniset && showtime != t.time) { showtime = t.time; timeLineView.Invalidate(); }
+      if (t == timeLineView.aniset && showtime != t.time)
+      {
+        showtime = t.time; timeLineView.Invalidate(); timeLineView.scrtime();
+      }
       if (btn_play.Checked != (modelView.RunningAnimation == timeLineView.aniset))
         btn_play.Text = (btn_play.Checked ^= true) ? "" : "";
       btn_record.Enabled = timeLineView.recundo() != null;
@@ -306,8 +317,17 @@ namespace Test
           for (int k = 0; k < tt.Count; k += 2)
           {
             var t = tt[k]; var dt = tt[k + 1]; se = selection.Contains(0x40000000 | (i << 16) | k);
-            if (se) g.FillRectangle(SystemBrushes.GradientInactiveCaption, t * xscale, y, dt * xscale, dyline - 1);
-            g.DrawRectangle(Pens.Black, t * xscale, y, dt * xscale, dyline - 1);
+            var u = (int)(t * xscale); var v = (int)((t + dt) * xscale) - u;
+            var r = new Rectangle(u, y, v, dyline - 1);
+            if (se) g.FillRectangle(SystemBrushes.GradientInactiveCaption, r);
+            //if (l.disp(1, 1) is string ic)
+            //{
+            //  //TextRenderer.DrawText(g, "*", Font, r, Color.Gray, 
+            //  //  TextFormatFlags.HorizontalCenter| TextFormatFlags.VerticalCenter| 
+            //  //  TextFormatFlags.PreserveGraphicsTranslateTransform);
+            //  g.DrawString(ic, Font, Brushes.Gray, r.X +3, r.Y+3);// new RectangleF(r.X, r.Y, r.Width, r.Height));
+            //}
+            g.DrawRectangle(Pens.Black, r);
           }
           g.DrawLine(Pens.LightGray, 0, y + dyline, s.Width - o.X, y + dyline);
         }
@@ -339,22 +359,8 @@ namespace Test
         }
         var w = undo.record(aniset, t); if (w.line == null) { times[split + 1] = xxx; return; }
         if (split != -1) { w.line.disp(5, ((split >> 1) + 1)); times[split + 3] = dt; dt = 0; }
-        if (t + dt > aniset.time) { aniset.maxtime = 0; aniset.ani(t + dt); }
-        adjust(); select(w.wo); lastu = undo;
-        var r = r2s(w.wo); r.Width += 32; r.Height += 16;
-        var o = AutoScrollPosition; var q = new Point(-o.X, -o.Y); var rs = ClientRectangle;
-        if (r.X < 0) q.X += r.X; else if (r.Right > rs.Right) q.X += r.Right - rs.Right;
-        if (r.Y < 0) q.Y += r.Y; else if (r.Bottom > rs.Bottom) q.Y += r.Bottom - rs.Bottom;
-        AutoScrollPosition = q; Invalidate();
-#if false
-        if (view.Scene != null)
-        {
-          var t1 = DX11ModelCtrl.Models.Save(view.Scene);
-          var t2 = t1.ToString(); File.WriteAllText(@"C:\Users\cohle\Desktop\rec.xml", t2);
-          var t3 = DX11ModelCtrl.Models.Load(XElement.Parse(t2.ToString()));
-          var t4 = DX11ModelCtrl.Models.Save(t3);
-        }
-#endif
+        if (t + dt != aniset.time) { aniset.maxtime = 0; aniset.ani(t + dt); }
+        adjust(); select(w.wo); lastu = undo; scrvis(w.wo);
       }
 
       Point p2s(Point p)
@@ -373,10 +379,6 @@ namespace Test
         var times = aniset.lines[y].times;
         var s = p2s(new Point(times[x], y * dyline));
         return new Rectangle(s.X, s.Y, (int)(times[x + 1] * xscale), dyline);
-        //var o = AutoScrollPosition;
-        //return new Rectangle(
-        //  o.X + leftofs + (int)(a[x] * xscale),
-        //  o.Y + y * dyline, (int)(a[x + 1] * xscale), dyline);
       }
       void select(int wo)
       {
@@ -401,6 +403,27 @@ namespace Test
         //else view.extrasel = (this, new AniSet(this));
         else view.extrasel = default;
         view.Invalidate();
+      }
+      void scrvis(int wo)
+      {
+        if (wo == 0) wo = selection[0];
+        var r = r2s(wo); r.Inflate(32, 16); // r.Width += 32; r.Height += 16;
+        var o = AutoScrollPosition; var q = new Point(-o.X, -o.Y); var rs = ClientRectangle;
+        if ((wo & 0x40000000) == 0) r.X = r.Width = 0;
+        if (r.X < 0) q.X += r.X; else if (r.Right > rs.Right) q.X += r.Right - rs.Right;
+        if (r.Y < 0) q.Y += r.Y; else if (r.Bottom > rs.Bottom) q.Y += r.Bottom - rs.Bottom;
+        if (o.X != -q.X || o.Y != -q.Y) AutoScrollPosition = q;
+      }
+      internal void scrtime()
+      {
+        var a = AutoScrollPosition;
+        int x = (int)(aniset.time * xscale) - leftofs + a.X;
+        int r = ClientSize.Width - (this.VerticalScroll.Visible ? SystemInformation.VerticalScrollBarWidth : 0);
+        if (x < 0 || x > r)
+        {
+          var b = a.X; if (x < 0) a.X -= x; else a.X -= (x - r);
+          AutoScrollPosition = new Point(-a.X, -a.Y); pcx += AutoScrollPosition.X - b;
+        }
       }
 
       protected override void OnMouseDown(MouseEventArgs e)
@@ -434,19 +457,19 @@ namespace Test
           }
           this.Cursor = wo == 1 ? Cursors.VSplit : (wo & 0x40000001) == 0x40000001 ? Cursors.SizeWE : Cursors.Default; return;
         }
-        if (wo == 0) return; var fdt = (e.X - pcx) / xscale;
+        if (wo == 0) return; var fdt = (int)((e.X - pcx) / xscale);
         if (wo == 1) //time
         {
           if (st == -1) st = aniset.time;
-          var u = Math.Max(0, Math.Min(aniset.maxtime, (int)(st + fdt))); if (u == aniset.time) return;
-          ani(u); //Target.Invalidate(); //props
+          var u = Math.Max(0, Math.Min(aniset.maxtime, st + fdt)); if (u == aniset.time) return;
+          ani(u); scrtime(); //Target.Invalidate(); //props          
         }
         else if ((wo & 0x40000000) != 0)
         {
           int x = wo & 0xffff, y = (wo >> 16) & 0x1fff;
           var tt = aniset.lines[y].times;
           if (st == -1) { st = tt[x]; if ((ctrl & 2) != 0) { ctrl ^= 2; select(wo); } }
-          var u = (int)(st + fdt);
+          var u = st + fdt;
           if ((wo & 1) == 0)
           {
             u = Math.Max(u, x == 0 ? 0 : tt[x - 2] + tt[x - 1]);
@@ -485,7 +508,7 @@ namespace Test
           var u = e.KeyCode == Keys.Left ? x - 2 : x + 2;
           if (u >= 0 && u < line.times.Count)
           {
-            select(0x40000000 | (y << 16) | u); return;
+            select(0x40000000 | (y << 16) | u); scrvis(0); return;
           }
         }
         if ((e.KeyCode == Keys.Up || e.KeyCode == Keys.Down) && (wo & 0x20000000) != 0)
@@ -498,7 +521,7 @@ namespace Test
               var t = lines[y]; lines[y] = lines[v]; lines[v] = t;
               this.ani(aniset.time | 0x40000000);
             }
-            select(0x20000000 | (v << 16)); return;
+            select(0x20000000 | (v << 16)); scrvis(0); return;
           }
         }
         if (e.KeyCode == Keys.Delete && (wo & 0x40000000) != 0)
@@ -507,7 +530,7 @@ namespace Test
           if (line.times.Count > 2)
           {
             line.disp(8, x);
-            select(0x40000000 | (y << 16) | Math.Min(x, line.times.Count - 2));
+            select(0x40000000 | (y << 16) | Math.Min(x, line.times.Count - 2)); scrvis(0);
           }
           else lines.RemoveAt(y);
           aniset.maxtime = 0; adjust();

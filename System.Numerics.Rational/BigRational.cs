@@ -1216,19 +1216,20 @@ namespace System.Numerics
       /// <remarks>
       /// <b>Note</b>: The Span must contain valid data based on the specification:<br/>
       /// <seealso href="https://c-ohle.github.io/RationalNumerics/#data-layout"/><br/>
+      /// (exception: it does not have to be a normalized fraction.)<br/>
       /// For performance reasons, there are no validation checks at this layer.<br/><br/> 
-      /// Together with <see cref="get(uint, out ReadOnlySpan{uint})"/> the operation represent a low level interface for direct access in form of the internal data representation.<br/> 
+      /// Together with <see cref="get(uint, out ReadOnlySpan{uint})"/> the operation represent a fast low level interface for direct access in form of the internal data representation.<br/> 
       /// This is intended to allow:<br/>
       /// 1. custom algorithms working on bitlevel<br/>
       /// 2. custom binary serialization<br/>
       /// 3. custom types like vectors with own storage managemend.<br/>
       /// </remarks>
-      /// <param name="s"></param>
-      public void push(ReadOnlySpan<uint> s)
+      /// <param name="v"></param>
+      public void push(ReadOnlySpan<uint> v)
       {
-        fixed (uint* a = s)
+        fixed (uint* a = v)
         {
-          var n = (uint)s.Length;
+          var n = (uint)v.Length;
           fixed (uint* b = rent(n)) copy(b, a, n);
         }
       }
@@ -1293,7 +1294,7 @@ namespace System.Numerics
       /// <remarks>
       /// Apply <see cref="norm(int)"/> beforehand to ensure the fraction is normalized in its binary form, if required.<br/>
       /// <b>Note</b>: The returned data is only valid solong the stack entry is not changed by a subsequent cpu operation.<br/><br/>
-      /// Together with <see cref="push(ReadOnlySpan{uint})"/> the operation represent a low level interface for direct access in form of the internal data representation.<br/> 
+      /// Together with <see cref="push(ReadOnlySpan{uint})"/> the operation represent a fast low level interface for direct access in form of the internal data representation.<br/> 
       /// This is intended to allow:<br/>
       /// 1. custom algorithms working on bitlevel<br/>
       /// 2. custom binary serialization<br/>
@@ -2357,7 +2358,7 @@ namespace System.Numerics
       /// non-number specific chars, spaces etc. are simply ignored.<br/>
       /// </remarks>
       /// <param name="sp">A Span that preserves the digits.</param>
-      /// <param name="bas">The number base, 1 to 10 or 16.<br/>For decimal a value of 10 is recommanded.</param>
+      /// <param name="bas">The number base, 1 to 10 or 16.<br/>(For decimal a value of 10 is recommanded.)</param>
       /// <param name="sep">A specific (decimal) seperator; otherwise default: '.' or ','.</param>
       public void tor(ReadOnlySpan<char> sp, int bas = 10, char sep = default)
       {
@@ -2606,7 +2607,9 @@ namespace System.Numerics
       /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
       /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
       /// <c>msb(pow(10, digits))</c>.<br/> 
-      /// The result however has to be rounded explicitely to get an exact decimal representation.
+      /// The result however has to be rounded explicitely to get an exact decimal representation.<br/> 
+      /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/> 
+      /// and the accuracy of the last digits has not yet been ensured!
       /// </remarks>
       /// <param name="c">The desired precision.</param>
       public void atan(uint c)
@@ -2626,7 +2629,7 @@ namespace System.Numerics
         dup(); sqr(); lim(c); // zsqr = z * z
         dup(); push(1u); add(); // zsqr1 = zsqr + 1
         push(1u); dup(); // a = 1, m = 1
-        for (int n = 1; n < 20; n++) //todo: c
+        for (int n = 1; n < 20; n++) //todo: 20 -> f(c) !!!
         {
           dup(3); push(n << 1); mul(); // (2 * k) * zsqr
           dup(3); push((n << 1) + 1); mul(); // (2 * k + 1) * zsqr1
