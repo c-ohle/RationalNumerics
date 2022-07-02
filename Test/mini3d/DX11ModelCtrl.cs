@@ -55,18 +55,19 @@ namespace Test
     {
       if (camera == null) camera = node as Models.Camera;
       if (light == null) light = node as Models.Light;
-      var a = node.VisibleNodes;
+      if ((node.flags & 0x02) != 0) return;
+      var a = node.nodes;
       if (a != null) for (int i = 0; i < a.Length; i++) { var p = a[i]; p.parent = node; link(p); }
       if (node is Models.Geometry geo) geo.checkbuild(0);
     }
     void render(DC dc, int was, Group[] nodes)
     {
-      var tm = dc.Transform;
+      var m = dc.Transform;
       for (int i = 0; i < nodes.Length; i++)
       {
         var node = nodes[i]; if ((node.flags & 0x02) != 0) continue;
-        dc.Transform = node.Transform * tm;
-        var pp = node.VisibleNodes; if (pp != null) render(dc, was, pp);
+        dc.Transform = node.transform * m;
+        if (node.nodes != null) render(dc, was, node.nodes);
         var geo = node as Models.Geometry; if (geo == null) continue;
         if (was == 0) dc.Select(node);
         if (was == 2) { dc.DrawMesh(geo.vb, geo.ib); continue; }
@@ -85,7 +86,7 @@ namespace Test
           dc.DrawMesh(geo.vb, geo.ib, a, c);
         }
       }
-      dc.Transform = tm;
+      dc.Transform = m;
     }
     protected override void OnRender(DC dc)
     {
@@ -107,18 +108,11 @@ namespace Test
           dc.Select();
           if (shadows && !dc.IsPicking)
           {
-            var t4 = dc.State; dc.Light = lightdir; dc.LightZero = -5; //todo: calc
-            dc.State = State.Shadows3D;
-            render(dc, 2, scene.nodes);
-            dc.State = t4;
-            dc.Ambient = 0;
-            dc.Light = lightdir * 0.7f;
-            dc.BlendState = BlendState.AlphaAdd;
+            var t4 = dc.State; dc.State = State.Shadows3D; dc.Light = lightdir; dc.LightZero = -5; //todo: calc            
+            render(dc, 2, scene.nodes); dc.State = t4;
+            dc.Ambient = 0; dc.Light = lightdir * 0.7f; dc.BlendState = BlendState.AlphaAdd;
             render(dc, 1, scene.nodes);
-            dc.Clear(CLEAR.STENCIL);
-            dc.State = t4;
-            dc.Light = lightdir;
-            dc.Ambient = scene.ambient;
+            dc.Clear(CLEAR.STENCIL); dc.State = t4; dc.Light = lightdir; dc.Ambient = scene.ambient;
           }
           if (selection.Count != 0 || RenderClient != null)
           {
@@ -130,15 +124,12 @@ namespace Test
               dc.Color = 0x40000000; var t1 = dc.State;
               dc.BlendState = BlendState.Alpha;
               dc.Rasterizer = Rasterizer.Wireframe;
-              for (int i = 0; i < selection.Count; i++)
-              {
-                var node = selection[i]; if ((node.flags & 0x02) != 0) continue;
-                wire(dc, node);
-              }
+              for (int i = 0; i < selection.Count; i++) wire(dc, selection[i]);
               static void wire(DC dc, Group p)
               {
+                if ((p.flags & 0x02) != 0) return;
                 if (p is Models.Geometry geo) { geo.checkbuild(0); dc.Transform = p.GetTransform(); dc.DrawMesh(geo.vb, geo.ib); }
-                var a = p.VisibleNodes; if (a != null) for (int i = 0; i < a.Length; i++) wire(dc, a[i]);
+                var a = p.nodes; if (a != null) for (int i = 0; i < a.Length; i++) wire(dc, a[i]);
               }
               dc.State = t1;
             }
@@ -284,10 +275,11 @@ namespace Test
         case 2006: return OnGroup(test);
         case 2007: return OnUngroup(test);
         //case 2008: return OnProperties(test);
-        case 2050: return OnIntersect(id, test); // Union
-        case 2051: return OnIntersect(id, test); // Difference
-        case 2052: return OnIntersect(id, test); // Intersection
-        case 2053: return OnIntersect(id, test); // Halfspace"
+        case 2009: return OnGroupCSG(test); //CSG
+        //case 2050: return OnIntersect(id, test); // Union
+        //case 2051: return OnIntersect(id, test); // Difference
+        //case 2052: return OnIntersect(id, test); // Intersection
+        //case 2053: return OnIntersect(id, test); // Halfspace"
         //case 2054: return OnCheckMash(test);
         //case 2055: return OnConvert(test);
         case 2056: return OnCenter(test);
@@ -334,8 +326,9 @@ namespace Test
       var s = Clipboard.GetText();
       if (s[0] != '<' || !s.Contains(Models.ns.NamespaceName)) return 0;
       if (test != null) return 1;
-      var xml = XElement.Parse(s); var scene = Models.Load(xml); //todo: units
-      Execute(new UndoNodes(this.scene, this.scene.nodes.Concat(scene.nodes).ToArray()), undosel(scene.nodes));
+      var xml = XElement.Parse(s); var blob = Models.Load(xml); //todo: units
+      Execute(new UndoNodes(this.scene,
+        this.scene.nodes.Concat(blob.nodes).ToArray()), new UndoSel(this, blob.nodes));
       return 1;
     }
     int OnDelete(object? test)
@@ -343,7 +336,7 @@ namespace Test
       if (selection.Count == 0 || scene.nodes == null) return 0;
       if (test != null) return 1;
       var layer = selection[0].parent;
-      Execute(undosel(null), new UndoNodes(layer, layer.nodes.Except(selection).ToArray()));
+      Execute(new UndoSel(this), new UndoNodes(layer, layer.nodes.Except(selection).ToArray()));
       return 1;
     }
     int OnSelectAll(object? test)
@@ -363,138 +356,104 @@ namespace Test
       if (selection.Count == 0) return 0;
       if (test != null) return 1;
       var box = (Min: new Vector3(float.MaxValue), Max: new Vector3(-float.MaxValue));
-      foreach (var p in selection) p.GetBox(ref box, p.Transform);
+      foreach (var p in selection) p.GetBox(ref box, p.transform);
       if (box.Min.X == float.MaxValue) box = default;
       var a = selection.ToArray();
-      var g = settings.GroupType == Settings.GroupM.BoolGeometry &&
-        a.Length == 2 && a[0] is Models.Geometry ga && a[1] is Models.Geometry ?
-        new Models.BoolGeometry() { nodes = a, ranges = new (int count, Models.Material material)[] { (0, ga.ranges[0].material) } } :
-        new Group { nodes = a };
+      //var g = settings.GroupType == Settings.GroupM.BoolGeometry &&
+      //  a.Length == 2 && a[0] is Models.Geometry ga && a[1] is Models.Geometry ?
+      //  new Models.BoolGeometry() { nodes = a, ranges = new (int count, Models.Material material)[] { (0, ga.ranges[0].material) } } :
+      //  new Group { nodes = a };
       var pm = (box.Min + box.Max) * 0.5f; pm.Z = box.Min.Z;
-      var m = Matrix4x3.CreateTranslation(pm); g.Transform = m; m = !m;
-      var nodes = this.scene.nodes.Except(selection).Concat(Enumerable.Repeat(g, 1)).ToArray();
+      var g = new Group { nodes = a };
+      var m = Matrix4x3.CreateTranslation(pm); g.transform = m; m = !m;
+      var nodes = this.scene.nodes.Except(a).Append(g).ToArray();
       Execute(new UndoNodes(this.scene, nodes),
-        selection.Select(p => UndoTrans.get(p, p.Transform * m)), undosel(g));
+        a.Select(p => UndoTrans.get(p, p.transform * m)), new UndoSel(this, g));
       return 1;
     }
-    int OnUngroup(object? test)
+    int OnGroupCSG(object? test)
+    {
+      if (selection.Count != 2) return 0;
+      if (selection[0] is not Models.Geometry t1 ||
+          selection[1] is not Models.Geometry t2) return 0;
+      if (test != null) return 1;
+      var a = selection.ToArray();
+      var g = new Models.BoolGeometry()
+      {
+        transform = t1.transform,
+        nodes = a,
+        Source = Models.BoolGeometry.MaterialSource.Merge,
+        ranges = new (int count, Models.Material material)[] { (0, t1.ranges[0].material) }
+      };
+      Execute(new UndoNodes(this.scene, this.scene.nodes.Except(a).Append(g).ToArray()),
+        new UndoProp(t1, nameof(t1.Visible), false),
+        new UndoProp(t2, nameof(t2.Visible), false),
+        UndoTrans.get(t1, Matrix4x3.Identity),
+        UndoTrans.get(t2, t2.transform * !g.transform), new UndoSel(this, g)); ;
+      return 1;
+    }
+    int OnUngroup(object? test) //todo: ungroup bool
     {
       var groups = selection.Where(p => p.nodes != null);
       if (!groups.Any()) return 0;
       if (test != null) return 1; //var scene = groups.First().Parent;
-      var childs = groups.SelectMany(p => p.nodes ?? Array.Empty<Group>()).ToArray();
+      var childs = groups.SelectMany(p => p.nodes ?? Enumerable.Empty<Group>()).ToArray();
       var nodes = this.scene.nodes.Except(groups).Concat(childs).ToArray();
       Execute(new UndoNodes(this.scene, nodes),
-        childs.Select(p => UndoTrans.get(p, p.Transform * ((Group)p.parent).Transform)), undosel(childs));
+        childs.Select(p => UndoTrans.get(p, p.transform * ((Group)p.parent).transform)),
+        childs.Where(p => !p.Visible).Select(p => new UndoProp(p, nameof(p.Visible), true)),
+        new UndoSel(this, childs));
       return 1;
     }
-    //int OnFlags(object? test, int id)
+    //int OnIntersect(int id, object? test)
     //{
-    //  var f = 1 << (id - 2100);
-    //  if (test != null)
+    //  //2050: Union 2051: Difference 2052: Intersection 2053: Halfspace"
+    //  if (selection.Count != 2) return 0;
+    //  var a = selection[0] as Models.Geometry; if (a == null) return 0;
+    //  var b = selection[1] as Models.Geometry; if (b == null) return 0;
+    //  if (test != null) return 1;
+    //  Cursor.Current = Cursors.WaitCursor;
+    //  var m = (Matrix4x3R)b.transform * !(Matrix4x3R)a.transform;
+    //  var mb = PolyhedronR.GetInstance();
+    //  mb.SetMesh(0, a.GetVertices(), a.indices);
+    //  if (id == 2053) //Halfspace
     //  {
-    //    if (id < 2108 && selection.Count == 0 && test is ToolStripButton) return 0;
-    //    return (flags & f) != 0 ? 3 : 1;
+    //    var plane = PlaneR.Transform(new PlaneR(0, 0, -1, 0), m);
+    //    if (mb.Cut(plane))
+    //    {
+    //      var ras = Models.BoolGeometry.remap(mb.Indices, mb.Mapping, a, b);
+    //      var c = new Models.MeshGeometry
+    //      {
+    //        Name = a.Name,
+    //        transform = a.transform,
+    //        rpts = mb.Vertices.ToArray(),
+    //        indices = mb.Indices.Select(p => (ushort)p).ToArray(),
+    //        ranges = ras
+    //      };
+    //      var xx = a.parent.nodes.Select(p => p == a ? c : p).ToArray();
+    //      Execute(new UndoSel(this, a), new UndoNodes(a.parent, xx), new UndoSel(this, c));
+    //    }
     //  }
-    //  flags ^= f; //Application.UserAppDataRegistry.SetValue("fl", flags);
-    //  Invalidate(); return 0;
+    //  else
+    //  {
+    //    mb.SetMesh(1, b.GetVertices(), b.indices);
+    //    mb.Transform(1, m); //var t1 = Environment.TickCount;
+    //    mb.Boolean((PolyhedronR.Mode)(id - 2050)); //var t2 = Environment.TickCount; Application.OpenForms[0].Text = $"{t2 - t1} ms";
+    //    var ras = Models.BoolGeometry.remap(mb.Indices, mb.Mapping, a, b);
+    //    var c = new Models.MeshGeometry
+    //    {
+    //      Name = a.Name,
+    //      transform = a.transform,
+    //      rpts = mb.Vertices.ToArray(),
+    //      indices = mb.Indices.Select(p => (ushort)p).ToArray(),
+    //      ranges = ras
+    //    };
+    //    var xx = a.parent.nodes.Select(p => p == a ? c : p == b ? null : p).OfType<Group>().ToArray();
+    //    Execute(new UndoSel(this, a), new UndoNodes(a.parent, xx), new UndoSel(this, c));
+    //  }
+    //  Cursor.Current = Cursors.Arrow;
+    //  return 0;
     //}
-    int OnCheckMash(object? test)
-    {
-      if (selection.Count != 1 || selection[0] is not Models.Geometry geo) return 0;
-      if (test != null) return 1;
-      check(geo); return 1;
-      static void check(Models.Geometry geo)
-      {
-        Cursor.Current = Cursors.WaitCursor;
-        var ss = (string)null;
-        var pp = geo.vertices.Select(p => (Vector3R)p).ToArray();
-        var ii = geo.indices;
-        var t1 = ii.Count(i => i >= pp.Length);
-        if (t1 != 0) ss += $"\n{t1} {"Invalid Indices"}";
-        var t2 = pp.Length - pp.Distinct().Count();
-        if (t2 != 0) ss += $"\n{t2} {"Duplicate Vertices"}";
-        var t3 = pp.Length - ii.Distinct().Count();
-        if (t3 != 0) ss += $"\n{t3} {"Unused Vertices"}";
-        var ee = Enumerable.Range(0, ii.Length / 3).
-          Where(i => Math.Max(Math.Max(ii[i * 3], ii[i * 3 + 1]), ii[i * 3 + 2]) < pp.Length).
-          Select(i => (k: i *= 3, e: PlaneR.FromVertices(pp[ii[i]], pp[ii[i + 1]], pp[ii[i + 2]]))).
-          GroupBy(p => p.e, p => p.k).Select(p => (e: p.Key, kk: p.ToArray())).ToArray();
-        var t4 = ee.FirstOrDefault(e => e.e.Normal == default);
-        if (t4.kk != null) ss += $"\n{t4.kk.Length} {"Empty Polygones"}";
-        var eb = Enumerable.Range(0, ii.Length).
-          Select(i => (a: ii[i], b: ii[i % 3 != 2 ? i + 1 : i - 2])).ToHashSet();//.ToLookup(p => p);// ToArray();
-        var t5 = eb.Count(p => !eb.Contains((p.b, p.a)));
-        if (t5 != 0) ss += $"\n{t5} {"Open Edges"}";
-        var t6 = ss != null ? 0 : ee.Sum(e =>
-        {
-          var tt = e.kk.SelectMany(k => Enumerable.Range(k, 3)).
-            Select(i => (a: ii[i], b: ii[i % 3 != 2 ? i + 1 : i - 2])).ToArray();
-          return tt.Count(p => !tt.Contains((p.b, p.a)));
-        });
-        Cursor.Current = Cursors.Default;
-        MessageBox.Show(ss != null ? "Mesh Errors:\n" + ss :
-            $"Mesh ok\n" +
-            $"\n{pp.Length} {"Points"}" +
-            $"\n{ii.Length / 3} {"Polygones"}" +
-            $"\n{ee.Length} {"Planes"}" +
-            $"\n{t6 / 2} {"Edges"}" +
-            $"\n{geo.ranges.Length} {"Ranges"}" +
-            $"\n{geo.ranges.Select(p => p.material).Distinct().Count()} {"Materials"}" +
-            $"\n{geo.ranges.Select(p => p.material.Texture).OfType<object>().Distinct().Count()} {"Textures"}",
-            Application.ProductName, MessageBoxButtons.OK,
-            ss != null ? MessageBoxIcon.Error : MessageBoxIcon.Information);
-      }
-    }
-    int OnIntersect(int id, object? test)
-    {
-      //2050: Union 2051: Difference 2052: Intersection 2053: Halfspace"
-      if (selection.Count != 2) return 0;
-      var a = selection[0] as Models.Geometry; if (a == null) return 0;
-      var b = selection[1] as Models.Geometry; if (b == null) return 0;
-      if (test != null) return 1;
-      Cursor.Current = Cursors.WaitCursor;
-      var m = (Matrix4x3R)b.Transform * !(Matrix4x3R)a.Transform;
-      var mb = PolyhedronR.GetInstance();
-      mb.SetMesh(0, a.GetVertices(), a.indices);
-      if (id == 2053) //Halfspace
-      {
-        var plane = PlaneR.Transform(new PlaneR(0, 0, -1, 0), m);
-        if (mb.Cut(plane))
-        {
-          var ras = Models.BoolGeometry.remap(mb.Indices, mb.Mapping, a, b);
-          var c = new Models.MeshGeometry
-          {
-            Name = a.Name,
-            Transform = a.Transform,
-            rpts = mb.Vertices.ToArray(),
-            indices = mb.Indices.Select(p => (ushort)p).ToArray(),
-            ranges = ras
-          };
-          var xx = a.parent.nodes.Select(p => p == a ? c : p).ToArray();
-          Execute(undosel(a), new UndoNodes(a.parent, xx), undosel(c));
-        }
-      }
-      else
-      {
-        mb.SetMesh(1, b.GetVertices(), b.indices);
-        mb.Transform(1, m); //var t1 = Environment.TickCount;
-        mb.Boolean((PolyhedronR.Mode)(id - 2050)); //var t2 = Environment.TickCount; Application.OpenForms[0].Text = $"{t2 - t1} ms";
-        var ras = Models.BoolGeometry.remap(mb.Indices, mb.Mapping, a, b);
-        var c = new Models.MeshGeometry
-        {
-          Name = a.Name,
-          Transform = a.Transform,
-          rpts = mb.Vertices.ToArray(),
-          indices = mb.Indices.Select(p => (ushort)p).ToArray(),
-          ranges = ras
-        };
-        var xx = a.parent.nodes.Select(p => p == a ? c : p == b ? null : p).OfType<Group>().ToArray();
-        Execute(undosel(a), new UndoNodes(a.parent, xx), undosel(c));
-      }
-      Cursor.Current = Cursors.Arrow;
-      return 0;
-    }
     int OnCenter(object? test)
     {
       if (selection.Count == 0) return 0;
@@ -557,20 +516,16 @@ namespace Test
       get => undoi != 0;
       set { undos = null; undoi = 0; }
     }
-    Undo undosel(params Group[]? a)
-    {
-      return new UndoSel(this, a); //return new AniEm(() => { var t = selection.Count != 0 ? selection.ToArray() : null; Select(a); a = t; });
-    }
 
     static int lastwheel;
     void wheel(PC pc)
     {
       if (pc.Hover is not Group) return;
       var wp = Vector3.Transform(pc.Point, pc.Transform);
-      var m = camera.Transform;
+      var m = camera.transform;
       var v = wp - m.Translation;
       var l = v.Length(); var f = pc.Primitive / 120f;
-      camera.Transform = m * Matrix4x3.CreateTranslation(v * (l * f * 0.02f)); pc.Invalidate();
+      camera.transform = m * Matrix4x3.CreateTranslation(v * (l * f * 0.02f)); pc.Invalidate();
       var t = Environment.TickCount; if (t - lastwheel > 500) { lastwheel = t; AddUndo(UndoTrans.get(camera, m)); }
     }
     Action<int> tool_cam_move(PC pc)
@@ -578,13 +533,13 @@ namespace Test
       var wp = Vector3.Transform(pc.Point, pc.Transform);
       var wm = Matrix4x3.CreateTranslation(wp);
       pc.SetPlane(wm);
-      var p1 = pc.Pick(); var m = camera.Transform;
+      var p1 = pc.Pick(); var m = camera.transform;
       return id =>
       {
         if (id == 0)
         {
           var dp = p1 - pc.Pick();
-          camera.Transform = m * Matrix4x3.CreateTranslation(dp.X, dp.Y, 0);
+          camera.transform = m * Matrix4x3.CreateTranslation(dp.X, dp.Y, 0);
           pc.Invalidate();
         }
         if (id == 1) AddUndo(UndoTrans.get(camera, m));
@@ -594,7 +549,7 @@ namespace Test
     {
       var wp = Vector3.Transform(pc.Point, pc.Transform);
       var wm = Matrix4x3.CreateTranslation(wp);
-      var cm = camera.Transform;
+      var cm = camera.transform;
       wm[0] = Vector3.Cross(wm[1] = new Vector3(0, 0, 1), wm[2] = Vector3.Normalize(cm.Translation - wp));
       pc.SetPlane(wm);
       var p1 = pc.Pick();
@@ -603,7 +558,7 @@ namespace Test
         if (id == 0)
         {
           var dz = p1.Y - pc.Pick().Y;
-          camera.Transform = cm * Matrix4x3.CreateTranslation(0, 0, dz); pc.Invalidate();
+          camera.transform = cm * Matrix4x3.CreateTranslation(0, 0, dz); pc.Invalidate();
         }
         if (id == 1) AddUndo(UndoTrans.get(camera, cm));
       };
@@ -611,7 +566,7 @@ namespace Test
     Action<int> tool_cam_decl(PC pc)
     {
       var wp = Vector3.Transform(pc.Point, pc.Transform);
-      var cm = camera.Transform;
+      var cm = camera.transform;
       var rot = cm.Translation;
       pc.SetPlane(Matrix4x3.CreateTranslation(rot.X, rot.Y, wp.Z));
       var p1 = pc.Pick(); var p2 = p1; var a1 = MathF.Atan2(p1.Y, p1.X);
@@ -620,7 +575,7 @@ namespace Test
         if (id == 0)
         {
           var p2 = pc.Pick(); var a2 = MathF.Atan2(p2.Y, p2.X);
-          camera.Transform = cm *
+          camera.transform = cm *
             Matrix4x3.CreateTranslation(-rot) *
             Matrix4x3.CreateRotationZ(a1 - a2) *
             Matrix4x3.CreateTranslation(rot);
@@ -631,14 +586,14 @@ namespace Test
     }
     Action<int> tool_cam_incl(PC pc)
     {
-      var cm = camera.Transform; var om = camera;
+      var cm = camera.transform; var om = camera;
       var mp = cm * pc.Plane; mp.M41 = mp.M31; mp.M42 = mp.M32; mp.M44 = mp.M34; pc.Plane = mp;
       var a1 = MathF.Atan(pc.Pick().Y);
       return id =>
       {
         if (id == 0)
         {
-          camera.Transform = Matrix4x3.CreateRotationX(MathF.Atan(pc.Pick().Y) - a1) * cm;
+          camera.transform = Matrix4x3.CreateRotationX(MathF.Atan(pc.Pick().Y) - a1) * cm;
           pc.Invalidate();
         }
         if (id == 1) AddUndo(UndoTrans.get(camera, cm));
@@ -673,9 +628,9 @@ namespace Test
               var m = node.GetTransform(); var pp = g.vertices; var ii = g.indices;
               for (int i = 0; i < ii.Length; i += 3)
               {
-                var p1 = Vector3.Transform(pp[ii[i + 0]], m);
-                var p2 = Vector3.Transform(pp[ii[i + 1]], m);
-                var p3 = Vector3.Transform(pp[ii[i + 2]], m);
+                var p1 = Matrix4x3.Transform(pp[ii[i + 0]], m);
+                var p2 = Matrix4x3.Transform(pp[ii[i + 1]], m);
+                var p3 = Matrix4x3.Transform(pp[ii[i + 2]], m);
                 if (Intersect((*(Vector2*)&p1, *(Vector2*)&p2, *(Vector2*)&p3), rect)) return true;
               }
               return false;
@@ -694,17 +649,17 @@ namespace Test
 
     static Func<int, Matrix4x3, object> move(Group node)
     {
-      var m = node.Transform;
+      var m = node.transform;
       return (id, v) =>
       {
-        if (id == 0) { v = node.Transform; node.Transform = m; m = v; node.parent?.Invalidate(); }
+        if (id == 0) { v = node.transform; node.transform = m; m = v; node.parent?.Invalidate(); }
         else if (id == 1)
         {
           var t = m * v;
           if (v.M41 != 0) t.M41 = MathF.Round(t.M41, 6);
           if (v.M42 != 0) t.M42 = MathF.Round(t.M42, 6);
           if (v.M43 != 0) t.M43 = MathF.Round(t.M43, 6);
-          node.Transform = t; node.parent?.Invalidate();
+          node.transform = t; node.parent?.Invalidate();
         }
         else if (id == 7) return UndoTrans.get(node, m);
         return null;
@@ -777,7 +732,7 @@ namespace Test
     {
       if (!IsSelect(main)) Select(main);
       var box = (Min: new Vector3(float.MaxValue), Max: new Vector3(-float.MaxValue));
-      foreach (var p in selection) p.GetBox(ref box, p.Transform);
+      foreach (var p in selection) p.GetBox(ref box, p.transform);
       var mo = default(Func<int, Matrix4x3, object>);
       var rp = main.Location;
       var wp = Vector3.Transform(pc.Point, pc.Transform);
@@ -822,7 +777,7 @@ namespace Test
       var ws = IsSelect(main); if (!ws) Select(main);
       var mo = default(Func<int, Matrix4x3, object>);
       var wp = Vector3.Transform(pc.Point, pc.Transform);
-      var mw = main.Transform;// GetTransform();
+      var mw = main.transform;// GetTransform();
       var mp = mw.Translation;
       var vm = Math.Abs(mw.M13) > 0.8f ? new Vector2(mw.M21, mw.M22) : new Vector2(mw.M11, mw.M12);
       var w0 = MathF.Atan2(vm.Y, vm.X);
@@ -868,7 +823,7 @@ namespace Test
     {
       if (!IsSelect(main)) Select(main);
       var mo = default(Func<int, Matrix4x3, object>);
-      var mm = main.Transform;// GetTransform();
+      var mm = main.transform;// GetTransform();
       var wp = Vector3.Transform(pc.Point, pc.Transform);
       var op = Vector3.Transform(wp, !main.GetTransform());
       var mr = (
@@ -979,7 +934,7 @@ namespace Test
             }
           }
           var tex = GetTexture(uri.AbsoluteUri); var ts = tex.Size; var os = ts / 100;
-          var box = new Models.BoxGeometry { Transform = Matrix4x3.Identity, Max = new Vector3(os, 0.01f) };
+          var box = new Models.BoxGeometry { transform = Matrix4x3.Identity, Max = new Vector3(os, 0.01f) };
           box.ranges = new (int, Models.Material)[] { (0, new Models.Material {
             Diffuse = 0xffffffff, Texture = tex,
             Transform = Matrix4x3.CreateScale(new Vector3(1 / os.X, -1 / os.Y, 1)) } )};
@@ -1023,7 +978,7 @@ namespace Test
         }
         else if (id == 1)
         {
-          var sel = undosel(nodes); sel.exec(); pc.Invalidate();
+          var sel = new UndoSel(this, nodes); sel.exec(); pc.Invalidate();
           AddUndo(Undo.join(sel, new UndoNodes(this.scene, oldnodes))); Focus();
         }
         else if (id == 2) { this.scene.nodes = oldnodes; pc.Invalidate(); }
@@ -1095,7 +1050,7 @@ namespace Test
       {
         for (int i = 0, n = nodes.Count; i < n; i++)
         {
-          var node = nodes[i]; var m = node.Transform * pm;
+          var node = nodes[i]; var m = node.transform * pm;
           if (node.nodes != null) recu(ref c, node.nodes, m);
           if (node is not Models.Geometry g) continue;
           var a = g.vertices; if (a == null) continue;
@@ -1113,16 +1068,16 @@ namespace Test
     {
       return Print(size.Width, size.Height, 4, 0, dc =>
       {
-        var cm = camera.Transform; // GetTransform(scene); 
+        var cm = camera.transform; // GetTransform(scene); 
         var pr = Matrix4x4.CreatePerspectiveFieldOfView(fov * (MathF.PI / 180), (float)size.Width / size.Height, camera.Near, camera.Far);
         var tm = Center(pr, cm, selection).m;
         var a = scene.nodes; var b = ArrayPool<int>.Shared.Rent(a.Length);
         for (int i = 0; i < a.Length; i++) { b[i] = a[i].flags; a[i].flags |= 0x02; }
         for (int i = 0; i < selection.Count; i++) selection[i].flags &= ~0x02;
         var t3 = this.flags; this.flags &= ~(0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20);
-        camera.Transform = tm; var t1 = camera.Fov; camera.Fov = fov; // var t4 = RenderClient; RenderClient = null;
+        camera.transform = tm; var t1 = camera.Fov; camera.Fov = fov; // var t4 = RenderClient; RenderClient = null;
         var t2 = infos; infos = null; OnRender(dc);
-        camera.Transform = cm; camera.Fov = t1; infos = t2; this.flags = t3; // RenderClient = t4;
+        camera.transform = cm; camera.Fov = t1; infos = t2; this.flags = t3; // RenderClient = t4;
         for (int i = 0; i < a.Length; i++) { a[i].flags = (a[i].flags & ~0x02) | (b[i] & 0x02); }
         ArrayPool<int>.Shared.Return(b);
       });
@@ -1254,7 +1209,7 @@ namespace Test
             times[i].TryFormat(w, out var c, default, fi); w = w.Slice(c);
           }
           var ts = s.Slice(0, s.Length - w.Length); if (n == 0) n = 2;
-          if (ts.Length != 0) e.SetAttributeValue("times", ts.ToString()); w = s; 
+          if (ts.Length != 0) e.SetAttributeValue("times", ts.ToString()); w = s;
           for (int i = 0, l = (n >> 1) + 1; i < l; i++)
           {
             if (i != 0) { w[0] = ';'; w[1] = ' '; w = w.Slice(2); }
@@ -1352,14 +1307,14 @@ namespace Test
     {
       readonly Group p; Matrix4x3 m;
       internal UndoTrans(Group p, in Matrix4x3 m) { this.p = p; this.m = m; }
-      internal override void exec() { var t = p.Transform; p.Transform = m; m = t; }
-      internal static UndoTrans? get(Group p, in Matrix4x3 m) => p.Transform != m ? new UndoTrans(p, m) : null;
+      internal override void exec() { var t = p.transform; p.transform = m; m = t; }
+      internal static UndoTrans? get(Group p, in Matrix4x3 m) => p.transform != m ? new UndoTrans(p, m) : null;
       internal override (AniLine? line, int wo) record(AniSet set, int time)
       {
         var c = getline(set, time, typeof(Line), this.p, null);
         if (time == -1) return c; var line = (Line)c.line;
         if (line.p == null) { line.p = this.p; line.list.Add(m); }
-        line.list.Insert(((c.wo & 0xffff) >> 1) + 1, p.Transform); return c;
+        line.list.Insert(((c.wo & 0xffff) >> 1) + 1, p.transform); return c;
       }
       internal class Line : AniLine
       {
@@ -1370,7 +1325,7 @@ namespace Test
             case 0: return p;
             case 2: { var e = (XElement)base.disp(id, wp, v); base.serial(e, null); return e; }
             case 3: serial((XElement)v, p = (Group)base.disp(id, wp, v)); return this;
-            case 5: { var x = wp; list[x + 1] = list[x]; list[x] = p.Transform; } break; //splitt trans
+            case 5: { var x = wp; list[x + 1] = list[x]; list[x] = p.transform; } break; //splitt trans
             case 8: list.RemoveAt(wp == 0 ? 0 : (wp >> 1) + 1); break; //del trans
           }
           return base.disp(id, wp, v);
@@ -1395,8 +1350,8 @@ namespace Test
             f <= 0 ? (Matrix4x3)list[x + 0] :
             f >= 1 ? (Matrix4x3)list[x + 1] :
             Quat.Slerp(list[x + 0], list[x + 1], f);
-          if (m == p.Transform) return false;
-          p.Transform = m; return true;
+          if (m == p.transform) return false;
+          p.transform = m; return true;
         }
       }
     }
@@ -1736,7 +1691,7 @@ namespace Test
     sealed class UndoSel : Undo
     {
       DX11ModelCtrl p; Group[]? a;
-      internal UndoSel(DX11ModelCtrl p, Group[]? a) { this.p = p; this.a = a; }
+      internal UndoSel(DX11ModelCtrl p, params Group[]? a) { this.p = p; this.a = a; }
       internal override void exec()
       {
         var t = p.selection.Count != 0 ? p.selection.ToArray() : null; p.Select(a); a = t;
@@ -1816,10 +1771,10 @@ namespace Test
       [Category("\tDrag Tool"), DefaultValue(typeof(Size), "64, 64")]
       public Size PreviewsSize { get; set; } = new Size(64, 64);
 
-      [Category("\tGroup Command"), DefaultValue(GroupM.Group)]
-      public GroupM GroupType { get; set; }
-      [Category("\tGroup Command"), DefaultValue(GroupC.CenterXY)]
-      public GroupC GroupCenter { get; set; }
+      //[Category("\tGroup Command"), DefaultValue(GroupM.Group)]
+      //public GroupM GroupType { get; set; }
+      //[Category("\tGroup Command"), DefaultValue(GroupC.CenterXY)]
+      //public GroupC GroupCenter { get; set; }
 
       [Category("Display Driver"), TypeConverter(typeof(DrvConv))]
       public uint Driver
@@ -1842,8 +1797,8 @@ namespace Test
       [Category("Registry"), DefaultValue(false)]
       public bool SaveSettings { get; set; }
 
-      public enum GroupM { Group, BoolGeometry }
-      public enum GroupC { CenterXY }
+      //public enum GroupM { Group, BoolGeometry }
+      //public enum GroupC { CenterXY }
       public enum XFormat { xxz, xxzpng }
       class DrvConv : TypeConverter
       {
@@ -1918,10 +1873,6 @@ namespace Test
         }
       }
       internal protected virtual void Invalidate() => parent?.Invalidate();
-      internal protected Group[]? VisibleNodes
-      {
-        get => nodes != null && this is not Models.BoolGeometry ? nodes : default;
-      }
       internal protected virtual object? GetService(Type t)
       {
         return parent != null ? parent.GetService(t) : null;
@@ -1938,6 +1889,7 @@ namespace Test
 
     public class Group : Node
     {
+      internal Matrix4x3 transform;
       [Category("\t\tGeneral")]
       public string Name
       {
@@ -1959,41 +1911,40 @@ namespace Test
       [Category("\tTransform"), TypeConverter(typeof(Models.VectorConverter))]
       public Vector3 Location
       {
-        get => Transform.Translation;
-        set { Transform.Translation = value; parent?.Invalidate(); }
+        get => transform.Translation;
+        set { transform.Translation = value; parent?.Invalidate(); }
       }
       [Category("\tTransform"), TypeConverter(typeof(Models.VectorConverter))]
       public Vector3 Rotation
       {
-        get => Transform.Rotation;
-        set { Transform.Rotation = value; parent?.Invalidate(); }
+        get => transform.Rotation;
+        set { transform.Rotation = value; parent?.Invalidate(); }
       }
       [Category("\tTransform"), TypeConverter(typeof(Models.VectorConverter))]
       public Vector3 Scaling
       {
-        get => Transform.Scaling;
-        set { Transform.Scaling = value; parent?.Invalidate(); }
+        get => transform.Scaling;
+        set { transform.Scaling = value; parent?.Invalidate(); }
       }
-      public Matrix4x3 Transform;
       public Matrix4x3 GetTransform(Node? root = null)
       {
         if (root == this) return Matrix4x3.Identity;
-        if (root == parent || parent is not Group p) return Transform;
-        return Transform * p.GetTransform(root);
+        if (root == parent || parent is not Group p) return transform;
+        return transform * p.GetTransform(root);
       }
       public void GetBox(ref (Vector3 Min, Vector3 Max) box, in Matrix4x3? pm = default)
       {
-        var a = VisibleNodes;
-        if (a != null)
-          for (int i = 0; i < a.Length; i++)
-          {
-            var p = nodes[i]; p.GetBox(ref box, pm.HasValue ? p.Transform * pm.Value : p.Transform);
-          }
+        for (int i = 0, n = nodes != null ? nodes.Length : 0; i < n; i++)
+        {
+          var p = nodes[i]; if ((p.flags & 0x02) != 0) continue;
+          p.GetBox(ref box, pm.HasValue ? p.transform * pm.Value : p.transform);
+        }
         if (this is not Models.Geometry geo) return;
         var pp = geo.vertices; if (pp == null) return;
-        for (int i = 0; i < pp.Length; i++)
+        var tm = pm.HasValue ? pm.Value : default; var t = pm.HasValue;
+        for (int i = 0, n = pp.Length; i < n; i++)
         {
-          var p = pp[i]; if (pm.HasValue) p = Vector3.Transform(p, pm.Value);
+          var p = pp[i]; if (t) p = Matrix4x3.Transform(p, tm);
           box.Min = Vector3.Min(box.Min, p);
           box.Max = Vector3.Max(box.Max, p);
         }
@@ -2008,7 +1959,7 @@ namespace Test
         base.Serialize(e, storing);
         if (storing)
         {
-          var m = Transform;
+          var m = transform;
           if (!m.IsIdentity) e.SetAttributeValue("transform", Models.format(new ReadOnlySpan<float>(&m, 12)));
           if (Fixed) e.SetAttributeValue("fixed", true);
           if (!Visible) e.SetAttributeValue("visible", false);
@@ -2019,9 +1970,9 @@ namespace Test
           if ((a = e.Attribute("transform")) != null)
           {
             var m = default(Matrix4x3);
-            Models.parse(a.Value.AsSpan().Trim(), new Span<float>(&m, 12)); Transform = m;
+            Models.parse(a.Value.AsSpan().Trim(), new Span<float>(&m, 12)); transform = m;
           }
-          else Transform = Matrix4x3.Identity;
+          else transform = Matrix4x3.Identity;
           if ((a = e.Attribute("fixed")) != null) Fixed = (bool)a;
           if ((a = e.Attribute("visible")) != null) Visible = (bool)a;
         }
@@ -2307,7 +2258,7 @@ namespace Test
             var hash = p.vertices.Length ^ p.indices.Length;
             if (hash != this.hash) { this.hash = hash; this.pp = null; }
             if (this.pp != null) return; //Console.Beep(4000, 100);
-            var ii = p.indices; var xp = p.GetVertices();
+            var ii = p.indices; var xp = getrpts(p);
             this.pp = xp as Vector3R[] ?? ((Vector3[])xp).Select(p => (Vector3R)p).ToArray();
             this.ee = Enumerable.Range(0, ii.Length / 3).
               Where(i => Math.Max(Math.Max(ii[i * 3], ii[i * 3 + 1]), ii[i * 3 + 2]) < pp.Length).
@@ -2408,7 +2359,7 @@ namespace Test
         {
           return null;
         }
-        protected internal virtual Array GetVertices() => vertices;
+        //protected internal virtual Array GetVertices() => vertices;
         protected void invert()
         {
           for (int i = 0; i < indices.Length; i += 3) { var t = indices[i]; indices[i] = indices[i + 1]; indices[i + 1] = t; }
@@ -2449,10 +2400,8 @@ namespace Test
             var geo = (Geometry)context.Instance;
             var pp = TypeDescriptor.GetProperties(geo);
             if (geo is BoolGeometry bg && bg.Source != BoolGeometry.MaterialSource.Own)
-            {
               pp = new PropertyDescriptorCollection(pp.OfType<PropertyDescriptor>().
-                Where(p => p.ComponentType != typeof(Geometry)).ToArray());
-            }
+                Where(p => p.ComponentType != typeof(Geometry) || p.PropertyType == typeof(MeshInfo)).ToArray());
             else if (geo.ranges[geo.Current].material.Texture == null)
               pp = new PropertyDescriptorCollection(pp.OfType<PropertyDescriptor>().
                 Where(p => p.Name == "Texture" || !p.Name.StartsWith("Texture")).ToArray());
@@ -2468,6 +2417,12 @@ namespace Test
             var n = ((Geometry)context.Instance).ranges.Length;
             return new StandardValuesCollection(Enumerable.Range(0, n).ToArray());
           }
+        }
+        internal static object getrpts(Geometry geo)
+        {
+          if (geo is BoolGeometry bg && bg.rpts is VectorR v)
+            return v.Chunk((a, b, c) => new Vector3R(a, b, c)).ToArray();
+          return geo.vertices;
         }
       }
 
@@ -2522,21 +2477,21 @@ namespace Test
         [Category("Geometry")]
         public int VertexCount
         {
-          get => rpts != null ? rpts.Length : vertices.Length;
+          get => vertices.Length;
         }
         [Category("Geometry")]
         public int IndexCount
         {
           get => indices.Length;
         }
-        internal Vector3R[]? rpts;
+        //internal Vector3R[]? rpts;
         protected internal override void Build()
         {
-          if (rpts != null)
-          {
-            var n = rpts.Length; Array.Resize(ref vertices, n);
-            for (int i = 0; i < n; i++) vertices[i] = (Vector3)rpts[i];
-          }
+          //if (rpts != null)
+          //{
+          //  var n = rpts.Length; Array.Resize(ref vertices, n);
+          //  for (int i = 0; i < n; i++) vertices[i] = (Vector3)rpts[i];
+          //}
         }
         protected internal override unsafe void Serialize(XElement e, bool storing)
         {
@@ -2544,28 +2499,29 @@ namespace Test
           if (storing)
           {
             string s;
-            if (rpts != null)
-            {
-              s = DX11Ctrl.ToString(new ReadOnlySpan<Vector3R>(rpts), "R");
-              e.SetAttributeValue("vertices-rat", s);
-            }
-            else
-            {
-              fixed (Vector3* p = vertices) s = format(new ReadOnlySpan<float>(p, vertices.Length * 3));
-              e.SetAttributeValue("vertices", s);
-            }
+            //if (rpts != null)
+            //{
+            //  s = DX11Ctrl.ToString(new ReadOnlySpan<Vector3R>(rpts), "R");
+            //  e.SetAttributeValue("vertices-rat", s);
+            //}
+            //else
+            //{
+            fixed (Vector3* p = vertices) s = format(new ReadOnlySpan<float>(p, vertices.Length * 3));
+            e.SetAttributeValue("vertices", s);
+            //}
             fixed (ushort* p = indices) s = format(new ReadOnlySpan<ushort>(p, indices.Length));
             e.SetAttributeValue("indices", s);
           }
           else
           {
             XAttribute a;
-            if ((a = e.Attribute("vertices-rat")) != null)
-            {
-              var sp = a.Value.AsSpan().Trim(); rpts = new Vector3R[tokencount(sp) / 3];
-              for (int i = 0; i < rpts.Length; i++) rpts[i] = Vector3R.Parse(ref sp);
-            }
-            else if ((a = e.Attribute("vertices")) != null)
+            //if ((a = e.Attribute("vertices-rat")) != null)
+            //{
+            //  var sp = a.Value.AsSpan().Trim(); rpts = new Vector3R[tokencount(sp) / 3];
+            //  for (int i = 0; i < rpts.Length; i++) rpts[i] = Vector3R.Parse(ref sp);
+            //}
+            //else 
+            if ((a = e.Attribute("vertices")) != null)
             {
               var sp = a.Value.AsSpan().Trim(); vertices = new Vector3[tokencount(sp) / 3];
               fixed (Vector3* p = vertices) parse(sp, new Span<float>(p, vertices.Length * 3));
@@ -2577,12 +2533,13 @@ namespace Test
             }
           }
         }
-        protected internal override Array GetVertices() => rpts ?? (Array)vertices;
+        //protected internal override Array GetVertices() => rpts ?? (Array)vertices;
       }
+
 
       public class BoolGeometry : Geometry
       {
-        PolyhedronR.Mode mode; Vector3R[]? rpts; MaterialSource source;
+        PolyhedronR.Mode mode; MaterialSource source; internal VectorR? rpts;
         (int count, Material material)[]? myranges;
         [Category("Geometry")]
         public PolyhedronR.Mode Operation
@@ -2614,7 +2571,7 @@ namespace Test
             if ((a = e.Attribute("mat")) != null) MaterialSource.TryParse(a.Value, out source);
           }
         }
-        protected internal override Array GetVertices() => rpts ?? (Array)vertices;
+        //protected internal override Array GetVertices() => rpts ?? (Array)vertices;
         protected internal override void Build()
         {
           var n = nodes != null ? nodes.Length : 0;
@@ -2624,9 +2581,9 @@ namespace Test
             a.checkbuild(0x08);
             b.checkbuild(0x08);
             var mb = PolyhedronR.GetInstance();
-            mb.SetMesh(0, a.GetVertices(), a.indices); mb.Transform(0, a.Transform);
-            mb.SetMesh(1, b.GetVertices(), b.indices); mb.Transform(1, b.Transform);
-            mb.Boolean(mode, source == MaterialSource.Merge ? 0 : 2);
+            mb.SetMesh(0, getrpts(a), a.indices); mb.Transform(0, a.transform);
+            mb.SetMesh(1, getrpts(b), b.indices); mb.Transform(1, b.transform);
+            mb.Csg(mode, source == MaterialSource.Merge ? 0 : 2);
             switch (source)
             {
               case MaterialSource.Merge: ranges = remap(mb.Indices, mb.Mapping, a, b); break;
@@ -2634,7 +2591,7 @@ namespace Test
               case MaterialSource.Second: ranges = new (int count, Material material)[] { new(0, b.ranges[0].material) }; break;
               default: ranges = myranges; break;
             }
-            rpts = mb.Vertices.ToArray();
+            this.rpts = VectorR.Create(mb.Vertices.Chunk(3, (p, i) => i == 0 ? p.X : i == 1 ? p.Y : p.Z).ToArray());
             vertices = mb.Vertices.Select(p => (Vector3)p).ToArray();
             indices = mb.Indices.Select(p => (ushort)p).ToArray();
             return;
@@ -2648,7 +2605,7 @@ namespace Test
           if (ii.Count == 0) return a.ranges.Take(1).ToArray();
           var t1 = a.ranges.Select((p, i) => (n: p.count != 0 ? p.count : a.indices.Length, m: p.material)).ToList();
           var n1 = t1.Count; var n2 = a.indices.Length / 3;
-          var tm = a.Transform * !b.Transform;
+          var tm = a.transform * !b.transform;
           t1.AddRange(b.ranges.Select((p, i) => (n: p.count != 0 ? p.count : b.indices.Length, m: p.material.Clone(tm))));
           var tt = t1.SelectMany((p, i) => Enumerable.Repeat(i, p.n / 3)).ToArray();
           for (int i = 0, t; i < map.Count; i++) map[i] = tt[(((t = map[i]) & 1) * n2) + (t >> 1) / 3];
@@ -2983,7 +2940,7 @@ namespace Test
             var p1 = raster(trans2(curpos)); var p2 = p1; var p3 = p1;
             var np = geo.points.Length;
             var pp = geo.points.Concat(Enumerable.Repeat(p1, 4)).ToArray();
-            var cc = (geo.counts != null ? geo.counts : new ushort[] { (ushort)np }).Concat(Enumerable.Repeat((ushort)4, 1)).ToArray();
+            var cc = (geo.counts != null ? geo.counts : new ushort[] { (ushort)np }).Append((ushort)4).ToArray();
             var ud = undo(geo, pp, cc); var vd = default(Action); Cursor = Cursors.Cross;
             return id =>
             {
@@ -3616,7 +3573,7 @@ namespace Test
     internal static ReadOnlySpan<char> param_slice(ref ReadOnlySpan<char> sp)
     {
       Debug.Assert(sp == sp.Trim());
-      int i = 0; for (; i < sp.Length && !(char.IsWhiteSpace(sp[i]) || sp[i] == ';'); i++) ;
+      int i = 0; for (; i < sp.Length && !(char.IsWhiteSpace(sp[i]) /*|| sp[i] == ';'*/); i++) ;
       var w = sp.Slice(0, i); sp = sp.Slice(i < sp.Length ? i + 1 : i).TrimStart(); return w;
     }
     internal static int param_count(ReadOnlySpan<char> sp)
@@ -3821,5 +3778,22 @@ namespace Test
       }
     }
   }
-
+  static class Extensions
+  {
+    internal static IEnumerable<T2> Chunk<T1, T2>(this IReadOnlyList<T1> a, int c, Func<T1, int, T2> f)
+    {
+      for (int i = 0; i < a.Count; i++) for (int k = 0; k < c; k++) yield return f(a[i], k);
+    }
+    internal static IEnumerable<T2> Chunk<T1, T2>(this IEnumerable<T1> a, Func<T1, T1, T1, T2> f)
+    {
+      var e = a.GetEnumerator();
+      for (; e.MoveNext();)
+      {
+        var u = e.Current; if (!e.MoveNext()) break;
+        var v = e.Current; if (!e.MoveNext()) break;
+        var w = e.Current; yield return f(u, v, w);
+      }
+      //for (int i = 0; i < a.Count; i += 3) yield return f(a[i], a[i + 1], a[i + 2]);
+    }
+  }
 }

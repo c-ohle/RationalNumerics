@@ -14,7 +14,7 @@ namespace Test
       Application.Run(new MainFrame());
     }
 
-#if false
+#if true
     static void test()
     {
       VectorR a, b, c; string s;

@@ -1135,6 +1135,15 @@ references:
   fullName.vb: System.Numerics.BigRational.Narrowing(System.Numerics.BigRational to System.Numerics.BigInteger)
   nameWithType: BigRational.Explicit(BigRational to BigInteger)
   nameWithType.vb: BigRational.Narrowing(BigRational to BigInteger)
+- uid: System.Numerics.BigRational.op_Explicit(System.Numerics.BigRational)~System.ReadOnlySpan{System.UInt32}
+  name: Explicit(BigRational to ReadOnlySpan<UInt32>)
+  href: api/System.Numerics.BigRational.op_Explicit.html#System_Numerics_BigRational_op_Explicit_System_Numerics_BigRational__System_ReadOnlySpan_System_UInt32_
+  commentId: M:System.Numerics.BigRational.op_Explicit(System.Numerics.BigRational)~System.ReadOnlySpan{System.UInt32}
+  name.vb: Narrowing(BigRational to ReadOnlySpan(Of UInt32))
+  fullName: System.Numerics.BigRational.Explicit(System.Numerics.BigRational to System.ReadOnlySpan<System.UInt32>)
+  fullName.vb: System.Numerics.BigRational.Narrowing(System.Numerics.BigRational to System.ReadOnlySpan(Of System.UInt32))
+  nameWithType: BigRational.Explicit(BigRational to ReadOnlySpan<UInt32>)
+  nameWithType.vb: BigRational.Narrowing(BigRational to ReadOnlySpan(Of UInt32))
 - uid: System.Numerics.BigRational.op_Explicit(System.Numerics.BigRational)~System.Single
   name: Explicit(BigRational to Single)
   href: api/System.Numerics.BigRational.op_Explicit.html#System_Numerics_BigRational_op_Explicit_System_Numerics_BigRational__System_Single

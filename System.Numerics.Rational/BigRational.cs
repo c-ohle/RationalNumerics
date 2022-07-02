@@ -590,6 +590,14 @@ namespace System.Numerics
         return (p[0] & 0x80000000) == 0 ? r : -r;
       }
     }
+    /// <summary>
+    /// Defines an explicit access to the internal data representation of a <see cref="BigRational"/> number.
+    /// </summary>
+    /// <param name="value">A <see cref="BigRational"/> number.</param>
+    public static explicit operator ReadOnlySpan<uint>(BigRational value)
+    {
+      return value.p; 
+    }
 
     /// <summary>
     /// Returns the value of the <see cref="BigRational"/> operand. (The sign of the operand is unchanged.)

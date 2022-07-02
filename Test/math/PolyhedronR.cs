@@ -38,7 +38,7 @@ namespace System.Numerics.Rational
       for (i = 0; i < xp.Count; i++) xp[i] = Vector3R.Transform(xp[i], m);
     }
     public enum Mode { Union, Difference, Intersection }
-    public void Boolean(Mode mode, int flags = 0)
+    public void Csg(Mode mode, int flags = 0)
     {
       var abox = getbox(app);
       var bbox = getbox(bpp);

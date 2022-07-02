@@ -23,11 +23,17 @@ In this form no further memory allocations are necessary at runtime and the tess
 
 ![tess1](docs/images/tess1.png)
 
-The third example, a calculator, is intended for testing BigRational's high-level functions API.  
+The third example is an intensive test for a set of 3D vector types and algorithms
+based on BigRational and BigRational.CPU arithmetic.  
+All 3D mesh calculations, polygon tessellations, CSG, etc. are done in real time at animation time.
+
+![polyhedron1](docs/images/polyhedron1.png)
+
+The fourth example, a calculator, is intended for testing BigRational's high-level functions API.  
 No problem to calculate with thousands of decimal digits.  
 Precisission, string formattings and speed for the several functions can be checked.
 
-![tess1](docs/images/calc1.png)
+![calc1](docs/images/calc1.png)
 
 More detailed benchmarks coming soon. 
 

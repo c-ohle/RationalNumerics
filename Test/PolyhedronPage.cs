@@ -59,7 +59,7 @@ namespace Test
           case 2008: return OnProperties(test);
           //case 2009: return OnToolbox(test);
           case 2010: return OnStoryBoard(test);
-          case 2054: return OnCheckMash(test);
+          //case 2054: return OnCheckMash(test);
         }
       }
       catch (Exception e)
@@ -89,15 +89,15 @@ namespace Test
         nodes = new Group[] {
         new Models.Camera {
           Name = "Camera", Fov = 30, Near = 0.1f, Far = 1000,
-          Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(new Vector3(0, -5, 5), new Vector3(), new Vector3(0, 0, 1)),
+          transform = !(Matrix4x3)Matrix4x4.CreateLookAt(new Vector3(0, -5, 5), new Vector3(), new Vector3(0, 0, 1)),
         },
         new Models.Light {
           Name = "Light",
-          Transform = !(Matrix4x3)Matrix4x4.CreateLookAt(new Vector3(), new Vector3(-1, -1.5f, 3), new Vector3(0, 0, 1)),
+          transform = !(Matrix4x3)Matrix4x4.CreateLookAt(new Vector3(), new Vector3(-1, -1.5f, 3), new Vector3(0, 0, 1)),
         },
         new Models.BoxGeometry {
           Name = "Ground", Fixed = true,
-          Transform = Matrix4x3.CreateTranslation(0, 0, 0),
+          transform = Matrix4x3.CreateTranslation(0, 0, 0),
           p1 = new Vector3(-10, -10, -0.1f), p2 = new Vector3(+10, +10, 0),
           ranges = new (int, Models.Material)[] { (0, new Models.Material {
             Diffuse = (uint)Color.LightGray.ToArgb(),
@@ -146,6 +146,7 @@ namespace Test
       var x = propsView.IsHandleCreated; if (!x) OnProperties(null);
       propsView.btnstory.PerformClick(); if (!x) OnProperties(null); return 1;
     }
+#if false
     int OnCheckMash(object? test)
     {
       if (modelView.selection.Count != 1 || modelView.selection[0] is not Models.Geometry geo) return 0;
@@ -203,6 +204,7 @@ namespace Test
         this.edges = eb.Count(p => p.a < p.b && eb.Contains((p.b, p.a)));
       }
     }
+#endif
 
     void btn_close_Click(object sender, EventArgs e)
     {

@@ -194,7 +194,7 @@ namespace Test
             var s = n.ToString(); var istack = i; if (i == 0) { istack = @public ? this.npub++ : this.Count; this.Insert(istack, null); }
             t = a.next(); t.trim(1, 1); a.trim(1, 1); var ab = this.Count;
             for (; t.n != 0;) { n = t.next(','); var v = n.gettype(); check(n, ab); this.Add(Expression.Parameter(GetType(v), n.ToString())); if (dbg != null && (flags & 0x08) == 0) map(n, this[this.Count - 1]); }
-            var t0 = i != 0 ? this[istack].Type : type != typeof(void) ? Expression.GetFuncType(this.Skip(ab).Select(p => p.Type).Concat(Enumerable.Repeat(type, 1)).ToArray()) : Expression.GetActionType(this.Skip(ab).Select(p => p.Type).ToArray());
+            var t0 = i != 0 ? this[istack].Type : type != typeof(void) ? Expression.GetFuncType(this.Skip(ab).Select(p => p.Type).Append(type).ToArray()) : Expression.GetActionType(this.Skip(ab).Select(p => p.Type).ToArray());
             var t1 = i != 0 ? this[istack] : Expression.Variable(t0, s); this[istack] = t1;
             if ((flags & 0x08) != 0) { this.RemoveRange(ab, this.Count - ab); continue; }
             var t2 = Expression.Lambda(t0, Parse(a, Expression.Label(type, "return"), null, null, 0x02 | 0x20), s, this.Skip(ab));

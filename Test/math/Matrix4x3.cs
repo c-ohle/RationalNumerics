@@ -319,7 +319,7 @@ namespace System.Numerics
       if (MathF.Abs(s) == 1) c = 0; else if (MathF.Abs(c) == 1) s = 0;
       return new() { M33 = 1, M11 = c, M12 = s, M21 = -s, M22 = c };
     }
-    public static Vector3 Transform(Vector3 a, in Matrix4x3 b)
+    public static Vector3 Transform(Vector3 a, Matrix4x3 b)
     {
       return new Vector3(
         a.X * b.M11 + a.Y * b.M21 + a.Z * b.M31 + b.M41,

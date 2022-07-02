@@ -10,7 +10,7 @@ namespace System.Numerics.Rational
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public readonly struct VectorR : IEnumerable<BigRational>, IEquatable<VectorR>//, IFormattable, ISpanFormattable
+  public readonly struct VectorR : IEnumerable<BigRational>, IEquatable<VectorR> //, IFormattable, ISpanFormattable, IReadOnlyList<BigRational> 
   {
     public override string ToString()
     {
@@ -18,7 +18,7 @@ namespace System.Numerics.Rational
     }
     public readonly string ToString(string? format, IFormatProvider? provider = null)
     { //todo: case values.Length is large
-      return '[' + string.Join("; ", this.Select(p => p.ToString(format, provider))) + ']';
+      return '[' + string.Join(' ', this.Select(p => p.ToString(format, provider))) + ']';
     }
     public static VectorR Parse(string s)
     {
@@ -49,7 +49,7 @@ namespace System.Numerics.Rational
     {
       if (p == b.p) return true;
       if (p == null || p.Length != b.p.Length) return false;
-      for (int i = 0; i < p.Length; i++) if (p[i] != b.p[i]) return true;
+      for (int i = 0; i < p.Length; i++) if (p[i] != b.p[i]) return false;
       return true;
     }
     public int Length
@@ -89,13 +89,38 @@ namespace System.Numerics.Rational
       var r = Create(cpu, n); cpu.pop(n); return r;
     }
     //operators, and so on...
-    public static VectorR Create(params BigRational[] values)
+    public static unsafe VectorR Create(params BigRational[] values)
     {
       var n = values.Length; if (n == 0) return default;
-      var cpu = rat.task_cpu; for (int i = 0; i < n; i++) cpu.push(values[i]);
-      var r = Create(cpu, n); cpu.pop(n); return r;
+      //var cpu = rat.task_cpu; for (int i = 0; i < n; i++) cpu.push(values[i]);
+      //var r = Create(cpu, n); cpu.pop(n); return r;
+      int a = 0; for (int i = 0; i < n; i++) a += Math.Max(4, ((ReadOnlySpan<uint>)values[i]).Length);
+      var p = new uint[n + a]; var w = new Span<uint>(p);
+      for (int i = 0, b = n; i < n; i++)
+      {
+        p[i] = unchecked((uint)(i == 0 ? n : b));
+        var s = (ReadOnlySpan<uint>)values[i];
+        if (s.Length == 0) { var t = (1u, 0u, 1u, 1u); s = new ReadOnlySpan<uint>(&t.Item1, 4); }
+        s.CopyTo(w.Slice(b)); b += s.Length;
+      }
+      return new VectorR(p);
     }
-    public static VectorR Create(rat.CPU cpu, int count)
+    //public static unsafe VectorR Create(IEnumerable<BigRational> values)
+    //{
+    //  int n = 0, a = 0;
+    //  foreach (var z in values) { a += Math.Max(4, ((ReadOnlySpan<uint>)z).Length); n++; }
+    //  if (n == 0) return default;
+    //  var p = new uint[n + a]; int i = 0, b = n; var w = new Span<uint>(p);
+    //  foreach (var z in values) //for (int i = 0, b = n; i < n; i++)
+    //  {
+    //    p[i] = unchecked((uint)(i == 0 ? n : b)); i++;
+    //    var s = (ReadOnlySpan<uint>)z;
+    //    if (s.Length == 0) { var t = (1u, 0u, 1u, 1u); s = new ReadOnlySpan<uint>(&t.Item1, 4); }
+    //    s.CopyTo(w.Slice(b)); b += s.Length;
+    //  }
+    //  return new VectorR(p);
+    //}
+    public static VectorR Create(BigRational.CPU cpu, int count)
     {
       uint c = checked((uint)count), m = cpu.mark() - c; int a = 0;
       for (uint i = 0; i < count; i++)

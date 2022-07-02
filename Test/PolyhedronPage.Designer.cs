@@ -55,21 +55,16 @@
       Test.MenuItem _file_save;
       Test.MenuItem _file_saveas;
       System.Windows.Forms.ToolStripLabel toolStripLabel1;
-      Test.MenuItem _ggroup;
-      Test.MenuItem _ungroup;
-      System.Windows.Forms.ToolStripSeparator sep1;
-      Test.MenuItem _band;
-      Test.MenuItem _bdiiff;
-      Test.MenuItem _bint;
-      Test.MenuItem _bhalf;
-      System.Windows.Forms.ToolStripSeparator sep2;
-      Test.MenuItem _center;
-      Test.MenuItem _check;
-      System.Windows.Forms.ToolStripSeparator sep3;
+      Test.MenuItem _group1;
+      Test.MenuItem _ungroup2;
+      System.Windows.Forms.ToolStripSeparator _5;
+      Test.MenuItem _groupcsg;
+      Test.MenuItem _center2;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
+      System.Windows.Forms.Button button1;
+      System.Windows.Forms.Button button2;
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
-      this._model = new Test.MenuItem();
       this._3 = new System.Windows.Forms.ToolStripSeparator();
       this._4 = new System.Windows.Forms.ToolStripSeparator();
       this.modelView = new Test.DX11ModelCtrl();
@@ -88,7 +83,6 @@
       this.btn_record = new System.Windows.Forms.ToolStripButton();
       this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
       this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-      this.label3 = new System.Windows.Forms.Label();
       _1 = new System.Windows.Forms.ToolStripSeparator();
       redo_back = new Test.MenuItem();
       undo_back = new Test.MenuItem();
@@ -115,17 +109,13 @@
       _file_save = new Test.MenuItem();
       _file_saveas = new Test.MenuItem();
       toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-      _ggroup = new Test.MenuItem();
-      _ungroup = new Test.MenuItem();
-      sep1 = new System.Windows.Forms.ToolStripSeparator();
-      _band = new Test.MenuItem();
-      _bdiiff = new Test.MenuItem();
-      _bint = new Test.MenuItem();
-      _bhalf = new Test.MenuItem();
-      sep2 = new System.Windows.Forms.ToolStripSeparator();
-      _center = new Test.MenuItem();
-      _check = new Test.MenuItem();
-      sep3 = new System.Windows.Forms.ToolStripSeparator();
+      _group1 = new Test.MenuItem();
+      _ungroup2 = new Test.MenuItem();
+      _5 = new System.Windows.Forms.ToolStripSeparator();
+      _groupcsg = new Test.MenuItem();
+      _center2 = new Test.MenuItem();
+      button1 = new System.Windows.Forms.Button();
+      button2 = new System.Windows.Forms.Button();
       this.contextMenuView.SuspendLayout();
       this.contextMenuPropsView.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -281,7 +271,7 @@
       btn_run.Name = "btn_run";
       btn_run.Size = new System.Drawing.Size(94, 29);
       btn_run.TabIndex = 2;
-      btn_run.Text = "Run Test";
+      btn_run.Text = "CSG Tests";
       btn_run.UseVisualStyleBackColor = true;
       btn_run.Click += new System.EventHandler(this.btn_run_Click);
       // 
@@ -351,85 +341,42 @@
       toolStripLabel1.Size = new System.Drawing.Size(100, 24);
       toolStripLabel1.Text = " Storyboard";
       // 
-      // _ggroup
+      // _group1
       // 
-      _ggroup.Id = 2006;
-      _ggroup.Name = "_ggroup";
-      _ggroup.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-      _ggroup.Size = new System.Drawing.Size(253, 26);
-      _ggroup.Text = "Group";
+      _group1.Id = 2006;
+      _group1.Name = "_group1";
+      _group1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+      _group1.Size = new System.Drawing.Size(231, 24);
+      _group1.Text = "Group";
       // 
-      // _ungroup
+      // _ungroup2
       // 
-      _ungroup.Id = 2007;
-      _ungroup.Name = "_ungroup";
-      _ungroup.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
-      _ungroup.Size = new System.Drawing.Size(253, 26);
-      _ungroup.Text = "Ungroup";
+      _ungroup2.Id = 2007;
+      _ungroup2.Name = "_ungroup2";
+      _ungroup2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
+      _ungroup2.Size = new System.Drawing.Size(231, 24);
+      _ungroup2.Text = "Ungroup";
       // 
-      // sep1
+      // _5
       // 
-      sep1.Name = "sep1";
-      sep1.Size = new System.Drawing.Size(250, 6);
+      _5.Name = "_5";
+      _5.Size = new System.Drawing.Size(228, 6);
       // 
-      // _band
+      // _groupcsg
       // 
-      _band.Id = 2050;
-      _band.Name = "_band";
-      _band.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.U)));
-      _band.Size = new System.Drawing.Size(253, 26);
-      _band.Text = "Union A Ս B";
+      _groupcsg.Id = 2009;
+      _groupcsg.Name = "_groupcsg";
+      _groupcsg.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.G)));
+      _groupcsg.Size = new System.Drawing.Size(231, 24);
+      _groupcsg.Text = "Group CSG";
       // 
-      // _bdiiff
+      // _center2
       // 
-      _bdiiff.Id = 2051;
-      _bdiiff.Name = "_bdiiff";
-      _bdiiff.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D)));
-      _bdiiff.Size = new System.Drawing.Size(253, 26);
-      _bdiiff.Text = "Difference A / B";
-      // 
-      // _bint
-      // 
-      _bint.Id = 2052;
-      _bint.Name = "_bint";
-      _bint.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
-      _bint.Size = new System.Drawing.Size(253, 26);
-      _bint.Text = "Intersection A Ո B";
-      // 
-      // _bhalf
-      // 
-      _bhalf.Id = 2053;
-      _bhalf.Name = "_bhalf";
-      _bhalf.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.H)));
-      _bhalf.Size = new System.Drawing.Size(253, 26);
-      _bhalf.Text = "Halfspace";
-      // 
-      // sep2
-      // 
-      sep2.Name = "sep2";
-      sep2.Size = new System.Drawing.Size(250, 6);
-      // 
-      // _center
-      // 
-      _center.Id = 2056;
-      _center.Name = "_center";
-      _center.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.C)));
-      _center.Size = new System.Drawing.Size(253, 26);
-      _center.Text = "Center";
-      // 
-      // _check
-      // 
-      _check.Id = 2054;
-      _check.Name = "_check";
-      _check.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
-      _check.Size = new System.Drawing.Size(253, 26);
-      _check.Text = "Mesh Info...";
-      // 
-      // sep3
-      // 
-      sep3.Name = "sep3";
-      sep3.Size = new System.Drawing.Size(250, 6);
+      _center2.Id = 2056;
+      _center2.Name = "_center2";
+      _center2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.C)));
+      _center2.Size = new System.Drawing.Size(231, 24);
+      _center2.Text = "Center";
       // 
       // label1
       // 
@@ -456,33 +403,18 @@
             del,
             _selall,
             _2,
-            this._model,
+            _group1,
+            _groupcsg,
+            _ungroup2,
+            _center2,
+            _5,
             _file,
             this._3,
             _storyboard,
             this._4,
             props});
       this.contextMenuView.Name = "contextMenu1";
-      this.contextMenuView.Size = new System.Drawing.Size(232, 368);
-      // 
-      // _model
-      // 
-      this._model.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            _ggroup,
-            _ungroup,
-            sep1,
-            _band,
-            _bdiiff,
-            _bint,
-            _bhalf,
-            sep2,
-            _center,
-            sep3,
-            _check});
-      this._model.Id = 0;
-      this._model.Name = "_model";
-      this._model.Size = new System.Drawing.Size(231, 24);
-      this._model.Text = "Model";
+      this.contextMenuView.Size = new System.Drawing.Size(232, 418);
       // 
       // _3
       // 
@@ -689,22 +621,33 @@
       this.toolStripButton2.Text = "⚒";
       this.toolStripButton2.Visible = false;
       // 
-      // label3
+      // button1
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(11, 569);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(142, 20);
-      this.label3.TabIndex = 0;
-      this.label3.Text = "(under construction)";
+      button1.Location = new System.Drawing.Point(444, 12);
+      button1.Name = "button1";
+      button1.Size = new System.Drawing.Size(94, 29);
+      button1.TabIndex = 2;
+      button1.Text = "Skeleton";
+      button1.UseVisualStyleBackColor = true;
+      button1.Click += new System.EventHandler(this.btn_run_Click);
+      // 
+      // button2
+      // 
+      button2.Location = new System.Drawing.Point(544, 12);
+      button2.Name = "button2";
+      button2.Size = new System.Drawing.Size(94, 29);
+      button2.TabIndex = 2;
+      button2.Text = "BSP Tests";
+      button2.UseVisualStyleBackColor = true;
+      button2.Click += new System.EventHandler(this.btn_run_Click);
       // 
       // PolyhedronPage
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+      this.Controls.Add(button2);
+      this.Controls.Add(button1);
       this.Controls.Add(btn_run);
       this.Controls.Add(this.panel1);
-      this.Controls.Add(this.label3);
       this.Controls.Add(this.label1);
       this.Name = "PolyhedronPage";
       this.Size = new System.Drawing.Size(975, 598);
@@ -728,9 +671,7 @@
     private DX11PropsCtrl propsView;
     private ContextMenu contextMenuPropsView;
     private Panel panel1;
-    private Label label3;
     private ToolStripSeparator _3;
-    private MenuItem _model;
     private ToolStripSeparator _4;
     private Panel panelStory;
     private ToolStrip toolStrip1;

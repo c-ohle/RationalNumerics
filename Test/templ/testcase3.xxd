@@ -1,15 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <scene name="Scene1" unit="Meter" ambient="00404040" shadows="true">
-  <camera name="Camera1" transform="0.82853097 -0.55994326 -1.4901161E-07 0.22872634 0.33843917 0.91276664 -0.5110976 -0.7562555 0.4084811 -3.3378277 -3.6317344 1.2612602" fov="30" near="0.1" far="1000" />
+  <camera name="Camera1" transform="0.82853097 -0.55994326 -1.4901161E-07 0.25816944 0.3820052 0.887367 -0.49687523 -0.73521113 0.46106339 -3.3378277 -3.6317344 1.2612602" fov="30" near="0.1" far="1000" />
   <light name="Light1" transform="-0.83205026 0.5547002 0 0.4754573 0.71318597 0.5150787 0.2857143 0.4285714 -0.8571429 0 0 0" />
   <box name="Ground" fixed="true" color="FFD3D3D3" texture="https://c-ohle.github.io/RationalNumerics/web/tex/millis.png" x1="-10" y1="-10" z1="-0.1" x2="10" y2="10" />
   <box name="Plate1" transform="0 1 0 -1 0 0 0 0 2 1.606 -1.647 0" visible="false" color="FFFFD700" x2="1" y2="1" z2="0.2" />
-  <cylinder name="Cylinder" transform="1 0 0 0 1 0 0 0 1 -2.233 -1.169 0" color="FFFFFF00" seg="32" radius="0.5" height="0.2" id="1" />
-  <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -1.816 -1.896 0" color="FF00C000" x2="0.2" y2="0.2" z2="0.2" id="2" />
-  <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -1.233 -2.331 0" color="FF0000FF" x2="0.2" y2="0.2" z2="0.2" id="3" />
-  <aniset name="main">
-    <at pid="1" times="0 510" line="-2.233 -1.169 0; -2.136 -1.179 0" gammas="3" />
-    <at pid="2" times="800 490" line="-1.816 -1.896 0; -1.986 -1.692 0" gammas="3" />
-    <at pid="3" times="1560 250" line="-1.233 -2.331 0; -0.989 -2.343 0" />
-  </aniset>
+  <cylinder name="Cylinder" transform="1 0 0 0 1 0 0 0 1 -2.339 -1.569 0" color="FFFFFF00" seg="32" radius="0.5" height="0.2" />
+  <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -1.697 -2.428 0.116" color="FFFF0000" x2="0.5" y2="0.5" z2="0.2" />
+  <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -1.699 -1.711 0.116" color="FF00FF00" x2="0.5" y2="0.5" z2="0.2" />
 </scene>
