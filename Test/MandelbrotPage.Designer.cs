@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MandelbrotPage));
       this.splitContainer1 = new System.Windows.Forms.SplitContainer();
       this.label4 = new System.Windows.Forms.Label();
@@ -52,7 +53,7 @@
       this.buttonReset = new System.Windows.Forms.Button();
       this.numericUpDownRound = new System.Windows.Forms.NumericUpDown();
       this.label10 = new System.Windows.Forms.Label();
-      this.gcSpyControl1 = new Test.GCSpyControl();
+      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
       this.splitContainer1.Panel1.SuspendLayout();
       this.splitContainer1.Panel2.SuspendLayout();
@@ -138,9 +139,10 @@
       this.labelState1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelState1.Location = new System.Drawing.Point(11, 438);
       this.labelState1.Name = "labelState1";
-      this.labelState1.Size = new System.Drawing.Size(218, 28);
+      this.labelState1.Size = new System.Drawing.Size(240, 28);
       this.labelState1.TabIndex = 2;
       this.labelState1.Text = "status";
+      this.toolTip1.SetToolTip(this.labelState1, "Calculation tíme in milliseconds\r\nGC memory allocations\r\nImage size in pixel");
       // 
       // label1
       // 
@@ -155,12 +157,14 @@
       // label6
       // 
       this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label6.Location = new System.Drawing.Point(166, 14);
+      this.label6.Location = new System.Drawing.Point(158, 14);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(304, 24);
       this.label6.TabIndex = 7;
       this.label6.Text = "Numeric based on BigInteger";
       this.label6.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.toolTip1.SetToolTip(this.label6, "Calculation based on a conventional BigRational implementation\r\nusing one BigInte" +
+        "ger each for the numerator and denominator.");
       // 
       // checkBoxActive2
       // 
@@ -168,7 +172,7 @@
       this.checkBoxActive2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxActive2.Checked = true;
       this.checkBoxActive2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxActive2.Location = new System.Drawing.Point(245, 437);
+      this.checkBoxActive2.Location = new System.Drawing.Point(237, 437);
       this.checkBoxActive2.Name = "checkBoxActive2";
       this.checkBoxActive2.Size = new System.Drawing.Size(225, 24);
       this.checkBoxActive2.TabIndex = 7;
@@ -193,7 +197,7 @@
       this.mandelbrotView2.Name = "mandelbrotView2";
       this.mandelbrotView2.PropChanged = null;
       this.mandelbrotView2.Scaling = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.Scaling")));
-      this.mandelbrotView2.Size = new System.Drawing.Size(465, 391);
+      this.mandelbrotView2.Size = new System.Drawing.Size(457, 391);
       this.mandelbrotView2.StateChanged = null;
       this.mandelbrotView2.TabIndex = 3;
       this.mandelbrotView2.TabStop = false;
@@ -206,6 +210,7 @@
       this.labelState2.Size = new System.Drawing.Size(346, 27);
       this.labelState2.TabIndex = 2;
       this.labelState2.Text = "status";
+      this.toolTip1.SetToolTip(this.labelState2, "Calculation tíme in milliseconds\r\nGC memory allocations\r\nImage size in pixel");
       // 
       // label2
       // 
@@ -241,6 +246,7 @@
       this.labelRelation.TabIndex = 2;
       this.labelRelation.Text = "___ : ___";
       this.labelRelation.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      this.toolTip1.SetToolTip(this.labelRelation, "Performance ratio");
       // 
       // textBoxCenterX
       // 
@@ -363,6 +369,8 @@
       this.numericUpDownRound.Name = "numericUpDownRound";
       this.numericUpDownRound.Size = new System.Drawing.Size(56, 27);
       this.numericUpDownRound.TabIndex = 5;
+      this.toolTip1.SetToolTip(this.numericUpDownRound, "Precision limitation.\r\nRoughly equivalent to an imaginary floating-point type\r\nwi" +
+        "th such mantissa bit count.");
       this.numericUpDownRound.Value = new decimal(new int[] {
             32,
             0,
@@ -381,19 +389,8 @@
       this.label10.Text = "lim:";
       this.label10.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
-      // gcSpyControl1
-      // 
-      this.gcSpyControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.gcSpyControl1.Location = new System.Drawing.Point(0, 489);
-      this.gcSpyControl1.Name = "gcSpyControl1";
-      this.gcSpyControl1.Size = new System.Drawing.Size(155, 25);
-      this.gcSpyControl1.TabIndex = 7;
-      this.gcSpyControl1.Text = null;
-      this.gcSpyControl1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
       // MandelbrotPage
       // 
-      this.Controls.Add(this.gcSpyControl1);
       this.Controls.Add(this.buttonReset);
       this.Controls.Add(this.numericUpDownRound);
       this.Controls.Add(this.numericUpDownIter);
@@ -448,6 +445,6 @@
     private Label label6;
     private NumericUpDown numericUpDownRound;
     private Label label10;
-    private GCSpyControl gcSpyControl1;
+    private ToolTip toolTip1;
   }
 }

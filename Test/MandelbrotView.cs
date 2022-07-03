@@ -231,8 +231,22 @@ namespace Test
       }
       t1 = t2 = 0;
       task = new Task(driver == 0 ? mandel_double : driver == 1 ? mandel_BigInteger : mandel_BigRational);
-      cancel = dostart = false; task.Start(); timer.Start(); StateChanged?.Invoke(this, EventArgs.Empty);
+      cancel = dostart = false; task.Start(); timer.Start(); gcount(true); StateChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    internal long gcnews; long gclast;
+    void gcount(bool on)
+    {
+      //return;
+      if (on) { gclast = gcnews = 0; Application.Idle += gcounter; }
+      else { gcounter(null, EventArgs.Empty); Application.Idle -= gcounter; }
+      void gcounter(object? sender, EventArgs e)
+      {
+        var c = GC.GetTotalMemory(false); //var p = GC.GetGCMemoryInfo(); p.Index...
+        if (c > gclast) gcnews += c - gclast; gclast = c;
+      }
+    }
+
     void delaystart()
     {
       if (bmp == null || manual) return;
@@ -240,8 +254,8 @@ namespace Test
     }
     void stop()
     {
-      timer.Stop();
-      if (task != null) { cancel = true; task.Wait(); task.Dispose(); task = null; }
+      timer.Stop(); if (task == null) return;
+      cancel = true; task.Wait(); task.Dispose(); task = null; gcount(false);
     }
     void update()
     {
@@ -253,7 +267,7 @@ namespace Test
       if (dostart) { dostart = false; start(); return; }
       if (!Visible) { stop(); bmp?.Dispose(); bmp = null; restart = true; return; }
       Invalidate();
-      if (task != null && task.IsCompleted) { timer.Stop(); if (t1 == t2) t2 = t1 + 1; Update(); StateChanged?.Invoke(this, EventArgs.Empty); return; }
+      if (task != null && task.IsCompleted) { timer.Stop(); task = null; gcount(false); if (t1 == t2) t2 = t1 + 1; Update(); StateChanged?.Invoke(this, EventArgs.Empty); return; }
     }
     protected override void OnHandleCreated(EventArgs e)
     {
@@ -328,7 +342,7 @@ namespace Test
     }
     protected override void OnMouseMove(MouseEventArgs e)
     {
-      if (tool != null) tool(0);
+      if (tool != null) tool(0); else base.OnMouseMove(e);
     }
     protected override void OnMouseUp(MouseEventArgs e)
     {

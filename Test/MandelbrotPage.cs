@@ -22,12 +22,13 @@ namespace Test
     }
     void statechaged(object? p, EventArgs? e)
     {
-      var t1 = mandelbrotView1.RenderTime;
-      var t2 = mandelbrotView2.RenderTime;
-      //labelState1.Text = t1 != 0 ? $"{t1} ms" : "calculating...";
-      //labelState2.Text = t2 != 0 ? $"{t2} ms" : checkBoxActive2.Checked ? "calculating..." : "";
-      labelState1.Text = t1 != 0 ? $"{t1} ms ({mandelbrotView1.Width}×{mandelbrotView1.Height})" : "calculating...";
-      labelState2.Text = t2 != 0 ? $"{t2} ms ({mandelbrotView2.Width}×{mandelbrotView2.Height})" : checkBoxActive2.Checked ? "calculating..." : "";
+      var v1 = mandelbrotView1; var t1 = v1.RenderTime;
+      var v2 = mandelbrotView2; var t2 = v2.RenderTime;
+      static string ms(long n) { var i = 0; for (; n >= 1024 && i < 4; n >>= 10, i++) ; return $"{n} {" KMGT"[i]}B"; }
+      labelState1.Text = t1 != 0 ?
+        $"{t1} ms {ms(v1.gcnews)} ({v1.Width}×{v1.Height})" : "calculates...";
+      labelState2.Text = t2 != 0 ?
+        $"{t2} ms {ms(v2.gcnews)} ({v2.Width}×{v2.Height})" : checkBoxActive2.Checked ? "calculates..." : "";
       labelRelation.Text = t1 != 0 && t2 != 0 ?
         $"{(t1 <= t2 ? 1 : t1 / t2)} : {(t1 <= t2 ? t2 / t1 : 1)}" :
         "___ : ___";
@@ -52,7 +53,7 @@ namespace Test
       textBoxCenterX.Text = mandelbrotView1.CenterX.ToString();
       textBoxCenterY.Text = mandelbrotView1.CenterY.ToString();
       numericUpDownIter.Value = mandelbrotView1.Iterations;
-      numericUpDownRound.Value= mandelbrotView1.Lim;
+      numericUpDownRound.Value = mandelbrotView1.Lim;
     }
     void textBox_Leave(object sender, EventArgs e)
     {
@@ -84,8 +85,8 @@ namespace Test
     {
       if (sender == numericUpDownIter)
         mandelbrotView1.Iterations = (int)numericUpDownIter.Value;
-      else if(sender == numericUpDownRound)
-      { 
+      else if (sender == numericUpDownRound)
+      {
         mandelbrotView1.Lim = (int)numericUpDownRound.Value;
         update();
       }
@@ -100,8 +101,8 @@ namespace Test
       {
         if (mandelbrotView1.RenderTime != 0)
         {
-          mandelbrotView2.Driver = ModifierKeys == Keys.Alt ? 
-            MandelbrotView.MandelDriver.Double : 
+          mandelbrotView2.Driver = ModifierKeys == Keys.Alt ?
+            MandelbrotView.MandelDriver.Double :
             MandelbrotView.MandelDriver.BigInteger;
           mandelbrotView2.Start();
         }

@@ -19,9 +19,6 @@ namespace Test
     {
       base.OnLoad(e);
       MenuItem.CmdRoot = OnCommand;
-      //this.path = Path.GetFullPath("templ\\testcase2.xxd");
-      var path = Path.GetFullPath("templ\\testcase2.xxd");
-      modelView.Scene = (Models.Scene)Models.Load(XElement.Load(path));
       propsView.Target = modelView;
       //modelView.Infos.Add("Hello World!");
       panelStory.VisibleChanged += (_, _) =>
@@ -42,6 +39,13 @@ namespace Test
       };
       btn_run_Click(null, null);
     }
+    void btn_run_Click(object? sender, EventArgs? e)
+    {
+      Open(Path.GetFullPath("templ\\testcase2.xxd")); this.path = null;
+      //if (sender == null) return;      
+      modelView.RunningAnimation = modelView.Scene.aniset;
+    }
+
     TimeLineView? timeLineView; string? path; int tv, showtime;
 
     int OnCommand(int id, object? test)
@@ -73,7 +77,7 @@ namespace Test
     {
       var doc = XElement.Load(path);
       var scene = (Models.Scene)Models.Load(doc); //var last = view.Scene != null; if (last && !AskSave()) return; 
-      //timeLineView?.Refresh();
+      modelView.RunningAnimation = null;
       modelView.Scene = scene; this.path = path; // UpdateTitle(); if (last && path != null) mru(path, path);
       if (timeLineView != null) { timeLineView.adjust(); timeLineView.Invalidate(); }
     }
@@ -146,65 +150,6 @@ namespace Test
       var x = propsView.IsHandleCreated; if (!x) OnProperties(null);
       propsView.btnstory.PerformClick(); if (!x) OnProperties(null); return 1;
     }
-#if false
-    int OnCheckMash(object? test)
-    {
-      if (modelView.selection.Count != 1 || modelView.selection[0] is not Models.Geometry geo) return 0;
-      if (test != null) return 1;
-      if (!propsView.Visible || !propsView.btnprops.Checked) OnProperties(null);
-      modelView.extrasel = new(modelView, new MeshInfo(geo)); modelView.Invalidate();
-      return 1;
-    }
-    class MeshInfo
-    {
-      internal MeshInfo(Models.Geometry geo) => this.geo = geo; readonly Models.Geometry geo;
-      public override string ToString() => "Mesh Info";
-      [Category("\t\tGeneral")]
-      public string Name => geo.Name;
-      [Category("\t\tGeneral")]//, Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-      public string Status { get => "ok"; } //set { } }
-      [Category("Mesh")]
-      public int Vertices => geo.vertices.Length;
-      [Category("Mesh")]
-      public int Polygones => geo.indices.Length / 3;
-      [Category("Mesh")]
-      public int Edges
-      {
-        get { calc(); return edges; }
-      }
-      [Category("Mesh")]
-      public int Euler => Vertices - Edges + Polygones;
-      [Category("Polyhedron")]
-      public int Planes
-      {
-        get { calc(); return ee.Length; }
-      }
-      [Category("Polyhedron")]
-      public int Edges_
-      {
-        get { calc(); return hedges; }
-      }
-      Vector3R[]? pp; (PlaneR e, int[] kk)[]? ee; int edges, hedges;
-      void calc()
-      {
-        if (this.pp != null) return;
-        var xp = geo.GetVertices();
-        this.pp = xp as Vector3R[] ?? ((Vector3[])xp).Select(p => (Vector3R)p).ToArray();
-        var ii = geo.indices;
-        this.ee = Enumerable.Range(0, ii.Length / 3).
-          Where(i => Math.Max(Math.Max(ii[i * 3], ii[i * 3 + 1]), ii[i * 3 + 2]) < pp.Length).
-          Select(i => (k: i *= 3, e: PlaneR.FromVertices(pp[ii[i]], pp[ii[i + 1]], pp[ii[i + 2]]))).
-          GroupBy(p => p.e, p => p.k).Select(p => (e: p.Key, kk: p.ToArray())).ToArray();
-        this.hedges = this.ee.Sum(e =>
-        {
-          var tt = e.kk.SelectMany(k => Enumerable.Range(k, 3)).Select(i => (a: ii[i], b: ii[i % 3 != 2 ? i + 1 : i - 2])).ToArray();
-          return tt.Count(p => !tt.Contains((p.b, p.a)));
-        }) >> 1;
-        var eb = Enumerable.Range(0, ii.Length).Select(i => (a: ii[i], b: ii[i % 3 != 2 ? i + 1 : i - 2])).ToHashSet();
-        this.edges = eb.Count(p => p.a < p.b && eb.Contains((p.b, p.a)));
-      }
-    }
-#endif
 
     void btn_close_Click(object sender, EventArgs e)
     {
@@ -237,15 +182,6 @@ namespace Test
     void panel_MouseLeave(object sender, EventArgs e)
     {
       ((Control)sender).Cursor = Cursors.Default;
-    }
-
-    void btn_run_Click(object? sender, EventArgs? e)
-    {
-      //if (sender == null) return;
-      var aniset = modelView.Scene.aniset; if (aniset == null) return;
-      //if (modelView.RunningAnimation != null) return;
-      modelView.RunningAnimation = null;
-      aniset.ani(0); modelView.RunningAnimation = aniset;
     }
 
     void btn_back_Click(object sender, EventArgs e) { timeLineView.ani(0); timeLineView.scrtime(); }
