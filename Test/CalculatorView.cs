@@ -442,7 +442,7 @@ namespace Test
     }
     protected override bool ProcessDialogChar(char charCode)
     {
-      var btn = Controls.OfType<Button>().FirstOrDefault(p => p.Tag is string s && s[0] == charCode);
+      var btn = Controls.OfType<Button>().FirstOrDefault(p => p.Tag is string s && s.Length == 1 && s[0] == charCode);
       if (btn != null) { btn.Focus(); btn.PerformClick(); return true; }
       return base.ProcessDialogChar(charCode);
     }

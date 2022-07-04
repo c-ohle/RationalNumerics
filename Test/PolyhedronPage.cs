@@ -42,7 +42,7 @@ namespace Test
     void btn_run_Click(object? sender, EventArgs? e)
     {
       Open(Path.GetFullPath("templ\\testcase2.xxd")); this.path = null;
-      //if (sender == null) return;      
+      //if (sender == null) return; //start no any     
       modelView.RunningAnimation = modelView.Scene.aniset;
     }
 
@@ -188,11 +188,11 @@ namespace Test
     void btn_back__Click(object sender, EventArgs e) { }
     void btn_forw__Click(object sender, EventArgs e)
     {
-      var scene = timeLineView.view.Scene; if (scene == null) return;
-      var t1 = DX11ModelCtrl.Models.Save(scene);
-      var t2 = t1.ToString(); //File.WriteAllText(@"C:\Users\cohle\Desktop\rec.xml", t2);
-      var t3 = DX11ModelCtrl.Models.Load(XElement.Parse(t2.ToString()));
-      var t4 = DX11ModelCtrl.Models.Save(t3);
+      //var scene = timeLineView.view.Scene; if (scene == null) return;
+      //var t1 = DX11ModelCtrl.Models.Save(scene);
+      //var t2 = t1.ToString(); //File.WriteAllText(@"C:\Users\cohle\Desktop\rec.xml", t2);
+      //var t3 = DX11ModelCtrl.Models.Load(XElement.Parse(t2.ToString()));
+      //var t4 = DX11ModelCtrl.Models.Save(t3);
     }
     void btn_forw_Click(object sender, EventArgs e) { timeLineView.ani(timeLineView.aniset.getendtime()); timeLineView.scrtime(); }
     void btn_record_Click(object sender, EventArgs e) => timeLineView.record();

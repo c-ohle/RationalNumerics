@@ -2,6 +2,7 @@
 global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
+using System.Collections;
 
 namespace Test
 {
@@ -17,7 +18,24 @@ namespace Test
 #if false
     static void test()
     {
-      VectorR a, b, c; string s;
+      VectorR a, b, c; string s; rat x, y;
+      //"2.7182818284590452353602874713526624977572470936999595749669676277"
+      var e = MathR.Exp(1);
+      s = MathRex.GetContinuedFraction(e);
+      e = (rat)"2.7182818284590452353602874713526624977572470936999595749669676277";
+      s = e.ToString("L100");
+      s = MathRex.GetContinuedFraction(e);
+      y = MathRex.ParseContinuedFraction(s);
+      if (y != e) { }
+
+      s = string.Concat(s.Select(c => c == ';' || c == ',' ? ' ' : c));
+      c = VectorR.Parse(s);
+
+      x = (rat)"0.00000000000007686868786";
+      s = MathRex.GetContinuedFraction(x);
+      y = MathRex.ParseContinuedFraction(s);
+      
+      c = VectorR.Parse(string.Concat(s.Select(c => c == ';' || c == ',' ? ' ' : c)));
 
       a = VectorR.Create(1, -2, MathR.Sin(Math.PI / 4), Math.PI);
       var h = a.GetHashCode();

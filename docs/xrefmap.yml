@@ -271,18 +271,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.dup
   fullName: System.Numerics.BigRational.CPU.dup
   nameWithType: BigRational.CPU.dup
-- uid: System.Numerics.BigRational.CPU.e(System.UInt32)
-  name: e(UInt32)
-  href: api/System.Numerics.BigRational.CPU.e.html#System_Numerics_BigRational_CPU_e_System_UInt32_
-  commentId: M:System.Numerics.BigRational.CPU.e(System.UInt32)
-  fullName: System.Numerics.BigRational.CPU.e(System.UInt32)
-  nameWithType: BigRational.CPU.e(UInt32)
-- uid: System.Numerics.BigRational.CPU.e*
-  name: e
-  href: api/System.Numerics.BigRational.CPU.e.html
-  commentId: Overload:System.Numerics.BigRational.CPU.e
-  fullName: System.Numerics.BigRational.CPU.e
-  nameWithType: BigRational.CPU.e
 - uid: System.Numerics.BigRational.CPU.equ(System.Numerics.BigRational,System.Numerics.BigRational)
   name: equ(BigRational, BigRational)
   href: api/System.Numerics.BigRational.CPU.equ.html#System_Numerics_BigRational_CPU_equ_System_Numerics_BigRational_System_Numerics_BigRational_

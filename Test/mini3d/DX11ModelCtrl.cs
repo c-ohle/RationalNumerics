@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS8601, CS8600, CS8602, CS8603, CS8604
+﻿#pragma warning disable CS8601, CS8600, CS8602, CS8603, CS8604, CS8605
 using System.Buffers;
 using System.Collections;
 using System.ComponentModel;
@@ -1050,7 +1050,8 @@ namespace Test
       {
         for (int i = 0, n = nodes.Count; i < n; i++)
         {
-          var node = nodes[i]; var m = node.transform * pm;
+          var node = nodes[i]; if ((node.flags & 0x02) != 0) continue;
+          var m = node.transform * pm;
           if (node.nodes != null) recu(ref c, node.nodes, m);
           if (node is not Models.Geometry g) continue;
           var a = g.vertices; if (a == null) continue;
@@ -1298,6 +1299,9 @@ namespace Test
         get => transform.Scaling;
         set { transform.Scaling = value; parent?.Invalidate(); }
       }
+      //[Category("\tTransform")]
+      //public Size Soße { get { return _soße; } set { _soße = value; } }
+      //Size _soße;
       public Matrix4x3 GetTransform(Node? root = null)
       {
         if (root == this) return Matrix4x3.Identity;
@@ -1609,7 +1613,7 @@ namespace Test
           MeshInfo(Geometry p) => this.p = p;
           public override string ToString()
           {
-            if (p.vertices == null) return string.Empty; 
+            if (p.vertices == null) return string.Empty;
             f0(); return status;
           }
           public int MeshVertices => p.vertices.Length;
@@ -1980,7 +1984,7 @@ namespace Test
             var mb = PolyhedronR.GetInstance();
             mb.SetMesh(0, getrpts(a), a.indices); if (!a.transform.IsIdentity) mb.Transform(0, a.transform);
             mb.SetMesh(1, getrpts(b), b.indices); if (!b.transform.IsIdentity) mb.Transform(1, b.transform);
-            mb.Csg(mode, source == MaterialSource.Merge ? 0 : 2);
+            mb.Csg(mode, source == MaterialSource.Merge ? 0 : 2); // 0 : 2
             switch (source)
             {
               case MaterialSource.Merge: ranges = remap(mb.Indices, mb.Mapping, a, b); break;
@@ -1988,6 +1992,10 @@ namespace Test
               case MaterialSource.Second: ranges = new (int count, Material material)[] { new(0, b.ranges[0].material) }; break;
               default: ranges = myranges; break;
             }
+
+            //var t1 = VectorR.Create(mb.Vertices.Chunk(3, (p, i) => i == 0 ? p.X : i == 1 ? p.Y : p.Z).ToArray());
+            //var t2 = VectorR.Create(t1.Distinct().ToArray());
+
             //this.rpts = VectorR.Create(mb.Vertices.Chunk(3, (p, i) => i == 0 ? p.X : i == 1 ? p.Y : p.Z).ToArray());
             this.rpts = mb.Vertices.ToArray();
             vertices = mb.Vertices.Select(p => (Vector3)p).ToArray();
@@ -2942,6 +2950,41 @@ namespace Test
           if (a.Length == 4) return new Vector4(b[0], b[1], b[2], b[3]);
           return base.ConvertFrom(context, culture, value);
         }
+#if true //expandable
+        public override bool GetPropertiesSupported(ITypeDescriptorContext? ct) => true;
+        public override bool GetCreateInstanceSupported(ITypeDescriptorContext? ct) => true;
+        public override PropertyDescriptorCollection? GetProperties(ITypeDescriptorContext? ct, object value, Attribute[]? attributes)
+        {
+          var t = ct.PropertyDescriptor.PropertyType;
+          if (t == typeof(Vector3))
+            return new PropertyDescriptorCollection(new PropertyDescriptor[] {
+              new MYP(value, "X", null), new MYP(value, "Y", null), new MYP(value, "Z", null)});
+          Debug.Assert(false); return base.GetProperties(ct, value, attributes);
+        }
+        public override object? CreateInstance(ITypeDescriptorContext? ct, IDictionary dict)
+        {
+          var t = ct.PropertyDescriptor.PropertyType;
+          if (t == typeof(Vector3)) return new Vector3((float)dict["X"], (float)dict["Y"], (float)dict["Z"]);
+          Debug.Assert(false); return base.CreateInstance(ct, dict);
+        }
+        class MYP : PropertyDescriptor
+        {
+          public MYP(object p, string name, Attribute[]? attrs) : base(name, attrs) { }
+          public override Type ComponentType => null;//typeof(Vector3);
+          public override bool IsReadOnly => false;
+          public override Type PropertyType => typeof(float);
+          public override bool CanResetValue(object component) => false;
+          public override void ResetValue(object component) { }
+          public override bool ShouldSerializeValue(object component) => false;
+          public override void SetValue(object? component, object? value) { }
+          public override object? GetValue(object? component)
+          {
+            //if (component is Vector2 a) switch (Name) { case "X": return a.X; case "Y": return a.Y; }
+            if (component is Vector3 b) switch (Name) { case "X": return b.X; case "Y": return b.Y; case "Z": return b.Z; }
+            Debug.Assert(false); return null;
+          }
+        }
+#endif
       }
       #endregion
     }
@@ -3623,15 +3666,30 @@ namespace Test
           if (grid.PropertySort == PropertySort.CategorizedAlphabetical)
             grid.PropertySort = PropertySort.Categorized; //NoSort
         };
+        grid.SelectedGridItemChanged += (_, e) =>
+        {
+          var a = e.OldSelection; var b = e.NewSelection; var c = b.Parent;
+          if (//b.GridItemType == GridItemType.Property && !b.PropertyDescriptor.IsReadOnly &&
+              c.Expandable && c.GridItemType == GridItemType.Property)
+            b.Tag = a != null && a.PropertyDescriptor.Name == b.PropertyDescriptor.Name
+              //a.PropertyDescriptor.GetType() == b.PropertyDescriptor.GetType() 
+              ? a.Tag : c.Value;
+        };
         grid.PropertyValueChanged += (_, e) =>
         {
-          var d = e.ChangedItem.PropertyDescriptor; //if (d.PropertyType == typeof(Type)) return;
-          var o = e.ChangedItem.GetType().GetProperty("Instance").GetValue(e.ChangedItem);
+          var c = e.ChangedItem; var d = c.PropertyDescriptor; //if (d.PropertyType == typeof(Type)) return;
+          var o = c.GetType().GetProperty("Instance").GetValue(e.ChangedItem);
           var s = d.Name; var v = e.OldValue;
-          Target.Invalidate(); if (o is not Node ba) return;
+          Target.Invalidate();
+          if (o is not Node node) //old value from tag for expands
+          {
+            o = (c = c.Parent).GetType().GetProperty("Instance").GetValue(c);
+            v = e.ChangedItem.Tag; s = c.PropertyDescriptor.Name; //v = ov;
+            if ((node = o as Node) == null) return;
+          }
           if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
-          var t = o.GetType().GetProperty(s).GetValue(o); if (object.Equals(v, t)) return;
-          Target.AddUndo(new UndoProp(ba, s, v)); grid.Update();
+          var t = node.GetType().GetProperty(s).GetValue(node); if (object.Equals(v, t)) return;
+          Target.AddUndo(new UndoProp(node, s, v)); update = true; //grid.Update(); //
         };
         var a = Controls; a.Add(grid); a.Add(combo);
         var cc = grid.Controls; view = cc[2]; info = cc[0];
@@ -3809,13 +3867,13 @@ namespace Test
     }
     internal static ReadOnlySpan<char> param_slice(ref ReadOnlySpan<char> sp)
     {
-      Debug.Assert(sp == sp.Trim());
+      Debug.Assert(sp == sp.Trim()); //for perfomance
       int i = 0; for (; i < sp.Length && !(char.IsWhiteSpace(sp[i]) /*|| sp[i] == ';'*/); i++) ;
       var w = sp.Slice(0, i); sp = sp.Slice(i < sp.Length ? i + 1 : i).TrimStart(); return w;
     }
     internal static int param_count(ReadOnlySpan<char> sp)
     {
-      Debug.Assert(sp == sp.Trim());
+      Debug.Assert(sp == sp.Trim()); //for perfomance
       var n = 0; for (; sp.Length != 0; param_slice(ref sp), n++) ; return n;
     }
   }

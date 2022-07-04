@@ -150,14 +150,14 @@
       this.label1.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
       this.label1.Location = new System.Drawing.Point(11, 0);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(169, 38);
+      this.label1.Size = new System.Drawing.Size(223, 38);
       this.label1.TabIndex = 1;
-      this.label1.Text = "BigRational";
+      this.label1.Text = "BigRationalXXX";
       // 
       // label6
       // 
       this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label6.Location = new System.Drawing.Point(158, 14);
+      this.label6.Location = new System.Drawing.Point(153, 14);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(304, 24);
       this.label6.TabIndex = 7;
@@ -172,7 +172,7 @@
       this.checkBoxActive2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxActive2.Checked = true;
       this.checkBoxActive2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxActive2.Location = new System.Drawing.Point(237, 437);
+      this.checkBoxActive2.Location = new System.Drawing.Point(232, 437);
       this.checkBoxActive2.Name = "checkBoxActive2";
       this.checkBoxActive2.Size = new System.Drawing.Size(225, 24);
       this.checkBoxActive2.TabIndex = 7;
@@ -197,7 +197,7 @@
       this.mandelbrotView2.Name = "mandelbrotView2";
       this.mandelbrotView2.PropChanged = null;
       this.mandelbrotView2.Scaling = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.Scaling")));
-      this.mandelbrotView2.Size = new System.Drawing.Size(457, 391);
+      this.mandelbrotView2.Size = new System.Drawing.Size(452, 391);
       this.mandelbrotView2.StateChanged = null;
       this.mandelbrotView2.TabIndex = 3;
       this.mandelbrotView2.TabStop = false;

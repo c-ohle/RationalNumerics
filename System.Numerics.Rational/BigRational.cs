@@ -2487,7 +2487,7 @@ namespace System.Numerics
       /// <param name="c">The desired precision.</param>
       public void log(uint c)
       {
-        log2(c); e(c); log2(c); div(); // exponentially faster for rat
+        log2(c); push(1u); exp(c); log2(c); div(); // exponentially faster for rat
         // todo: check again https://en.wikipedia.org/wiki/Natural_logarithm#High_precision
         // if (sign() <= 0) { pop(); pnan(); return; }
         // push(); swp(); // r
@@ -2515,8 +2515,8 @@ namespace System.Numerics
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
-      public void exp(uint c)
-      {
+      public void exp(uint c) //todo: catch cases fast exp(1), ...
+      { 
         var s = sign(); if (s < 0) neg(); c += 16; //todo: exp NaN fix
         dup(); push(1u); add(); // r = x + 1
         dup(1); // d = x
@@ -2539,7 +2539,7 @@ namespace System.Numerics
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
-      public void pi(uint c) //todo: cache
+      public void pi(uint c) //todo: c = f(c), cache
       {
         push(); //alg: https://en.wikipedia.org/wiki/Bellard%27s_formula
         for (uint n = 0; ; n++)
@@ -2557,21 +2557,6 @@ namespace System.Numerics
           add(); lim(c + 64); if (t > c + 32) break; //todo: check
         }
         push(64); div(); //todo: shift
-      }
-      /// <summary>
-      /// Calculates <b>℮</b> (E), the natural logarithmic base to the desired precision and push it to the stack.<br/>
-      /// </summary>
-      /// <remarks>
-      /// The desired precision is controlled by the parameter <paramref name="c"/> 
-      /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
-      /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
-      /// <c>msb(pow(10, digits))</c>.<br/> 
-      /// The result however has to be rounded explicitely to get an exact decimal representation.
-      /// </remarks>
-      /// <param name="c">The desired precision.</param>
-      public void e(uint c) // todo: check e from [2;1,2,1,1,4,1,1,6,...
-      {
-        push(1u); exp(c); // todo: inline
       }
       /// <summary>
       /// Replaces the value on top of the stack with the sine or cosine of that value.<br/>

@@ -736,7 +736,6 @@
       this.btn_dec.Name = "btn_dec";
       this.btn_dec.Size = new System.Drawing.Size(106, 29);
       this.btn_dec.TabIndex = 4;
-      this.btn_dec.Tag = "";
       this.btn_dec.Text = "DEC";
       this.toolTip1.SetToolTip(this.btn_dec, "DEC: Decimal\r\nCF: Continued fraction\r\n\r\nunder construction:\r\nHEX: Hexadecimal\r\nOC" +
         "T: Octal\r\nBIN: Binary\r\n");

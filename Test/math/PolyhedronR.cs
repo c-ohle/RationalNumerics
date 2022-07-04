@@ -1,4 +1,6 @@
 ﻿
+//todo:  fix: There is currently a bug for the case of coplanar planes within one of the polyhedra.
+
 namespace System.Numerics.Rational
 {
   /// <summary>
@@ -38,6 +40,17 @@ namespace System.Numerics.Rational
       for (i = 0; i < xp.Count; i++) xp[i] = Vector3R.Transform(xp[i], m);
     }
     public enum Mode { Union, Difference, Intersection }
+    /// <summary>
+    /// Constructive Solid Geometry
+    /// </summary>
+    /// <remarks>
+    /// <b>Note</b>: There is currently a bug for the case of coplanar planes within one of the polyhedra. 
+    /// </remarks>
+    /// <param name="mode">Boolean operation: Union, Difference or Intersection</param>
+    /// <param name="flags">
+    /// 1: Interpretation of coplanar planes as intersected.<br/> 
+    /// 2: Generate face map.
+    /// </param>
     public void Csg(Mode mode, int flags = 0)
     {
       var abox = getbox(app);
@@ -54,7 +67,7 @@ namespace System.Numerics.Rational
       }
       else if (mode == Mode.Union)
       {
-        //if (!touch(abox, bbox)) { }      
+        //if (!touch(abox, bbox)) { } //todo: simple fast group but with map ...    
       }
       else //Mode.Intersection
       {
@@ -123,7 +136,7 @@ namespace System.Numerics.Rational
           int q = (f & 2) != 0 ? qplane(aee, e.plane) : -1; //if (q != -1 && (flags & 1) != 0) continue;
           if (f < 5 && q == -1) { fetch(1, e); return; }
           if (f >= 5) t.cutmesh(app, aii, e.plane);
-          if (q != -1) t.xor2(aee[q].ii);
+          if (q != -1) t.xor2(aee[q].ii); //todo: check this case!!!
           t.tess.Winding = Winding.Positive;
           t.tess.SetNormal(e.plane.Normal);
           t.tess.BeginPolygon(); t.tessel(app); t.xor1(e.ii); t.tessel(bpp);
@@ -383,7 +396,7 @@ namespace System.Numerics.Rational
           if (map != null) map.Add(map[u / 3]);
           if (abs.Count == 0) return; e = abs.GetEnumerator();
         }
-        abs.Clear(); throw new Exception(err);
+        abs.Clear(); throw new Exception(err); //see: There is currently a bug for the case of coplanar planes within one of the polyhedra.
       }
     }
     const string err = "Invalid input polyhedron";

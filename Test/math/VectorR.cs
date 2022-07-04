@@ -17,20 +17,16 @@ namespace System.Numerics.Rational
       return ToString(null);
     }
     public readonly string ToString(string? format, IFormatProvider? provider = null)
-    { //todo: case values.Length is large
+    {
       return '[' + string.Join(' ', this.Select(p => p.ToString(format, provider))) + ']';
     }
-    public static VectorR Parse(string s)
+    public static VectorR Parse(ReadOnlySpan<char> sp)
     {
-      var sp = s.AsSpan().Trim(); return Parse(ref sp);
-    }
-    public static VectorR Parse(ref ReadOnlySpan<char> sp)
-    {
-      Debug.Assert(sp == sp.Trim());
-      if (sp[0] == '[') { Debug.Assert(sp[sp.Length - 1] == ']'); sp = sp.Slice(1, sp.Length - 2).Trim(); }
-      var cpu = rat.task_cpu; int n = SpanTools.param_count(sp);
+      sp = sp.Trim().Trim("[]").Trim(); //trim for param_..., tor don't need it
+      int n = SpanTools.param_count(sp); //todo: if(n > anylim) -> chunks
+      var cpu = rat.task_cpu; 
       for (int i = 0; i < n; i++) cpu.tor(SpanTools.param_slice(ref sp), 10, default);
-      var r = Create(cpu, n); cpu.pop(4); return r;
+      var r = Create(cpu, n); cpu.pop(n); return r;
     }
     public unsafe override int GetHashCode()
     {

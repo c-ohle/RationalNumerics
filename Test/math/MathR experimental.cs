@@ -4,7 +4,7 @@ namespace System.Numerics.Rational
   /// <summary>
   /// MathR experimental
   /// </summary>
-  public static class MathRex 
+  public static class MathRex
   {
     /// <summary>
     /// Returns the numerator of the specified number.
@@ -101,20 +101,15 @@ namespace System.Numerics.Rational
     /// <returns>A <see cref="BigRational"/> number.</returns>
     public static BigRational ParseContinuedFraction(ReadOnlySpan<char> s)
     {
-      if (s[0] == '[') s = s.Slice(1, s.Length - 2).Trim();
+      s = s.Trim().Trim("[]").Trim();
       var cpu = BigRational.task_cpu; cpu.push();
       for (; s.Length != 0;)
       {
         var x = s.LastIndexOfAny(",;");
         var d = x != -1 ? s.Slice(x + 1).Trim() : s; s = s.Slice(0, x != -1 ? x : 0);
-        if (cpu.sign() != 0) cpu.inv(); 
-        cpu.push(0); //todo: cpu.parse(ReadOnlySpan<char> s, uint b = 10)
-        for (int i = 0; i < d.Length; i++)
-        {
-          cpu.push(10u); cpu.mul();         
-          cpu.push(d[i] - '0'); cpu.add();
-        }
-        cpu.add();
+        if (cpu.sign() != 0) cpu.inv();
+        //or tor: cpu.push(0); for (int i = 0; i < d.Length; i++) { cpu.push(10u); cpu.mul(); cpu.push(d[i] - '0'); cpu.add(); }      
+        cpu.tor(d); cpu.add(); 
       }
       return cpu.popr();
     }

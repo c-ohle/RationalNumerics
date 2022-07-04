@@ -148,7 +148,7 @@ namespace Test
       var x1 = (OldRational)(mx - scale * dx / dy);
       var y1 = (OldRational)(my - scale);
       var fi = (OldRational)(2 * scale / dy); var qmax = (OldRational)4;
-      t1 = t2 = Environment.TickCount; var digits = 10 * lim / 64; // actually about 15 * lim / 64
+      t1 = t2 = Environment.TickCount; var digits = Math.Max(8, 10 * lim / 64); // actually about 15 * lim / 64
       //for (int py = 0; py < dy; py++)
       Parallel.For(0, dy, (py, po) =>
       {
