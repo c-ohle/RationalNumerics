@@ -75,12 +75,12 @@ namespace Test
         for (int k = 0, a = 0, w = was, c; k < rr.Length; k++, a += c)
         {
           var mat = rr[k].material; c = rr[k].count;
-          if (mat.Diffuse >> 24 != 0xff) { if (w == 0) { w = 1; transp.Add(geo); } continue; }
-          dc.Color = mat.Diffuse;
-          if (mat.Texture != null)
+          if (mat.diffuse >> 24 != 0xff) { if (w == 0) { w = 1; transp.Add(geo); } continue; }
+          dc.Color = mat.diffuse;
+          if (mat.texture != null && mat.texture.srv != null)
           {
-            dc.Texture = mat.Texture; dc.PixelShader = PixelShader.Texture;
-            dc.VertexShader = VertexShader.Tex; dc.Textrans = mat.Transform;
+            dc.Texture = mat.texture; dc.PixelShader = PixelShader.Texture;
+            dc.VertexShader = VertexShader.Tex; dc.Textrans = mat.transform;
           }
           else { dc.PixelShader = PixelShader.Color3D; dc.VertexShader = VertexShader.Lighting; }
           dc.DrawMesh(geo.vb, geo.ib, a, c);
@@ -171,12 +171,12 @@ namespace Test
               for (int k = 0, a = 0, c; k < rr.Length; k++, a += c)
               {
                 var mat = rr[k].material; c = rr[k].count;
-                if (mat.Diffuse >> 24 == 0xff) continue;
-                dc.Color = mat.Diffuse;
-                if (mat.Texture != null)
+                if (mat.diffuse >> 24 == 0xff) continue;
+                dc.Color = mat.diffuse;
+                if (mat.texture != null && mat.texture.srv != null)
                 {
-                  dc.Texture = mat.Texture; dc.PixelShader = PixelShader.Texture;
-                  dc.VertexShader = VertexShader.Tex; dc.Textrans = mat.Transform;
+                  dc.Texture = mat.texture; dc.PixelShader = PixelShader.Texture;
+                  dc.VertexShader = VertexShader.Tex; dc.Textrans = mat.transform;
                 }
                 else { dc.PixelShader = PixelShader.Color3D; dc.VertexShader = VertexShader.Lighting; }
                 dc.DrawMesh(geo.vb, geo.ib, a, c);
@@ -933,8 +933,8 @@ namespace Test
           var tex = GetTexture(uri.AbsoluteUri); var ts = tex.Size; var os = ts / 100;
           var box = new Models.BoxGeometry { transform = Matrix4x3.Identity, Max = new Vector3(os, 0.01f) };
           box.ranges = new (int, Models.Material)[] { (0, new Models.Material {
-            Diffuse = 0xffffffff, Texture = tex,
-            Transform = Matrix4x3.CreateScale(new Vector3(1 / os.X, -1 / os.Y, 1)) } )};
+            diffuse = 0xffffffff, texture = tex,
+            transform = Matrix4x3.CreateScale(new Vector3(1 / os.X, -1 / os.Y, 1)) } )};
           return new Group[] { box };
         }
         return null;
@@ -1513,9 +1513,9 @@ namespace Test
 
       public class Material : IEquatable<Material>
       {
-        public uint Diffuse;
-        public DX11Ctrl.Texture? Texture;
-        public unsafe Matrix4x3 Transform
+        internal uint diffuse;
+        internal DX11Ctrl.Texture? texture;
+        internal unsafe Matrix4x3 transform
         {
           get
           {
@@ -1531,16 +1531,16 @@ namespace Test
         float[]? trans;
         public override int GetHashCode()
         {
-          return HashCode.Combine(Diffuse, Texture, Transform);
+          return HashCode.Combine(diffuse, texture, transform);
         }
         public bool Equals(Material? b)
         {
-          return Diffuse == b.Diffuse && Texture == b.Texture && Transform == b.Transform;
+          return diffuse == b.diffuse && texture == b.texture && transform == b.transform;
         }
         internal Material Clone(in Matrix4x3 m)
         {
-          var p = new Material { Diffuse = Diffuse, Texture = Texture };
-          if (p.Texture != null) p.Transform = m * Transform; return p;
+          var p = new Material { diffuse = diffuse, texture = texture };
+          if (p.texture != null) p.transform = m * transform; return p;
         }
       }
 
@@ -1556,49 +1556,49 @@ namespace Test
         [Category("Material")]
         public Color ColorDiffuse
         {
-          get => Color.FromArgb(unchecked((int)ranges[Current].material.Diffuse));
-          set { ranges[Current].material.Diffuse = unchecked((uint)value.ToArgb()); }
+          get => Color.FromArgb(unchecked((int)ranges[Current].material.diffuse));
+          set { ranges[Current].material.diffuse = unchecked((uint)value.ToArgb()); }
         }
         [Category("Material"), Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
         public string? Texture
         {
-          get { var m = ranges[Current].material; return m.Texture != null ? m.Texture.Url : null; }
+          get { var m = ranges[Current].material; return m.texture != null ? m.texture.Url : null; }
           set
           {
             if (value != null && (value = value.Trim()).Length == 0) value = null;
             var tex = value != null ? DX11Ctrl.GetTexture(value) : null;
             if (tex != null && tex.srv == null) { tex.Release(); throw new Exception($"{"Not found:"} {value}"); }
-            var m = ranges[Current].material.Texture = tex; propref = true;
+            var m = ranges[Current].material.texture = tex; propref = true;
           }
         }
         [Category("Material"), TypeConverter(typeof(VectorConverter))]
         public Vector3 TextureScaling
         {
-          get => ranges[Current].material.Transform.Scaling;
+          get => ranges[Current].material.transform.Scaling;
           set
           {
-            var m = ranges[Current].material.Transform; m.Scaling = value;
-            ranges[Current].material.Transform = m;
+            var m = ranges[Current].material.transform; m.Scaling = value;
+            ranges[Current].material.transform = m;
           }
         }
         [Category("Material"), TypeConverter(typeof(VectorConverter))]
         public Vector3 TextureRotation
         {
-          get => ranges[Current].material.Transform.Rotation;
+          get => ranges[Current].material.transform.Rotation;
           set
           {
-            var m = ranges[0].material.Transform; m.Rotation = value;
-            ranges[0].material.Transform = m;
+            var m = ranges[0].material.transform; m.Rotation = value;
+            ranges[0].material.transform = m;
           }
         }
         [Category("Material"), TypeConverter(typeof(VectorConverter))]
         public Vector2 TextureOffset
         {
-          get { var p = ranges[Current].material.Transform.Translation; return new Vector2(p.X, p.Y); }
+          get { var p = ranges[Current].material.transform.Translation; return new Vector2(p.X, p.Y); }
           set
           {
-            var m = ranges[Current].material.Transform; m.Translation = new Vector3(value, 0);
-            ranges[Current].material.Transform = m;
+            var m = ranges[Current].material.transform; m.Translation = new Vector3(value, 0);
+            ranges[Current].material.transform = m;
           }
         }
         [Category("Geometry")]
@@ -1716,8 +1716,8 @@ namespace Test
             }
             static void save(XElement e, Material m)
             {
-              e.SetAttributeValue("color", m.Diffuse.ToString("X8")); if (m.Texture == null) return;
-              e.SetAttributeValue("texture", m.Texture.Url); var t = m.Transform; if (t.IsIdentity) return;
+              e.SetAttributeValue("color", m.diffuse.ToString("X8")); if (m.texture == null) return;
+              e.SetAttributeValue("texture", m.texture.Url); var t = m.transform; if (t.IsIdentity) return;
               e.SetAttributeValue("texture-trans", format(new ReadOnlySpan<float>(&t, 12)));
             }
           }
@@ -1742,12 +1742,12 @@ namespace Test
           static Material load(XElement e)
           {
             var ma = new Material(); XAttribute a;
-            if ((a = e.Attribute("color")) != null) ma.Diffuse = uint.Parse(a.Value, NumberStyles.HexNumber);
-            if ((a = e.Attribute("texture")) != null) ma.Texture = DX11Ctrl.GetTexture(a.Value);
+            if ((a = e.Attribute("color")) != null) ma.diffuse = uint.Parse(a.Value, NumberStyles.HexNumber);
+            if ((a = e.Attribute("texture")) != null) ma.texture = DX11Ctrl.GetTexture(a.Value);
             if ((a = e.Attribute("texture-trans")) != null)
             {
               var m = default(Matrix4x3);
-              parse(a.Value.AsSpan().Trim(), new Span<float>(&m, 12)); ma.Transform = m;
+              parse(a.Value.AsSpan().Trim(), new Span<float>(&m, 12)); ma.transform = m;
             }
             return ma;
           }
@@ -1804,7 +1804,7 @@ namespace Test
             if (geo is CsgGeometry bg && bg.Source != CsgGeometry.MaterialSource.Own)
               pp = new PropertyDescriptorCollection(pp.OfType<PropertyDescriptor>().
                 Where(p => p.ComponentType != typeof(Geometry) || p.PropertyType == typeof(MeshInfo)).ToArray());
-            else if (geo.ranges[geo.Current].material.Texture == null)
+            else if (geo.ranges[geo.Current].material.texture == null)
               pp = new PropertyDescriptorCollection(pp.OfType<PropertyDescriptor>().
                 Where(p => p.Name == "Texture" || !p.Name.StartsWith("Texture")).ToArray());
             return pp;
@@ -3687,8 +3687,8 @@ namespace Test
           if (o is not Node node) //old value from tag for expands
           {
             o = (c = c.Parent).GetType().GetProperty("Instance").GetValue(c);
-            v = e.ChangedItem.Tag; s = c.PropertyDescriptor.Name; //v = ov;
             if ((node = o as Node) == null) return;
+            v = e.ChangedItem.Tag; s = c.PropertyDescriptor.Name; //v = ov;
           }
           if (lastpd == d && d.PropertyType == typeof(int)) return; lastpd = d; // index selectors
           var t = node.GetType().GetProperty(s).GetValue(node); if (object.Equals(v, t)) return;

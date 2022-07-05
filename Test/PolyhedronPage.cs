@@ -42,6 +42,7 @@ namespace Test
     void btn_run_Click(object? sender, EventArgs? e)
     {
       Open(Path.GetFullPath("templ\\testcase2.xxd")); this.path = null;
+      //Open(Path.GetFullPath("C:\\Users\\cohle\\Desktop\\coplanbug.xxd"));//this.path = null;
       //if (sender == null) return; //start no any     
       modelView.RunningAnimation = modelView.Scene.aniset;
     }
@@ -104,7 +105,7 @@ namespace Test
           transform = Matrix4x3.CreateTranslation(0, 0, 0),
           p1 = new Vector3(-10, -10, -0.1f), p2 = new Vector3(+10, +10, 0),
           ranges = new (int, Models.Material)[] { (0, new Models.Material {
-            Diffuse = (uint)Color.LightGray.ToArgb(),
+            diffuse = (uint)Color.LightGray.ToArgb(),
             //Texture = DX11ModelCtrl.GetTexture("https://c-ohle.github.io/RationalNumerics/web/tex/millis.png"),
           }) },
         } }
