@@ -359,10 +359,6 @@ namespace Test
       foreach (var p in selection) p.GetBox(ref box, p.transform);
       if (box.Min.X == float.MaxValue) box = default;
       var a = selection.ToArray();
-      //var g = settings.GroupType == Settings.GroupM.BoolGeometry &&
-      //  a.Length == 2 && a[0] is Models.Geometry ga && a[1] is Models.Geometry ?
-      //  new Models.BoolGeometry() { nodes = a, ranges = new (int count, Models.Material material)[] { (0, ga.ranges[0].material) } } :
-      //  new Group { nodes = a };
       var pm = (box.Min + box.Max) * 0.5f; pm.Z = box.Min.Z;
       var g = new Group { nodes = a };
       var m = Matrix4x3.CreateTranslation(pm); g.transform = m; m = !m;
@@ -618,11 +614,12 @@ namespace Test
           var list = new List<Group>();
           for (int i = 0; i < scene.nodes.Length; i++)
           {
-            var node = scene.nodes[i]; if (node.Fixed) continue;
+            var node = scene.nodes[i]; if (node.Fixed || !node.Visible) continue;
             if (intersect(node, rect)) list.Add(node);
             var box = node.GetBox(); if (!Intersect(box, rect)) continue;
             static bool intersect(Group node, (Vector2 Min, Vector2 Max) rect)
             {
+              if (!node.Visible) return false;
               var a = node.nodes; if (a != null) for (int i = 0; i < a.Length; i++) if (intersect(a[i], rect)) return true;
               var g = node as Models.Geometry; if (g == null) return false;
               var m = node.GetTransform(); var pp = g.vertices; var ii = g.indices;
@@ -1562,14 +1559,16 @@ namespace Test
           get => Color.FromArgb(unchecked((int)ranges[Current].material.Diffuse));
           set { ranges[Current].material.Diffuse = unchecked((uint)value.ToArgb()); }
         }
-        [Category("Material")]
+        [Category("Material"), Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
         public string? Texture
         {
           get { var m = ranges[Current].material; return m.Texture != null ? m.Texture.Url : null; }
           set
           {
             if (value != null && (value = value.Trim()).Length == 0) value = null;
-            var m = ranges[Current].material.Texture = value != null ? DX11Ctrl.GetTexture(value) : null; propref = true;
+            var tex = value != null ? DX11Ctrl.GetTexture(value) : null;
+            if (tex != null && tex.srv == null) { tex.Release(); throw new Exception($"{"Not found:"} {value}"); }
+            var m = ranges[Current].material.Texture = tex; propref = true;
           }
         }
         [Category("Material"), TypeConverter(typeof(VectorConverter))]
@@ -2959,12 +2958,16 @@ namespace Test
           if (t == typeof(Vector3))
             return new PropertyDescriptorCollection(new PropertyDescriptor[] {
               new MYP(value, "X", null), new MYP(value, "Y", null), new MYP(value, "Z", null)});
+          if (t == typeof(Vector2))
+            return new PropertyDescriptorCollection(new PropertyDescriptor[] {
+              new MYP(value, "X", null), new MYP(value, "Y", null)});
           Debug.Assert(false); return base.GetProperties(ct, value, attributes);
         }
         public override object? CreateInstance(ITypeDescriptorContext? ct, IDictionary dict)
         {
           var t = ct.PropertyDescriptor.PropertyType;
           if (t == typeof(Vector3)) return new Vector3((float)dict["X"], (float)dict["Y"], (float)dict["Z"]);
+          if (t == typeof(Vector2)) return new Vector2((float)dict["X"], (float)dict["Y"]);
           Debug.Assert(false); return base.CreateInstance(ct, dict);
         }
         class MYP : PropertyDescriptor
@@ -2976,11 +2979,11 @@ namespace Test
           public override bool CanResetValue(object component) => false;
           public override void ResetValue(object component) { }
           public override bool ShouldSerializeValue(object component) => false;
-          public override void SetValue(object? component, object? value) { }
+          public override void SetValue(object? component, object? value) { Debug.Assert(false); }
           public override object? GetValue(object? component)
           {
-            //if (component is Vector2 a) switch (Name) { case "X": return a.X; case "Y": return a.Y; }
             if (component is Vector3 b) switch (Name) { case "X": return b.X; case "Y": return b.Y; case "Z": return b.Z; }
+            if (component is Vector2 c) switch (Name) { case "X": return c.X; case "Y": return c.Y; }
             Debug.Assert(false); return null;
           }
         }

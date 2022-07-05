@@ -4,9 +4,9 @@
   <light name="Light1" transform="-0.83205026 0.5547002 0 0.4754573 0.71318597 0.5150787 0.2857143 0.4285714 -0.8571429 0 0 0" />
   <box name="Ground" fixed="true" color="FFD3D3D3" texture="https://c-ohle.github.io/RationalNumerics/web/tex/millis.png" x1="-10" y1="-10" z1="-0.1" x2="10" y2="10" />
   <box name="Plate1" transform="0 1 0 -1 0 0 0 0 2 1.606 -1.647 0" visible="false" color="FFFFD700" x2="1" y2="1" z2="0.2" />
-  <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -2.748 -1.851 0.116" color="FF00FF00" x2="0.5" y2="0.5" z2="0.2" />
+  <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 -2.59 -1.869 0.058" color="FF00FF00" x2="0.5" y2="0.5" z2="0.2" />
   <bool transform="1 0 0 0 1 0 0 0 1 -2.339 -1.569 0" color="FFFFFF00" op="Union" mat="Merge">
-    <cylinder name="Cylinder" visible="false" color="FFFFFF00" seg="32" radius="0.5" height="0.2" />
+    <cylinder name="Cylinder" visible="false" color="FFFFFF00" seg="100" radius="0.5" height="0.2" />
     <box name="Plate1" transform="1 0 0 0 1 0 0 0 1 0.04099989 -0.73399997 0.116" visible="false" color="FFFF0000" x2="0.5" y2="0.5" z2="0.2" />
   </bool>
 </scene>
