@@ -17,7 +17,7 @@ namespace Test
     }
     protected override void OnLoad(EventArgs e)
     {
-      base.OnLoad(e);
+      base.OnLoad(e); if (DesignMode) return;
       MenuItem.CmdRoot = OnCommand;
       propsView.Target = modelView;
       //modelView.Infos.Add("Hello World!");
@@ -64,7 +64,7 @@ namespace Test
           case 2008: return OnProperties(test);
           //case 2009: return OnToolbox(test);
           case 2010: return OnStoryBoard(test);
-          //case 2054: return OnCheckMash(test);
+            //case 2054: return OnCheckMash(test);
         }
       }
       catch (Exception e)
@@ -137,12 +137,12 @@ namespace Test
     int OnProperties(object? test)
     {
       if (test != null) return 1;
-      if (propsView.Visible) { if (!propsView.btnprops.Checked) { propsView.btnprops.PerformClick(); return 1; } }
-      else
+      if (!propsView.Visible)
       {
         var c = propsView.IsHandleCreated; propsView.Visible = true;
         if (!c) propsView.btnstory.Click += (_, _) => panelStory.Visible = (propsView.btnstory.Checked ^= true);
       }
+      if (!propsView.btnprops.Checked) propsView.btnprops.PerformClick();
       return 1;
     }
     int OnStoryBoard(object? test)

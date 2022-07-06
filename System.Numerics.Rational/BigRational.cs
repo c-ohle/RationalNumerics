@@ -2778,6 +2778,11 @@ namespace System.Numerics
         {
           *(ulong*)(r + 3) = Bmi2.X64.MultiplyNoFlags(*(ulong*)(a + 1), nb == 2 ? *(ulong*)(b + 1) : b[1], (ulong*)(r + 1));
         }
+        else if (na >= 0020) //nb <= na
+        {
+          var n = na + nb; for (uint i = 1; i <= n; i++) r[i] = 0; //todo: optimize
+          kmu(a + 1, na, b + 1, nb, r + 1, n); //r[0] = n; while (r[r[0]] == 0) r[0]--; return;
+        }
         else
         {
           ulong c = 0;
@@ -3030,7 +3035,8 @@ namespace System.Numerics
       {
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
       }
-      static uint[][]? cache; //todo: cache experimental
+      #region experimental
+      static uint[][]? cache;
       static BigRational cachx(uint* s, uint n, uint x)
       {
         var p = cache != null ? cache[x] : null;
@@ -3039,6 +3045,53 @@ namespace System.Numerics
               copy(d, s, n);
         return new BigRational(p);
       }
+      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r, uint nr) //todo: optimize
+      {
+        Debug.Assert(na >= nb && nr == na + nb);
+        if (nb < 0020)
+        {
+          for (uint i = 0; i < nb; i++) //todo: optimize, the 0 row trick
+          {
+            ulong c = 0, d;
+            for (uint k = 0; k < na; k++, c = d >> 32) 
+              r[i + k] = unchecked((uint)(d = r[i + k] + c + (ulong)a[k] * b[i]));
+            r[i + na] = (uint)c;
+          }
+          return;
+        }
+        uint n = nb >> 1, m = n << 1;
+        kmu(a, n, b, n, r, m); // p1 = al * bl
+        kmu(a + n, na - n, b + n, nb - n, r + m, nr - m); // p2 = ah * bh
+        uint r1 = na - n + 1, r2 = nb - n + 1, r3 = r1 + r2, r4 = r1 + r2 + r3;
+        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; //todo: optimize
+        for (uint i = 0; i < r4; i++) t1[i] = 0; //todo: optimize
+        add(a + n, na - n, a, n, t1, r1);
+        add(b + n, nb - n, b, n, t2, r2);
+        kmu(t1, r1, t2, r2, t3, r3); // p3 = (ah + al) * (bh + bl)
+        sub(r + m, nr - m, r, m, t3, r3);
+        ada(r + n, nr - n, t3, r3); // (p2 << m) + ((p3 - (p1 + p2)) << n) + p1
+        static void sub(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+        {
+          uint i = 0; long c = 0, d;
+          for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i] - b[i]));
+          for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i]));
+          for (; c != 0 && i < nr; i++, c = d >> 32) r[i] = unchecked((uint)(d = r[i] + c));
+        }
+        static void add(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+        {
+          uint i = 0; ulong c = 0, d; Debug.Assert(na >= nb && nr == na + 1);
+          for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
+          for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = a[i] + c));
+          r[i] = unchecked((uint)c);
+        }
+        static void ada(uint* a, uint na, uint* b, uint nb)
+        {
+          uint i = 0; ulong c = 0L, d; Debug.Assert(na >= nb);
+          for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
+          for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
+        }
+      }
+      #endregion
     }
     /// <summary>
     /// Thread static instance of a <see cref="CPU"/> for general use.
@@ -3063,10 +3116,12 @@ namespace System.Numerics
       var n = p[0] & 0x3fffffff;
       return n + p[n + 1] + 2;
     }
+    [MethodImpl(MethodImplOptions.NoInlining)]
     static void copy(uint* d, uint* s, uint n)
     {
-      for (uint i = 0, c = n >> 1; i < c; i++) ((ulong*)d)[i] = ((ulong*)s)[i];
-      if ((n & 1) != 0) d[n - 1] = s[n - 1];
+      for (uint i = 0; i < n; i++) d[i] = s[i];
+      //for (uint i = 0, c = n >> 1; i < c; i++) ((ulong*)d)[i] = ((ulong*)s)[i];
+      //if ((n & 1) != 0) d[n - 1] = s[n - 1];
     }
     #endregion
     #region debug support

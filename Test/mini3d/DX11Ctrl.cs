@@ -68,7 +68,7 @@ namespace Test
     protected abstract void OnRender(DC dc);
     protected abstract int OnMouse(int id, PC dc);
     public Action? Animations;
-    public Action? Invaliated;
+    public Action? InvalEvent; 
     protected long TimerTicks;
 
     VIEWPORT viewport; bool inval;
@@ -150,7 +150,7 @@ namespace Test
     public new void Invalidate()
     {
       if (inval) return;
-      inval = true; Invaliated?.Invoke();
+      inval = true; InvalEvent?.Invoke();
     }
     public string Adapter
     {

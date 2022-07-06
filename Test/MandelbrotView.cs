@@ -262,7 +262,7 @@ namespace Test
       start(); Invalidate(); //task?.Wait(); Update();
     }
 
-    void Timer_Tick(object? sender, EventArgs e)
+    void ontimer(object? sender, EventArgs e)
     {
       if (dostart) { dostart = false; start(); return; }
       if (!Visible) { stop(); bmp?.Dispose(); bmp = null; restart = true; return; }
@@ -271,12 +271,12 @@ namespace Test
     }
     protected override void OnHandleCreated(EventArgs e)
     {
-      timer.Tick += Timer_Tick;
+      timer.Tick += ontimer;
     }
     protected override void OnHandleDestroyed(EventArgs e)
     {
       stop();
-      if (timer != null) { timer.Tick -= Timer_Tick; timer.Dispose(); }
+      if (timer != null) { timer.Tick -= ontimer; timer.Dispose(); }
       if (bmp != null) { bmp.Dispose(); bmp = null; }
     }
     protected override void OnPaintBackground(PaintEventArgs pevent) { }

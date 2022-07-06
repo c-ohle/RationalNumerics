@@ -167,8 +167,9 @@
       // 
       // labelDebug
       // 
-      this.labelDebug.BackColor = System.Drawing.SystemColors.Info;
+      this.labelDebug.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(220)))));
       this.labelDebug.Dock = System.Windows.Forms.DockStyle.Top;
+      this.labelDebug.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.labelDebug.ForeColor = System.Drawing.SystemColors.InfoText;
       this.labelDebug.Location = new System.Drawing.Point(0, 0);
       this.labelDebug.Name = "labelDebug";

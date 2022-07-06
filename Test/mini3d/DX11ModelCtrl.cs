@@ -193,10 +193,10 @@ namespace Test
         dc.Color = 0xff000000; var font = dc.Font; float y = 8f, dy = font.Height;
         if ((flags & 0x20) != 0)
         {
-          if (TimerTicks <= 1) { TimerTicks = 1; }// Invalidate(); }
-          else test(dc, font, 8, y + font.Ascent, (int)(Stopwatch.Frequency / TimerTicks));
+          if (TimerTicks <= 1) { TimerTicks = 1; } // Invalidate(); }
+          else testdraw(dc, font, 8, y + font.Ascent, (int)(Stopwatch.Frequency / TimerTicks));
           y += dy;
-          unsafe static void test(DC dc, Font font, float x, float y, int v)
+          unsafe static void testdraw(DC dc, Font font, float x, float y, int v) //todo: build in, it works
           {
             var ss = stackalloc char[100]; var sp = new Span<char>(ss, 100);
             v.TryFormat(sp, out var ns); " fps".CopyTo(sp.Slice(ns)); ns += 4;
@@ -1081,10 +1081,13 @@ namespace Test
       });
     }
 
-    AniSet? running;
+    AniSet? running; long ts;
     void animate()
     {
-      if (running.ani(Math.Min(running.time + 30, running.maxtime))) Invalidate();
+      var t = Stopwatch.GetTimestamp();
+      var dt = unchecked((int)((t - ts) * 1000 / Stopwatch.Frequency)); ts = t;
+      dt = Math.Max(1, Math.Min(100, dt));
+      if (running.ani(Math.Min(running.time + dt, running.maxtime))) Invalidate();
       if (running.time == running.maxtime) RunningAnimation = null;
     }
     internal AniSet? RunningAnimation
@@ -1096,38 +1099,38 @@ namespace Test
         if (running != null) { Animations -= animate; running = null; }
         if (value == null) return;
         if (value.maxtime == 0) value.maxtime = value.getendtime();
-        running = value; Animations += animate;
+        running = value; Animations += animate; ts = Stopwatch.GetTimestamp();
       }
     }
 
     public class Settings
     {
-      internal Settings(DX11ModelCtrl p) { this.p = p; }
-      readonly DX11ModelCtrl p; float raster = 0.001f, angelgrid = 0.01f;
+      internal Settings(DX11ModelCtrl p) { this.view = p; }
+      readonly DX11ModelCtrl view; float raster = 0.001f, angelgrid = 0.01f;
       [Category("\t\t\tSelection"), DisplayName("Bounding Box"), DefaultValue(true)]
       public bool sel_box
       {
-        get => (p.flags & 0x01) != 0; set { p.flags = (p.flags & ~0x01) | (value ? 0x01 : 0); p.Invaliated(); }
+        get => (view.flags & 0x01) != 0; set { view.flags = (view.flags & ~0x01) | (value ? 0x01 : 0); view.InvalEvent(); }
       }
       [Category("\t\t\tSelection"), DisplayName("Pivot Coords"), DefaultValue(true)]
       public bool sel_pivot
       {
-        get => (p.flags & 0x02) != 0; set { p.flags = (p.flags & ~0x02) | (value ? 0x02 : 0); p.Invaliated(); }
+        get => (view.flags & 0x02) != 0; set { view.flags = (view.flags & ~0x02) | (value ? 0x02 : 0); view.InvalEvent(); }
       }
       [Category("\t\t\tSelection"), DisplayName("Wireframe"), DefaultValue(false)]
       public bool sel_wire
       {
-        get => (p.flags & 0x04) != 0; set { p.flags = (p.flags & ~0x04) | (value ? 0x04 : 0); p.Invaliated(); }
+        get => (view.flags & 0x04) != 0; set { view.flags = (view.flags & ~0x04) | (value ? 0x04 : 0); view.InvalEvent(); }
       }
       [Category("\t\t\tSelection"), DisplayName("Normals"), DefaultValue(false)]
       public bool sel_normals
       {
-        get => (p.flags & 0x08) != 0; set { p.flags = (p.flags & ~0x08) | (value ? 0x08 : 0); p.Invaliated(); }
+        get => (view.flags & 0x08) != 0; set { view.flags = (view.flags & ~0x08) | (value ? 0x08 : 0); view.InvalEvent(); }
       }
       [Category("\t\t\tSelection"), DisplayName("Tool Points"), DefaultValue(true)]
       public bool sel_points
       {
-        get => (p.flags & 0x10) != 0; set { p.flags = (p.flags & ~0x10) | (value ? 0x10 : 0); p.Invaliated(); }
+        get => (view.flags & 0x10) != 0; set { view.flags = (view.flags & ~0x10) | (value ? 0x10 : 0); view.InvalEvent(); }
       }
 
       [Category("\t\tModel Tools"), DefaultValue(0.001f)]
@@ -1151,19 +1154,25 @@ namespace Test
       [Category("Display Driver"), TypeConverter(typeof(DrvConv))]
       public uint Driver
       {
-        get => unchecked((uint)p.OnDriver(null));
-        set => p.OnDriver(value);
+        get => unchecked((uint)view.OnDriver(null));
+        set => view.OnDriver(value);
       }
       [Category("Display Driver"), TypeConverter(typeof(DrvConv))]
       public int Multisamples
       {
-        get => p.OnSamples(null);
-        set => p.OnSamples(value);
+        get => view.OnSamples(null);
+        set => view.OnSamples(value);
       }
       [Category("Display Driver"), DisplayName("Show Fps"), DefaultValue(false)]
       public bool show_fps
       {
-        get => (p.flags & 0x20) != 0; set { p.flags = (p.flags & ~0x20) | (value ? 0x20 : 0); p.Invaliated(); }
+        get => (view.flags & 0x20) != 0;
+        set 
+        { 
+          view.flags = (view.flags & ~0x20) | (value ? 0x20 : 0); 
+          view.TimerTicks = show_fps ? 1 : 0; view.Invalidate();
+          if(show_fps) { view.Refresh(); view.Invalidate(); }
+        }
       }
 
       [Category("Registry"), DefaultValue(false)]
@@ -1182,14 +1191,14 @@ namespace Test
           var m = value is uint ? m1 : m2;
           if (m == null)
           {
-            var view = ((Settings)context.Instance).p; m = new ToolStripMenuItem();
+            var view = ((Settings)context.Instance).view; m = new ToolStripMenuItem();
             if (value is uint) view.OnDriver(m1 = m); else view.OnSamples(m2 = m);
           }
           return m.DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(p => value.Equals(p.Tag))?.Text;
         }
         public override StandardValuesCollection? GetStandardValues(ITypeDescriptorContext? context)
         {
-          var x = ((Settings)context.Instance).p.OnDriver(null);
+          var x = ((Settings)context.Instance).view.OnDriver(null);
           if (x != drv) { drv = x; m2 = null; ConvertTo(context, null, 0, GetType()); }
           return new StandardValuesCollection(
             (context.PropertyDescriptor.PropertyType == typeof(uint) ? m1 : m2)?.
@@ -3710,7 +3719,7 @@ namespace Test
         {
           if (btnprops.Checked) return; btnprops.Checked = true;
           btnsetting.Checked = btntoolbox.Checked = false; showtoolbox(false);
-          update = true; combo.Items.Clear();
+          update = true; combo.Items.Clear(); if (ContainsFocus) Target.Focus();
         };
         btnsetting.Click += (p, e) =>
         {
@@ -3737,11 +3746,11 @@ namespace Test
         base.OnVisibleChanged(e); if (Target == null || grid == null) return;
         if (Visible)
         {
-          Target.Animations += onidle; Target.Invaliated += oninv; update = true;
+          Target.Animations += onidle; Target.InvalEvent += oninv; update = true;
         }
         else
         {
-          Target.Animations -= onidle; Target.Invaliated -= oninv;
+          Target.Animations -= onidle; Target.InvalEvent -= oninv;
           grid.SelectedObject = null; combo.Items.Clear();
         }
         void oninv() => update = true;

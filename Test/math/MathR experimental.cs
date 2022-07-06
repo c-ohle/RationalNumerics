@@ -4,7 +4,7 @@ namespace System.Numerics.Rational
   /// <summary>
   /// MathR experimental
   /// </summary>
-  public static class MathRex
+  public static class MathRexp
   {
     /// <summary>
     /// Returns the numerator of the specified number.
@@ -47,7 +47,7 @@ namespace System.Numerics.Rational
     /// <i>Just to create big numbers with lots of controllable digits.</i>
     /// </remarks>
     /// <param name="digits">The number of decimal digits to calculate.</param>
-    public static BigRational PI(int digits)
+    public static BigRational Pi(int digits)
     {
       var cpu = BigRational.task_cpu; cpu.push();
       for (int n = 0, c = 1 + digits / 3; n < c; n++)
@@ -55,13 +55,15 @@ namespace System.Numerics.Rational
         int a = n << 2, b = 10 * n;
         cpu.pow(-1, n); cpu.pow(2, b); cpu.div();
         cpu.push(-32);  /**/ cpu.push(a + 1); cpu.div();
-        cpu.push(-1);   /**/ cpu.push(a + 3); cpu.div(); cpu.add();
-        cpu.push(256u); /**/ cpu.push(b + 1); cpu.div(); cpu.add();
-        cpu.push(-64);  /**/ cpu.push(b + 3); cpu.div(); cpu.add();
-        cpu.push(-4);   /**/ cpu.push(b + 5); cpu.div(); cpu.add();
-        cpu.push(-4);   /**/ cpu.push(b + 7); cpu.div(); cpu.add();
-        cpu.push(1u);   /**/ cpu.push(b + 9); cpu.div(); cpu.add();
-        cpu.mul(); cpu.add(); if ((n & 0x3) == 0x3) cpu.norm();
+        cpu.push(-1);   /**/ cpu.push(a + 3); cpu.div(); cpu.add(); //cpu.norm();
+        cpu.push(256u); /**/ cpu.push(b + 1); cpu.div(); cpu.add(); //cpu.norm();
+        cpu.push(-64);  /**/ cpu.push(b + 3); cpu.div(); cpu.add(); //cpu.norm();
+        cpu.push(-4);   /**/ cpu.push(b + 5); cpu.div(); cpu.add(); //cpu.norm();
+        cpu.push(-4);   /**/ cpu.push(b + 7); cpu.div(); cpu.add(); //cpu.norm();
+        cpu.push(1u);   /**/ cpu.push(b + 9); cpu.div(); cpu.add(); //cpu.norm();
+        cpu.mul(); cpu.add(); 
+        if ((n & 0x3) == 0x3) 
+          cpu.norm();
       }
       cpu.push(64); cpu.div(); cpu.rnd(digits);
       return cpu.popr();
@@ -125,7 +127,8 @@ namespace System.Numerics.Rational
     public static BigRational GreatestCommonDivisor(BigRational a, BigRational b)
     {
       var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
-      cpu.gcd(); return cpu.popr();
+      cpu.gcd(); //cpu.pop(); return default;
+      return cpu.popr();
     }
     /// <summary>
     /// Finds the least common multiple (LCM) of two <see cref="BigRational"/> integer values.

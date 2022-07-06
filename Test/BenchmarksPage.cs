@@ -1,12 +1,14 @@
-﻿#pragma warning disable CS8602
+﻿#pragma warning disable CS8602,CS8604
 using Microsoft.Win32;
 using System.Data;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Xml;
 using System.Xml.Linq;
 
 namespace Test
 {
-  public partial class BenchmarksPage : UserControl
+  public unsafe partial class BenchmarksPage : UserControl
   {
     public BenchmarksPage()
     {
@@ -14,7 +16,7 @@ namespace Test
     }
     protected override void OnLoad(EventArgs e)
     {
-      base.OnLoad(e);
+      base.OnLoad(e); if (DesignMode) return;
       var path = Path.GetFullPath("templ\\benchmarks1.htm");
       wb = new WebBrowser
       {
@@ -29,8 +31,17 @@ namespace Test
       wb.DocumentCompleted += wb_DocumentCompleted;
       panel_webview.Controls.Add(wb);
       //wb.DocumentText = File.ReadAllText(path);
+      //textBox1.Text = rat.CPU.klim.ToString();
     }
-    WebBrowser? wb;
+
+    void textBox1_Leave(object sender, EventArgs e)
+    {
+      //try { rat.CPU.klim = (uint)int.Parse(textBox1.Text); }
+      //catch { }
+      //textBox1.Text = rat.CPU.klim.ToString();
+    }
+
+    WebBrowser? wb; HtmlElement? p5; XElement? esvg;
     void wb_DocumentCompleted(object? sender, WebBrowserDocumentCompletedEventArgs? e)
     {
       var doc = wb.Document; var body = doc.Body;
@@ -42,23 +53,179 @@ namespace Test
         doc.GetElementById("3").InnerText = $"{key.GetValue("ProcessorNameString")} ({key.GetValue("~MHz")} MHz) × {Environment.ProcessorCount}";
       if (!MainFrame.debug) doc.GetElementById("4").OuterHtml = "";
 
+      esvg = XElement.Parse((p5 = doc.GetElementById("5")).InnerHtml);
+      //if(!Stopwatch.IsHighResolution) { } //todo:
     }
-    void button_add_Click(object sender, EventArgs e)
+
+    //Task? task; System.Windows.Forms.Timer? timer;
+    (float[] times, int count)[]? passes;
+
+    void runtest(HtmlElement svg, HtmlElement info, Action<int, Func<bool>> test)
     {
-      //var doc = wb.Document;
-      //var t1 = doc.GetElementById("5");
-      //var t2 = XElement.Parse(t1.InnerHtml);
-      //var t3 = t2.Descendants().First(p => (string?)p.Attribute("id") == "10");
-      //t3.SetAttributeValue("points", "0,0 300,300");
-      //t1.InnerHtml = t2.ToString();
+      passes = new (float[], int)[2];
+      passes[0].times = new float[256];
+      passes[1].times = new float[256];
+      for (int k = 0; k < 2; k++) for (int i = 0; i < 256; i++) passes[k].times[i] = float.MaxValue;
+      var ft = 1000f / Stopwatch.Frequency;
+      for (int i = 0; i < 40; i++)
+      {
+        var lt = 0L;
+        test(i & 1, () =>
+        {
+          var t = Stopwatch.GetTimestamp();
+          ref var p = ref passes[i & 1];
+          if (lt == 0) p.count = 0;
+          else { p.times[p.count] = MathF.Min(p.times[p.count], (t - lt) * ft); p.count++; }
+          lt = Stopwatch.GetTimestamp(); return true;
+        });
+      }
+      update_svg(svg);
+      test(8, () => true);
+      var a1 = passes[0].times.Take(255);//.Average();
+      var a2 = passes[1].times.Take(255);//.Average();
+      info.InnerHtml = $"Average: {MathF.Round(a1.Average() * 100 / a2.Average())}%; Bigrational Max: {a1.Max()}ms, BigInteger Max: {a2.Max()}ms";
+      info.ScrollIntoView(false);
+    }
+
+    void button_run_Click(object sender, EventArgs e)
+    {
+      if (esvg == null) return;
+      //if (task != null) return;
+      runtest(
+        wb.Document.GetElementById("5"),
+        wb.Document.GetElementById("6"), _test_mul());
+      runtest(
+        wb.Document.GetElementById("7"),
+        wb.Document.GetElementById("8"), _test_gcd());
+
       return;
+#if false
+      passes = new (float[], int)[2];
+      passes[0].times = new float[256];
+      passes[1].times = new float[256];
+      for (int k = 0; k < 2; k++) for (int i = 0; i < 256; i++) passes[k].times[i] = float.MaxValue;
+      var ft = 1000f / Stopwatch.Frequency;
+#if true
+      for (int i = 0; i < 40; i++)
+      {
+        var lt = 0L;
+        test(i & 1, () =>
+        {
+          var t = Stopwatch.GetTimestamp();
+          ref var p = ref passes[i & 1];
+          if (lt == 0) p.count = 0;
+          else { p.times[p.count] = MathF.Min(p.times[p.count], (t - lt) * ft); p.count++; }
+          lt = Stopwatch.GetTimestamp(); return true;
+        });
+      }
+      update_svg(p5);
+      var a1 = passes[0].times.Take(255);//.Average();
+      var a2 = passes[1].times.Take(255);//.Average();
+      var p6 = wb.Document.GetElementById("6");
+      p6.InnerHtml = $"Average: {MathF.Round(a1.Average() * 100 / a2.Average())}%; Bigrational Max: {a1.Max()}ms, BigInteger Max: {a2.Max()}ms";
+      p6.ScrollIntoView(false);
+
+#else
+      task = new Task(() =>
+      {
+        for (int i = 0; i < 40; i++)
+        {
+          var lt = 0L;
+          test(i & 1, () =>
+          {
+            var t = Stopwatch.GetTimestamp();
+            ref var p = ref passes[i & 1];
+            if (lt == 0) p.count = 0;
+            else { p.times[p.count] = MathF.Min(p.times[p.count], (t - lt) * ft); p.count++; }
+            lt = Stopwatch.GetTimestamp(); return true;
+          });
+        }
+      });
+      timer = new System.Windows.Forms.Timer() { Interval = 200 };
+      timer.Tick += ontimer; timer.Start();
+      task.Start();
+      void ontimer(object? p, EventArgs? e)
+      {
+        update_svg(p5); if (!task.IsCompleted) return;
+        timer.Tick -= ontimer; timer.Dispose(); timer = null;
+        task.Dispose(); task = null;
+
+        var a1 = passes[0].times.Skip(1).Take(248);//.Average();
+        var a2 = passes[1].times.Skip(1).Take(248);//.Average();
+        var p6 = wb.Document.GetElementById("6");
+        p6.InnerHtml =
+          $"Average: {MathF.Round(a1.Average() * 100 / a2.Average())}%; Bigrational Max: {a1.Max()}ms, BigInteger Max: {a2.Max()}ms";
+        p6.ScrollIntoView(false);
+      };   
+#endif
+#endif
     }
-    void button_add2_Click(object sender, EventArgs e)
+
+    void update_svg(HtmlElement? psvg)
     {
+      var a1 = passes[0].times.Take(passes[0].count);
+      var a2 = passes[1].times.Take(passes[1].count);
+      var fx = 740f / 256;
+      var fy = 237f / 0.15f; //ms
+      var s1 = string.Join(' ', a1.Select((p, i) => XmlConvert.ToString(i * fx) + "," + XmlConvert.ToString(p * fy)));
+      var s2 = string.Join(' ', a2.Select((p, i) => XmlConvert.ToString(i * fx) + "," + XmlConvert.ToString(p * fy)));
+      var t1 = esvg.Descendants().First(p => (string?)p.Attribute("name") == "B");
+      var t2 = esvg.Descendants().First(p => (string?)p.Attribute("name") == "R");
+      t1.SetAttributeValue("points", s1);
+      t2.SetAttributeValue("points", s2);
+      psvg.InnerHtml = esvg.ToString(); //psvg.ScrollIntoView(false);
     }
-    void button_add3_Click(object sender, EventArgs e)
+
+    static Action<int, Func<bool>> _test_gcd()
     {
+      var aa = new BigRational[256]; var bb = new BigInteger[256];
+      var ar = new BigRational[256]; var br = new BigInteger[256];
+      var ra = new Random(13); //E+2040
+      for (int i = 0; i < 256; i++) bb[i] = (BigInteger)(aa[i] = random_rat(ra, i << 3));
+      return test;
+      void test(int pass, Func<bool> f)
+      {
+        if (pass == 0)
+          for (int i = 1; f() && i < 256; i++)
+            ar[i] = MathRexp.GreatestCommonDivisor(aa[i - 1], aa[i]);
+
+        if (pass == 1)
+          for (int i = 1; f() && i < 256; i++)
+            br[i] = BigInteger.GreatestCommonDivisor(bb[i - 1], bb[i]);
+
+        if (pass == 8) Debug.Assert(ar.Zip(br).All(p => p.First == p.Second));
+      }
     }
+    static Action<int, Func<bool>> _test_mul()
+    {
+      var aa = new BigRational[256]; var bb = new BigInteger[256];
+      var ar = new BigRational[256]; var br = new BigInteger[256];
+      var ra = new Random(13); //E+4080
+      for (int i = 0; i < 256; i++) bb[i] = (BigInteger)(aa[i] = random_rat(ra, i << 4));//<< 3
+      //Debug.Assert(aa.Zip(bb).All(p => p.First == p.Second));
+      return test;
+      void test(int pass, Func<bool> f)
+      {
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) ar[i] = aa[i - 1] * aa[i];
+        if (pass == 1) for (int i = 1; f() && i < 256; i++) br[i] = bb[i - 1] * bb[i];
+        if (pass == 8) Debug.Assert(ar.Zip(br).All(p => p.First == p.Second));
+      }
+    }
+
+    static BigRational random_rat(Random rnd, int digits)
+    {
+      var cpu = rat.task_cpu;
+      cpu.pow(10, digits);
+      var x = cpu.msb();
+      for (int i = 0; i < x; i += 32)
+      {
+        var v = rnd.Next(); if (i + 32 >= x) v = (int)((long)v >> ((i + 32) - (int)x + 1));
+        cpu.push(v); cpu.shl(i); cpu.xor();
+      }
+      //var y = cpu.msb(); if(x != y) { }
+      var r = cpu.popr(); return r;
+    }
+
     void button_save_Click(object sender, EventArgs e)
     {
       var dlg = new SaveFileDialog() { FileName = "BigRational-Benchmarks.htm", Filter = "HTML files|*.htm", DefaultExt = "htm" };
@@ -66,9 +233,6 @@ namespace Test
       var s = wb.Document.GetElementsByTagName("html")[0].OuterHtml;
       try { File.WriteAllText(dlg.FileName, s); }
       catch (Exception ex) { MessageBox.Show(ex.Message); }
-    }
-    void button_clear_Click(object sender, EventArgs e)
-    {
     }
   }
 }

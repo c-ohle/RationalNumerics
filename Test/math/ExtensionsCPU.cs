@@ -4,7 +4,7 @@ namespace System.Numerics.Rational
   /// <summary>
   /// Extensions for <see cref="BigRational.CPU"/>.
   /// </summary>
-  static class Extensions
+  static class ExtensionsCPU
   {
     /// <summary>
     /// a * b + c * d + e * f
