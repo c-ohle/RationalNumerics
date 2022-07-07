@@ -30,7 +30,7 @@ common mathematical functions for BigRational.</Description>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
     <AnalysisLevel>none</AnalysisLevel>
     <PackageIcon></PackageIcon>
-    <Version>1.0.0.3</Version>
+    <Version>1.0.0.4</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType></RepositoryType>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>

@@ -39,9 +39,9 @@
   <h1>Environment</h1>
   <p>BigRational Version: <span id="1"></span>&nbsp;ImageRuntime: <span id="2"></span></p>
   <p>Processor: <span id="3"></span></p>
-  <h1>Simple integer arithmetic benchmarks</h1>
+  <h1>Core integer arithmetic benchmarks</h1>
   <p>
-    Multiply for random integer numbers in the range from 0 to 1E+4080<br />
+    Multiply for random integer numbers in the range 0 to 10<sup>4080</sup><br />
     BigRational: <span style="color: blue">blue</span><br />
     BigInteger: <span style="color: red">red</span>
   </p>
@@ -60,31 +60,24 @@
         </clipPath>
       </defs>
       <g transform="translate(10 237) scale(1 -1)" clip-path="url(#path-1)">
-        <rect fill="url(#grid)" width="740" height="237" />
+        <rect name="F" transform="scale(1 1)" fill="url(#grid)" width="720" height="237" />
         <polyline name="R" fill="none" stroke="red" points="" />
         <polyline name="G" fill="none" stroke="green" points="" />
         <polyline name="B" fill="none" stroke="blue" points="" />
       </g>
-      <g transform="translate(10 247)">
+      <g name="X" transform="translate(4.5 248)">
         <text x="0">0</text>
-        <text x="100">1</text>
-        <text x="200">2</text>
-        <text x="300">3</text>
-        <text x="400">4</text>
-        <text x="500">5</text>
-        <text x="600">5</text>
-        <text x="700">10¹⁰⁰⁰</text>
+        <text x="300">10<tspan dy="-5" font-size="60%">100</tspan></text>
       </g>
-      <g transform="translate(12 -3)">
-        <text y="250"></text>
-        <text y="137">1</text>
-        <text y="37">2</text>
+      <g name="Y" transform="translate(14 -3)">
+        <text y="137">1.0</text>
+        <text y="37">2.0 ms</text>
       </g>
     </svg>
   </p>
   <p id="6"></p>
   <p>
-    GCD for random integer numbers in the range from 0 to 1E+2040<br />
+    GCD for random integer numbers in the range 0 to 10<sup>2040</sup><br />
     BigRational: MathR.GreatestCommonDivisor() <span style="color: blue">blue</span><br />
     BigInteger.GreatestCommonDivisor() <span style="color: red">red</span>
   </p>

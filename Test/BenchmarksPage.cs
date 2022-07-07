@@ -17,6 +17,7 @@ namespace Test
     protected override void OnLoad(EventArgs e)
     {
       base.OnLoad(e); if (DesignMode) return;
+      //if(!Stopwatch.IsHighResolution) { } //todo:
       var path = Path.GetFullPath("templ\\benchmarks1.htm");
       wb = new WebBrowser
       {
@@ -54,7 +55,6 @@ namespace Test
       if (!MainFrame.debug) doc.GetElementById("4").OuterHtml = "";
 
       esvg = XElement.Parse((p5 = doc.GetElementById("5")).InnerHtml);
-      //if(!Stopwatch.IsHighResolution) { } //todo:
     }
 
     //Task? task; System.Windows.Forms.Timer? timer;
@@ -79,11 +79,11 @@ namespace Test
           lt = Stopwatch.GetTimestamp(); return true;
         });
       }
-      update_svg(svg);
       test(8, () => true);
+      update_svg(svg);
       var a1 = passes[0].times.Take(255);//.Average();
       var a2 = passes[1].times.Take(255);//.Average();
-      info.InnerHtml = $"Average: {MathF.Round(a1.Average() * 100 / a2.Average())}%; Bigrational Max: {a1.Max()}ms, BigInteger Max: {a2.Max()}ms";
+      info.InnerHtml = $"Average ratio: {MathF.Round(a1.Average() * 100 / a2.Average())}%; BigRational Max: {a1.Max()}ms, BigInteger Max: {a2.Max()}ms";
       info.ScrollIntoView(false);
     }
 
@@ -163,18 +163,56 @@ namespace Test
 
     void update_svg(HtmlElement? psvg)
     {
-      var a1 = passes[0].times.Take(passes[0].count);
-      var a2 = passes[1].times.Take(passes[1].count);
-      var fx = 740f / 256;
-      var fy = 237f / 0.15f; //ms
-      var s1 = string.Join(' ', a1.Select((p, i) => XmlConvert.ToString(i * fx) + "," + XmlConvert.ToString(p * fy)));
-      var s2 = string.Join(' ', a2.Select((p, i) => XmlConvert.ToString(i * fx) + "," + XmlConvert.ToString(p * fy)));
-      var t1 = esvg.Descendants().First(p => (string?)p.Attribute("name") == "B");
-      var t2 = esvg.Descendants().First(p => (string?)p.Attribute("name") == "R");
-      t1.SetAttributeValue("points", s1);
-      t2.SetAttributeValue("points", s2);
-      psvg.InnerHtml = esvg.ToString(); //psvg.ScrollIntoView(false);
+      var ns = esvg.Name.Namespace;// DX11ModelCtrl.Models.ns;
+      var bk = esvg.Descendants(ns + "rect").First(p => (string?)p.Attribute("name") == "F");
+      var sx = esvg.Descendants(ns + "g").First(p => (string?)p.Attribute("name") == "X"); sx.RemoveNodes();
+      var sy = esvg.Descendants(ns + "g").First(p => (string?)p.Attribute("name") == "Y"); sy.RemoveNodes();
+      var lb = esvg.Descendants(ns + "polyline").First(p => (string?)p.Attribute("name") == "B");
+      var lr = esvg.Descendants(ns + "polyline").First(p => (string?)p.Attribute("name") == "R");
+      var a1 = passes[0].times.Take(255);
+      var a2 = passes[1].times.Take(255);
+
+      int wx = 720, wy = 223;
+      var mx = 2040f; var nx = 10;
+      var my = Math.Max(a1.Max(), a2.Max()); //my = 0.0748f;                
+      var oy = MathF.Pow(10, 1 - MathF.Ceiling(MathF.Log10(my)));
+      var t1 = MathF.Ceiling(my * oy); oy = t1 / oy;
+      var ny = (int)t1; ny = ny == 1 ? 5 : ny == 2 || ny == 8 ? 4 : ny == 6 || ny == 9 ? 3 : ny;
+
+      float xx = (wx / nx) * 0.01f, yy = (wy / ny) * 0.01f;
+      bk.SetAttributeValue("transform", $"scale({XmlConvert.ToString(xx)} {XmlConvert.ToString(yy)})");
+      bk.SetAttributeValue("width", XmlConvert.ToString(740 / xx));
+      bk.SetAttributeValue("height", XmlConvert.ToString(237 / yy));
+
+      for (int i = 0; i <= nx; i++)
+      {
+        var tt = XElement.Parse("<tspan>10<tspan dy=\"-5\" font-size=\"60%\"/></tspan>");
+        var ti = tt.Elements().First(); if (i == 0) tt.Value = "0";
+        else ti.Value = XmlConvert.ToString(i * mx / nx);
+        sx.Add(new XElement(ns + "text", new XAttribute("x", i * wx / nx), tt));
+      }
+      for (int i = 1; i <= ny; i++) sy.Add(new XElement(ns + "text",
+        new XAttribute("y", 237 - i * wy / ny), new XText(MathF.Round(i * oy / ny, 5) + (i == ny ? " ms" : null))));
+
+      float fx = wx / 254f, fy = wy / oy;
+      lb.SetAttributeValue("points", string.Join(' ', a1.Select((p, i) => XmlConvert.ToString(i * fx) + "," + XmlConvert.ToString(p * fy))));
+      lr.SetAttributeValue("points", string.Join(' ', a2.Select((p, i) => XmlConvert.ToString(i * fx) + "," + XmlConvert.ToString(p * fy))));
+      psvg.InnerHtml = esvg.ToString();
     }
+    //void update_svg_old(HtmlElement? psvg)
+    //{
+    //  var a1 = passes[0].times.Take(passes[0].count);
+    //  var a2 = passes[1].times.Take(passes[1].count);
+    //  var fx = 740f / 256;
+    //  var fy = 237f / 0.15f; //ms
+    //  var s1 = string.Join(' ', a1.Select((p, i) => XmlConvert.ToString(i * fx) + "," + XmlConvert.ToString(p * fy)));
+    //  var s2 = string.Join(' ', a2.Select((p, i) => XmlConvert.ToString(i * fx) + "," + XmlConvert.ToString(p * fy)));
+    //  var t1 = esvg.Descendants().First(p => (string?)p.Attribute("name") == "B");
+    //  var t2 = esvg.Descendants().First(p => (string?)p.Attribute("name") == "R");
+    //  t1.SetAttributeValue("points", s1);
+    //  t2.SetAttributeValue("points", s2);
+    //  psvg.InnerHtml = esvg.ToString(); //psvg.ScrollIntoView(false);
+    //}
 
     static Action<int, Func<bool>> _test_gcd()
     {
