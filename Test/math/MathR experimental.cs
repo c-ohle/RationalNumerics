@@ -4,7 +4,7 @@ namespace System.Numerics.Rational
   /// <summary>
   /// MathR experimental
   /// </summary>
-  public static class MathRexp
+  public static class MathRE
   {
     /// <summary>
     /// Returns the numerator of the specified number.
@@ -145,6 +145,26 @@ namespace System.Numerics.Rational
       var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
       cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
       return cpu.popr();
+    }
+    /// <summary>
+    /// Performes an integer division a / b;
+    /// </summary>
+    public static BigRational IntegerDivide(BigRational a, BigRational b)
+    {
+      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
+      var cpu = rat.task_cpu; 
+      cpu.push(a); cpu.push(b); cpu.idiv();
+      var c = cpu.popr(); return c;
+    }
+    /// <summary>
+    /// Performes an integer modula a % b;
+    /// </summary>
+    public static BigRational IntegerModula(BigRational a, BigRational b)
+    {
+      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
+      var cpu = rat.task_cpu;
+      cpu.push(a); cpu.push(b); cpu.imod();
+      var c = cpu.popr(); return c;
     }
   }
 }

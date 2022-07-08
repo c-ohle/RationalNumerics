@@ -166,8 +166,8 @@ namespace Test
         var r = d ? rnd(parsed(a, b)) : parse(a, b);
         if (btn_dec.Text[0] == 'C')
         {
-          var t1 = MathRexp.GetContinuedFraction(r);
-          var t2 = MathRexp.ParseContinuedFraction(t1); Debug.Assert(r == t2); //cross check
+          var t1 = MathRE.GetContinuedFraction(r);
+          var t2 = MathRE.ParseContinuedFraction(t1); Debug.Assert(r == t2); //cross check
           return t1;
         }
         return r.ToString((f == "ℚ" ? "L" : "S") + (digits + 2));
@@ -185,7 +185,7 @@ namespace Test
           case "π": return MathR.Pi(digits);
           case "℮": return MathR.Exp(1, digits);
           default:
-            if (h[0] == '[') return MathRexp.ParseContinuedFraction(h);
+            if (h[0] == '[') return MathRE.ParseContinuedFraction(h);
             return rat.Parse(h);
         }
       for (int l = 0; l < 3; l++)
@@ -245,7 +245,7 @@ namespace Test
           case "π": return Math.PI;
           case "℮": return Math.E;
           default:
-            if (h[0] == '[') return (double)MathRexp.ParseContinuedFraction(h);
+            if (h[0] == '[') return (double)MathRE.ParseContinuedFraction(h);
             return (double)BigRational.Parse(h);
         }
       for (int l = 0; l < 3; l++)

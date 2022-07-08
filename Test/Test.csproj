@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="templ\benchmarks2.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="templ\benchmarks1.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

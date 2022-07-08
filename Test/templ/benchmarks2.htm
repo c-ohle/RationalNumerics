@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <title>Benchmarks2</title>
+  <style type="text/css">
+    .group {
+      cursor: default;
+      font-weight: bold;
+      color: #555555;
+      background-color: #EEEEEE;
+      padding-left: 4px
+    }
+  </style>
+  <script> 
+    function toggle(p) {
+      var e = p.nextElementSibling;//document.getElementById(id); 
+      var h = e.style.display == "none";
+      e.style.display = h ? "block" : "none";
+      p.innerText = (h ? "◢ " : "▷ ") + p.innerText.slice(2);
+      if (h) e.parentElement.scrollIntoView(false);
+    }
+  </script>
+</head>
+<body style="font: normal 10pt Segoe UI">
+  <div id="svg" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="750" height="250">
+      <defs>
+        <pattern id="smallgrid" patternUnits="userSpaceOnUse" width="10" height="10">
+          <path fill="none" stroke="lightgray" stroke-width="0.5" d="M 10 0 L 0 0 L 0 10" />
+        </pattern>
+        <pattern id="grid" patternUnits="userSpaceOnUse" width="100" height="100">
+          <rect fill="url(#smallgrid)" width="100" height="100" />
+          <path fill="none" stroke="gray" stroke-width="1" d="M 100 0 L 0 0 L 0 100" />
+        </pattern>
+        <clipPath id="path-1">
+          <rect x="0" y="0" width="740" height="237"></rect>
+        </clipPath>
+      </defs>
+      <g transform="translate(10 237) scale(1 -1)" clip-path="url(#path-1)">
+        <rect name="F" transform="scale(1 1)" fill="url(#grid)" width="720" height="237" />
+        <polyline name="R" fill="none" stroke="red" points="" />
+        <polyline name="G" fill="none" stroke="green" points="" />
+        <polyline name="B" fill="none" stroke="blue" points="" />
+      </g>
+      <g name="X" transform="translate(4.5 248)">
+        <text x="0">0</text>
+        <text x="300">10</text>
+        <!--<tspan dy="-5" font-size="60%">100</tspan>-->
+      </g>
+      <g name="Y" transform="translate(14 -3)">
+        <text y="137">1.0</text>
+        <text y="37">2.0 ms</text>
+      </g>
+    </svg>
+  </div>
+  <div style="background-color: white; position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px;" />
+  <div style="position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; overflow: auto;">
+    <div name="Environment">
+      <div class="group" onclick="toggle(this)">◢ System Environment</div>
+      <div style="display: block; margin-left: 16px">
+        <p>BigRational Version: <span id="1"></span>&nbsp;ImageRuntime: <span id="2"></span></p>
+        <p>Processor: <span id="3"></span></p>
+      </div>
+      <hr />
+    </div>
+    <div name="Mul">
+      <div class="group">Simple integer multiplication in comparison to BigInteger </div>
+      <div style="display: none; margin-left: 16px">
+        <p id="5" style="font-size: 7pt" />
+        <p>BigRational (<span style="color: blue">blue</span>); BigInteger (<span style="color: red">red</span>); Average Ratio:</p>
+      </div>
+      <hr />
+    </div>
+    <div name="Div">
+      <div class="group" onclick="toggle(this,2)">Simple integer integer division in comparison to BigInteger</div>
+      <div style="display: none; margin-left: 16px">
+        <p id="6" style="font-size: 7pt" />
+        <p>BigRational (<span style="color: blue">blue</span>); BigInteger (<span style="color: red">red</span>); Average Ratio:</p>
+      </div>
+      <hr />
+    </div>
+    <div name="Gcd">
+      <div class="group" onclick="toggle(this,2)">GCD function (GreatestCommonDevisor) in comparison to BigInteger</div>
+      <div style="display: none; margin-left: 16px">
+        <p id="7" style="font-size: 7pt" />
+        <p>BigRational (<span style="color: blue">blue</span>); BigInteger (<span style="color: red">red</span>); Average Ratio:</p>
+      </div>
+      <hr />
+    </div>
+    <p>
+      And so on...<br />
+      Under construction
+    </p>
+  </div>
+</body>
+</html>

@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Method xor
+    <title>Method imod
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Method xor
+    <meta name="title" content="Method imod
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -235,8 +235,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.idiv.html" title="idiv" class="">idiv</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.BigRational.CPU.imod.html" title="imod" class="">imod</a>
+                                <li class="active">
+                                  <a href="System.Numerics.BigRational.CPU.imod.html" title="imod" class="active">imod</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.inv.html" title="inv" class="">inv</a>
@@ -331,8 +331,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.tos.html" title="tos" class="">tos</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.CPU.xor.html" title="xor" class="active">xor</a>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.CPU.xor.html" title="xor" class="">xor</a>
                                 </li>
                               </ul>  </li>
                           <li class="">
@@ -427,33 +427,35 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.xor*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.imod*">
 
-<h1 id="System_Numerics_BigRational_CPU_xor_" data-uid="System.Numerics.BigRational.CPU.xor*">Method xor
+<h1 id="System_Numerics_BigRational_CPU_imod_" data-uid="System.Numerics.BigRational.CPU.imod*">Method imod
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_xor.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.xor%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_imod.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.imod%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1882">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2682">View Source</a>
 </span>
-<a id="System_Numerics_BigRational_CPU_xor_" data-uid="System.Numerics.BigRational.CPU.xor*"></a>
-<h4 id="System_Numerics_BigRational_CPU_xor" data-uid="System.Numerics.BigRational.CPU.xor">xor()</h4>
-<div class="markdown level1 summary"><p>Bitwise logical XOR of the numerators<br>
-of the first two values on top of the stack and replaces them with the result.</p>
+<a id="System_Numerics_BigRational_CPU_imod_" data-uid="System.Numerics.BigRational.CPU.imod*"></a>
+<h4 id="System_Numerics_BigRational_CPU_imod" data-uid="System.Numerics.BigRational.CPU.imod">imod()</h4>
+<div class="markdown level1 summary"><p>Performs an integer division of the numerators of the first two values on top of the stack<br>
+and replaces them with the integral result.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void xor()</code></pre>
+  <pre><code class="lang-csharp hljs">public void imod()</code></pre>
 </div>
-<h5 id="System_Numerics_BigRational_CPU_xor_remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>Manipulating denominators is possible by calling <a class="xref" href="System.Numerics.BigRational.CPU.inv.html#System_Numerics_BigRational_CPU_inv_System_Int32_">inv(Int32)</a> beforehand.<br>
-Inversion of rational 0 values (0 / 1 =&gt; 1 / 0) results in NaN values which can be ignored for all bit-level operations.</p>
+<h5 id="System_Numerics_BigRational_CPU_imod_remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>Divides a / b where b is the value on top of the stack.<br>
+This is a integer division with always non-farctional integer results.<br>
+When calculating with integers and integer results are required,<br>
+this operation is faster than dividing and then rounding to an integer result.<br></p>
 </div>
 </article>
           </div>
@@ -463,10 +465,10 @@ Inversion of rational 0 values (0 / 1 =&gt; 1 / 0) results in NaN values which c
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_xor_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.xor*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_imod_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.imod*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1882" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2682" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

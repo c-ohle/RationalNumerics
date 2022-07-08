@@ -596,7 +596,7 @@ namespace System.Numerics
     /// <param name="value">A <see cref="BigRational"/> number.</param>
     public static explicit operator ReadOnlySpan<uint>(BigRational value)
     {
-      return value.p; 
+      return value.p;
     }
 
     /// <summary>
@@ -1679,7 +1679,7 @@ namespace System.Numerics
       /// and replaces them with the result.
       /// </summary>
       /// <remarks>
-      /// a / b where b is the value on top of the stack 
+      /// Divides a / b where b is the value on top of the stack.
       /// </remarks>
       public void div()
       {
@@ -2516,7 +2516,7 @@ namespace System.Numerics
       /// </remarks>
       /// <param name="c">The desired precision.</param>
       public void exp(uint c) //todo: catch cases fast exp(1), ...
-      { 
+      {
         var s = sign(); if (s < 0) neg(); c += 16; //todo: exp NaN fix
         dup(); push(1u); add(); // r = x + 1
         dup(1); // d = x
@@ -2646,6 +2646,49 @@ namespace System.Numerics
       public void free()
       {
         cpu = null;
+      }
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to an integer result.
+      /// </remarks>
+      public void idiv()
+      {
+        fixed (uint* u = p[this.i - 1])
+        fixed (uint* v = p[this.i - 2])
+        fixed (uint* w = rent(len(u))) // nu - nv + 1
+        {
+          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
+          *(ulong*)(w + w[0] + 1) = 0x100000001;
+          if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
+        }
+        swp(2); pop(2);
+      }
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to an integer result.<br/>
+      /// </remarks>
+      public void imod()
+      {
+        fixed (uint* u = p[this.i - 1])
+        fixed (uint* v = p[this.i - 2])
+        {
+          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
+          *(ulong*)(v + v[0] + 1) = 0x100000001;
+          v[0] |= h & 0x80000000;
+        }
+        pop();
       }
 
       uint[] rent(uint n)
@@ -2780,7 +2823,7 @@ namespace System.Numerics
         }
         else if (na >= 0020) //nb <= na
         {
-          var n = na + nb; for (uint i = 1; i <= n; i++) r[i] = 0; //todo: optimize
+          var n = na + nb; for (uint i = 1; i <= n; i++) r[i] = 0; //todo: remove, kmu opt will make it needles
           kmu(a + 1, na, b + 1, nb, r + 1, n); //r[0] = n; while (r[r[0]] == 0) r[0]--; return;
         }
         else
@@ -2865,6 +2908,23 @@ namespace System.Numerics
           a[0] = 1; a[1] = unchecked((uint)x); if (r == null) return;
           for (; na > 1 && r[na] == 0; na--) ; r[0] = na; return;
         }
+
+        //if (r != null)
+        //{
+        //  var aa = new Span<uint>(a + 1, (int)na);
+        //  var rr = new Span<uint>(r + 1, (int)(na + 1));
+        //  var rn = Divide(aa, new ReadOnlySpan<uint>(b + 1, (int)nb), rr);
+        //  for (; a[0] > 1 && a[a[0]] == 0; a[0]--) ;
+        //  r[0] = (uint)rn + 1; return;
+        //}
+
+        //if (r != null)
+        //{
+        //  int rn = Divide(a + 1,(int)na, b + 1, (int)nb, r + 1, (int)na);
+        //  for (; a[0] > 1 && a[a[0]] == 0; a[0]--) ;
+        //  r[0] = (uint)rn + 1; return;
+        //}
+
         uint dh = b[nb], dl = nb > 1 ? b[nb - 1] : 0;
         int sh = BitOperations.LeadingZeroCount(dh), sb = 32 - sh;
         if (sh > 0)
@@ -2896,7 +2956,7 @@ namespace System.Numerics
             if (tl < vl) break; if (tl > vl) { di--; continue; }
             break;
           }
-          if (di > 0)
+          if (di != 0)
           {
             ulong c = 0; var p = a + n;
             for (int k = 1; k <= nb; k++)
@@ -2918,7 +2978,8 @@ namespace System.Numerics
           if (r != null && di != 0)
           {
             var x = n + 1; for (var j = r[0] + 1; j < x; j++) r[j] = 0;
-            if (r[0] < x) r[0] = x; r[x] = unchecked((uint)di);
+            if (r[0] < x) r[0] = x; else { }
+            r[x] = unchecked((uint)di);
           }
           if (i < na) a[i + 1] = 0;
         }
@@ -2940,8 +3001,8 @@ namespace System.Numerics
       }
       static uint* gcd(uint* u, uint* v)
       {
-        var su = clz(u); if (su != 0) shr(u, su);
-        var sv = clz(v); if (sv != 0) shr(v, sv); if (su > sv) su = sv;
+        //var su = clz(u); if (su != 0) shr(u, su);
+        //var sv = clz(v); if (sv != 0) shr(v, sv); if (su > sv) su = sv;
         if (cms(u, v) < 0) { var t = u; u = v; v = t; }
         while (v[0] > 2)
         {
@@ -2999,7 +3060,7 @@ namespace System.Numerics
           while (y != 0) { var t = unchecked((uint)x) % unchecked((uint)y); x = y; y = t; }
           *(ulong*)(u + 1) = x; u[0] = u[2] != 0 ? 2u : 1u; m1:;
         }
-        if (su != 0) shl(u, su);
+        //if (su != 0) shl(u, su);
         return u;
       }
       static int clz(uint* p)
@@ -3045,7 +3106,7 @@ namespace System.Numerics
               copy(d, s, n);
         return new BigRational(p);
       }
-      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r, uint nr) //todo: optimize
+      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r, uint nr) //todo: optimize, non recursive on stack
       {
         Debug.Assert(na >= nb && nr == na + nb);
         if (nb < 0020)
@@ -3053,7 +3114,7 @@ namespace System.Numerics
           for (uint i = 0; i < nb; i++) //todo: optimize, the 0 row trick
           {
             ulong c = 0, d;
-            for (uint k = 0; k < na; k++, c = d >> 32) 
+            for (uint k = 0; k < na; k++, c = d >> 32)
               r[i + k] = unchecked((uint)(d = r[i + k] + c + (ulong)a[k] * b[i]));
             r[i + na] = (uint)c;
           }
@@ -3063,7 +3124,7 @@ namespace System.Numerics
         kmu(a, n, b, n, r, m); // p1 = al * bl
         kmu(a + n, na - n, b + n, nb - n, r + m, nr - m); // p2 = ah * bh
         uint r1 = na - n + 1, r2 = nb - n + 1, r3 = r1 + r2, r4 = r1 + r2 + r3;
-        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; //todo: optimize
+        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; //todo: optimize, use cpu.stack  
         for (uint i = 0; i < r4; i++) t1[i] = 0; //todo: optimize
         add(a + n, na - n, a, n, t1, r1);
         add(b + n, nb - n, b, n, t2, r2);
@@ -3116,12 +3177,14 @@ namespace System.Numerics
       var n = p[0] & 0x3fffffff;
       return n + p[n + 1] + 2;
     }
-    [MethodImpl(MethodImplOptions.NoInlining)]
     static void copy(uint* d, uint* s, uint n)
     {
-      for (uint i = 0; i < n; i++) d[i] = s[i];
-      //for (uint i = 0, c = n >> 1; i < c; i++) ((ulong*)d)[i] = ((ulong*)s)[i];
-      //if ((n & 1) != 0) d[n - 1] = s[n - 1];
+      //new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; // 10% slower 
+      //if (n > 16) { new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; } // 5% slower 
+      uint i = 0, c;
+      for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = *(decimal*)&((byte*)s)[i << 2]; // RyuJIT vmovdqu
+      for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = *(ulong*)&((byte*)s)[i << 2];
+      if (i != n) d[i] = s[i];
     }
     #endregion
     #region debug support

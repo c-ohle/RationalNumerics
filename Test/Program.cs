@@ -19,21 +19,27 @@ namespace Test
     static void test()
     {
       VectorR a, b, c; string s; rat x, y;
+
+      x = MathRE.IntegerDivide(+10, 3);
+      x = MathRE.IntegerDivide(-10, 3);
+      y = MathRE.IntegerModula(10, 3);
+      y = MathRE.IntegerModula(-10, 3);
+
       //"2.7182818284590452353602874713526624977572470936999595749669676277"
       var e = MathR.Exp(1);
-      s = MathRex.GetContinuedFraction(e);
+      s = MathRE.GetContinuedFraction(e);
       e = (rat)"2.7182818284590452353602874713526624977572470936999595749669676277";
       s = e.ToString("L100");
-      s = MathRex.GetContinuedFraction(e);
-      y = MathRex.ParseContinuedFraction(s);
+      s = MathRE.GetContinuedFraction(e);
+      y = MathRE.ParseContinuedFraction(s);
       if (y != e) { }
 
       s = string.Concat(s.Select(c => c == ';' || c == ',' ? ' ' : c));
       c = VectorR.Parse(s);
 
       x = (rat)"0.00000000000007686868786";
-      s = MathRex.GetContinuedFraction(x);
-      y = MathRex.ParseContinuedFraction(s);
+      s = MathRE.GetContinuedFraction(x);
+      y = MathRE.ParseContinuedFraction(s);
       
       c = VectorR.Parse(string.Concat(s.Select(c => c == ';' || c == ',' ? ' ' : c)));
 

@@ -33,6 +33,7 @@
       this.label1 = new System.Windows.Forms.Label();
       this.panel_webview = new System.Windows.Forms.Panel();
       this.textBox1 = new System.Windows.Forms.TextBox();
+      this.labelDebug = new System.Windows.Forms.Label();
       button_add = new System.Windows.Forms.Button();
       button_save = new System.Windows.Forms.Button();
       this.SuspendLayout();
@@ -40,7 +41,7 @@
       // button_add
       // 
       button_add.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      button_add.Location = new System.Drawing.Point(878, 44);
+      button_add.Location = new System.Drawing.Point(878, 58);
       button_add.Name = "button_add";
       button_add.Size = new System.Drawing.Size(94, 29);
       button_add.TabIndex = 3;
@@ -74,24 +75,38 @@
       this.panel_webview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.panel_webview.Location = new System.Drawing.Point(11, 44);
+      this.panel_webview.Location = new System.Drawing.Point(11, 58);
       this.panel_webview.Name = "panel_webview";
-      this.panel_webview.Size = new System.Drawing.Size(861, 554);
+      this.panel_webview.Size = new System.Drawing.Size(861, 540);
       this.panel_webview.TabIndex = 2;
       // 
       // textBox1
       // 
       this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBox1.Location = new System.Drawing.Point(878, 79);
+      this.textBox1.Location = new System.Drawing.Point(878, 93);
       this.textBox1.Name = "textBox1";
       this.textBox1.Size = new System.Drawing.Size(94, 27);
       this.textBox1.TabIndex = 7;
       this.textBox1.Visible = false;
       this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
       // 
+      // labelDebug
+      // 
+      this.labelDebug.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(220)))));
+      this.labelDebug.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.labelDebug.ForeColor = System.Drawing.SystemColors.InfoText;
+      this.labelDebug.Location = new System.Drawing.Point(207, 15);
+      this.labelDebug.Name = "labelDebug";
+      this.labelDebug.Padding = new System.Windows.Forms.Padding(4, 0, 0, 0);
+      this.labelDebug.Size = new System.Drawing.Size(178, 24);
+      this.labelDebug.TabIndex = 9;
+      this.labelDebug.Text = "Under construction";
+      this.labelDebug.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
       // BenchmarksPage
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+      this.Controls.Add(this.labelDebug);
       this.Controls.Add(this.textBox1);
       this.Controls.Add(button_save);
       this.Controls.Add(button_add);
@@ -109,5 +124,6 @@
     private Label label1;
     private Panel panel_webview;
     private TextBox textBox1;
+    private Label labelDebug;
   }
 }
