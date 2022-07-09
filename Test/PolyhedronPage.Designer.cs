@@ -60,9 +60,9 @@
       System.Windows.Forms.ToolStripSeparator _5;
       Test.MenuItem _groupcsg;
       Test.MenuItem _center2;
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
       System.Windows.Forms.Button button1;
       System.Windows.Forms.Button button2;
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PolyhedronPage));
       this.label1 = new System.Windows.Forms.Label();
       this.contextMenuView = new Test.ContextMenu(this.components);
       this._3 = new System.Windows.Forms.ToolStripSeparator();
@@ -378,6 +378,28 @@
       _center2.Size = new System.Drawing.Size(231, 24);
       _center2.Text = "Center";
       // 
+      // button1
+      // 
+      button1.Enabled = false;
+      button1.Location = new System.Drawing.Point(444, 12);
+      button1.Name = "button1";
+      button1.Size = new System.Drawing.Size(94, 29);
+      button1.TabIndex = 2;
+      button1.Text = "Skeleton";
+      button1.UseVisualStyleBackColor = true;
+      button1.Click += new System.EventHandler(this.btn_run_Click);
+      // 
+      // button2
+      // 
+      button2.Enabled = false;
+      button2.Location = new System.Drawing.Point(544, 12);
+      button2.Name = "button2";
+      button2.Size = new System.Drawing.Size(94, 29);
+      button2.TabIndex = 2;
+      button2.Text = "BSP Tests";
+      button2.UseVisualStyleBackColor = true;
+      button2.Click += new System.EventHandler(this.btn_run_Click);
+      // 
       // label1
       // 
       this.label1.AutoSize = true;
@@ -620,26 +642,6 @@
       this.toolStripButton2.Size = new System.Drawing.Size(29, 24);
       this.toolStripButton2.Text = "⚒";
       this.toolStripButton2.Visible = false;
-      // 
-      // button1
-      // 
-      button1.Location = new System.Drawing.Point(444, 12);
-      button1.Name = "button1";
-      button1.Size = new System.Drawing.Size(94, 29);
-      button1.TabIndex = 2;
-      button1.Text = "Skeleton";
-      button1.UseVisualStyleBackColor = true;
-      button1.Click += new System.EventHandler(this.btn_run_Click);
-      // 
-      // button2
-      // 
-      button2.Location = new System.Drawing.Point(544, 12);
-      button2.Name = "button2";
-      button2.Size = new System.Drawing.Size(94, 29);
-      button2.TabIndex = 2;
-      button2.Text = "BSP Tests";
-      button2.UseVisualStyleBackColor = true;
-      button2.Click += new System.EventHandler(this.btn_run_Click);
       // 
       // PolyhedronPage
       // 

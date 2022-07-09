@@ -40,8 +40,7 @@
       // 
       // button_add
       // 
-      button_add.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      button_add.Location = new System.Drawing.Point(878, 58);
+      button_add.Location = new System.Drawing.Point(202, 11);
       button_add.Name = "button_add";
       button_add.Size = new System.Drawing.Size(94, 29);
       button_add.TabIndex = 3;
@@ -83,7 +82,7 @@
       // textBox1
       // 
       this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBox1.Location = new System.Drawing.Point(878, 93);
+      this.textBox1.Location = new System.Drawing.Point(878, 58);
       this.textBox1.Name = "textBox1";
       this.textBox1.Size = new System.Drawing.Size(94, 27);
       this.textBox1.TabIndex = 7;
@@ -92,13 +91,15 @@
       // 
       // labelDebug
       // 
+      this.labelDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelDebug.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(220)))));
       this.labelDebug.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.labelDebug.ForeColor = System.Drawing.SystemColors.InfoText;
-      this.labelDebug.Location = new System.Drawing.Point(207, 15);
+      this.labelDebug.Location = new System.Drawing.Point(323, 11);
       this.labelDebug.Name = "labelDebug";
       this.labelDebug.Padding = new System.Windows.Forms.Padding(4, 0, 0, 0);
-      this.labelDebug.Size = new System.Drawing.Size(178, 24);
+      this.labelDebug.Size = new System.Drawing.Size(549, 29);
       this.labelDebug.TabIndex = 9;
       this.labelDebug.Text = "Under construction";
       this.labelDebug.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

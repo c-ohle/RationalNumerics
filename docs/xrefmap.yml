@@ -397,30 +397,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.hash
   fullName: System.Numerics.BigRational.CPU.hash
   nameWithType: BigRational.CPU.hash
-- uid: System.Numerics.BigRational.CPU.idiv
-  name: idiv()
-  href: api/System.Numerics.BigRational.CPU.idiv.html#System_Numerics_BigRational_CPU_idiv
-  commentId: M:System.Numerics.BigRational.CPU.idiv
-  fullName: System.Numerics.BigRational.CPU.idiv()
-  nameWithType: BigRational.CPU.idiv()
-- uid: System.Numerics.BigRational.CPU.idiv*
-  name: idiv
-  href: api/System.Numerics.BigRational.CPU.idiv.html
-  commentId: Overload:System.Numerics.BigRational.CPU.idiv
-  fullName: System.Numerics.BigRational.CPU.idiv
-  nameWithType: BigRational.CPU.idiv
-- uid: System.Numerics.BigRational.CPU.imod
-  name: imod()
-  href: api/System.Numerics.BigRational.CPU.imod.html#System_Numerics_BigRational_CPU_imod
-  commentId: M:System.Numerics.BigRational.CPU.imod
-  fullName: System.Numerics.BigRational.CPU.imod()
-  nameWithType: BigRational.CPU.imod()
-- uid: System.Numerics.BigRational.CPU.imod*
-  name: imod
-  href: api/System.Numerics.BigRational.CPU.imod.html
-  commentId: Overload:System.Numerics.BigRational.CPU.imod
-  fullName: System.Numerics.BigRational.CPU.imod
-  nameWithType: BigRational.CPU.imod
 - uid: System.Numerics.BigRational.CPU.inv(System.Int32)
   name: inv(Int32)
   href: api/System.Numerics.BigRational.CPU.inv.html#System_Numerics_BigRational_CPU_inv_System_Int32_
@@ -1642,6 +1618,27 @@ references:
   commentId: Overload:System.Numerics.MathR.DefaultDigits
   fullName: System.Numerics.MathR.DefaultDigits
   nameWithType: MathR.DefaultDigits
+- uid: System.Numerics.MathR.DivRem(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: DivRem(BigRational, BigRational)
+  href: api/System.Numerics.MathR.DivRem.html#System_Numerics_MathR_DivRem_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.MathR.DivRem(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.MathR.DivRem(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: MathR.DivRem(BigRational, BigRational)
+- uid: System.Numerics.MathR.DivRem(System.Numerics.BigRational,System.Numerics.BigRational,System.Numerics.BigRational@)
+  name: DivRem(BigRational, BigRational, out BigRational)
+  href: api/System.Numerics.MathR.DivRem.html#System_Numerics_MathR_DivRem_System_Numerics_BigRational_System_Numerics_BigRational_System_Numerics_BigRational__
+  commentId: M:System.Numerics.MathR.DivRem(System.Numerics.BigRational,System.Numerics.BigRational,System.Numerics.BigRational@)
+  name.vb: DivRem(BigRational, BigRational, ByRef BigRational)
+  fullName: System.Numerics.MathR.DivRem(System.Numerics.BigRational, System.Numerics.BigRational, out System.Numerics.BigRational)
+  fullName.vb: System.Numerics.MathR.DivRem(System.Numerics.BigRational, System.Numerics.BigRational, ByRef System.Numerics.BigRational)
+  nameWithType: MathR.DivRem(BigRational, BigRational, out BigRational)
+  nameWithType.vb: MathR.DivRem(BigRational, BigRational, ByRef BigRational)
+- uid: System.Numerics.MathR.DivRem*
+  name: DivRem
+  href: api/System.Numerics.MathR.DivRem.html
+  commentId: Overload:System.Numerics.MathR.DivRem
+  fullName: System.Numerics.MathR.DivRem
+  nameWithType: MathR.DivRem
 - uid: System.Numerics.MathR.Exp(System.Numerics.BigRational,System.Int32)
   name: Exp(BigRational, Int32)
   href: api/System.Numerics.MathR.Exp.html#System_Numerics_MathR_Exp_System_Numerics_BigRational_System_Int32_
@@ -1678,6 +1675,30 @@ references:
   commentId: Overload:System.Numerics.MathR.Floor
   fullName: System.Numerics.MathR.Floor
   nameWithType: MathR.Floor
+- uid: System.Numerics.MathR.GreatestCommonDivisor(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: GreatestCommonDivisor(BigRational, BigRational)
+  href: api/System.Numerics.MathR.GreatestCommonDivisor.html#System_Numerics_MathR_GreatestCommonDivisor_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.MathR.GreatestCommonDivisor(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.MathR.GreatestCommonDivisor(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: MathR.GreatestCommonDivisor(BigRational, BigRational)
+- uid: System.Numerics.MathR.GreatestCommonDivisor*
+  name: GreatestCommonDivisor
+  href: api/System.Numerics.MathR.GreatestCommonDivisor.html
+  commentId: Overload:System.Numerics.MathR.GreatestCommonDivisor
+  fullName: System.Numerics.MathR.GreatestCommonDivisor
+  nameWithType: MathR.GreatestCommonDivisor
+- uid: System.Numerics.MathR.IDiv(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: IDiv(BigRational, BigRational)
+  href: api/System.Numerics.MathR.IDiv.html#System_Numerics_MathR_IDiv_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.MathR.IDiv(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.MathR.IDiv(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: MathR.IDiv(BigRational, BigRational)
+- uid: System.Numerics.MathR.IDiv*
+  name: IDiv
+  href: api/System.Numerics.MathR.IDiv.html
+  commentId: Overload:System.Numerics.MathR.IDiv
+  fullName: System.Numerics.MathR.IDiv
+  nameWithType: MathR.IDiv
 - uid: System.Numerics.MathR.ILog10(System.Numerics.BigRational)
   name: ILog10(BigRational)
   href: api/System.Numerics.MathR.ILog10.html#System_Numerics_MathR_ILog10_System_Numerics_BigRational_
@@ -1690,6 +1711,30 @@ references:
   commentId: Overload:System.Numerics.MathR.ILog10
   fullName: System.Numerics.MathR.ILog10
   nameWithType: MathR.ILog10
+- uid: System.Numerics.MathR.IMod(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: IMod(BigRational, BigRational)
+  href: api/System.Numerics.MathR.IMod.html#System_Numerics_MathR_IMod_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.MathR.IMod(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.MathR.IMod(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: MathR.IMod(BigRational, BigRational)
+- uid: System.Numerics.MathR.IMod*
+  name: IMod
+  href: api/System.Numerics.MathR.IMod.html
+  commentId: Overload:System.Numerics.MathR.IMod
+  fullName: System.Numerics.MathR.IMod
+  nameWithType: MathR.IMod
+- uid: System.Numerics.MathR.LeastCommonMultiple(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: LeastCommonMultiple(BigRational, BigRational)
+  href: api/System.Numerics.MathR.LeastCommonMultiple.html#System_Numerics_MathR_LeastCommonMultiple_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.MathR.LeastCommonMultiple(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.MathR.LeastCommonMultiple(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: MathR.LeastCommonMultiple(BigRational, BigRational)
+- uid: System.Numerics.MathR.LeastCommonMultiple*
+  name: LeastCommonMultiple
+  href: api/System.Numerics.MathR.LeastCommonMultiple.html
+  commentId: Overload:System.Numerics.MathR.LeastCommonMultiple
+  fullName: System.Numerics.MathR.LeastCommonMultiple
+  nameWithType: MathR.LeastCommonMultiple
 - uid: System.Numerics.MathR.Log(System.Numerics.BigRational,System.Int32)
   name: Log(BigRational, Int32)
   href: api/System.Numerics.MathR.Log.html#System_Numerics_MathR_Log_System_Numerics_BigRational_System_Int32_

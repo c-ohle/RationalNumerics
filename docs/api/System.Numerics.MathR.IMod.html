@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Method cmp
+    <title>Method IMod
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Method cmp
+    <meta name="title" content="Method IMod
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -193,8 +193,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.bdi.html" title="bdi" class="">bdi</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.CPU.cmp.html" title="cmp" class="active">cmp</a>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.CPU.cmp.html" title="cmp" class="">cmp</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.cmpa.html" title="cmpa" class="">cmpa</a>
@@ -379,8 +379,8 @@
                                 <li class="">
                                   <a href="System.Numerics.MathR.ILog10.html" title="ILog10" class="">ILog10</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.MathR.IMod.html" title="IMod" class="">IMod</a>
+                                <li class="active">
+                                  <a href="System.Numerics.MathR.IMod.html" title="IMod" class="active">IMod</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.MathR.LeastCommonMultiple.html" title="LeastCommonMultiple" class="">LeastCommonMultiple</a>
@@ -436,202 +436,28 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.cmp*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.MathR.IMod*">
 
-<h1 id="System_Numerics_BigRational_CPU_cmp_" data-uid="System.Numerics.BigRational.CPU.cmp*">Method cmp
+<h1 id="System_Numerics_MathR_IMod_" data-uid="System.Numerics.MathR.IMod*">Method IMod
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_cmp_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.cmp(System.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_MathR_IMod_System_Numerics_BigRational_System_Numerics_BigRational_.md&amp;value=---%0Auid%3A%20System.Numerics.MathR.IMod(System.Numerics.BigRational%2CSystem.Numerics.BigRational)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2090">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/MathR.cs/#L555">View Source</a>
 </span>
-<a id="System_Numerics_BigRational_CPU_cmp_" data-uid="System.Numerics.BigRational.CPU.cmp*"></a>
-<h4 id="System_Numerics_BigRational_CPU_cmp_System_Int32_System_Int32_" data-uid="System.Numerics.BigRational.CPU.cmp(System.Int32,System.Int32)">cmp(Int32, Int32)</h4>
-<div class="markdown level1 summary"><p>Compares the values at index <code data-dev-comment-type="paramref" class="paramref">a</code> and <code data-dev-comment-type="paramref" class="paramref">b</code> relative to the top of the stack.<br></p>
+<a id="System_Numerics_MathR_IMod_" data-uid="System.Numerics.MathR.IMod*"></a>
+<h4 id="System_Numerics_MathR_IMod_System_Numerics_BigRational_System_Numerics_BigRational_" data-uid="System.Numerics.MathR.IMod(System.Numerics.BigRational,System.Numerics.BigRational)">IMod(BigRational, BigRational)</h4>
+<div class="markdown level1 summary"><p>Performes an integer modulo operation <code data-dev-comment-type="paramref" class="paramref">a</code> % <code data-dev-comment-type="paramref" class="paramref">b</code> what is the remainder that results from a division.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public int cmp(int a = 0, int b = 1)</code></pre>
-</div>
-<h5 class="parameters">Parameters</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><span class="parametername">a</span></td>
-      <td><p>Relative index of the first stack entry.</p>
-</td>
-    </tr>
-    <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>Relative index of the second stack entry.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><p>-1 – value at a is less than value at b.<br>
-0 – value at a is equal to value at b.<br>
-1 – value at a is greater than value at b.<br></p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<span class="small pull-right mobile-hide">
-  <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_cmp_System_UInt32_System_UInt32_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.cmp(System.UInt32%2CSystem.UInt32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-</span>
-<span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2108">View Source</a>
-</span>
-<a id="System_Numerics_BigRational_CPU_cmp_" data-uid="System.Numerics.BigRational.CPU.cmp*"></a>
-<h4 id="System_Numerics_BigRational_CPU_cmp_System_UInt32_System_UInt32_" data-uid="System.Numerics.BigRational.CPU.cmp(System.UInt32,System.UInt32)">cmp(UInt32, UInt32)</h4>
-<div class="markdown level1 summary"><p>Compares the values at index <code data-dev-comment-type="paramref" class="paramref">a</code> and <code data-dev-comment-type="paramref" class="paramref">b</code> as absolute indices in the stack.</p>
-</div>
-<div class="markdown level1 conceptual"></div>
-<h5 class="decalaration">Declaration</h5>
-<div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public int cmp(uint a, uint b)</code></pre>
-</div>
-<h5 class="parameters">Parameters</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.UInt32</span></td>
-      <td><span class="parametername">a</span></td>
-      <td><p>Absolute index of a stack entry.</p>
-</td>
-    </tr>
-    <tr>
-      <td><span class="xref">System.UInt32</span></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>Absolute index of a stack entry.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><p>-1 – value at a is less than value at b.<br>
-0 – value at a is equal to value at b.<br>
-1 – value at a is greater than value at b.<br></p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 id="System_Numerics_BigRational_CPU_cmp_System_UInt32_System_UInt32__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>see: <a class="xref" href="System.Numerics.BigRational.CPU.mark.html#System_Numerics_BigRational_CPU_mark">mark()</a> for absolute indices.</p>
-</div>
-<span class="small pull-right mobile-hide">
-  <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_cmp_System_UInt32_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.cmp(System.UInt32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-</span>
-<span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2126">View Source</a>
-</span>
-<a id="System_Numerics_BigRational_CPU_cmp_" data-uid="System.Numerics.BigRational.CPU.cmp*"></a>
-<h4 id="System_Numerics_BigRational_CPU_cmp_System_UInt32_" data-uid="System.Numerics.BigRational.CPU.cmp(System.UInt32)">cmp(UInt32)</h4>
-<div class="markdown level1 summary"><p>Compares the value on top of the stack with the value at b as absolute index in the stack.</p>
-</div>
-<div class="markdown level1 conceptual"></div>
-<h5 class="decalaration">Declaration</h5>
-<div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public int cmp(uint b)</code></pre>
-</div>
-<h5 class="parameters">Parameters</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.UInt32</span></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>Absolute index of a stack entry.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><p>-1 – value on top of the stack is less than value at b.<br>
-0 – value on top of the stack is equal to value at b.<br>
-1 – value on top of the stack is greater than value at b.<br></p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 id="System_Numerics_BigRational_CPU_cmp_System_UInt32__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>see: <a class="xref" href="System.Numerics.BigRational.CPU.mark.html#System_Numerics_BigRational_CPU_mark">mark()</a> for absolute indices.</p>
-</div>
-<span class="small pull-right mobile-hide">
-  <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_cmp_System_Numerics_BigRational_System_Numerics_BigRational_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.cmp(System.Numerics.BigRational%2CSystem.Numerics.BigRational)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-</span>
-<span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2140">View Source</a>
-</span>
-<a id="System_Numerics_BigRational_CPU_cmp_" data-uid="System.Numerics.BigRational.CPU.cmp*"></a>
-<h4 id="System_Numerics_BigRational_CPU_cmp_System_Numerics_BigRational_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.CPU.cmp(System.Numerics.BigRational,System.Numerics.BigRational)">cmp(BigRational, BigRational)</h4>
-<div class="markdown level1 summary"><p>Compares the <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value <code data-dev-comment-type="paramref" class="paramref">a</code> with the <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value b.</p>
-</div>
-<div class="markdown level1 conceptual"></div>
-<h5 class="decalaration">Declaration</h5>
-<div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public int cmp(BigRational a, BigRational b)</code></pre>
+  <pre><code class="lang-csharp hljs">public static BigRational IMod(BigRational a, BigRational b)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -646,13 +472,13 @@
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
       <td><span class="parametername">a</span></td>
-      <td><p>A <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> as first value.</p>
+      <td><p>The value to be divided. (dividend)</p>
 </td>
     </tr>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
       <td><span class="parametername">b</span></td>
-      <td><p>A <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> as second value.</p>
+      <td><p>The value to divide by. (divisor)</p>
 </td>
     </tr>
   </tbody>
@@ -667,62 +493,28 @@
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><p>-1 – a is less than b.<br>
-0 – a is equal b.<br>
-1 – a is greater than b.<br></p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<span class="small pull-right mobile-hide">
-  <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_cmp_System_Numerics_BigRational_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.cmp(System.Numerics.BigRational)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-</span>
-<span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2159">View Source</a>
-</span>
-<a id="System_Numerics_BigRational_CPU_cmp_" data-uid="System.Numerics.BigRational.CPU.cmp*"></a>
-<h4 id="System_Numerics_BigRational_CPU_cmp_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.CPU.cmp(System.Numerics.BigRational)">cmp(BigRational)</h4>
-<div class="markdown level1 summary"><p>Compares the value on top of the stack a with the <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value b.</p>
-</div>
-<div class="markdown level1 conceptual"></div>
-<h5 class="decalaration">Declaration</h5>
-<div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public int cmp(BigRational b)</code></pre>
-</div>
-<h5 class="parameters">Parameters</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>A <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> as second value.</p>
+      <td><p>A <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> integer value.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 class="returns">Returns</h5>
+<h5 id="System_Numerics_MathR_IMod_System_Numerics_BigRational_System_Numerics_BigRational__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>For integer values <code data-dev-comment-type="paramref" class="paramref">a</code> and <code data-dev-comment-type="paramref" class="paramref">b</code>, the result equals a <span class="xref">System.Numerics.BigInteger</span> modulo (%) operation.<br>
+This in contrast to <code data-dev-comment-type="paramref" class="paramref">a</code> % <code data-dev-comment-type="paramref" class="paramref">b</code>, where for <span class="xref">System.Numerics.BigInteger</span> a corresponding fraction results.</p>
+</div>
+<h5 class="exceptions">Exceptions</h5>
 <table class="table table-bordered table-striped table-condensed">
   <thead>
     <tr>
       <th>Type</th>
-      <th>Description</th>
+      <th>Condition</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Int32</span></td>
-      <td><p>-1 – the value on top of the stack is less than b.<br>
-0 – the value on top of the stack is equal b.<br>
-1 – the value on top of the stack is greater than b.<br></p>
+      <td><span class="xref">System.DivideByZeroException</span></td>
+      <td><p><span class="xref">System.DivideByZeroException</span>: <code data-dev-comment-type="paramref" class="paramref">b</code> is zero.</p>
 </td>
     </tr>
   </tbody>
@@ -735,10 +527,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_cmp_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.cmp*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_MathR_IMod_.md&amp;value=---%0Auid%3A%20System.Numerics.MathR.IMod*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L2090" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/MathR.cs/#L555" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

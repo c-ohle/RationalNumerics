@@ -1008,7 +1008,7 @@ namespace System.Numerics
       /// <param name="capacity">The initial stack capacity that must be greater than 0 (zero).</param>
       public CPU(uint capacity = 32)
       {
-        p = new uint[capacity][]; Debug.Assert(capacity > 0);
+        p = new uint[capacity][];
       }
       /// <summary>
       /// Returns a temporary absolute index of the current stack top
@@ -2647,6 +2647,8 @@ namespace System.Numerics
       {
         cpu = null;
       }
+
+#if false //todo: remove, div(a, b); mod(); swp(); pop(); must!!! have the same performance      
       /// <summary>
       /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
       /// and replaces them with the integral result.
@@ -2690,6 +2692,7 @@ namespace System.Numerics
         }
         pop();
       }
+#endif
 
       uint[] rent(uint n)
       {
@@ -2812,11 +2815,20 @@ namespace System.Numerics
         uint f = b[1];
         if (nb == 1)
         {
-          if (f == 0) { *(ulong*)r = 1; return; }
-          if (f == 1) { r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; return; }
+          switch (f) //jump table
+          {
+            case 0: *(ulong*)r = 1; return;
+            case 1: copy(r, a, na + 1); r[0] = na; return;
+              //case 2: //todo: opt. shl(1)
+              //case 3: //todo: opt. + +
+              //case 4: //todo: opt. shl(2)
+              //...
+          }
+          //if (f == 0) { *(ulong*)r = 1; return; }
+          //if (f == 1) { copy(r, a, na + 1); r[0] = na; /* r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; */ return; }
         }
-        //if (na == 1) *(ulong*)(r + 1) = (ulong)a[1] * b[1];
-        //else
+        if (na == 1) *(ulong*)(r + 1) = (ulong)a[1] * b[1]; //todo: jt
+        else
         if (na == 2 && Bmi2.X64.IsSupported)
         {
           *(ulong*)(r + 3) = Bmi2.X64.MultiplyNoFlags(*(ulong*)(a + 1), nb == 2 ? *(ulong*)(b + 1) : b[1], (ulong*)(r + 1));
@@ -2824,7 +2836,7 @@ namespace System.Numerics
         else if (na >= 0020) //nb <= na
         {
           var n = na + nb; for (uint i = 1; i <= n; i++) r[i] = 0; //todo: remove, kmu opt will make it needles
-          kmu(a + 1, na, b + 1, nb, r + 1, n); //r[0] = n; while (r[r[0]] == 0) r[0]--; return;
+          kmu(a + 1, na, b + 1, nb, r + 1, n);
         }
         else
         {
@@ -2849,7 +2861,7 @@ namespace System.Numerics
         }
         if (r[r[0] = na + nb] == 0 && r[0] > 1) { r[0]--; Debug.Assert(!(r[r[0]] == 0 && r[0] > 1)); }
       }
-      static void sqr(uint* a, uint* r)
+      static void sqr(uint* a, uint* r) //todo: opt kmu for sqr
       {
         uint n = *a++ & 0x3fffffff; var v = r + 1;
         if (n == 1)
@@ -3001,8 +3013,8 @@ namespace System.Numerics
       }
       static uint* gcd(uint* u, uint* v)
       {
-        //var su = clz(u); if (su != 0) shr(u, su);
-        //var sv = clz(v); if (sv != 0) shr(v, sv); if (su > sv) su = sv;
+        var su = clz(u); if (su != 0) shr(u, su);
+        var sv = clz(v); if (sv != 0) shr(v, sv); if (su > sv) su = sv;
         if (cms(u, v) < 0) { var t = u; u = v; v = t; }
         while (v[0] > 2)
         {
@@ -3060,7 +3072,7 @@ namespace System.Numerics
           while (y != 0) { var t = unchecked((uint)x) % unchecked((uint)y); x = y; y = t; }
           *(ulong*)(u + 1) = x; u[0] = u[2] != 0 ? 2u : 1u; m1:;
         }
-        //if (su != 0) shl(u, su);
+        if (su != 0) shl(u, su);
         return u;
       }
       static int clz(uint* p)

@@ -35,9 +35,19 @@ Precisission, string formattings and speed for the several functions can be chec
 
 ![calc1](docs/images/calc1.png)
 
+The Benchmarks are currently under construction.  
+The bottle-nack for rational arbitrary arithmetic is the integer multiplication and for the normalization the GCD function and the integer division.   
+The first benchmarks showing that the BigRational calculation core is aprximatly 15% faster then the equivalent functions in System.Numerics.BigInteger.  
+With other words, using BigRagtional for pure integer arithmetics can improve the performance, and together by using the CPU dramatic.
+
+BigInteger in NET 7 will use Spans more stack allocs and shared buffers.  
+The benchmarks made with NET 7 preview versions are showing that this reduces a little bit the memory pressure  
+but further degreads the performance especialliy for big numbers.
+
+![banch1](docs/images/benchmarks1.png)
+
 More detailed benchmarks coming soon. 
 
 * How it works and how to use it: [https://c-ohle.github.io/RationalNumerics](https://c-ohle.github.io/RationalNumerics)
 * Api Documentation: [https://c-ohle.github.io/RationalNumerics/api/System.Numerics.html](https://c-ohle.github.io/RationalNumerics/api/System.Numerics.html)
 * NuGet Package: [https://www.nuget.org/packages/BigRational](https://www.nuget.org/packages/BigRational)
-* For questions or suggestions: [c.ohle@outlook.com](mailto:c.ohle@outlook.com)

@@ -61,8 +61,8 @@ namespace System.Numerics.Rational
         cpu.push(-4);   /**/ cpu.push(b + 5); cpu.div(); cpu.add(); //cpu.norm();
         cpu.push(-4);   /**/ cpu.push(b + 7); cpu.div(); cpu.add(); //cpu.norm();
         cpu.push(1u);   /**/ cpu.push(b + 9); cpu.div(); cpu.add(); //cpu.norm();
-        cpu.mul(); cpu.add(); 
-        if ((n & 0x3) == 0x3) 
+        cpu.mul(); cpu.add();
+        if ((n & 0x3) == 0x3)
           cpu.norm();
       }
       cpu.push(64); cpu.div(); cpu.rnd(digits);
@@ -111,60 +111,10 @@ namespace System.Numerics.Rational
         var d = x != -1 ? s.Slice(x + 1).Trim() : s; s = s.Slice(0, x != -1 ? x : 0);
         if (cpu.sign() != 0) cpu.inv();
         //or tor: cpu.push(0); for (int i = 0; i < d.Length; i++) { cpu.push(10u); cpu.mul(); cpu.push(d[i] - '0'); cpu.add(); }      
-        cpu.tor(d); cpu.add(); 
+        cpu.tor(d); cpu.add();
       }
       return cpu.popr();
     }
-    /// <summary>
-    /// Finds the greatest common divisor (GCD) of two <see cref="BigRational"/> integer values.
-    /// </summary>
-    /// <remarks>
-    /// This operation makes only sense for integer values.
-    /// </remarks>
-    /// <param name="a">The first value.</param>
-    /// <param name="b">The second value.</param>
-    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static BigRational GreatestCommonDivisor(BigRational a, BigRational b)
-    {
-      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
-      cpu.gcd(); //cpu.pop(); return default;
-      return cpu.popr();
-    }
-    /// <summary>
-    /// Finds the least common multiple (LCM) of two <see cref="BigRational"/> integer values.
-    /// </summary>
-    /// <remarks>
-    /// This operation makes only sense for integer values.
-    /// </remarks>
-    /// <param name="a">The first value.</param>
-    /// <param name="b">The second value.</param>
-    /// <returns>The least common multiple of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static BigRational LeastCommonMultiple(BigRational a, BigRational b)
-    {
-      //|a * b| / gcd(a, b) == |a / gcd(a, b) * b|
-      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
-      cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
-      return cpu.popr();
-    }
-    /// <summary>
-    /// Performes an integer division a / b;
-    /// </summary>
-    public static BigRational IntegerDivide(BigRational a, BigRational b)
-    {
-      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = rat.task_cpu; 
-      cpu.push(a); cpu.push(b); cpu.idiv();
-      var c = cpu.popr(); return c;
-    }
-    /// <summary>
-    /// Performes an integer modula a % b;
-    /// </summary>
-    public static BigRational IntegerModula(BigRational a, BigRational b)
-    {
-      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = rat.task_cpu;
-      cpu.push(a); cpu.push(b); cpu.imod();
-      var c = cpu.popr(); return c;
-    }
+
   }
 }

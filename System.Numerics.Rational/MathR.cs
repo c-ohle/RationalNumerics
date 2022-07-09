@@ -493,6 +493,103 @@ namespace System.Numerics
       return default(BigRational) / 0; //NaN
     }
     /// <summary>
+    /// Finds the greatest common divisor (GCD) of two <see cref="BigRational"/> integer values.
+    /// </summary>
+    /// <remarks>
+    /// This operation makes only sense for integer values.
+    /// </remarks>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static BigRational GreatestCommonDivisor(BigRational a, BigRational b)
+    {
+      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
+      cpu.gcd(); //cpu.pop(); return default;
+      return cpu.popr();
+    }
+    /// <summary>
+    /// Finds the least common multiple (LCM) of two <see cref="BigRational"/> integer values.
+    /// </summary>
+    /// <remarks>
+    /// This operation makes only sense for integer values.
+    /// </remarks>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
+    /// <returns>The least common multiple of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static BigRational LeastCommonMultiple(BigRational a, BigRational b)
+    {
+      //|a * b| / gcd(a, b) == |a / gcd(a, b) * b| 
+      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
+      cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
+      return cpu.popr();
+    }
+    /// <summary>
+    /// Performes an integer division <paramref name="a"/> / <paramref name="b"/> 
+    /// </summary>
+    /// <remarks>
+    /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.Divide(BigInteger, BigInteger)"/> division.<br/>
+    /// This in contrast to <paramref name="a"/> / <paramref name="b"/>, where a corresponding fraction results.
+    /// </remarks>
+    /// <param name="a">The value to be divided. (dividend)</param>
+    /// <param name="b">The value to divide by. (devisor)</param>
+    /// <returns>A <see cref="BigRational "/> integer value.</returns>
+    /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
+    public static BigRational IDiv(BigRational a, BigRational b)
+    {
+      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
+      var cpu = rat.task_cpu; //cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
+      cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
+      return cpu.popr();
+    }
+    /// <summary>
+    /// Performes an integer modulo operation <paramref name="a"/> % <paramref name="b"/> what is the remainder that results from a division.
+    /// </summary>
+    /// <param name="a">The value to be divided. (dividend)</param>
+    /// <param name="b">The value to divide by. (divisor)</param>
+    /// <remarks>
+    /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger"/> modulo (%) operation.<br/>
+    /// This in contrast to <paramref name="a"/> % <paramref name="b"/>, where for <see cref="BigInteger"/> a corresponding fraction results.
+    /// </remarks>
+    /// <returns>A <see cref="BigRational "/> integer value.</returns>
+    /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
+    public static BigRational IMod(BigRational a, BigRational b)
+    {
+      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
+      var cpu = rat.task_cpu; //cpu.push(a); cpu.push(b); cpu.imod(); var c = cpu.popr(); return c;
+      cpu.div(b, b); cpu.mod(); cpu.pop();
+      return cpu.popr();
+    }
+    /// <summary>
+    /// Calculates the quotient of two <see cref="BigRational"/> signed values and also returns the remainder in an output parameter.
+    /// </summary>
+    /// <remarks>
+    /// This function is for compatibility to <see cref="Math.DivRem(int, int, out int)"/> like functions.<br/>
+    /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.DivRem(BigInteger, BigInteger, out BigInteger)"/> operation..<br/>
+    /// </remarks>
+    /// <param name="a">The dividend.</param>
+    /// <param name="b">The divisor.</param>
+    /// <param name="r">The remainder.</param>
+    /// <returns>The quotient of the specified numbers.</returns>
+    /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
+    public static BigRational DivRem(BigRational a, BigRational b, out BigRational r)
+    {
+      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
+      var cpu = rat.task_cpu; cpu.div(b, b); cpu.mod();
+      r = cpu.popr(); return cpu.popr();
+    }
+    /// <summary>
+    /// Produces the quotient and the remainder of two signed <see cref="BigRational"/> numbers.
+    /// </summary>
+    /// This function is for compatibility to <see cref="Math.DivRem(int, int)"/> like functions.<br/>
+    /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.DivRem(BigInteger, BigInteger, out BigInteger)"/> operation..<br/>
+    /// <param name="a">The dividend.</param>
+    /// <param name="b">The divisor.</param>
+    /// <returns>The quotient and the remainder of the specified numbers as integer values.</returns>
+    public static (BigRational Quotient, BigRational Remainder) DivRem(BigRational a, BigRational b)
+    {
+      var d = DivRem(a, b, out var r); return (d, r);
+    }
+    /// <summary>
     /// Gets or sets the default number of digits used by <see cref="MathR"/> functions 
     /// with an optional digits parameter with default value = 0.<br/>
     /// This allows for a flat interface, easily interchangeable with <see cref="Math"/> or <see cref="MathF"/>.
