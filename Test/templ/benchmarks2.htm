@@ -58,13 +58,15 @@
   <div style="background-color: white; position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px;" />
   <div style="position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; overflow: auto;">
     <div name="Environment">
-      <div class="group" onclick="toggle(this)">◢ System Environment</div>
+      <div class="group" onclick="toggle(this)">◢ Environment</div>
       <div style="display: block; margin-left: 16px">
-        <p>BigRational Version: <span id="1"></span>&nbsp;ImageRuntime: <span id="2"></span></p>
         <p>Processor: <span id="3"></span></p>
+        <p>System: <span id="0"/></p>
+        <p>BigRational: <span id="1"></span></p>
       </div>
       <hr />
     </div>
+    <p id="4" style="padding: 8px; background-color: #ffffDC;">App is in debug or a debugger is attached - Benchmark results are not realistic!</p> 
     <div name="Mul">
       <div class="group">Simple integer multiplication in comparison to BigInteger </div>
       <div style="display: none; margin-left: 16px">
@@ -85,6 +87,14 @@
       <div class="group" onclick="toggle(this,2)">GCD function (GreatestCommonDevisor) in comparison to BigInteger</div>
       <div style="display: none; margin-left: 16px">
         <p id="7" style="font-size: 7pt" />
+        <p>BigRational (<span style="color: blue">blue</span>); BigInteger (<span style="color: red">red</span>); Average Ratio:</p>
+      </div>
+      <hr />
+    </div>
+    <div name="Sqr">
+      <div class="group">Simple integer sqr in comparison to BigInteger </div>
+      <div style="display: none; margin-left: 16px">
+        <p id="8" style="font-size: 7pt" />
         <p>BigRational (<span style="color: blue">blue</span>); BigInteger (<span style="color: red">red</span>); Average Ratio:</p>
       </div>
       <hr />

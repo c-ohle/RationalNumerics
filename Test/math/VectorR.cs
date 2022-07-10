@@ -9,6 +9,10 @@ namespace System.Numerics.Rational
   /// A general imutable arbitrary one dimensional vector class based on <see cref="BigRational.CPU"/>.<br/>
   /// <i>This is just a non-optimal example implementation for testing!</i>
   /// </summary>
+  /// <remarks>
+  /// (as test setup client types and direct ReadOnlySpan&lt;uint>&gt; cpu access)<br/>
+  /// (a final version with duplicate and zero check to compact)<br/>
+  /// </remarks>
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct VectorR : IEnumerable<BigRational>, IEquatable<VectorR> //, IFormattable, ISpanFormattable, IReadOnlyList<BigRational> 
   {

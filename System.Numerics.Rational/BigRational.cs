@@ -11,9 +11,9 @@ namespace System.Numerics
 {
   /// <summary>
   /// Represents an arbitrarily large rational number.
-  /// </summary>
+  /// </summary>                                                    
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public unsafe readonly partial struct BigRational : IComparable<BigRational>, IEquatable<BigRational>, IFormattable, ISpanFormattable
+  public unsafe readonly struct BigRational : IComparable<BigRational>, IEquatable<BigRational>, IFormattable, ISpanFormattable
   {
     /// <summary>
     /// Converts the numeric value of the current <see cref="BigRational"/> instance to its equivalent string representation.
@@ -279,7 +279,7 @@ namespace System.Numerics
         if (*(uint*)s == 0) { value = value.Slice(4); return default; }
         if (value.Length < 16) throw new FormatException();
         var n = len((uint*)s); var p = new uint[n];
-        fixed (uint* d = p) copy(d, (uint*)s, n);
+        fixed (uint* d = p) cpy(d, (uint*)s, n);
         value = value.Slice((int)n << 2); return new BigRational(p);
       }
     }
@@ -564,7 +564,7 @@ namespace System.Numerics
       static decimal dec(uint* p, out int e)
       {
         var n = p[0] & 0x3fffffff; var c = n < 4 ? n : 4;
-        var t = stackalloc uint[5] { c, 0, 0, 0, 0 }; copy(t + 1, p + 1 + (n - c), c);
+        var t = stackalloc uint[5] { c, 0, 0, 0, 0 }; cpy(t + 1, p + 1 + (n - c), c);
         e = (int)(n << 5) - BitOperations.LeadingZeroCount(p[n]) - 96;
         if (e <= 0) e = 0; else CPU.shr(t, e - ((int)(n - c) << 5));
         return new decimal((int)t[1], (int)t[2], (int)t[3], (p[0] & 0x80000000) != 0, 0);
@@ -1052,7 +1052,7 @@ namespace System.Numerics
         fixed (uint* a = v.p)
         {
           var n = len(a);
-          fixed (uint* b = rent(n)) copy(b, a, n);
+          fixed (uint* b = rent(n)) cpy(b, a, n);
         }
       }
       /// <summary>
@@ -1238,7 +1238,7 @@ namespace System.Numerics
         fixed (uint* a = v)
         {
           var n = (uint)v.Length;
-          fixed (uint* b = rent(n)) copy(b, a, n);
+          fixed (uint* b = rent(n)) cpy(b, a, n);
         }
       }
       /// <summary>
@@ -1264,7 +1264,7 @@ namespace System.Numerics
             v = cachx(p, n, 1); return;
           }
           //
-          var a = new uint[n]; fixed (uint* s = a) copy(s, p, n);
+          var a = new uint[n]; fixed (uint* s = a) cpy(s, p, n);
           v = new BigRational(a); // if (c != 0) cache[c] = v;
         }
       }
@@ -1439,7 +1439,7 @@ namespace System.Numerics
         fixed (uint* u = this.p[a])
         {
           var n = len(u);
-          fixed (uint* v = rent(n)) copy(v, u, n);
+          fixed (uint* v = rent(n)) cpy(v, u, n);
         }
       }
       /// <summary>
@@ -1672,6 +1672,7 @@ namespace System.Numerics
       {
         if (a.p == null) { push(); return; }
         if (b.p == null) { push(); return; }
+        if (a.p == b.p) { push(a); sqr(); return; }
         fixed (uint* u = a.p, v = b.p) mul(u, v, false);
       }
       /// <summary>
@@ -1797,17 +1798,17 @@ namespace System.Numerics
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
-      public void shl(int c, int i = 0)
+      public void shl(uint c, int i = 0)
       {
-        if (c <= 0) { Debug.Assert(c == 0); return; }
+        if (c == 0) return;
         fixed (uint* u = p[this.i - 1 - i])
         {
           if (*(ulong*)u == 1) return;
-          fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1))
+          fixed (uint* v = rent(len(u) + (c >> 5) + 1))
           {
             var n = (u[0] & 0x3fffffff) + 1;
-            copy(v, u, n); shl(v, c);
-            copy(v + v[0] + 1, u + n, u[n] + 1);
+            cpy(v, u, n); shl(v, unchecked((int)c));
+            cpy(v + v[0] + 1, u + n, u[n] + 1);
             v[0] |= (u[0] & 0x80000000) | 0x40000000; swp(i + 1); pop();
           }
         }
@@ -1823,14 +1824,14 @@ namespace System.Numerics
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
-      public void shr(int c, int i = 0)
+      public void shr(uint c, int i = 0)
       {
-        if (c <= 0) { Debug.Assert(c == 0); return; }
+        if (c == 0) return;
         fixed (uint* p = this.p[this.i - 1 - i])
         {
           var h = p[0]; var a = h & 0x3fffffff;
-          shr(p, c); if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
-          if (p[0] != a) copy(p + p[0] + 1, p + a + 1, p[a + 1] + 1);
+          shr(p, unchecked((int)c)); if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
+          if (p[0] != a) cpy(p + p[0] + 1, p + a + 1, p[a + 1] + 1);
           p[0] |= (h & 0x80000000) | 0x40000000;
         }
       }
@@ -1849,7 +1850,7 @@ namespace System.Numerics
         {
           uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff, n = nu < nv ? nu : nv, l = 1;
           for (uint i = 1; i <= n; i++) if ((v[i] &= u[i]) != 0) l = i;
-          if (l != nv) { copy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
+          if (l != nv) { cpy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
           pop();
         }
       }
@@ -1887,7 +1888,7 @@ namespace System.Numerics
           uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff;
           if (nv < nu) { swp(); xor(); return; }
           uint l = 1; for (uint i = 1; i <= nu; i++) if ((v[i] ^= u[i]) != 0) l = i;
-          if (nu == nv && l != nv) { copy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
+          if (nu == nv && l != nv) { cpy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
           pop();
         }
       }
@@ -1911,7 +1912,7 @@ namespace System.Numerics
         {
           var h = u[0]; u[0] &= 0x3fffffff; var t = u + u[0] + 1;
           if (*(ulong*)t == 1) { pop(); pnan(); return; } //keep NaN
-          if (f != 8) div(u, t, v); else copy(v, t, t[0] + 1);
+          if (f != 8) div(u, t, v); else cpy(v, t, t[0] + 1);
           if ((f & (1 | 2 | 4)) != 0)
           {
             if (f == 4) f = *(ulong*)u != 1 ? 1 : 0;
@@ -1943,6 +1944,7 @@ namespace System.Numerics
       {
         uint e = unchecked((uint)(y < 0 ? -y : y)), z;
         if (x == 10) { push(unchecked((ulong)Math.Pow(x, z = e < 19 ? e : 19))); e -= z; }
+        //else if (x == 2) { push(1u); shl(e); e = 0; } //opt. possible but cases?
         else push(1u);
         if (e != 0)
         {
@@ -2022,7 +2024,7 @@ namespace System.Numerics
           var v = (b << 5) - unchecked((uint)BitOperations.LeadingZeroCount(q[b]));
           if (u > v) u = v; if (u <= c) return;
           var t = (int)(u - c); shr(p, t); shr(q, t);
-          if (p[0] != a) copy(p + p[0] + 1, q, q[0] + 1);
+          if (p[0] != a) cpy(p + p[0] + 1, q, q[0] + 1);
           p[0] |= (h & 0x80000000) | 0x40000000;
         }
       }
@@ -2348,7 +2350,7 @@ namespace System.Numerics
                 for (; t != 0 && sp[i - 1] == '0' && sp[t - 1] == '0'; i--, t--) ;
                 rep = t; ns = i; pop(3); break;
               }
-              copy(rr + i * nr, tt, tt[0] + 1);
+              cpy(rr + i * nr, tt, tt[0] + 1);
             }
           }
           sp[i] = c; swp(); pop();
@@ -2424,11 +2426,11 @@ namespace System.Numerics
         var e = bdi(); if (e == -int.MaxValue) return; // 0
         e = Math.Abs(e); if (e > c) c = unchecked((uint)e);
         uint m = mark(), s; //get(m - 1, out double d); // best possible initial est: 
-        //if (double.IsNormal(d)) push(Math.Sqrt(d));   // todo: enable afte checks
+        //if (double.IsNormal(d)) push(Math.Sqrt(d));   // todo: enable afte checks, best possible start value
         //else
         {
-          dup(); if ((s = msb()) > 1) shr(unchecked((int)s) >> 1); // est
-          inv(); if ((s = msb()) > 1) shr(unchecked((int)s) >> 1); inv();
+          dup(); if ((s = msb()) > 1) shr(s >> 1); // est
+          inv(); if ((s = msb()) > 1) shr(s >> 1); inv();
         }
         //uint i = 0;
         for (; ; )
@@ -2456,7 +2458,7 @@ namespace System.Numerics
         if (sign() <= 0) { pop(); pnan(); return; } // NaN
         lim(c + 32); // todo: check, lim x?
         var a = bdi(); // var c = _shl(1, a); x = x / c;
-        if (a != 0) { push(1u); if (a > 0) { shl(a); div(); } else { shl(-a); mul(); } }
+        if (a != 0) { push(1u); shl(unchecked((uint)(a > 0 ? a : -a))); if (a > 0) div(); else mul(); }
         var e = cmpi(0, 1); // push(1u); var e = cmp(1, 0); pop();
         if (e == 0) { pop(); push(a); return; } //if (x == 1) return a;
         if (e < 0) { shl(1); a--; } // adjust bdi //todo: lim x ?
@@ -2468,7 +2470,7 @@ namespace System.Numerics
           if (cmpi(1, 2) <= 0) continue; // if (x < 2) continue;        
           //push(2u); div(2, 0); pop(); // x = x / 2; //todo: shl den       
           swp(); inv(); shl(1); inv(); swp(); // x = x / 2; //todo: shl den
-          push(1u); shl((int)i); inv(); // var p = rat.Pow(2, -i); //var b = bdi(); if (i == c) { }
+          push(1u); shl(i); inv(); // var p = rat.Pow(2, -i); //var b = bdi(); if (i == c) { }
           add(); lim(c); // b += p;
         }
         swp(); pop(); if (a != 0) { push(a); add(); } // return a + b;
@@ -2545,7 +2547,8 @@ namespace System.Numerics
         for (uint n = 0; ; n++)
         {
           uint a = n << 2, b = n * 10;
-          pow(-1, unchecked((int)n)); pow(2, unchecked((int)b)); div(); //todo: opt inline pow, shifts
+
+          push(1u); shl(b); inv(); if ((n & 1) != 0) neg(); //pow(-1, unchecked((int)n)); pow(2, unchecked((int)b)); div();
           push(-32);  /**/ push(a + 1); div();
           push(-1);   /**/ push(a + 3); div(); add();
           push(256u); /**/ push(b + 1); div(); add();
@@ -2556,7 +2559,7 @@ namespace System.Numerics
           mul(); var t = -bdi();
           add(); lim(c + 64); if (t > c + 32) break; //todo: check
         }
-        push(64); div(); //todo: shift
+        dup(); shr(6); //push(64); div(); //shr checked up 4159
       }
       /// <summary>
       /// Replaces the value on top of the stack with the sine or cosine of that value.<br/>
@@ -2631,7 +2634,7 @@ namespace System.Numerics
         }
         mul(1, 4); div(1, 2); //z *= z / zsqr1;
         swp(1, 4); pop(4);
-        if (sh != 0) shl(sh); // z *= pow(2, sh); 
+        if (sh != 0) shl(unchecked((uint)sh)); // z *= pow(2, sh); 
         if (td) { neg(); pi(c); shr(1); add(); } // z = pi / 2 - z;
         if (s < 0) neg();
       }
@@ -2748,7 +2751,7 @@ namespace System.Numerics
           if (((u[0] | v[0]) & 0x40000000) == 0)
           {
             var n = len(u); // for (uint i = 0; i < n; i++) if (u[i] != v[i]) return false;
-            for (uint i = 0, c = n >> 1; i < c; i++)
+            for (uint i = 0, c = n >> 1; i < c; i++) //todo: opt
               if (((ulong*)u)[i] != ((ulong*)v)[i])
                 return false;
             if ((n & 1) != 0) return u[n - 1] == v[n - 1];
@@ -2779,11 +2782,11 @@ namespace System.Numerics
         var l = len(p);
         fixed (uint* s = rent(l << 1))
         {
-          copy(s, p, l); s[0] &= 0x3fffffff;
+          cpy(s, p, l); s[0] &= 0x3fffffff;
           var e = gcd(s, s + (s[0] + 1));
           if (*(ulong*)e == 0x100000001) { p[0] &= ~0x40000000u; pop(); return; }
           var t = s + l; var h = p[0];
-          copy(t, p, l); t[0] &= 0x3fffffff;
+          cpy(t, p, l); t[0] &= 0x3fffffff;
           d = t + (t[0] + 1); div(t, e, p); div(d, e, p + (p[0] + 1));
           p[0] |= (h & 0x80000000); pop();
         }
@@ -2818,7 +2821,7 @@ namespace System.Numerics
           switch (f) //jump table
           {
             case 0: *(ulong*)r = 1; return;
-            case 1: copy(r, a, na + 1); r[0] = na; return;
+            case 1: cpy(r, a, na + 1); r[0] = na; return;
               //case 2: //todo: opt. shl(1)
               //case 3: //todo: opt. + +
               //case 4: //todo: opt. shl(2)
@@ -2833,10 +2836,9 @@ namespace System.Numerics
         {
           *(ulong*)(r + 3) = Bmi2.X64.MultiplyNoFlags(*(ulong*)(a + 1), nb == 2 ? *(ulong*)(b + 1) : b[1], (ulong*)(r + 1));
         }
-        else if (na >= 0020) //nb <= na
+        else if (na >= 00_32) //nb <= na
         {
-          var n = na + nb; for (uint i = 1; i <= n; i++) r[i] = 0; //todo: remove, kmu opt will make it needles
-          kmu(a + 1, na, b + 1, nb, r + 1, n);
+          var n = na + nb; clr(r + 1, n); kmu(a + 1, na, b + 1, nb, r + 1, n);
         }
         else
         {
@@ -2880,6 +2882,7 @@ namespace System.Numerics
           //((ulong*)v)[0] = t5 << 32 | (uint)t1;
           //((ulong*)v)[1] = t3 + (t4 >> 32) + (t5 >> 32);
         }
+        else if (n >= 0_040) { clr(v, n + n); kmu(a, n, v, n + n); }
         else
         {
           for (uint i = 0; i < n; i++)
@@ -2920,23 +2923,6 @@ namespace System.Numerics
           a[0] = 1; a[1] = unchecked((uint)x); if (r == null) return;
           for (; na > 1 && r[na] == 0; na--) ; r[0] = na; return;
         }
-
-        //if (r != null)
-        //{
-        //  var aa = new Span<uint>(a + 1, (int)na);
-        //  var rr = new Span<uint>(r + 1, (int)(na + 1));
-        //  var rn = Divide(aa, new ReadOnlySpan<uint>(b + 1, (int)nb), rr);
-        //  for (; a[0] > 1 && a[a[0]] == 0; a[0]--) ;
-        //  r[0] = (uint)rn + 1; return;
-        //}
-
-        //if (r != null)
-        //{
-        //  int rn = Divide(a + 1,(int)na, b + 1, (int)nb, r + 1, (int)na);
-        //  for (; a[0] > 1 && a[a[0]] == 0; a[0]--) ;
-        //  r[0] = (uint)rn + 1; return;
-        //}
-
         uint dh = b[nb], dl = nb > 1 ? b[nb - 1] : 0;
         int sh = BitOperations.LeadingZeroCount(dh), sb = 32 - sh;
         if (sh > 0)
@@ -3115,18 +3101,18 @@ namespace System.Numerics
         var p = cache != null ? cache[x] : null;
         if (p == null) lock (string.Empty)
             fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n])
-              copy(d, s, n);
+              cpy(d, s, n);
         return new BigRational(p);
       }
-      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r, uint nr) //todo: optimize, non recursive on stack
+      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r, uint nr) //todo: opt, non recursive on stack
       {
         Debug.Assert(na >= nb && nr == na + nb);
-        if (nb < 0020)
+        if (nb < 00_20)
         {
-          for (uint i = 0; i < nb; i++) //todo: optimize, the 0 row trick
+          for (uint i = 0; i < nb; i++) //todo: opt after checks, the 0 row trick
           {
             ulong c = 0, d;
-            for (uint k = 0; k < na; k++, c = d >> 32)
+            for (uint k = 0; k < na; k++, c = d >> 32)  //todo: opt
               r[i + k] = unchecked((uint)(d = r[i + k] + c + (ulong)a[k] * b[i]));
             r[i + na] = (uint)c;
           }
@@ -3136,33 +3122,56 @@ namespace System.Numerics
         kmu(a, n, b, n, r, m); // p1 = al * bl
         kmu(a + n, na - n, b + n, nb - n, r + m, nr - m); // p2 = ah * bh
         uint r1 = na - n + 1, r2 = nb - n + 1, r3 = r1 + r2, r4 = r1 + r2 + r3;
-        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; //todo: optimize, use cpu.stack  
-        for (uint i = 0; i < r4; i++) t1[i] = 0; //todo: optimize
+        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; //todo: opt, use cpu.stack  
+        clr(t1, r4); // for(uint i = 0; i < r4; i++) t1[i] = 0; //todo: optimize
         add(a + n, na - n, a, n, t1, r1);
         add(b + n, nb - n, b, n, t2, r2);
         kmu(t1, r1, t2, r2, t3, r3); // p3 = (ah + al) * (bh + bl)
         sub(r + m, nr - m, r, m, t3, r3);
-        ada(r + n, nr - n, t3, r3); // (p2 << m) + ((p3 - (p1 + p2)) << n) + p1
-        static void sub(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+        ada(r + n, nr - n, t3, r3); // (p2 << m) + ((p3 - (p1 + p2)) << n) + p1        
+      }
+      static void kmu(uint* a, uint na, uint* r, uint nr)
+      {
+        if (na < 0_032)
         {
-          uint i = 0; long c = 0, d;
-          for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i] - b[i]));
-          for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i]));
-          for (; c != 0 && i < nr; i++, c = d >> 32) r[i] = unchecked((uint)(d = r[i] + c));
+          for (uint i = 0; i < na; i++) //todo: opt after checks, the 0 row trick
+          {
+            ulong c = 0, u, v;
+            for (uint k = 0; k < i; k++, c = (v + (u >> 1)) >> 31) //todo: opt 
+              r[i + k] = unchecked((uint)((u = r[i + k] + c) + ((v = (ulong)a[k] * a[i]) << 1)));
+            r[i + i] = unchecked((uint)(u = (ulong)a[i] * a[i] + c)); r[i + i + 1] = (uint)(u >> 32);
+          }
+          return;
         }
-        static void add(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
-        {
-          uint i = 0; ulong c = 0, d; Debug.Assert(na >= nb && nr == na + 1);
-          for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
-          for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = a[i] + c));
-          r[i] = unchecked((uint)c);
-        }
-        static void ada(uint* a, uint na, uint* b, uint nb)
-        {
-          uint i = 0; ulong c = 0L, d; Debug.Assert(na >= nb);
-          for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
-          for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
-        }
+        uint n = na >> 1, m = n << 1;
+        kmu(a, n, r, m);
+        kmu(a + n, na - n, r + m, nr - m);
+        uint r1 = na - n + 1, r2 = r1 + r1;
+        uint* t1 = stackalloc uint[(int)(r1 + r2)], t2 = t1 + r1; clr(t1, r1 + r2); //todo: cpu stack
+        add(a + n, na - n, a, n, t1, r1);
+        kmu(t1, r1, t2, r2);
+        sub(r + m, nr - m, r, m, t2, r2);
+        ada(r + n, (nr - n), t2, r2);
+      }
+      static void sub(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+      {
+        uint i = 0; long c = 0, d;
+        for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i] - b[i]));
+        for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i]));
+        for (; c != 0 && i < nr; i++, c = d >> 32) r[i] = unchecked((uint)(d = r[i] + c));
+      }
+      static void add(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+      {
+        uint i = 0; ulong c = 0, d; Debug.Assert(na >= nb && nr == na + 1);
+        for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
+        for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = a[i] + c));
+        r[i] = unchecked((uint)c);
+      }
+      static void ada(uint* a, uint na, uint* b, uint nb)
+      {
+        uint i = 0; ulong c = 0L, d; Debug.Assert(na >= nb);
+        for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
+        for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
       #endregion
     }
@@ -3189,14 +3198,21 @@ namespace System.Numerics
       var n = p[0] & 0x3fffffff;
       return n + p[n + 1] + 2;
     }
-    static void copy(uint* d, uint* s, uint n)
+    static void clr(uint* d, uint n)
+    {
+      uint i = 0, c;
+      for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = default; // RyuJIT vxorps, vmovdqu
+      for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = default;
+      if (i != n) d[i] = 0; //if ?
+    }
+    static void cpy(uint* d, uint* s, uint n)
     {
       //new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; // 10% slower 
       //if (n > 16) { new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; } // 5% slower 
       uint i = 0, c;
       for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = *(decimal*)&((byte*)s)[i << 2]; // RyuJIT vmovdqu
       for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = *(ulong*)&((byte*)s)[i << 2];
-      if (i != n) d[i] = s[i];
+      if (i != n) d[i] = s[i]; //if ?
     }
     #endregion
     #region debug support

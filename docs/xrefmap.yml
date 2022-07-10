@@ -778,24 +778,24 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.rnd
   fullName: System.Numerics.BigRational.CPU.rnd
   nameWithType: BigRational.CPU.rnd
-- uid: System.Numerics.BigRational.CPU.shl(System.Int32,System.Int32)
-  name: shl(Int32, Int32)
-  href: api/System.Numerics.BigRational.CPU.shl.html#System_Numerics_BigRational_CPU_shl_System_Int32_System_Int32_
-  commentId: M:System.Numerics.BigRational.CPU.shl(System.Int32,System.Int32)
-  fullName: System.Numerics.BigRational.CPU.shl(System.Int32, System.Int32)
-  nameWithType: BigRational.CPU.shl(Int32, Int32)
+- uid: System.Numerics.BigRational.CPU.shl(System.UInt32,System.Int32)
+  name: shl(UInt32, Int32)
+  href: api/System.Numerics.BigRational.CPU.shl.html#System_Numerics_BigRational_CPU_shl_System_UInt32_System_Int32_
+  commentId: M:System.Numerics.BigRational.CPU.shl(System.UInt32,System.Int32)
+  fullName: System.Numerics.BigRational.CPU.shl(System.UInt32, System.Int32)
+  nameWithType: BigRational.CPU.shl(UInt32, Int32)
 - uid: System.Numerics.BigRational.CPU.shl*
   name: shl
   href: api/System.Numerics.BigRational.CPU.shl.html
   commentId: Overload:System.Numerics.BigRational.CPU.shl
   fullName: System.Numerics.BigRational.CPU.shl
   nameWithType: BigRational.CPU.shl
-- uid: System.Numerics.BigRational.CPU.shr(System.Int32,System.Int32)
-  name: shr(Int32, Int32)
-  href: api/System.Numerics.BigRational.CPU.shr.html#System_Numerics_BigRational_CPU_shr_System_Int32_System_Int32_
-  commentId: M:System.Numerics.BigRational.CPU.shr(System.Int32,System.Int32)
-  fullName: System.Numerics.BigRational.CPU.shr(System.Int32, System.Int32)
-  nameWithType: BigRational.CPU.shr(Int32, Int32)
+- uid: System.Numerics.BigRational.CPU.shr(System.UInt32,System.Int32)
+  name: shr(UInt32, Int32)
+  href: api/System.Numerics.BigRational.CPU.shr.html#System_Numerics_BigRational_CPU_shr_System_UInt32_System_Int32_
+  commentId: M:System.Numerics.BigRational.CPU.shr(System.UInt32,System.Int32)
+  fullName: System.Numerics.BigRational.CPU.shr(System.UInt32, System.Int32)
+  nameWithType: BigRational.CPU.shr(UInt32, Int32)
 - uid: System.Numerics.BigRational.CPU.shr*
   name: shr
   href: api/System.Numerics.BigRational.CPU.shr.html

@@ -30,10 +30,8 @@ namespace Test
         //AllowWebBrowserDrop = false,
         Url = new Uri(path)
       };
-      wb.DocumentCompleted += wb_DocumentCompleted;
+      wb.DocumentCompleted += wb_ready;
       panel_webview.Controls.Add(wb);
-      //wb.DocumentText = File.ReadAllText(path);
-      //textBox1.Text = rat.CPU.klim.ToString();
     }
 
     void textBox1_Leave(object sender, EventArgs e)
@@ -44,15 +42,23 @@ namespace Test
     }
 
     WebBrowser? wb; XElement? esvg;//HtmlElement? p5; 
-    void wb_DocumentCompleted(object? sender, WebBrowserDocumentCompletedEventArgs? e)
+    void wb_ready(object? sender, WebBrowserDocumentCompletedEventArgs? e)
     {
       var doc = wb.Document; var body = doc.Body;
+      var t0 = RuntimeInformation.FrameworkDescription;
+      var t2 = RuntimeInformation.OSDescription;
+      var t3 = RuntimeInformation.OSArchitecture;
+      var t4 = RuntimeInformation.ProcessArchitecture;
+      var t5 = RuntimeInformation.RuntimeIdentifier;
+      doc.GetElementById("0").InnerText = $"{t2} {t3} Runtime: {t0} {t4}";
+
       var a = typeof(BigRational).Assembly; var name = a.GetName();
       var t1 = a.GetCustomAttributes(typeof(System.Runtime.Versioning.TargetFrameworkAttribute), false).FirstOrDefault() as System.Runtime.Versioning.TargetFrameworkAttribute;
-      doc.GetElementById("1").InnerText = name.Version.ToString();
-      doc.GetElementById("2").InnerText = a.ImageRuntimeVersion + " " + t1?.FrameworkName;
+      doc.GetElementById("1").InnerText = $"{name.Version.ToString()} Runtime: {a.ImageRuntimeVersion} {t1?.FrameworkName}";
+      //doc.GetElementById("2").InnerText = $"{a.ImageRuntimeVersion} Framework: ({t1?.FrameworkName}";
       using (var key = Registry.LocalMachine.OpenSubKey("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"))//\\CentralProcessor\\0\\ProcessorNameString"))
         doc.GetElementById("3").InnerText = $"{key.GetValue("ProcessorNameString")} ({key.GetValue("~MHz")} MHz) × {Environment.ProcessorCount}";
+      if (!MainFrame.debug) doc.GetElementById("4").OuterHtml = "";//.Style = "visibility: collapse";
       esvg = XElement.Parse(doc.GetElementById("svg").InnerHtml);
     }
 
@@ -119,6 +125,11 @@ namespace Test
       if (old == null) tag.ScrollIntoView(false);
       for (int i = 0; i < 3; i++) { Thread.Sleep(0); Application.DoEvents(); }
 
+      test = _test_sqr(out ex); tag = wb.Document.GetElementById("8");
+      runtest(tag, test, ex);
+      if (old == null) tag.ScrollIntoView(false);
+      for (int i = 0; i < 3; i++) { Thread.Sleep(0); Application.DoEvents(); }
+       
       Cursor = Cursors.Default;
       return;
     }
@@ -176,6 +187,20 @@ namespace Test
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second));
       };
     }
+    static Action<int, Func<bool>> _test_sqr(out int e)
+    {
+      var rr = new BigRational[256]; var ii = new BigInteger[256];
+      var cr = new BigRational[256]; var ci = new BigInteger[256];
+      var ra = new Random(13);
+      for (int i = 0; i < 256; i++) ii[i] = (BigInteger)(rr[i] = random_rat(ra, i << 4)); //E+4080
+      e = MathR.ILog10(rr[255]);
+      return (pass, f) =>
+      {
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = rr[i] * rr[i];
+        if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = ii[i] * ii[i];
+        if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second));
+      };
+    }
     static Action<int, Func<bool>> _test_div(out int e)
     {
       var rr = new BigRational[256]; var ii = new BigInteger[256];
@@ -210,9 +235,9 @@ namespace Test
       var cpu = rat.task_cpu;
       cpu.pow(10, digits);
       var x = cpu.msb();
-      for (int i = 0; i < x; i += 32)
+      for (uint i = 0; i < x; i += 32)
       {
-        var v = rnd.Next(); if (i + 32 >= x) v = (int)((long)v >> ((i + 32) - (int)x + 1));
+        var v = rnd.Next(); if (i + 32 >= x) v = (int)((long)v >> ((int)(i + 32) - (int)x + 1));
         cpu.push(v); cpu.shl(i); cpu.xor();
       }
       //var y = cpu.msb(); if(x != y) { }
@@ -221,7 +246,7 @@ namespace Test
 
     void button_save_Click(object sender, EventArgs e)
     {
-      var dlg = new SaveFileDialog() { FileName = "BigRational-Benchmarks.htm", Filter = "HTML files|*.htm", DefaultExt = "htm" };
+      var dlg = new SaveFileDialog() { FileName = "BigRational-Benchmarks.html", Filter = "HTML files|*.html;*.htm", DefaultExt = "htm" };
       if (dlg.ShowDialog(this) != DialogResult.OK) return;
       var s = wb.Document.GetElementsByTagName("html")[0].OuterHtml;
       try { File.WriteAllText(dlg.FileName, s); }

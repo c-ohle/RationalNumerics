@@ -445,20 +445,20 @@
 
 <span class="small pull-right mobile-hide">
   <span class="divider">|</span>
-  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_shr_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.shr(System.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_shr_System_UInt32_System_Int32_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.shr(System.UInt32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
 </span>
 <span class="small pull-right mobile-hide">
-  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1826">View Source</a>
+  <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1827">View Source</a>
 </span>
 <a id="System_Numerics_BigRational_CPU_shr_" data-uid="System.Numerics.BigRational.CPU.shr*"></a>
-<h4 id="System_Numerics_BigRational_CPU_shr_System_Int32_System_Int32_" data-uid="System.Numerics.BigRational.CPU.shr(System.Int32,System.Int32)">shr(Int32, Int32)</h4>
+<h4 id="System_Numerics_BigRational_CPU_shr_System_UInt32_System_Int32_" data-uid="System.Numerics.BigRational.CPU.shr(System.UInt32,System.Int32)">shr(UInt32, Int32)</h4>
 <div class="markdown level1 summary"><p>Selects the value at index i relative to the top of the stack.<br>
 Shifts the numerator value to the right (in zeros) by the specified number of bits.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void shr(int c, int i = 0)</code></pre>
+  <pre><code class="lang-csharp hljs">public void shr(uint c, int i = 0)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -471,7 +471,7 @@ Shifts the numerator value to the right (in zeros) by the specified number of bi
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Int32</span></td>
+      <td><span class="xref">System.UInt32</span></td>
       <td><span class="parametername">c</span></td>
       <td><p>The number of bits to shift.</p>
 </td>
@@ -484,7 +484,7 @@ Shifts the numerator value to the right (in zeros) by the specified number of bi
     </tr>
   </tbody>
 </table>
-<h5 id="System_Numerics_BigRational_CPU_shr_System_Int32_System_Int32__remarks">Remarks</h5>
+<h5 id="System_Numerics_BigRational_CPU_shr_System_UInt32_System_Int32__remarks">Remarks</h5>
 <div class="markdown level1 remarks"><p>Shifts the numerator value only, which is a fast alternative to divisions by powers of two.<br>
 Manipulating denominators is possible by calling <a class="xref" href="System.Numerics.BigRational.CPU.inv.html#System_Numerics_BigRational_CPU_inv_System_Int32_">inv(Int32)</a> beforehand.<br>
 Inversion of rational 0 values (0 / 1 =&gt; 1 / 0) results in NaN values which can be ignored for all bit-level operations.</p>
@@ -500,7 +500,7 @@ Inversion of rational 0 values (0 / 1 =&gt; 1 / 0) results in NaN values which c
                     <a href="https://github.com/c-ohle/RationalNumerics/new/master/apiSpec/new?filename=System_Numerics_BigRational_CPU_shr_.md&amp;value=---%0Auid%3A%20System.Numerics.BigRational.CPU.shr*%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1826" class="contribution-link">View Source</a>
+                    <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/BigRational.cs/#L1827" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

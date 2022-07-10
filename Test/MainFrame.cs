@@ -16,7 +16,7 @@ namespace Test
     {
       InitializeComponent();
       labelDebug.Visible = debug;
-      //tabControl.SelectedIndex = 4;
+      //tabControl.SelectedIndex = 3;
     }
 #if DEBUG
     internal static readonly bool debug = true;
