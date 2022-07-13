@@ -11,11 +11,27 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); // test();
       Application.Run(new MainFrame());
     }
 
 #if false
+
+    static void test()
+    {
+      rat a, b, c;
+      a = +(rat)1 / 3; c = MathR.GetNumerator(a, out b);
+      a = -(rat)1 / 3; c = MathR.GetNumerator(a, out b);
+      a = 0; c = MathR.GetNumerator(a, out b);
+
+      a = MathR.Sin(1);
+      MathR.DefaultDigits = 10;
+      b = MathR.Sin(1);
+      MathR.DefaultDigits = 100;
+      b = MathR.Sin(1);
+      MathR.DefaultDigits = 10;
+    }
+    
     private static AsyncLocal<rat.CPU>? _async_cpu;
     public static rat.CPU async_cpu
     {

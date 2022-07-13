@@ -13,7 +13,7 @@
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Company></Company>
     <Copyright>© Christian Ohle</Copyright>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId>BigRational</PackageId>
     <Authors>Christian Ohle</Authors>
     <Description>BigRational based on a specialized stack machine to create an arbitrary-precision rational number type.

@@ -177,7 +177,7 @@ namespace System.Numerics
     public static BigRational Pow(BigRational x, BigRational y, int digits = 0)
     {
       //return Exp(y * Log(x, digits), digits);
-      var s = rat.Sign(x); if (s == 0) return 0;
+      var s = rat.Sign(x); if (s == 0) return default;
       if (s < 0)
       {
         if (rat.IsInt(y)) return Round(Pow(x, (int)y, digits), digits); //todo: inline, cases
@@ -221,7 +221,7 @@ namespace System.Numerics
     public static BigRational Sqrt(BigRational a, int digits = 0)
     {
       if (rat.Sign(a) < 0) throw new ArgumentException(nameof(a));
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits); //if (x != c) { }
+      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
       cpu.push(a); cpu.sqrt(c); cpu.rnd(d);
       return cpu.popr();
     }
@@ -590,6 +590,19 @@ namespace System.Numerics
       var d = DivRem(a, b, out var r); return (d, r);
     }
     /// <summary>
+    /// Returns the numerator and the denominator of the specified number.
+    /// </summary>
+    /// <param name="a">A <see cref="BigRational"/> integer number</param>
+    /// <param name="den">returns the denominator of <paramref name="a"/> always positive integer.</param>
+    /// <returns>Returns the numerator of <paramref name="a"/>.</returns>
+    public static BigRational GetNumerator(BigRational a, out BigRational den)
+    {
+      var cpu = BigRational.task_cpu; cpu.push(a);
+      cpu.mod(8); var s = cpu.sign();
+      if (s < 0) cpu.neg(); den = cpu.popr();
+      if (s < 0) cpu.neg(); return cpu.popr();
+    }
+    /// <summary>
     /// Gets or sets the default number of digits used by <see cref="MathR"/> functions 
     /// with an optional digits parameter with default value = 0.<br/>
     /// This allows for a flat interface, easily interchangeable with <see cref="Math"/> or <see cref="MathF"/>.
@@ -599,13 +612,21 @@ namespace System.Numerics
     /// </remarks>  
     public static int DefaultDigits
     {
-      get { var cpu = rat.task_cpu; return cpu.mathdigits != 0 ? cpu.mathdigits : 30; }
-      set { var cpu = rat.task_cpu; cpu.mathdigits = value; }
+      get => rat.task_cpu.digits;
+      set => rat.task_cpu.digits = value;
     }
-    static (uint c, int d) getprec(rat.CPU cpu, int digits) //todo: find better solution or cache
+    static (uint c, int d) getprec(rat.CPU cpu, int digits)
     {
-      if (digits == 0) digits = cpu.mathdigits != 0 ? cpu.mathdigits : 30;
-      cpu.pow(10, digits); var c = cpu.msb(); cpu.pop(); return (c, digits);
+      var d = digits != 0 ? digits : cpu.digits;
+      var c = (uint)Math.Ceiling(d * 3.321928094887362); // * ((Math.Log(2) + Math.Log(5)) / Math.Log(2))
+      return (c, d);
     }
+    //static (uint c, int d) getprec(rat.CPU cpu, int digits) //todo: find better solution or cache
+    //{
+    //  if (digits == 0) digits = cpu.digits != 0 ? cpu.digits : 30;
+    //  //cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
+    //  var c = (uint)Math.Ceiling(digits * 3.321928094887362); //digits * ((Math.Log(2) + Math.Log(5)) / Math.Log(2))
+    //  return (c, digits);
+    //}
   }
 }

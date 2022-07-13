@@ -1444,7 +1444,6 @@ namespace System.Numerics
       }
       /// <summary>
       /// Negates the value at index <paramref name="a"/> relative to the top of the stack.<br/>
-      /// Default index 0 negates the value on top of the stack.
       /// </summary>
       /// <param name="a">Relative index of a stack entry.</param>
       public void neg(int a = 0)
@@ -2547,7 +2546,6 @@ namespace System.Numerics
         for (uint n = 0; ; n++)
         {
           uint a = n << 2, b = n * 10;
-
           push(1u); shl(b); inv(); if ((n & 1) != 0) neg(); //pow(-1, unchecked((int)n)); pow(2, unchecked((int)b)); div();
           push(-32);  /**/ push(a + 1); div();
           push(-1);   /**/ push(a + 3); div(); add();
@@ -2557,9 +2555,9 @@ namespace System.Numerics
           push(-4);   /**/ push(b + 7); div(); add();
           push(1u);   /**/ push(b + 9); div(); add();
           mul(); var t = -bdi();
-          add(); lim(c + 64); if (t > c + 32) break; //todo: check
+          add(); lim(c + 64); if (t > c + 32) break;
         }
-        dup(); shr(6); //push(64); div(); //shr checked up 4159
+        shr(6); //push(64); div(); //shr checked up 4159
       }
       /// <summary>
       /// Replaces the value on top of the stack with the sine or cosine of that value.<br/>
@@ -2651,51 +2649,50 @@ namespace System.Numerics
         cpu = null;
       }
 
-#if false //todo: remove, div(a, b); mod(); swp(); pop(); must!!! have the same performance      
-      /// <summary>
-      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      /// and replaces them with the integral result.
-      /// </summary>
-      /// <remarks>
-      /// Divides a / b where b is the value on top of the stack.<br/>
-      /// This is a integer division with always non-farctional integer results.<br/>
-      /// When calculating with integers and integer results are required,<br/>
-      /// this operation is faster than dividing and then rounding to an integer result.
-      /// </remarks>
-      public void idiv()
-      {
-        fixed (uint* u = p[this.i - 1])
-        fixed (uint* v = p[this.i - 2])
-        fixed (uint* w = rent(len(u))) // nu - nv + 1
-        {
-          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
-          *(ulong*)(w + w[0] + 1) = 0x100000001;
-          if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
-        }
-        swp(2); pop(2);
-      }
-      /// <summary>
-      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      /// and replaces them with the integral result.
-      /// </summary>
-      /// <remarks>
-      /// Divides a / b where b is the value on top of the stack.<br/>
-      /// This is a integer division with always non-farctional integer results.<br/>
-      /// When calculating with integers and integer results are required,<br/>
-      /// this operation is faster than dividing and then rounding to an integer result.<br/>
-      /// </remarks>
-      public void imod()
-      {
-        fixed (uint* u = p[this.i - 1])
-        fixed (uint* v = p[this.i - 2])
-        {
-          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
-          *(ulong*)(v + v[0] + 1) = 0x100000001;
-          v[0] |= h & 0x80000000;
-        }
-        pop();
-      }
-#endif
+      //todo: remove, div(a, b); mod(); swp(); pop(); must!!! have the same performance      
+      // /// <summary>
+      // /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      // /// and replaces them with the integral result.
+      // /// </summary>
+      // /// <remarks>
+      // /// Divides a / b where b is the value on top of the stack.<br/>
+      // /// This is a integer division with always non-farctional integer results.<br/>
+      // /// When calculating with integers and integer results are required,<br/>
+      // /// this operation is faster than dividing and then rounding to an integer result.
+      // /// </remarks>
+      // public void idiv()
+      // {
+      //   fixed (uint* u = p[this.i - 1])
+      //   fixed (uint* v = p[this.i - 2])
+      //   fixed (uint* w = rent(len(u))) // nu - nv + 1
+      //   {
+      //     var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
+      //     *(ulong*)(w + w[0] + 1) = 0x100000001;
+      //     if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
+      //   }
+      //   swp(2); pop(2);
+      // }
+      // /// <summary>
+      // /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      // /// and replaces them with the integral result.
+      // /// </summary>
+      // /// <remarks>
+      // /// Divides a / b where b is the value on top of the stack.<br/>
+      // /// This is a integer division with always non-farctional integer results.<br/>
+      // /// When calculating with integers and integer results are required,<br/>
+      // /// this operation is faster than dividing and then rounding to an integer result.<br/>
+      // /// </remarks>
+      // public void imod()
+      // {
+      //   fixed (uint* u = p[this.i - 1])
+      //   fixed (uint* v = p[this.i - 2])
+      //   {
+      //     var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
+      //     *(ulong*)(v + v[0] + 1) = 0x100000001;
+      //     v[0] |= h & 0x80000000;
+      //   }
+      //   pop();
+      // }
 
       uint[] rent(uint n)
       {
@@ -3235,7 +3232,7 @@ namespace System.Numerics
         }
       }
       [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-      internal int mathdigits { get; set; } // used by MathR only to avoid another threadlocal root 
+      internal int digits { get; set; } = 30; // used by MathR only to avoid another threadlocal root 
     }
     #endregion
   }
