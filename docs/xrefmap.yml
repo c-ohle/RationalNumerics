@@ -1675,6 +1675,21 @@ references:
   commentId: Overload:System.Numerics.MathR.Floor
   fullName: System.Numerics.MathR.Floor
   nameWithType: MathR.Floor
+- uid: System.Numerics.MathR.GetNumerator(System.Numerics.BigRational,System.Numerics.BigRational@)
+  name: GetNumerator(BigRational, out BigRational)
+  href: api/System.Numerics.MathR.GetNumerator.html#System_Numerics_MathR_GetNumerator_System_Numerics_BigRational_System_Numerics_BigRational__
+  commentId: M:System.Numerics.MathR.GetNumerator(System.Numerics.BigRational,System.Numerics.BigRational@)
+  name.vb: GetNumerator(BigRational, ByRef BigRational)
+  fullName: System.Numerics.MathR.GetNumerator(System.Numerics.BigRational, out System.Numerics.BigRational)
+  fullName.vb: System.Numerics.MathR.GetNumerator(System.Numerics.BigRational, ByRef System.Numerics.BigRational)
+  nameWithType: MathR.GetNumerator(BigRational, out BigRational)
+  nameWithType.vb: MathR.GetNumerator(BigRational, ByRef BigRational)
+- uid: System.Numerics.MathR.GetNumerator*
+  name: GetNumerator
+  href: api/System.Numerics.MathR.GetNumerator.html
+  commentId: Overload:System.Numerics.MathR.GetNumerator
+  fullName: System.Numerics.MathR.GetNumerator
+  nameWithType: MathR.GetNumerator
 - uid: System.Numerics.MathR.GreatestCommonDivisor(System.Numerics.BigRational,System.Numerics.BigRational)
   name: GreatestCommonDivisor(BigRational, BigRational)
   href: api/System.Numerics.MathR.GreatestCommonDivisor.html#System_Numerics_MathR_GreatestCommonDivisor_System_Numerics_BigRational_System_Numerics_BigRational_

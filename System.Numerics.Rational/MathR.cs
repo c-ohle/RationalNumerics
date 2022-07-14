@@ -23,21 +23,21 @@ namespace System.Numerics
       return rat.Sign(a) >= 0 ? a : -a;
     }
     /// <summary>
-    /// Returns the larger of two <see cref="BigRational"/> numbers.
-    /// </summary>
-    /// <param name="a">The first value to compare.</param>
-    /// <param name="b">The second value to compare.</param>
-    /// <returns>The a or b parameter, whichever is larger.</returns>
-    public static BigRational Min(BigRational a, BigRational b)
-    {
-      return a.CompareTo(b) <= 0 ? a : b;
-    }
-    /// <summary>
     /// Returns the smaller of two <see cref="BigRational"/> numbers.
     /// </summary>
     /// <param name="a">The first value to compare.</param>
     /// <param name="b">The second value to compare.</param>
     /// <returns>The a or b parameter, whichever is smaller.</returns>
+    public static BigRational Min(BigRational a, BigRational b)
+    {
+      return a.CompareTo(b) <= 0 ? a : b;
+    }
+    /// <summary>
+    /// Returns the larger of two <see cref="BigRational"/> numbers.
+    /// </summary>
+    /// <param name="a">The first value to compare.</param>
+    /// <param name="b">The second value to compare.</param>
+    /// <returns>The a or b parameter, whichever is larger.</returns>
     public static BigRational Max(BigRational a, BigRational b)
     {
       return a.CompareTo(b) >= 0 ? a : b;
