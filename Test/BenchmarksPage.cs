@@ -179,7 +179,7 @@ namespace Test
       var cr = new BigRational[256]; var ci = new BigInteger[256];
       var ra = new Random(13);
       for (int i = 0; i < 256; i++) ii[i] = (BigInteger)(rr[i] = random_rat(ra, i << 4)); //E+4080
-      e = MathR.ILog10(rr[255]);
+      e = rat.ILog10(rr[255]);
       return (pass, f) =>
       {
         if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = rr[i - 1] * rr[i];
@@ -193,7 +193,7 @@ namespace Test
       var cr = new BigRational[256]; var ci = new BigInteger[256];
       var ra = new Random(13);
       for (int i = 0; i < 256; i++) ii[i] = (BigInteger)(rr[i] = random_rat(ra, i << 4)); //E+4080
-      e = MathR.ILog10(rr[255]);
+      e = rat.ILog10(rr[255]);
       return (pass, f) =>
       {
         if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = rr[i] * rr[i];
@@ -207,10 +207,10 @@ namespace Test
       var cr = new BigRational[256]; var ci = new BigInteger[256];
       var ra = new Random(13);
       for (int i = 0; i < 256; i++) ii[i] = (BigInteger)(rr[i] = random_rat(ra, i << 6));
-      e = MathR.ILog10(rr[255]);
+      e = rat.ILog10(rr[255]);
       return (pass, f) =>
       {
-        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = MathR.IDiv(rr[i], rr[i - 1]);
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = rat.IDiv(rr[i], rr[i - 1]);
         if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = ii[i] / ii[i - 1];
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second));
       };
@@ -221,10 +221,10 @@ namespace Test
       var cr = new BigRational[256]; var ci = new BigInteger[256];
       var ra = new Random(13); //E+2040
       for (int i = 0; i < 256; i++) ii[i] = (BigInteger)(rr[i] = random_rat(ra, i << 3));
-      e = MathR.ILog10(rr[255]);
+      e = rat.ILog10(rr[255]);
       return (pass, f) =>
       {
-        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = MathR.GreatestCommonDivisor(rr[i - 1], rr[i]);
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = rat.GreatestCommonDivisor(rr[i - 1], rr[i]);
         if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = BigInteger.GreatestCommonDivisor(ii[i - 1], ii[i]);
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second));
       };

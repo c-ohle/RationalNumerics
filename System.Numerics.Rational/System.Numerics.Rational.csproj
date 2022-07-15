@@ -39,11 +39,13 @@ common mathematical functions for BigRational.</Description>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Deterministic>True</Deterministic>
     <NoWarn>IDE1006</NoWarn>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <Deterministic>True</Deterministic>
     <NoWarn>IDE1006</NoWarn>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
 </Project>

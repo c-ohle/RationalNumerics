@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+#nullable disable
 
 namespace Test
 {
@@ -29,7 +21,7 @@ namespace Test
     {
       get { var t = base.CreateParams; t.ExStyle |= 0x02000000; return t; } // WS_EX_COMPOSITED
     }
-    List<string> list = new(); int state, kl, digits, exp; char sep; Font? font; bool deg;
+    List<string> list = new(); int state, kl, digits, exp; char sep; Font font; bool deg;
 
     void button_Click(object sender, EventArgs e)
     {
@@ -154,7 +146,7 @@ namespace Test
       };
     }
 
-    string? parse()
+    string parse()
     {
       if (state == 0) return null;
       if (kl != 0) return null;
@@ -182,8 +174,8 @@ namespace Test
       if (a == b)
         switch (h)
         {
-          case "π": return MathR.Pi(digits);
-          case "℮": return MathR.Exp(1, digits);
+          case "π": return rat.Pi(digits);
+          case "℮": return rat.Exp(1, digits);
           default:
             if (h[0] == '[') return MathRE.ParseContinuedFraction(h);
             return rat.Parse(h);
@@ -208,30 +200,30 @@ namespace Test
           }
           else
           {
-            if (c == '^') return MathR.Pow(parse(a, i - 1), parse(i + 1, b));
+            if (c == '^') return rat.Pow(parse(a, i - 1), parse(i + 1, b), digits);
           }
         }
       if (h == "(") return parse(a + 1, b - 1);
       var t = parse(a + 1, b);
       switch (h)
       {
-        case "abs": t = MathR.Abs(t); break;
+        case "abs": t = rat.Abs(t); break;
         case "1 /": t = 1 / t; break;
-        case "sqrt": t = MathR.Sqrt(t, digits); break;
+        case "sqrt": t = rat.Sqrt(t, digits); break;
         case "sqr": t = t * t; break;
-        case "ln": t = MathR.Log(t, digits); break;
+        case "ln": t = rat.Log(t, digits); break;
         case "log":
           // Math.Log2((double)t) / Math.Log2(10);            
-          t = MathR.Log2(t, digits) / MathR.Log2(10, digits);
-          //t = MathR.Log(t, digits) / MathR.Log(10, digits);
+          t = rat.Log2(t, digits) / rat.Log2(10, digits);
+          //t = rat.Log(t, digits) / rat.Log(10, digits);
           break;
         case "fact": t = fact(t); break;
-        case "sin": if (deg) t = t * (MathR.Pi(digits) / 180); t = MathR.Sin(t, digits); break;
-        case "cos": if (deg) t = t * (MathR.Pi(digits) / 180); t = MathR.Cos(t, digits); break;
-        case "tan": if (deg) t = t * (MathR.Pi(digits) / 180); t = MathR.Tan(t, digits); break;
-        case "cot": if (deg) t = t * (MathR.Pi(digits) / 180); t = MathR.Cos(t, digits) / MathR.Sin(t, digits); break;
-        case "asin": t = MathR.Asin(t, digits); if (deg) t = t * (180 / MathR.Pi(digits)); break;
-        case "atan": t = MathR.Atan(t, digits); if (deg) t = t * (180 / MathR.Pi(digits)); break;
+        case "sin": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Sin(t, digits); break;
+        case "cos": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Cos(t, digits); break;
+        case "tan": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Tan(t, digits); break;
+        case "cot": if (deg) t = t * (rat.Pi(digits) / 180); t = rat.Cos(t, digits) / rat.Sin(t, digits); break;
+        case "asin": t = rat.Asin(t, digits); if (deg) t = t * (180 / rat.Pi(digits)); break;
+        case "atan": t = rat.Atan(t, digits); if (deg) t = t * (180 / rat.Pi(digits)); break;
         default: break;
       }
       return t;
@@ -295,13 +287,13 @@ namespace Test
     #region gamma
     rat fact(rat z, int digits = 32)
     {
-      if (rat.IsInt(z))
+      if (rat.IsInteger(z))
       {
         if (z < 0) throw new ArgumentException();
-        return MathR.Factorial((int)z);
+        return rat.Factorial((int)z);
       }
       var r = gamma(z + 1, 30, 55); //todo: formula for z, digits => a, d 
-      r = MathR.Round(r, digits); return r;
+      r = rat.Round(r, digits); return r;
     }
     rat gamma(rat z, int a, int d)
     {
@@ -312,24 +304,24 @@ namespace Test
         static rat[] calc(int a, int digits)
         {
           var kk = new rat[a]; rat fac = 1;
-          kk[0] = MathR.Sqrt(MathR.Pi(digits) * 2, digits);
+          kk[0] = rat.Sqrt(rat.Pi(digits) * 2, digits);
           for (int k = 1; k < a; k++) { kk[k] = fac; fac *= -k; }
-          Parallel.For(1, a, k => kk[k] = MathR.Exp(a - k, digits) * MathR.Pow(a - k, k - 0.5, digits) / kk[k]);
+          Parallel.For(1, a, k => kk[k] = rat.Exp(a - k, digits) * rat.Pow(a - k, k - 0.5, digits) / kk[k]);
           return kk;
         }
         //static rat[] calc(int a, int digits)
         //{
         //  var kk = new rat[a]; rat fac = 1;
         //  for (int k = 1; k < a; fac *= -k, k++)
-        //    kk[k] = MathR.Exp(a - k, digits) * MathR.Pow(a - k, k - 0.5, digits) / fac;
+        //    kk[k] = rat.Exp(a - k, digits) * rat.Pow(a - k, k - 0.5, digits) / fac;
         //  return kk;
         //}
       }
       var s = kk[0]; for (int k = 1; k < a; k++) s += kk[k] / (z + k);
-      s *= MathR.Exp(-(z + a), d) * MathR.Pow(z + a, z + 0.5, d);
+      s *= rat.Exp(-(z + a), d) * rat.Pow(z + a, z + 0.5, d);
       return s / z;
     }
-    rat[]? gamma_kk; int gamma_d;
+    rat[] gamma_kk; int gamma_d;
 
     static double factd(double d)
     {

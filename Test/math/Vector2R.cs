@@ -113,13 +113,13 @@ namespace System.Numerics.Rational
     /// <param name="a">A <see cref="Vector2R"/></param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="MathR.DefaultDigits"/> is used.
+    /// With default value (digits = 0) the current value of <see cref="rat.DefaultDigits"/> is used.
     /// </param>
     /// <returns>A length as <see cref="BigRational"/> number.</returns>
     public static BigRational LengthR(Vector2R a, int digits = 0)
     {
-      //return MathR.Sqrt(a.X * a.X + a.Y * a.Y, digits);      
-      if (digits == 0) digits = MathR.DefaultDigits;
+      //return rat.Sqrt(a.X * a.X + a.Y * a.Y, digits);      
+      if (digits == 0) digits = rat.DefaultDigits;
       var cpu = rat.task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop(); //todo: build in      
       cpu.push(a.X); cpu.sqr();
@@ -130,14 +130,14 @@ namespace System.Numerics.Rational
     public static Vector2R Min(in Vector2R a, in Vector2R b)
     {
       return new Vector2R(
-        MathR.Min(a.X, b.X),
-        MathR.Min(a.Y, b.Y));
+        rat.Min(a.X, b.X),
+        rat.Min(a.Y, b.Y));
     }
     public static Vector2R Max(in Vector2R a, in Vector2R b)
     {
       return new Vector2R(
-        MathR.Max(a.X, b.X),
-        MathR.Max(a.Y, b.Y));
+        rat.Max(a.X, b.X),
+        rat.Max(a.Y, b.Y));
     }
     /// <summary>
     /// Returns the sine and cosine of the specified angle

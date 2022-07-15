@@ -136,16 +136,16 @@ namespace System.Numerics.Rational
     public static Vector3R Min(in Vector3R a, in Vector3R b)
     {
       return new Vector3R(
-        MathR.Min(a.X, b.X),
-        MathR.Min(a.Y, b.Y),
-        MathR.Min(a.Z, b.Z));
+        rat.Min(a.X, b.X),
+        rat.Min(a.Y, b.Y),
+        rat.Min(a.Z, b.Z));
     }
     public static Vector3R Max(in Vector3R a, in Vector3R b)
     {
       return new Vector3R(
-        MathR.Max(a.X, b.X),
-        MathR.Max(a.Y, b.Y),
-        MathR.Max(a.Z, b.Z));
+        rat.Max(a.X, b.X),
+        rat.Max(a.Y, b.Y),
+        rat.Max(a.Z, b.Z));
     }
     public static Vector3R Transform(in Vector3R a, in Matrix4x3R b)
     {

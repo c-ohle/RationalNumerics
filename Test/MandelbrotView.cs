@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Text.RegularExpressions;
 
 namespace Test
 {
@@ -149,28 +150,39 @@ namespace Test
       var y1 = (OldRational)(my - scale);
       var fi = (OldRational)(2 * scale / dy); var qmax = (OldRational)4;
       t1 = t2 = Environment.TickCount; var digits = Math.Max(8, 10 * lim / 64); // actually about 15 * lim / 64
-      //for (int py = 0; py < dy; py++)
-      Parallel.For(0, dy, (py, po) =>
+      try // as long as the BigInteger bugs in NET7 not fixed
       {
-        if (cancel) { po.Break(); return; }
-        var p = scan + py * (stride >> 2);
-        var y = y1 + py * fi;
-        for (int px = 0; px < dx && !cancel; px++)
+        //for (int py = 0; py < dy; py++)
+        Parallel.For(0, dy, (py, po) =>
         {
-          var x = x1 + px * fi;
-          int i = 0; var a = x; var b = y;
-          for (; i < imax; i++)
+          if (cancel) { po.Break(); return; }
+          var p = scan + py * (stride >> 2);
+          var y = y1 + py * fi;
+          for (int px = 0; px < dx && !cancel; px++)
           {
-            var u = a * a - b * b + x; u = OldRational.Round(u, digits);
-            var v = 2 * a * b + y; v = OldRational.Round(v, digits);
-            if (u * u + v * v > qmax) break;
-            a = u; b = v;
+            var x = x1 + px * fi;
+            int i = 0; var a = x; var b = y;
+            for (; i < imax; i++)
+            {
+              var u = a * a - b * b + x; u = OldRational.Round(u, digits);
+              var v = 2 * a * b + y; v = OldRational.Round(v, digits);
+              if (u * u + v * v > qmax) break;
+              a = u; b = v;
+            }
+            p[px] = i < imax ? map[i] : 0;
           }
-          p[px] = i < imax ? map[i] : 0;
-        }
+        });
       }
-      );
+      catch (Exception ex)
+      {
+        Invoke(() =>
+        {
+          this.Controls.Add(new TextBox { Text = ex.InnerException?.ToString() ?? ex.Message, Multiline = true, Dock = DockStyle.Fill, ScrollBars = ScrollBars.Vertical });
+          this.Enabled = true;
+        });
+      }
       t2 = Environment.TickCount;
+
     }
     void mandel_BigRational()
     {
@@ -313,9 +325,9 @@ namespace Test
           var p2 = Cursor.Position;
           mx = x1 - (2 * (p2.X - p1.X)) * scale / dy;
           my = y1 - (2 * (p2.Y - p1.Y)) * scale / dy;
-          var l = MathR.ILog10(scale);
-          mx = MathR.Round(mx, 4 - l);
-          my = MathR.Round(my, 4 - l);
+          var l = rat.ILog10(scale);
+          mx = rat.Round(mx, 4 - l);
+          my = rat.Round(my, 4 - l);
           if (bmp != null)
             using (var g = Graphics.FromImage(bmp))
             {
@@ -360,11 +372,11 @@ namespace Test
       var p = e.Location;
       var d = 1 - e.Delta * (0.1f / 120);
       var t = scale; scale *= d;
-      var l = MathR.ILog10(scale);
-      scale = MathR.Round(scale, 5 - l);
+      var l = rat.ILog10(scale);
+      scale = rat.Round(scale, 5 - l);
       t = (scale - t) / dy;
-      mx += t * (dx - p.X * 2); mx = MathR.Round(mx, 4 - l);
-      my += t * (dy - p.Y * 2); my = MathR.Round(my, 4 - l);
+      mx += t * (dx - p.X * 2); mx = rat.Round(mx, 4 - l);
+      my += t * (dy - p.Y * 2); my = rat.Round(my, 4 - l);
       if (bmp != null)
         using (var g = Graphics.FromImage(bmp))
         {

@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+﻿#nullable disable
+#pragma warning disable CS0649
+using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Security;
-#pragma warning disable CS0649, CS8618, CS8600, CS8602, CS8604
 
 namespace Test
 {
@@ -48,7 +49,7 @@ namespace Test
       t = cbpsperobject; context.PSSetConstantBuffers(1, 1, &t);
       t = cbpertexture; context.VSSetConstantBuffers(2, 1, &t);
     }
-    static void reset(object? sender, EventArgs? e)
+    static void reset(object sender, EventArgs e)
     {
       curtex = curib = curvb = string.Empty;
       release(vertexshader); release(geoshader); release(pixelshader); release(depthstencil); release(blend); release(rasterizer); release(sampler);
@@ -67,12 +68,12 @@ namespace Test
     protected uint BkColor { get; set; }
     protected abstract void OnRender(DC dc);
     protected abstract int OnMouse(int id, PC dc);
-    public Action? Animations;
-    public Action? InvalEvent; 
+    public Action Animations;
+    public Action InvalEvent; 
     protected long TimerTicks;
 
     VIEWPORT viewport; bool inval;
-    ISwapChain? swapchain; void* rtv, dsv; //IRenderTargetView, IDepthStencilView
+    ISwapChain swapchain; void* rtv, dsv; //IRenderTargetView, IDepthStencilView
 
     void sizebuffers()
     {
@@ -157,11 +158,11 @@ namespace Test
       get => ((IDXGIDevice)device).Adapter.Desc.Description;
     }
 
-    static IDevice? device;
-    static IDeviceContext? context;
+    static IDevice device;
+    static IDeviceContext context;
     static VIEWPORT* currentvp; static float pixelscale;
     static void* currentdsv; //IDepthStencilView
-    static Texture? texture; /*static IntPtr currentsrv; //IShaderResourceView*/
+    static Texture texture; /*static IntPtr currentsrv; //IShaderResourceView*/
     static Font font;
     static void* cbperobject, cbperframe, cbpsperobject, cbpertexture; //IBuffer
     static cbPerObject* cb1; static cbPerFrame* cb2; static cbPsPerObject* cb3; static cbPerTexture* cb4; static int cbsok;
@@ -453,21 +454,21 @@ namespace Test
       ringbuffer = device.CreateBuffer(&bd);
     }
 
-    static object? curib, curvb = string.Empty, curtex;
-    static void SetVertexBuffer(VertexBuffer? vb)
+    static object curib, curvb = string.Empty, curtex;
+    static void SetVertexBuffer(VertexBuffer vb)
     {
       if (curvb == vb) return;
       int stride = 32, offs = 0; var t = vb != null ? vb.buffer : ringbuffer;
       context.IASetVertexBuffers(0, 1, &t, &stride, &offs);
       curvb = vb;
     }
-    static void SetIndexBuffer(IndexBuffer? ib)
+    static void SetIndexBuffer(IndexBuffer ib)
     {
       if (curib == ib) return;
       context.IASetIndexBuffer(ib != null ? ib.buffer : null, FORMAT.R16_UINT, 0);
       curib = ib;
     }
-    static void SetTexture(Texture? tex) //IShaderResourceView
+    static void SetTexture(Texture tex) //IShaderResourceView
     {
       if (curtex == tex) return; var t = tex != null ? tex.srv : null;
       context.PSSetShaderResources(0, 1, &t); curtex = tex;
@@ -488,10 +489,10 @@ namespace Test
     static void* rtvtex, dsvtex, rtvcpu, dsvcpu; //ITexture2D
     static void* rtv1, dsv1; //IRenderTargetView rtv1; IDepthStencilView dsv1;
     static int inpick;
-    static object? data; static int id, id1, id2, prim;
+    static object data; static int id, id1, id2, prim;
 
     System.Drawing.Point point;
-    object? pickdata, pickview; int pickid, pickprim, pickz;
+    object pickdata, pickview; int pickid, pickprim, pickz;
     Matrix4x4 pickplane, picktrans; Vector3 pickp;
 
     static void initpixel()
@@ -527,7 +528,7 @@ namespace Test
       td.Format = FORMAT.D24_UNORM_S8_UINT;
       dsvcpu = device.CreateTexture2D(&td, null);
     }
-    void pick(DC dc, VertexBuffer? vb, IndexBuffer? ib, int nv, ref int sv, Topology topo)
+    void pick(DC dc, VertexBuffer vb, IndexBuffer ib, int nv, ref int sv, Topology topo)
     {
       if (data == null) return; id1++;
       if (inpick == 2)
@@ -601,7 +602,7 @@ namespace Test
     {
       if (p != null) { var c = Marshal.Release((IntPtr)p); p = null; }
     }
-    static void release(void*[]? a)
+    static void release(void*[] a)
     {
       if (a != null)
         for (int i = 0; i < a.Length; i++) release(ref a[i]);
@@ -677,7 +678,7 @@ namespace Test
       base.WndProc(ref m);
     }
 
-    Action<int>? tool;
+    Action<int> tool;
     static DX11Ctrl first; DX11Ctrl next;
     bool indrag; //todo: check WM_MOUSELEAVE
     protected override void OnDragEnter(DragEventArgs e)
@@ -694,7 +695,7 @@ namespace Test
       if (p != point) { pick(p); tool(0); Refresh(); }
       e.Effect = DragDropEffects.Copy;
     }
-    protected override void OnDragDrop(DragEventArgs? e)
+    protected override void OnDragDrop(DragEventArgs e)
     {
       indrag = false; if (tool == null) return;
       tool(e != null ? 1 : 2); tool = null;
@@ -709,7 +710,7 @@ namespace Test
       return true; // (keyData & (Keys.Control | Keys.Alt)) == 0;
     }
 
-    public int OnDriver(object? test) //single view only!
+    public int OnDriver(object test) //single view only!
     {
       if (test is ToolStripMenuItem item)
       {
@@ -730,7 +731,7 @@ namespace Test
       foreach (var p in tmp) p.buffer.Reset(p.data);
       drvsettings = (drvsettings >> 32 << 32) | (uint)test; OnDeviceSettings(drvsettings); return 0;
     }
-    public int OnSamples(object? test)
+    public int OnSamples(object test)
     {
       var current = swapchain != null ? swapchain.Desc.SampleDesc.Count : (int)(drvsettings >> 32);
       if (test is ToolStripMenuItem item)
@@ -887,7 +888,7 @@ namespace Test
         }
         set { font = value; }
       }
-      public Texture? Texture
+      public Texture Texture
       {
         get { return texture; }
         set { texture = value; }
@@ -914,7 +915,7 @@ namespace Test
         }
       }
       public bool IsPicking { get => inpick != 0; }
-      public void Select(object? data = null, int id = 0)
+      public void Select(object data = null, int id = 0)
       {
         DX11Ctrl.data = data; DX11Ctrl.id = id;
       }
@@ -1211,7 +1212,7 @@ namespace Test
         this.State = t1;
       }
 
-      public void DrawMesh(VertexBuffer? vb, IndexBuffer? ib, int i = 0, int n = 0)
+      public void DrawMesh(VertexBuffer vb, IndexBuffer ib, int i = 0, int n = 0)
       {
         Debug.Assert(this.Topology == Topology.TriangleListAdj);
         //this.Topology = Topology.TriangleListAdj;
@@ -1340,7 +1341,7 @@ namespace Test
       {
         get { return view.picktrans; }
       }
-      public object? Hover
+      public object Hover
       {
         get { return view.pickdata; }
       }
@@ -1361,7 +1362,7 @@ namespace Test
           return ToVector3(Vector4.Transform(view.pickp, m));
         }
       }
-      public void SetTool(Action<int>? tool)
+      public void SetTool(Action<int> tool)
       {
         view.tool = tool;
       }
@@ -1476,13 +1477,13 @@ namespace Test
       for (int s = 0; ; s += 7) { uint b = rs[i++]; u |= (b & 0x7F) << s; if ((b & 0x80) == 0) break; }
       rs = rs.Slice(i); count = unchecked((int)u);
     }
-    static void Write(ref Span<byte> ws, string? s)
+    static void Write(ref Span<byte> ws, string s)
     {
       if (s == null) { WriteCount(ref ws, 0); return; }
       var n = encoding.GetByteCount(s); WriteCount(ref ws, n + 1);
       ws = ws.Slice(encoding.GetBytes(s, ws));
     }
-    static void Read(ref ReadOnlySpan<byte> rs, out string? s)
+    static void Read(ref ReadOnlySpan<byte> rs, out string s)
     {
       ReadCount(ref rs, out var n); if (n-- <= 0) { s = n == 0 ? string.Empty : null; return; }
       s = encoding.GetString(rs.Slice(0, n)); rs = rs.Slice(n);
@@ -1505,7 +1506,7 @@ namespace Test
     {
       uint refcount, id;
       internal static Dictionary<uint, GCHandle> cache = new Dictionary<uint, GCHandle>();
-      internal static Buffer GetBuffer(Type type, void* p, int n, Buffer? buffer)
+      internal static Buffer GetBuffer(Type type, void* p, int n, Buffer buffer)
       {
         uint idfree = 0, id = 0; //for (int t = 0, l = n >> 2; t < l; t++) id = id * 31 + ((uint*)p)[t];
         for (int i = 0, c = n >> 2; i < c; i++) id = ((id << 7) | (id >> 25)) ^ ((uint*)p)[i];
@@ -1547,7 +1548,7 @@ namespace Test
       protected abstract int GetData(void* p);
       internal byte[] Reset() { var n = GetData(StackPtr); var a = new byte[n]; memcpy(a, StackPtr); Dispose(); return a; }
       internal void Reset(byte[] a) { fixed (void* t = a) Init(t, a.Length); }
-      public static IEnumerable<(int Count, Type? Type)> CacheState
+      public static IEnumerable<(int Count, Type Type)> CacheState
       {
         get => cache.GroupBy(p => p.Value.Target is object b ? b.GetType() : null).Select(p => (p.Count(), p.Key));
       }
@@ -1645,12 +1646,12 @@ namespace Test
     public sealed class Texture : Buffer
     {
       internal void* srv; /*D3D11.IShaderResourceView*/
-      byte[] data; int info; Action<Graphics>? draw;
+      byte[] data; int info; Action<Graphics> draw;
       public Vector2 Size
       {
         get { return new Vector2(info & 0xffff, info >> 16); }
       }
-      public string? Url
+      public string Url
       {
         get
         {
@@ -1856,7 +1857,7 @@ namespace Test
       {
         fixed (char* s = chars) create(s, chars.Length);
       }
-      public string? Name { get { return name; } }
+      public string Name { get { return name; } }
       public float Size
       {
         get { return size; }
@@ -1952,11 +1953,11 @@ namespace Test
         StackPtr = (byte*)re.lpDx;
       }
 
-      string? name; float size, ascent, descent; void* hfont;
-      Dictionary<char, int>? dict; //Dictionary<uint, float> kern;
+      string name; float size, ascent, descent; void* hfont;
+      Dictionary<char, int> dict; //Dictionary<uint, float> kern;
       struct Glyph { internal float boxx, boxy, orgx, orgy, incx, x1, x2; internal int srv; }
       Glyph* glyphs; int glyphn, glypha;
-      void*[]? srvs; int srvn; /*D3D11.IShaderResourceView*/
+      void*[] srvs; int srvn; /*D3D11.IShaderResourceView*/
       void create()
       {
         var rs = new ReadOnlySpan<byte>(data);
@@ -2072,7 +2073,7 @@ namespace Test
 
     internal struct Vertex { public Vector3 p, n; public Vector2 t; }
 
-    public static void UpdateMesh(Vector3* pp, int np, ushort* ii, int ni, float smooth, ref IndexBuffer? ib, ref VertexBuffer? vb)
+    public static void UpdateMesh(Vector3* pp, int np, ushort* ii, int ni, float smooth, ref IndexBuffer ib, ref VertexBuffer vb)
     {
       var kk = (int*)StackPtr; var tt = kk + ni;
       var e = 31 - BitOperations.LeadingZeroCount(unchecked((uint)ni));
@@ -2234,7 +2235,7 @@ namespace Test
       }
     }
 
-    static Dictionary<System.Reflection.PropertyInfo, object>? propdict;
+    static Dictionary<System.Reflection.PropertyInfo, object> propdict;
     public record class PropAcc<T>(Func<object, T> get, Action<object, T> set);
     public static PropAcc<T> GetPropAcc<T>(System.Reflection.PropertyInfo pi)
     {
@@ -2366,10 +2367,10 @@ namespace Test
       System.Runtime.InteropServices.ComTypes.FILETIME lmt, uint type,
       [MarshalAs(UnmanagedType.LPTStr)] string header, uint headersize,
       [MarshalAs(UnmanagedType.LPTStr)] string ext,
-      [MarshalAs(UnmanagedType.LPTStr)] string? _);
+      [MarshalAs(UnmanagedType.LPTStr)] string _);
 
     [DllImport("d3d11.dll"), SuppressUnmanagedCodeSecurity]
-    static extern int D3D11CreateDevice(IAdapter? Adapter, D3D_DRIVER_TYPE DriverType, void* Software, CREATE_DEVICE_FLAG Flags, FEATURE_LEVEL* pFeatureLevels, int FeatureLevels, SDK_VERSION SDKVersion, out IDevice Device, FEATURE_LEVEL* Level, out IDeviceContext ImmediateContext);
+    static extern int D3D11CreateDevice(IAdapter Adapter, D3D_DRIVER_TYPE DriverType, void* Software, CREATE_DEVICE_FLAG Flags, FEATURE_LEVEL* pFeatureLevels, int FeatureLevels, SDK_VERSION SDKVersion, out IDevice Device, FEATURE_LEVEL* Level, out IDeviceContext ImmediateContext);
     [DllImport("dxgi.dll"), SuppressUnmanagedCodeSecurity]
     static extern int CreateDXGIFactory([In, MarshalAs(UnmanagedType.LPStruct)] Guid iid, [MarshalAs(UnmanagedType.IUnknown)] out object unk);
 
@@ -2833,7 +2834,7 @@ namespace Test
       [PreserveSig]
       void RSSetViewports(int NumViewports, VIEWPORT* Viewports);
       [PreserveSig]
-      void RSSetScissorRects(int NumRects, RECT* pRects);
+      void RSSetScissorRects(int NumRects, int* pRects); //l,t,r,b
       [PreserveSig]
       void CopySubresourceRegion(IResource dst, int DstSubresource, int DstX, int DstY, int DstZ, IResource Src, int SrcSubresource, BOX* pSrcBox); //pSrcBox opt
       [PreserveSig]
@@ -3361,8 +3362,6 @@ namespace Test
       TEXTURE2D_DESC Desc { get; }
     }
 
-    struct RECT { public int left, top, right, bottom; }
-
     enum RESOURCE_MISC
     {
       GENERATE_MIPS = 0x1,
@@ -3642,12 +3641,7 @@ namespace Test
       public TEX2DMS_ARRAY_DSV Texture2DMSArray;
     }
 
-    struct MAPPED_SUBRESOURCE
-    {
-      public void* pData;
-      public int RowPitch;
-      public int DepthPitch;
-    }
+    struct MAPPED_SUBRESOURCE { public void* pData; public int RowPitch, DepthPitch; }
     enum MAP { READ = 1, WRITE = 2, READ_WRITE = 3, WRITE_DISCARD = 4, WRITE_NO_OVERWRITE = 5 }
 
     [ComImport, Guid("839d1216-bb2e-412b-b7f4-a9dbebe08ed1"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), SuppressUnmanagedCodeSecurity]

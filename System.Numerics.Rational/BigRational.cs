@@ -13,7 +13,7 @@ namespace System.Numerics
   /// Represents an arbitrarily large rational number.
   /// </summary>                                                    
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public unsafe readonly struct BigRational : IComparable<BigRational>, IEquatable<BigRational>, IFormattable, ISpanFormattable
+  public unsafe readonly partial struct BigRational : IComparable<BigRational>, IComparable, IEquatable<BigRational>, IFormattable, ISpanFormattable
   {
     /// <summary>
     /// Converts the numeric value of the current <see cref="BigRational"/> instance to its equivalent string representation.
@@ -109,7 +109,7 @@ namespace System.Numerics
             case 'F':
             case 'L': // like F without trailing zeros
               if (round == -1) round = info.NumberDecimalDigits;
-              digs = Math.Max(0, MathR.ILog10(this)) + 1 + round;
+              digs = Math.Max(0, ILog10(this)) + 1 + round;
               if (digs > destination.Length && destination.Length == 100) { charsWritten = digs; return false; } //hint for ToString(,)
               emin = -(emax = int.MaxValue); goto def;
             case 'E':
@@ -117,7 +117,7 @@ namespace System.Numerics
               if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
               emax = -(emin = int.MaxValue); goto def;
           }
-        var e = MathR.ILog10(this);
+        var e = ILog10(this);
         if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
         if (e <= 308) return ((double)this).TryFormat(destination, out charsWritten, format, provider);
       }
@@ -126,7 +126,7 @@ namespace System.Numerics
       var ts = stackalloc char[pb != null ? 0 : digs];
       var ss = pb != null ? pb.AsSpan().Slice(0, digs) : new Span<char>(ts, digs);
       var cpu = task_cpu; cpu.push(this);
-      if (round >= 0) cpu.rnd(fc == 'E' ? Math.Max(0, round - MathR.ILog10(this)) : round);
+      if (round >= 0) cpu.rnd(fc == 'E' ? Math.Max(0, round - ILog10(this)) : round);
       cpu.tos(ss, out var ns, out var exp, out var rep, round == -1);
       var ofl = ns == ss.Length && round == -1;
       ss = ss.Slice(0, ns); var ws = destination;
@@ -319,6 +319,26 @@ namespace System.Numerics
       return task_cpu.equ(this, b);
     }
     /// <summary>
+    /// Compares this object to another object, returning an instance of System.Relation.<br/>
+    /// Null is considered less than any instance.
+    /// </summary>
+    /// <param name="obj">The object to compare.</param>
+    /// <returns>
+    /// A signed integer value that indicates the relationship of this instance to other,
+    /// as shown in the following table.<br/>
+    /// Return value – Description<br/>
+    /// Less than zero – The current instance is less than other.<br/>
+    /// Zero – The current instance equals other.<br/>
+    /// Greater than zero – The current instance is greater than other.<br/>
+    /// </returns>
+    /// <exception cref="ArgumentException">If obj is not null and not of type <see cref="BigRational"/>.</exception>
+    public int CompareTo(object? obj)
+    {
+      if (obj == null) return 1;
+      if (obj is not BigRational v) throw new ArgumentException(nameof(obj));
+      return this.CompareTo(v);
+    }
+    /// <summary>
     /// Compares this instance to a second <see cref="BigRational"/> and returns an
     /// integer that indicates whether the value of this instance is less than, equal
     /// to, or greater than the value of the specified object.
@@ -504,7 +524,16 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="int"/>.</returns>
     public static explicit operator int(BigRational value)
     {
-      return (int)(double)value;
+      return (int)(double)value; //todo: opt
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="uint"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="uint"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="uint"/>.</returns>
+    public static explicit operator ushort(BigRational value)
+    {
+      return (ushort)(double)value; //todo: opt
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="long"/> value.
@@ -513,7 +542,16 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="long"/>.</returns>
     public static explicit operator long(BigRational value)
     {
-      return (long)(decimal)value;
+      return (long)(decimal)value; //todo: opt. urgend check vs. against cpu lim mod 
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="ulong"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="ulong"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="ulong"/>.</returns>
+    public static explicit operator ulong(BigRational value)
+    {
+      return (ulong)(decimal)value; //todo: opt. urgend check performance vs. cpu lim mod 
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="float"/> value.
@@ -534,17 +572,17 @@ namespace System.Numerics
       if (value.p == null) return 0;
       fixed (uint* a = value.p)
       {
-        var na = a[0] & 0x3fffffff; var b = a + (na + 1); var nb = b[0];
+        var na = a[0] & 0x3fffffff; var b = a + (na + 1); var nb = b[0];  //todo: opt. check performance using lim(64)
         var ca = BitOperations.LeadingZeroCount(a[na]);
-        var cb = BitOperations.LeadingZeroCount(b[nb]);
+        var cb = BitOperations.LeadingZeroCount(b[nb]); 
         var va = ((ulong)a[na] << 32 + ca) | (na < 2 ? 0 : ((ulong)a[na - 1] << ca) | (na < 3 ? 0 : (ulong)a[na - 2] >> 32 - ca));
         var vb = ((ulong)b[nb] << 32 + cb) | (nb < 2 ? 0 : ((ulong)b[nb - 1] << cb) | (nb < 3 ? 0 : (ulong)b[nb - 2] >> 32 - cb));
         if (vb == 0) return double.NaN;
         var e = ((na << 5) - ca) - ((nb << 5) - cb);
         if (e < -1021) return double.NegativeInfinity;
-        if (e > +1023) return double.PositiveInfinity;
+        if (e > +1023) return double.PositiveInfinity; //todo: opt. extended over ctor
         var r = (double)(va >> 11) / (vb >> 11);
-        var x = (0x3ff + e) << 52; r *= *(double*)&x; // r *= Math.Pow(2, e);
+        var x = (0x3ff + e) << 52; r *= *(double*)&x; //fast r *= Math.Pow(2, e);
         if ((a[0] & 0x80000000) != 0) r = -r; return r;
       }
     }
@@ -575,7 +613,7 @@ namespace System.Numerics
     /// </summary>
     /// <remarks>
     /// The result is truncated to integer by default.<br/>
-    /// Consider rounding the value before using <see cref="MathR.Round(BigRational)"/>, <see cref="MathR.Round(BigRational, int)"/>  or <see cref="MathR.Round(BigRational, int, MidpointRounding)"/> methods.
+    /// Consider rounding the value before using <see cref="Round(BigRational)"/>, <see cref="Round(BigRational, int)"/>  or <see cref="Round(BigRational, int, MidpointRounding)"/> methods.
     /// </remarks>
     /// <param name="value">The value to convert to a <see cref="BigInteger"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="BigInteger"/>.</returns>
@@ -616,6 +654,24 @@ namespace System.Numerics
     public static BigRational operator -(BigRational a)
     {
       var cpu = task_cpu; cpu.push(a); cpu.neg(); return cpu.popr();
+    }
+    /// <summary>
+    /// Increments a <see cref="BigRational"/> value by one.
+    /// </summary>
+    /// <param name="value">The value to increment.</param>
+    /// <returns>The result of incrementing <paramref name="value" />.</returns>
+    public static BigRational operator ++(BigRational value)
+    {
+      var cpu = task_cpu; cpu.push(1u); cpu.add(value); return cpu.popr();
+    }
+    /// <summary>
+    /// Decrements a <see cref="BigRational"/> value by one.
+    /// </summary>
+    /// <param name="value">The value to decrement.</param>
+    /// <returns>The result of decrementing <paramref name="value" />.</returns>
+    public static BigRational operator --(BigRational value)
+    {
+      var cpu = task_cpu; cpu.push(value); cpu.push(1u); cpu.sub(); return cpu.popr();
     }
     /// <summary>
     /// Adds the values of two specified <see cref="BigRational"/> numbers.
@@ -977,19 +1033,18 @@ namespace System.Numerics
     /// </summary>
     /// <param name="a">A <see cref="BigRational"/> number.</param>
     /// <returns>True if <paramref name="a"/> is integer; otherwise, false.</returns>
-    public static bool IsInt(BigRational a)
+    public static bool IsInteger(BigRational a)
     {
       if (a.p == null) return true; //since BigRational is always normalized:
       fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000001;
-      // or: return a % 1 == 0;
-      // or: var cpu = task_cpu; cpu.push(a); var b = cpu.isi(); cpu.pop(); return b;
+      // or: return a % 1 == 0; or: var cpu = task_cpu; cpu.push(a); var b = cpu.isi(); cpu.pop(); return b;
     }
     /// <summary>
     /// Returns a value indicating whether the specified number is not a number. 
     /// </summary>
     /// <param name="a">A <see cref="BigRational"/> number.</param>
     /// <returns>True if <paramref name="a"/> is not a number; otherwise, false.</returns>
-    public static bool IsNan(BigRational a)
+    public static bool IsNaN(BigRational a)
     {
       if (a.p == null) return false;
       fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
@@ -2236,6 +2291,7 @@ namespace System.Numerics
       /// Returns the MSB (most significant bit) of the numerator of the value on top of the stack.
       /// </summary>
       /// <remarks>
+      /// Uses <i>MSB 1 bit numbering</i>, so 0 gives 0, 1 gives 1, 4 gives 2.<br/>
       /// To get the MSB of the denominator is possible by calling <see cref="inv"/> before and after.
       /// </remarks>
       /// <returns>A <see cref="uint"/> value as MSB.</returns>
@@ -2251,6 +2307,7 @@ namespace System.Numerics
       /// Returns the LSB (least significant bit) of the numerator of the value on top of the stack.
       /// </summary>
       /// <remarks>
+      /// Uses <i>LSB 1 bit numbering</i>, so 0 gives 0, 1 gives 1, 4 gives 2.<br/>
       /// To get the LSB of the denominator is possible by calling <see cref="inv"/> before and after.
       /// </remarks>
       /// <returns>A <see cref="uint"/> value as MSB.</returns>
@@ -2416,7 +2473,8 @@ namespace System.Numerics
       /// The desired precision is controlled by the parameter <paramref name="c"/> 
       /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
       /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
-      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// <c>msb(pow(10, digits))</c> or<br/> 
+      /// <c>(uint)Math.Ceiling(digits * 3.321928094887362) // * (log(2) + log(5)) / log(2))</c>.<br/> 
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
@@ -2448,7 +2506,8 @@ namespace System.Numerics
       /// The desired precision is controlled by the parameter <paramref name="c"/> 
       /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
       /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
-      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// <c>msb(pow(10, digits))</c> or<br/> 
+      /// <c>(uint)Math.Ceiling(digits * 3.321928094887362) // * (log(2) + log(5)) / log(2))</c>.<br/> 
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
@@ -2469,7 +2528,7 @@ namespace System.Numerics
           if (cmpi(1, 2) <= 0) continue; // if (x < 2) continue;        
           //push(2u); div(2, 0); pop(); // x = x / 2; //todo: shl den       
           swp(); inv(); shl(1); inv(); swp(); // x = x / 2; //todo: shl den
-          push(1u); shl(i); inv(); // var p = rat.Pow(2, -i); //var b = bdi(); if (i == c) { }
+          push(1u); shl(i); inv(); // var p = Pow(2, -i); //var b = bdi(); if (i == c) { }
           add(); lim(c); // b += p;
         }
         swp(); pop(); if (a != 0) { push(a); add(); } // return a + b;
@@ -2482,7 +2541,8 @@ namespace System.Numerics
       /// The desired precision is controlled by the parameter <paramref name="c"/> 
       /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
       /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
-      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// <c>msb(pow(10, digits))</c> or<br/> 
+      /// <c>(uint)Math.Ceiling(digits * 3.321928094887362) // * (log(2) + log(5)) / log(2))</c>.<br/> 
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
@@ -2512,7 +2572,8 @@ namespace System.Numerics
       /// The desired precision is controlled by the parameter <paramref name="c"/> 
       /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
       /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
-      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// <c>msb(pow(10, digits))</c> or<br/> 
+      /// <c>(uint)Math.Ceiling(digits * 3.321928094887362) // * (log(2) + log(5)) / log(2))</c>.<br/> 
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
@@ -2536,7 +2597,8 @@ namespace System.Numerics
       /// The desired precision is controlled by the parameter <paramref name="c"/> 
       /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
       /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
-      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// <c>msb(pow(10, digits))</c> or<br/> 
+      /// <c>(uint)Math.Ceiling(digits * 3.321928094887362) // * (log(2) + log(5)) / log(2))</c>.<br/> 
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
@@ -2567,7 +2629,8 @@ namespace System.Numerics
       /// The desired precision is controlled by the parameter <paramref name="c"/> 
       /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
       /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
-      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// <c>msb(pow(10, digits))</c> or<br/> 
+      /// <c>(uint)Math.Ceiling(digits * 3.321928094887362) // * (log(2) + log(5)) / log(2))</c>.<br/> 
       /// The result however has to be rounded explicitely to get an exact decimal representation.
       /// </remarks>
       /// <param name="c">The desired precision.</param>
@@ -2600,7 +2663,8 @@ namespace System.Numerics
       /// The desired precision is controlled by the parameter <paramref name="c"/> 
       /// where <paramref name="c"/> represents a break criteria of the internal iteration.<br/>
       /// For a desired precesission of decimal digits <paramref name="c"/> can be calculated as:<br/> 
-      /// <c>msb(pow(10, digits))</c>.<br/> 
+      /// <c>msb(pow(10, digits))</c> or<br/> 
+      /// <c>(uint)Math.Ceiling(digits * 3.321928094887362) // * (log(2) + log(5)) / log(2))</c>.<br/> 
       /// The result however has to be rounded explicitely to get an exact decimal representation.<br/> 
       /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/> 
       /// and the accuracy of the last digits has not yet been ensured!

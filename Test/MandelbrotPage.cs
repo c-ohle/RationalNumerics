@@ -23,12 +23,12 @@ namespace Test
     void statechaged(object? p, EventArgs? e)
     {
       var v1 = mandelbrotView1; var t1 = v1.RenderTime;
-      var v2 = mandelbrotView2; var t2 = v2.RenderTime;
+      var v2 = mandelbrotView2; var t2 = v2.RenderTime; var bug = mandelbrotView2.Enabled; if (bug) t2 = 0; //crashed (BigInteger bugs)
       static string ms(long n) { var i = 0; for (; n >= 1024 && i < 4; n >>= 10, i++) ; return $"{n} {" KMGT"[i]}B"; }
       labelState1.Text = t1 != 0 ?
         $"{t1} ms {ms(v1.gcnews)} ({v1.Width}×{v1.Height})" : "calculates...";
       labelState2.Text = t2 != 0 ?
-        $"{t2} ms {ms(v2.gcnews)} ({v2.Width}×{v2.Height})" : checkBoxActive2.Checked ? "calculates..." : "";
+        $"{t2} ms {ms(v2.gcnews)} ({v2.Width}×{v2.Height})" : !checkBoxActive2.Checked ? "" : !bug ? "calculates..." : "exception";
       labelRelation.Text = t1 != 0 && t2 != 0 ?
         $"{(t1 <= t2 ? 1 : t1 / t2)} : {(t1 <= t2 ? t2 / t1 : 1)}" :
         "___ : ___";
@@ -42,7 +42,7 @@ namespace Test
           mandelbrotView2.Scaling = mandelbrotView1.Scaling;
           mandelbrotView2.Iterations = mandelbrotView1.Iterations;
           mandelbrotView2.Lim = mandelbrotView1.Lim;
-          if (checkBoxActive2.Checked)
+          if (checkBoxActive2.Checked && !bug) // !crashed (BigInteger bugs)
             mandelbrotView2.Start();
         }
       }

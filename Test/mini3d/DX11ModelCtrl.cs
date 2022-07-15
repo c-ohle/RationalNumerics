@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS8601, CS8600, CS8602, CS8603, CS8604, CS8605
+﻿#nullable disable //#pragma warning disable CS8601, CS8600, CS8602, CS8603, CS8604, CS8605
 using System.Buffers;
 using System.Collections;
 using System.ComponentModel;
@@ -20,7 +20,7 @@ namespace Test
   public unsafe partial class DX11ModelCtrl : DX11Ctrl
   {
     [Browsable(false)]
-    public Models.Scene? Scene
+    public Models.Scene Scene
     {
       get => scene;
       set
@@ -38,12 +38,12 @@ namespace Test
       get => infos ??= new();
     }
     public Settings settings { get => _settings ??= new Settings(this); }
-    Models.Scene? scene; Settings? _settings;
-    Models.Camera? camera; Models.Light? light;
-    List<Models.Geometry>? transp;
-    internal List<Group>? selection; internal (Control view, object? p) extrasel;
-    internal List<Undo>? undos; internal int undoi;  //todo: private
-    Action<DC>? RenderClient; List<string>? infos;
+    Models.Scene scene; Settings _settings;
+    Models.Camera camera; Models.Light light;
+    List<Models.Geometry> transp;
+    internal List<Group> selection; internal (Control view, object p) extrasel;
+    internal List<Undo> undos; internal int undoi;  //todo: private
+    Action<DC> RenderClient; List<string> infos;
     int flags = 0x01 | 0x02 | 0x04 | 0x10; // 0x01:SelectBox, 0x02:Select Pivot, 0x04:Wireframe, 0x08:Normals, 0x10:Clients, 0x20:fps
     protected override void OnLoad(EventArgs e)
     {
@@ -262,7 +262,7 @@ namespace Test
       return 0;
     }
 
-    public int OnCmd(int id, object? test)
+    public int OnCmd(int id, object test)
     {
       switch (id)
       {
@@ -295,32 +295,32 @@ namespace Test
       }
       return 0;
     }
-    int OnRedo(object? test)
+    int OnRedo(object test)
     {
       if (undos == null || undoi >= undos.Count) return 0;
       if (test == null) { undos[undoi++].exec(); Invalidate(); Focus(); /*UndoChanged?.Invoke();*/ }
       return 1;
     }
-    int OnUndo(object? test)
+    int OnUndo(object test)
     {
       if (undos == null || undoi == 0) return 0;
       if (test == null) { undos[--undoi].exec(); Invalidate(); Focus(); /*UndoChanged?.Invoke();*/ }
       return 1;
     }
-    int OnCut(object? test)
+    int OnCut(object test)
     {
       if (OnDelete(this) == 0) return 0;
       if (test != null) return 1;
       OnCopy(null); return OnDelete(null);
     }
-    int OnCopy(object? test)
+    int OnCopy(object test)
     {
       if (selection.Count == 0) return 0;
       if (test != null) return 1;
       var xml = Models.Save(new Models.Scene { Unit = scene.Unit, nodes = selection.ToArray() });
       Clipboard.SetText(xml.ToString()); return 1;
     }
-    int OnPaste(object? test)
+    int OnPaste(object test)
     {
       if (!Clipboard.ContainsText()) return 0;
       var s = Clipboard.GetText();
@@ -331,7 +331,7 @@ namespace Test
         this.scene.nodes.Concat(blob.nodes).ToArray()), new UndoSel(this, blob.nodes));
       return 1;
     }
-    int OnDelete(object? test)
+    int OnDelete(object test)
     {
       if (selection.Count == 0 || scene.nodes == null) return 0;
       if (test != null) return 1;
@@ -339,7 +339,7 @@ namespace Test
       Execute(new UndoSel(this), new UndoNodes(layer, layer.nodes.Except(selection).ToArray()));
       return 1;
     }
-    int OnSelectAll(object? test)
+    int OnSelectAll(object test)
     {
       if (test != null) return 1;
       selection.Clear(); selection.AddRange(scene.nodes.Where(p => !p.Fixed && isgeo(p))); Invalidate();
@@ -351,7 +351,7 @@ namespace Test
       }
       return 0;
     }
-    int OnGroup(object? test)
+    int OnGroup(object test)
     {
       if (selection.Count == 0) return 0;
       if (test != null) return 1;
@@ -367,7 +367,7 @@ namespace Test
         a.Select(p => UndoTrans.get(p, p.transform * m)), new UndoSel(this, g));
       return 1;
     }
-    int OnGroupCSG(object? test)
+    int OnGroupCSG(object test)
     {
       if (selection.Count != 2) return 0;
       if (selection[0] is not Models.Geometry t1 ||
@@ -388,7 +388,7 @@ namespace Test
         UndoTrans.get(t2, t2.transform * !g.transform), new UndoSel(this, g));
       return 1;
     }
-    int OnUngroup(object? test)
+    int OnUngroup(object test)
     {
       var groups = selection.Where(p => p.nodes != null);
       if (!groups.Any()) return 0;
@@ -450,7 +450,7 @@ namespace Test
     //  Cursor.Current = Cursors.Arrow;
     //  return 0;
     //}
-    int OnCenter(object? test)
+    int OnCenter(object test)
     {
       if (selection.Count == 0) return 0;
       if (test != null) return 1;
@@ -460,7 +460,7 @@ namespace Test
     }
 
     bool IsSelect(Group node) => selection.Contains(node);
-    public void Select(object? p, bool toggle = false)
+    public void Select(object p, bool toggle = false)
     {
       if (extrasel.view == this) { extrasel = default; Invalidate(); } //props
       if (p == null) { if (selection.Count != 0) { selection.Clear(); Invalidate(); } return; }
@@ -489,7 +489,7 @@ namespace Test
         Invalidate(); return;
       }
     }
-    public void AddUndo(Undo? p)
+    public void AddUndo(Undo p)
     {
       if (p == null) return;
       if (undos == null) undos = new List<Undo>();
@@ -900,7 +900,7 @@ namespace Test
         if (id == 1 && ws) { Select(main, true); }
       };
     }
-    Action<int>? tool_drop(PC pc)
+    Action<int> tool_drop(PC pc)
     {
       static Group[] load(DataObject data, out Vector3 pt)
       {
@@ -1081,7 +1081,7 @@ namespace Test
       });
     }
 
-    AniSet? running; long ts;
+    AniSet running; long ts;
     void animate()
     {
       var t = Stopwatch.GetTimestamp();
@@ -1090,7 +1090,7 @@ namespace Test
       if (running.ani(Math.Min(running.time + dt, running.maxtime))) Invalidate();
       if (running.time == running.maxtime) RunningAnimation = null;
     }
-    internal AniSet? RunningAnimation
+    internal AniSet RunningAnimation
     {
       get => running;
       set
@@ -1181,12 +1181,12 @@ namespace Test
       public enum XFormat { xxz, xxzpng }
       class DrvConv : TypeConverter
       {
-        ToolStripMenuItem? m1, m2; int drv;
-        public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType) => true;
-        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) => true;
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext? context) => true;
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext? context) => true;
-        public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
+        ToolStripMenuItem m1, m2; int drv;
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) => true;
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => true;
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context) => true;
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) => true;
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
           var m = value is uint ? m1 : m2;
           if (m == null)
@@ -1196,7 +1196,7 @@ namespace Test
           }
           return m.DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(p => value.Equals(p.Tag))?.Text;
         }
-        public override StandardValuesCollection? GetStandardValues(ITypeDescriptorContext? context)
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
           var x = ((Settings)context.Instance).view.OnDriver(null);
           if (x != drv) { drv = x; m2 = null; ConvertTo(context, null, 0, GetType()); }
@@ -1204,7 +1204,7 @@ namespace Test
             (context.PropertyDescriptor.PropertyType == typeof(uint) ? m1 : m2)?.
             DropDownItems.OfType<ToolStripMenuItem>().Select(p => p.Tag).Distinct().ToArray());
         }
-        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
           return (context.PropertyDescriptor.PropertyType == typeof(uint) ? m1 : m2).
             DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(p => p.Text.Equals(value))?.Tag;
@@ -1219,9 +1219,9 @@ namespace Test
     public abstract class Node
     {
       internal int flags; // 0x01: Fixed 0x02:!visible 0x04:buildok 0x08:vbok 0x10:merge 0x20:shadows
-      internal string? name;
-      internal Group[]? nodes;
-      internal Node? parent;
+      internal string name;
+      internal Group[] nodes;
+      internal Node parent;
       internal protected virtual unsafe void Serialize(XElement e, bool storing)
       {
         e.AddAnnotation(this);
@@ -1252,11 +1252,11 @@ namespace Test
         }
       }
       internal protected virtual void Invalidate() => parent?.Invalidate();
-      internal protected virtual object? GetService(Type t)
+      internal protected virtual object GetService(Type t)
       {
         return parent != null ? parent.GetService(t) : null;
       }
-      public Node? Find(string name)
+      public Node Find(string name)
       {
         if (nodes != null)
           for (int i = 0; i < nodes.Length; i++)
@@ -1308,7 +1308,7 @@ namespace Test
       //[Category("\tTransform")]
       //public Size Soße { get { return _soße; } set { _soße = value; } }
       //Size _soße;
-      public Matrix4x3 GetTransform(Node? root = null)
+      public Matrix4x3 GetTransform(Node root = null)
       {
         if (root == this) return Matrix4x3.Identity;
         if (root == parent || parent is not Group p) return transform;
@@ -1365,8 +1365,8 @@ namespace Test
     {
       public class Scene : Node
       {
-        internal DX11Ctrl? root;
-        internal AniSet? aniset;
+        internal DX11Ctrl root;
+        internal AniSet aniset;
         public enum Units { Meter = 1, Centimeter = 2, Millimeter = 3, Micron = 4, Foot = 5, Inch = 6 }
         Units unit; internal uint ambient;
         [Category("\t\tGeneral")]
@@ -1404,7 +1404,7 @@ namespace Test
             if (aniset != null && aniset.lines.Count != 0)
             {
               var res = default(XElement);
-              int id = 0; Func<Node, string?> f = null; f = p =>
+              int id = 0; Func<Node, string> f = null; f = p =>
               {
                 var t1 = e.DescendantsAndSelf().FirstOrDefault(x => x.Annotation<Node>() == p);
                 if (t1 == null)
@@ -1439,14 +1439,14 @@ namespace Test
             if (aniset != null)
             {
               var res = default(XElement);
-              Func<string, Node?> f = null; f = pid =>
+              Func<string, Node> f = null; f = pid =>
               {
                 var p = e.DescendantsAndSelf().
-                  FirstOrDefault(a => (string?)a.Attribute("id") == pid)?.
+                  FirstOrDefault(a => (string)a.Attribute("id") == pid).
                   Annotation(typeof(Node)) as Node;
                 if (p != null) return p;
                 var x = (res ??= e.Element(ns + "res")).Elements().
-                  First(a => (string?)a.Attribute("id") == pid);
+                  First(a => (string)a.Attribute("id") == pid);
                 if ((p = x.Annotation(typeof(Node)) as Node) == null)
                 {
                   p = Load(x); var a = x.Attribute("cc");
@@ -1461,7 +1461,7 @@ namespace Test
           }
         }
         protected internal override void Invalidate() { root?.Invalidate(); }
-        protected internal override object? GetService(Type t)
+        protected internal override object GetService(Type t)
         {
           if (t == typeof(Scene)) return this;
           if (t == typeof(DX11ModelCtrl)) return root;
@@ -1523,7 +1523,7 @@ namespace Test
       public class Material : IEquatable<Material>
       {
         internal uint diffuse;
-        internal DX11Ctrl.Texture? texture;
+        internal DX11Ctrl.Texture texture;
         internal unsafe Matrix4x3 transform
         {
           get
@@ -1537,12 +1537,12 @@ namespace Test
             fixed (float* p = trans ??= new float[12]) *(Matrix4x3*)p = value;
           }
         }
-        float[]? trans;
+        float[] trans;
         public override int GetHashCode()
         {
           return HashCode.Combine(diffuse, texture, transform);
         }
-        public bool Equals(Material? b)
+        public bool Equals(Material b)
         {
           return diffuse == b.diffuse && texture == b.texture && transform == b.transform;
         }
@@ -1569,7 +1569,7 @@ namespace Test
           set { ranges[Current].material.diffuse = unchecked((uint)value.ToArgb()); }
         }
         [Category("Material"), Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public string? Texture
+        public string Texture
         {
           get { var m = ranges[Current].material; return m.texture != null ? m.texture.Url : null; }
           set
@@ -1616,7 +1616,7 @@ namespace Test
         [TypeConverter(typeof(ExpandableObjectConverter))]
         public class MeshInfo
         {
-          static MeshInfo? cache; readonly Geometry p;
+          static MeshInfo cache; readonly Geometry p;
           internal static MeshInfo get(Geometry p) => cache?.p == p ? cache : cache = new MeshInfo(p);
           MeshInfo(Geometry p) => this.p = p;
           public override string ToString()
@@ -1640,7 +1640,7 @@ namespace Test
             get { f1(); return hedges; }
           }
           //public int PolyhedronEuler => MeshVertices - MeshEdges + MeshPolygones;          
-          string? status; Vector3R[]? pp; (PlaneR e, int[] kk)[]? ee; int hash, edges, hedges;
+          string status; Vector3R[] pp; (PlaneR e, int[] kk)[] ee; int hash, edges, hedges;
           void checkhash()
           {
             var pp = p.vertices; var ii = p.indices; var h = pp.Length ^ ii.Length;
@@ -1686,11 +1686,11 @@ namespace Test
           }
         }
 
-        internal protected Vector3[]? vertices;
-        internal protected ushort[]? indices;
-        internal (int count, Material material)[]? ranges; int current;
-        internal DX11Ctrl.VertexBuffer? vb;
-        internal DX11Ctrl.IndexBuffer? ib;
+        internal protected Vector3[] vertices;
+        internal protected ushort[] indices;
+        internal (int count, Material material)[] ranges; int current;
+        internal DX11Ctrl.VertexBuffer vb;
+        internal DX11Ctrl.IndexBuffer ib;
         internal unsafe void checkbuild(int skip)
         {
           skip |= flags;
@@ -1767,7 +1767,7 @@ namespace Test
           indices = Array.Empty<ushort>();
         }
         protected internal virtual void Render(DX11Ctrl.DC dc, Group main) { }
-        protected internal virtual Action<int>? GetTool(DX11Ctrl.PC pc, Group main)
+        protected internal virtual Action<int> GetTool(DX11Ctrl.PC pc, Group main)
         {
           return null;
         }
@@ -1805,8 +1805,8 @@ namespace Test
         }
         class GTC : TypeConverter
         {
-          public override bool GetPropertiesSupported(ITypeDescriptorContext? context) => true;
-          public override PropertyDescriptorCollection? GetProperties(ITypeDescriptorContext? context, object value, Attribute[]? attributes)
+          public override bool GetPropertiesSupported(ITypeDescriptorContext context) => true;
+          public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
           {
             var geo = (Geometry)context.Instance;
             var pp = TypeDescriptor.GetProperties(geo);
@@ -1821,9 +1821,9 @@ namespace Test
         }
         class MTC : Int32Converter
         {
-          public override bool GetStandardValuesSupported(ITypeDescriptorContext? context) => true;
-          public override bool GetStandardValuesExclusive(ITypeDescriptorContext? context) => true;
-          public override StandardValuesCollection? GetStandardValues(ITypeDescriptorContext? context)
+          public override bool GetStandardValuesSupported(ITypeDescriptorContext context) => true;
+          public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) => true;
+          public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
           {
             var n = ((Geometry)context.Instance).ranges.Length;
             return new StandardValuesCollection(Enumerable.Range(0, n).ToArray());
@@ -1840,7 +1840,7 @@ namespace Test
       public sealed class ScriptGeometry : Geometry
       {
         [Category("Geometry"), Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public string? Code
+        public string Code
         {
           get => code;
           set
@@ -1853,7 +1853,7 @@ namespace Test
             this.code = value; this.inst = inst; flags &= ~0x04;
           }
         }
-        string? code; object[]? inst;
+        string code; object[] inst;
         static readonly string[] usings = { "System", "System.Collections.Generic", "System.Numerics" };
         internal protected override void Serialize(XElement e, bool storing)
         {
@@ -1895,7 +1895,7 @@ namespace Test
         {
           get => indices.Length;
         }
-        //internal Vector3R[]? rpts;
+        //internal Vector3R[] rpts;
         protected internal override void Build()
         {
           //if (rpts != null)
@@ -1949,8 +1949,8 @@ namespace Test
       public class CsgGeometry : Geometry
       {
         PolyhedronR.Mode mode; MaterialSource source;
-        (int count, Material material)[]? myranges;
-        internal Vector3R[]? rpts; //VectorR? rpts;
+        (int count, Material material)[] myranges;
+        internal Vector3R[] rpts; //VectorR rpts;
         [Category("Geometry")]
         public PolyhedronR.Mode Operation
         {
@@ -2208,8 +2208,8 @@ namespace Test
       [EditorAttribute(typeof(Editor), typeof(ComponentEditor))]
       public abstract class Poly2DGeometry : Geometry
       {
-        protected internal Vector2[]? points;
-        protected internal ushort[]? counts;
+        protected internal Vector2[] points;
+        protected internal ushort[] counts;
         class Editor : WindowsFormsComponentEditor
         {
           public override bool EditComponent(ITypeDescriptorContext context, object component, IWin32Window owner)
@@ -2225,7 +2225,7 @@ namespace Test
             grid.PropertySort = PropertySort.NoSort;
             grid.SelectedObjectsChanged += rem;
             grid.PropertySortChanged += rem;
-            void rem(object? p, EventArgs e)
+            void rem(object p, EventArgs e)
             {
               grid.SelectedObjectsChanged -= rem;
               grid.PropertySortChanged -= rem;
@@ -2236,10 +2236,10 @@ namespace Test
         }
         class PolyEditCtrl : UserControl
         {
-          internal PropertyGrid? infogrid;
+          internal PropertyGrid infogrid;
           public PolyEditCtrl() { DoubleBuffered = true; }
-          Vector2 pos, sca; Pen? pen;
-          Poly2DGeometry? geo; Action<int>? tool; int isel;
+          Vector2 pos, sca; Pen pen;
+          Poly2DGeometry geo; Action<int> tool; int isel;
           DX11ModelCtrl RootCtrl => (DX11ModelCtrl)geo.GetService(typeof(DX11ModelCtrl));
           static Vector2 conv(Point p) => new Vector2(p.X, p.Y);
           static Vector2 conv(Size p) => new Vector2(p.Width, p.Height);
@@ -2264,7 +2264,7 @@ namespace Test
               var s = geo.counts; geo.counts = c; c = s; geo.Invalidate();
             };
           }
-          static int ipoly(IReadOnlyList<ushort>? counts, int i)
+          static int ipoly(IReadOnlyList<ushort> counts, int i)
           {
             if (counts == null) return -1; int t = 0;
             for (int x = 0, y; t < counts.Count && (y = (x + counts[t])) <= i; x = y, t++) ; return t;
@@ -2441,7 +2441,7 @@ namespace Test
           }
           class Info
           {
-            internal PolyEditCtrl? view;
+            internal PolyEditCtrl view;
             int ipt() => (view.isel & 0x10000000) != 0 && (view.isel & 0x0fffffff) < view.geo.points.Length ? view.isel & 0x0fffffff : -1;
             public float X
             {
@@ -2532,7 +2532,7 @@ namespace Test
           dc.DrawPoints(points.Length, 7);
           dc.Select();
         }
-        protected internal override Action<int>? GetTool(DX11Ctrl.PC pc, Group main)
+        protected internal override Action<int> GetTool(DX11Ctrl.PC pc, Group main)
         {
           if ((pc.Id & 0x10000000) != 0) return tool(pc, main);
           return base.GetTool(pc, main);
@@ -2587,14 +2587,14 @@ namespace Test
         }
         class Builder
         {
-          [ThreadStatic] static WeakReference? wr; Builder() { }
+          [ThreadStatic] static WeakReference wr; Builder() { }
           public static Builder GetInstance()
           {
             if (wr == null || wr.Target is not Builder p)
               wr = new WeakReference(p = new Builder());
             return p;
           }
-          public void Extruse(Vector2[] pp, ushort[]? cc, int nz)
+          public void Extruse(Vector2[] pp, ushort[] cc, int nz)
           {
             var np = pp.Length; var nc = cc != null ? cc.Length : 1;
             this.pp.Clear(); this.pp.EnsureCapacity(np * nz);
@@ -2726,7 +2726,7 @@ namespace Test
           dc.DrawPoints(points.Length, 7);
           dc.Select();
         }
-        protected internal override Action<int>? GetTool(DX11Ctrl.PC pc, Group main)
+        protected internal override Action<int> GetTool(DX11Ctrl.PC pc, Group main)
         {
           if ((pc.Id & 0x10000000) != 0) return tool(pc, main);
           return base.GetTool(pc, main);
@@ -2750,7 +2750,7 @@ namespace Test
 
       public class TextGeometry : Geometry
       {
-        string text = string.Empty; System.Drawing.Font? font;
+        string text = string.Empty; System.Drawing.Font font;
         float height = 1, depth; int flat = 8;
         [Category("Geometry"), Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
         public string Text { get => text; set { text = value; Invalidate(); } }
@@ -2827,7 +2827,7 @@ namespace Test
 
       #region xml
       public static readonly XNamespace ns = XNamespace.None; //todo: 
-      internal static Type? s2t(string s)
+      internal static Type s2t(string s)
       {
         switch (s)
         {
@@ -2857,7 +2857,7 @@ namespace Test
           default: return null;
         }
       }
-      internal static object? s2o(string s)
+      internal static object s2o(string s)
       {
         return Activator.CreateInstance(s2t(s));
       }
@@ -2939,7 +2939,7 @@ namespace Test
       #region converter
       internal class VectorConverter : TypeConverter
       {
-        public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type? destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
           if (value is Vector2 a) return $"{a.X}; {a.Y}";
           if (value is Vector3 b) return $"{b.X}; {b.Y}; {b.Z}";
@@ -2947,8 +2947,8 @@ namespace Test
           //if (value is rat d) return d.ToString();
           return null;
         }
-        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type? sourceType) => true;
-        public override object ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => true;
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
           var a = ((string)value).Split(';');
           var b = stackalloc float[a.Length];
@@ -2959,9 +2959,9 @@ namespace Test
           return base.ConvertFrom(context, culture, value);
         }
 #if true //expandable
-        public override bool GetPropertiesSupported(ITypeDescriptorContext? ct) => true;
-        public override bool GetCreateInstanceSupported(ITypeDescriptorContext? ct) => true;
-        public override PropertyDescriptorCollection? GetProperties(ITypeDescriptorContext? ct, object value, Attribute[]? attributes)
+        public override bool GetPropertiesSupported(ITypeDescriptorContext ct) => true;
+        public override bool GetCreateInstanceSupported(ITypeDescriptorContext ct) => true;
+        public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext ct, object value, Attribute[] attributes)
         {
           var t = ct.PropertyDescriptor.PropertyType;
           if (t == typeof(Vector3))
@@ -2972,7 +2972,7 @@ namespace Test
               new MYP(value, "X", null), new MYP(value, "Y", null)});
           Debug.Assert(false); return base.GetProperties(ct, value, attributes);
         }
-        public override object? CreateInstance(ITypeDescriptorContext? ct, IDictionary dict)
+        public override object CreateInstance(ITypeDescriptorContext ct, IDictionary dict)
         {
           var t = ct.PropertyDescriptor.PropertyType;
           if (t == typeof(Vector3)) return new Vector3((float)dict["X"], (float)dict["Y"], (float)dict["Z"]);
@@ -2981,15 +2981,15 @@ namespace Test
         }
         class MYP : PropertyDescriptor
         {
-          public MYP(object p, string name, Attribute[]? attrs) : base(name, attrs) { }
+          public MYP(object p, string name, Attribute[] attrs) : base(name, attrs) { }
           public override Type ComponentType => null;//typeof(Vector3);
           public override bool IsReadOnly => false;
           public override Type PropertyType => typeof(float);
           public override bool CanResetValue(object component) => false;
           public override void ResetValue(object component) { }
           public override bool ShouldSerializeValue(object component) => false;
-          public override void SetValue(object? component, object? value) { Debug.Assert(false); }
-          public override object? GetValue(object? component)
+          public override void SetValue(object component, object value) { Debug.Assert(false); }
+          public override object GetValue(object component)
           {
             if (component is Vector3 b) switch (Name) { case "X": return b.X; case "Y": return b.Y; case "Z": return b.Z; }
             if (component is Vector2 c) switch (Name) { case "X": return c.X; case "Y": return c.Y; }
@@ -3008,9 +3008,9 @@ namespace Test
     public abstract class Undo
     {
       internal abstract void exec();
-      internal static Undo? join(params object[] a) // Ani, IEnumerable<Ani>, null
+      internal static Undo join(params object[] a) // Ani, IEnumerable<Ani>, null
       {
-        static Undo? join(object[] p)
+        static Undo join(object[] p)
         {
           var a = p.Select(p =>
             p is Undo a ? a :
@@ -3022,8 +3022,8 @@ namespace Test
         }
         return join(a);
       }
-      internal virtual (AniLine? line, int wo) record(AniSet set, int time) => default;
-      protected (AniLine? line, int wo) getline(AniSet set, int time, Type type, Node target, object? prop)
+      internal virtual (AniLine line, int wo) record(AniSet set, int time) => default;
+      protected (AniLine line, int wo) getline(AniSet set, int time, Type type, Node target, object prop)
       {
         var lines = set.lines; AniLine t = null;
         for (int i = 0, x = 0; i < lines.Count; i++)
@@ -3046,19 +3046,19 @@ namespace Test
     public abstract class AniLine
     {
       //0:tag 1:prop 2:save 3:load 5:cap x 8:del x 9:gamma x
-      internal virtual object? disp(int id, int wp = 0, object? lp = null)
+      internal virtual object disp(int id, int wp = 0, object lp = null)
       {
         switch (id)
         {
           case 2: //save
             {
               var e = new XElement(Models.o2s(this));
-              var f = (Func<Node, string?>)lp;
+              var f = (Func<Node, string>)lp;
               e.SetAttributeValue("pid", f((Node)disp(0, 0))); return e;
             }
           case 3: //load
             {
-              var e = (XElement)lp; var f = e.Annotation<Func<string, Node?>>();
+              var e = (XElement)lp; var f = e.Annotation<Func<string, Node>>();
               var a = e.Attribute("pid"); return a != null ? f(a.Value) : null;
             }
           case 8: //del time
@@ -3087,7 +3087,7 @@ namespace Test
         }
         return null;
       }
-      internal readonly List<int> times = new(2); internal List<float>? gammas;
+      internal readonly List<int> times = new(2); internal List<float> gammas;
 
       internal bool ani(int t1, int t2)
       {
@@ -3117,7 +3117,7 @@ namespace Test
         return inf;
       }
       internal abstract bool lerp(int x, float f);
-      protected internal virtual void serial(XElement e, Node? load)
+      protected internal virtual void serial(XElement e, Node load)
       {
         var fi = NumberFormatInfo.InvariantInfo;
         if (load == null)
@@ -3176,7 +3176,7 @@ namespace Test
     public class AniSet
     {
       internal readonly List<AniLine> lines = new();
-      internal string? name;
+      internal string name;
       internal int time, maxtime; int lt;
       internal int getendtime()
       {
@@ -3195,13 +3195,13 @@ namespace Test
           inf |= lines[i].ani(lt, time);
         return inf;
       }
-      internal object? disp(int id, object? v)
+      internal object disp(int id, object v)
       {
         switch (id)
         {
           case 2:
             {
-              var e = new XElement(Models.ns + "aniset"); var getid = (Func<Node, string?>)v;
+              var e = new XElement(Models.ns + "aniset"); var getid = (Func<Node, string>)v;
               if (name != null) e.SetAttributeValue("name", name);
               if (time != 0) e.SetAttributeValue("time", time);
               for (int i = 0; i < lines.Count; i++) e.Add((XElement)lines[i].disp(id, 0, getid));
@@ -3209,7 +3209,7 @@ namespace Test
             }
           case 3:
             {
-              var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>(); var a = default(XAttribute);
+              var e = (XElement)v; var f = e.Annotation<Func<string, Node>>(); var a = default(XAttribute);
               if ((a = e.Attribute("name")) != null) name = a.Value; //todo: trim
               if ((a = e.Attribute("time")) != null) time = (int)a;
               foreach (var ani in e.Elements())
@@ -3229,8 +3229,8 @@ namespace Test
       readonly Group p; Matrix4x3 m;
       internal UndoTrans(Group p, in Matrix4x3 m) { this.p = p; this.m = m; }
       internal override void exec() { var t = p.transform; p.transform = m; m = t; }
-      internal static UndoTrans? get(Group p, in Matrix4x3 m) => p.transform != m ? new UndoTrans(p, m) : null;
-      internal override (AniLine? line, int wo) record(AniSet set, int time)
+      internal static UndoTrans get(Group p, in Matrix4x3 m) => p.transform != m ? new UndoTrans(p, m) : null;
+      internal override (AniLine line, int wo) record(AniSet set, int time)
       {
         var c = getline(set, time, typeof(Line), this.p, null);
         if (time == -1) return c; var line = (Line)c.line;
@@ -3239,7 +3239,7 @@ namespace Test
       }
       internal class Line : AniLine
       {
-        internal override object? disp(int id, int wp, object? v)
+        internal override object disp(int id, int wp, object v)
         {
           switch (id)
           {
@@ -3251,8 +3251,8 @@ namespace Test
           }
           return base.disp(id, wp, v);
         }
-        internal Group? p; internal readonly List<Quat> list = new(2);
-        protected internal override void serial(XElement e, Node? load)
+        internal Group p; internal readonly List<Quat> list = new(2);
+        protected internal override void serial(XElement e, Node load)
         {
           if (load != null) p = (Group)load;
           base.serial(e, load);
@@ -3284,7 +3284,7 @@ namespace Test
       {
         var pd = p.GetType().GetProperty(s); var t = pd.GetValue(p); pd.SetValue(p, v); v = t;
       }
-      static Type? t2t(Type pt)
+      static Type t2t(Type pt)
       {
         if (pt == typeof(Color)) return typeof(ColorLine);
         if (pt == typeof(float)) return typeof(FloatLine);
@@ -3295,7 +3295,7 @@ namespace Test
         if (pt == typeof(int) || pt.IsEnum) return typeof(IntLine);
         return null;
       }
-      internal override (AniLine? line, int wo) record(AniSet set, int time)
+      internal override (AniLine line, int wo) record(AniSet set, int time)
       {
         var pd = this.p.GetType().GetProperty(s);
         var lt = t2t(pd.PropertyType); if (lt == null) return default;
@@ -3310,7 +3310,7 @@ namespace Test
       }
       internal abstract class PropLine<T> : AniLine
       {
-        internal override object? disp(int id, int wp, object? v = null)
+        internal override object disp(int id, int wp, object v = null)
         {
           switch (id)
           {
@@ -3328,7 +3328,7 @@ namespace Test
           }
           return base.disp(id, wp, v);
         }
-        Node? p; PropAcc<T>? acc;
+        Node p; PropAcc<T> acc;
         internal readonly List<T> list = new(2);
         protected abstract bool equals(T a, T b);
         protected abstract T lerp(T a, T b, float f);
@@ -3338,7 +3338,7 @@ namespace Test
           if (equals(a, b)) return false;
           acc.set(p, b); return true;
         }
-        protected internal override void serial(XElement e, Node? load)
+        protected internal override void serial(XElement e, Node load)
         {
           if (load == null) e.SetAttributeValue("prop", ((string)this.disp(1, 0)).ToLower());
           else { this.p = load; var a = e.Attribute("prop"); setacc(a.Value); }
@@ -3464,8 +3464,8 @@ namespace Test
     }
     sealed class UndoNodes : Undo
     {
-      Node p; Group[]? b;
-      internal UndoNodes(Node p, Group[]? b)
+      Node p; Group[] b;
+      internal UndoNodes(Node p, Group[] b)
       {
         this.p = p; this.b = b;
       }
@@ -3474,7 +3474,7 @@ namespace Test
         if (b != null) for (int i = 0, n = b.Length; i < n; i++) b[i].parent = p;
         var t = p.nodes; p.nodes = b; b = t;
       }
-      internal override (AniLine? line, int wo) record(AniSet set, int time)
+      internal override (AniLine line, int wo) record(AniSet set, int time)
       {
         var c = getline(set, time, typeof(Line), this.p, null);
         if (time == -1) return c; var line = (Line)c.line;
@@ -3483,8 +3483,8 @@ namespace Test
       }
       internal class Line : AniLine
       {
-        internal Node? p; internal readonly List<Group[]> list = new(2);
-        internal override object? disp(int id, int wp, object? v)
+        internal Node p; internal readonly List<Group[]> list = new(2);
+        internal override object disp(int id, int wp, object v)
         {
           switch (id)
           {
@@ -3492,13 +3492,13 @@ namespace Test
             case 2: //save
               {
                 var e = (XElement)base.disp(id, 0, v); serial(e, null); //todo: skip line output  line="; " 
-                var f = (Func<Node, string?>)v;
+                var f = (Func<Node, string>)v;
                 e.SetAttributeValue("line", string.Join("; ", list.Select(y => string.Join(' ', y.Select(x => f(x))))));
                 return e;
               }
             case 3: //load
               {
-                var e = (XElement)v; var f = e.Annotation<Func<string, Node?>>();
+                var e = (XElement)v; var f = e.Annotation<Func<string, Node>>();
                 serial((XElement)v, p = (Node)base.disp(id, 0, v)); //todo: skip line read
                 list.AddRange(((string)e.Attribute("line")).Split(';').
                   Select(y => y.Split(' ', StringSplitOptions.RemoveEmptyEntries).
@@ -3538,7 +3538,7 @@ namespace Test
       {
         for (int i = 0; i < a.Length; i++) a[i].exec(); Array.Reverse(a);
       }
-      internal override (AniLine? line, int wo) record(AniSet set, int time)
+      internal override (AniLine line, int wo) record(AniSet set, int time)
       {
         var recu = set.name == string.Empty;
         var coll = recu ? set : new AniSet() { name = string.Empty };
@@ -3561,8 +3561,8 @@ namespace Test
       }
       internal class Line : AniLine
       {
-        internal Models.Scene? p; internal readonly List<AniSet> list = new(2);
-        internal override object? disp(int id, int wp, object? v)
+        internal Models.Scene p; internal readonly List<AniSet> list = new(2);
+        internal override object disp(int id, int wp, object v)
         {
           switch (id)
           {
@@ -3571,7 +3571,7 @@ namespace Test
               {
                 var e = (XElement)base.disp(id, 0, v); //pid
                 base.serial(e, null); e.SetAttributeValue("line", null); //times, line
-                var f = (Func<Node, string?>)v;
+                var f = (Func<Node, string>)v;
                 for (int i = 0; i < list.Count; i++) e.Add(list[i].disp(2, f) as XElement);
                 return e;
               }
@@ -3579,7 +3579,7 @@ namespace Test
               {
                 p = (Models.Scene)base.disp(id, 0, v);
                 var e = (XElement)v; base.serial(e, p); //times
-                var f = e.Annotation<Func<string, Node?>>();
+                var f = e.Annotation<Func<string, Node>>();
                 foreach (var c in e.Elements())
                 {
                   var a = new AniSet(); c.AddAnnotation(f); a.disp(3, c);
@@ -3596,7 +3596,7 @@ namespace Test
           }
           return base.disp(id, wp, v);
         }
-        protected internal override void serial(XElement e, Node? load) { base.serial(e, load); }
+        protected internal override void serial(XElement e, Node load) { base.serial(e, load); }
         protected override int write(int i, Span<char> w, NumberFormatInfo f) { return 0; }
         protected override void read(ReadOnlySpan<char> s, NumberFormatInfo f) { }
         internal override bool lerp(int x, float f)
@@ -3613,8 +3613,8 @@ namespace Test
     }
     sealed class UndoSel : Undo
     {
-      DX11ModelCtrl p; Group[]? a;
-      internal UndoSel(DX11ModelCtrl p, params Group[]? a) { this.p = p; this.a = a; }
+      DX11ModelCtrl p; Group[] a;
+      internal UndoSel(DX11ModelCtrl p, params Group[] a) { this.p = p; this.a = a; }
       internal override void exec()
       {
         var t = p.selection.Count != 0 ? p.selection.ToArray() : null; p.Select(a); a = t;
@@ -3632,7 +3632,7 @@ namespace Test
   {
     public abstract class PropsCtrl : UserControl
     {
-      public DX11ModelCtrl? Target; // { get; set; }
+      public DX11ModelCtrl Target; // { get; set; }
       protected override void OnLoad(EventArgs e)
       {
         base.OnLoad(e);
@@ -3755,9 +3755,9 @@ namespace Test
         }
         void oninv() => update = true;
       }
-      PropertyGrid? grid; ComboBox? combo; System.Drawing.Font? bold;
-      Control? view, info; internal ToolStripButton? btnprops, btnsetting, btntoolbox, btnstory;
-      bool comboupdate, update; object? lastpd; WebBrowser? wb;
+      PropertyGrid grid; ComboBox combo; System.Drawing.Font bold;
+      Control view, info; internal ToolStripButton btnprops, btnsetting, btntoolbox, btnstory;
+      bool comboupdate, update; object lastpd; WebBrowser wb;
       void onidle()
       {
         if (!update) return; update = false;
@@ -3858,11 +3858,11 @@ namespace Test
 
   static unsafe class SpanTools
   {
-    internal static Vector3 readv3(ReadOnlySpan<char> s, NumberFormatInfo? fi)
+    internal static Vector3 readv3(ReadOnlySpan<char> s, NumberFormatInfo fi)
     {
       Vector3 v; DX11ModelCtrl.Models.parse(s.Trim(), new Span<float>(&v, 3)); return v;
     }
-    internal static Vector2 readv2(ReadOnlySpan<char> s, NumberFormatInfo? fi)
+    internal static Vector2 readv2(ReadOnlySpan<char> s, NumberFormatInfo fi)
     {
       Vector2 v; DX11ModelCtrl.Models.parse(s.Trim(), new Span<float>(&v, 2)); return v;
     }

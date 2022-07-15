@@ -2,7 +2,7 @@
 global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
-using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace Test
 {
@@ -11,11 +11,106 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // test();
+      ApplicationConfiguration.Initialize(); //test();
       Application.Run(new MainFrame());
     }
 
 #if false
+#if NET7_0
+    static void test()
+    {
+      rat a, b, c; double d; bool o; decimal m;
+
+      var x = (Int128)123.456;
+      x = (Int128)2;
+      x = (Int128)4;
+
+      a = (Int128)(-1);        /**/ b = (Int128)a; Debug.Assert(a == b);
+      a = (Int128)(+1);        /**/ b = (Int128)a; Debug.Assert(a == b);
+
+      a = (Int128)(-123);        /**/ b = (Int128)a; Debug.Assert(a == b);
+      a = (Int128)(+123);        /**/ b = (Int128)a; Debug.Assert(a == b);
+      a = -(Int128)0xffffffffffffffff << 8; /**/ b = (Int128)a; Debug.Assert(a == b);
+      a = +(Int128)0xffffffffffffffff << 8; /**/ b = (Int128)a; Debug.Assert(a == b);
+      a = Int128.MaxValue; /**/ b = (Int128)a; Debug.Assert(a == b);
+      a = Int128.MinValue; /**/ b = (Int128)a; Debug.Assert(a == b);
+
+      a = UInt128.MaxValue;     /**/ b = (UInt128)a; Debug.Assert(a == b);
+      a = UInt128.MinValue;     /**/ b = (UInt128)a; Debug.Assert(a == b);
+      a = Math.PI * +1000;      /**/ b = (Int128)a; Debug.Assert(a != b);
+      a = Math.PI * -1000;      /**/ b = (Int128)a; Debug.Assert(a != b);
+
+      var u = (UInt128)(-123);
+      u = (UInt128)(double)(-123); //0
+      u = (UInt128)(long)(-123);
+      //u = (UInt128)(decimal)(-123); //exception
+      a = (UInt128)(-123);
+
+      a = (byte)+123;       /**/ b = (byte)a; Debug.Assert(a == b);
+      a = (sbyte)-123;      /**/ b = (sbyte)a; Debug.Assert(a == b);
+      a = (ushort)+123;     /**/ b = (ushort)a; Debug.Assert(a == b);
+      m = 'c';
+      d = 'c';
+      a = 'c';              /**/ b = (char)a; Debug.Assert(a == b);
+      a = (short)-123;      /**/ b = (short)a; Debug.Assert(a == b);
+      a = (uint)+123;       /**/ b = (uint)a; Debug.Assert(a == b);
+      a = (int)-123;        /**/ b = (int)a; Debug.Assert(a == b);
+      a = (ulong)+123;      /**/ b = (ulong)a; Debug.Assert(a == b);
+      a = (long)-123;       /**/ b = (long)a; Debug.Assert(a == b);
+      a = (nuint)(+123);    /**/ b = (nuint)a; Debug.Assert(a == b);
+      a = (nint)(-123);     /**/ b = (nint)a; Debug.Assert(a == b);
+      a = (UInt128)123;     /**/ b = (UInt128)a; Debug.Assert(a == b);
+      a = (Int128)(-123);   /**/ b = (Int128)a; Debug.Assert(a == b);
+      a = (Half)(+123.4);   /**/ b = (Half)a; Debug.Assert(a == b);
+      a = (Half)(-123.4);   /**/ b = (Half)a; Debug.Assert(a == b);
+      a = (NFloat)123.4;    /**/ b = (NFloat)a; Debug.Assert(a == b);
+      a = (NFloat)(-123.4); /**/ b = (NFloat)a; Debug.Assert(a == b);
+
+      a = Math.PI;    /**/ a++; a--;
+      d = (double)a;  /**/ d++; d--;
+
+      o = d.Equals(null);     /**/ o = a.Equals(null);
+      c = d.CompareTo(null);  /**/ c = a.CompareTo(null);
+
+      m = (decimal)d;
+
+      d = double.MaxMagnitude(-2, 1.5);        /**/ c = rat.MaxMagnitude(-2, 1.5);
+      d = double.MaxMagnitudeNumber(-2, +1.5); /**/ c = rat.MaxMagnitudeNumber(-2, +1.5);
+      d = double.MaxMagnitudeNumber(-2, -1.5); /**/ c = rat.MaxMagnitudeNumber(-2, -1.5);
+      d = double.MaxMagnitudeNumber(+2, +1.5); /**/ c = rat.MaxMagnitudeNumber(+2, +1.5);
+      d = double.MaxMagnitudeNumber(+2, -1.5); /**/ c = rat.MaxMagnitudeNumber(+2, -1.5);
+      d = double.MinMagnitude(-2, 1.5);        /**/ c = rat.MinMagnitude(-2, 1.5);
+      d = double.MinMagnitudeNumber(-2, +1.5); /**/ c = rat.MinMagnitudeNumber(-2, +1.5);
+      d = double.MinMagnitudeNumber(-2, -1.5); /**/ c = rat.MinMagnitudeNumber(-2, -1.5);
+      d = double.MinMagnitudeNumber(+2, +1.5); /**/ c = rat.MinMagnitudeNumber(+2, +1.5);
+      d = double.MinMagnitudeNumber(+2, -1.5); /**/ c = rat.MinMagnitudeNumber(+2, -1.5);
+
+
+      o = double.IsInteger(1);  /**/ o = rat.IsInteger(1);
+      o = double.IsInteger(-1); /**/ o = rat.IsInteger(-1);
+      o = double.IsInteger(0);  /**/ o = rat.IsInteger(0);
+
+      o = double.IsEvenInteger(1);  /**/ o = rat.IsEvenInteger(1);
+      o = double.IsEvenInteger(-1); /**/ o = rat.IsEvenInteger(-1);
+      o = double.IsEvenInteger(0);  /**/ o = rat.IsEvenInteger(0);
+      o = double.IsEvenInteger(2);  /**/ o = rat.IsEvenInteger(2);
+      o = double.IsEvenInteger(-2); /**/ o = rat.IsEvenInteger(-2);
+
+      o = double.IsOddInteger(1);   /**/ o = rat.IsOddInteger(1);
+      o = double.IsOddInteger(-1);  /**/ o = rat.IsOddInteger(-1);
+      o = double.IsOddInteger(0);   /**/ o = rat.IsOddInteger(0);
+      o = double.IsOddInteger(2);   /**/ o = rat.IsOddInteger(2);
+      o = double.IsOddInteger(-2);  /**/ o = rat.IsOddInteger(-2);
+
+      o = ((object)123m).Equals((object)(123m));
+      o = ((object)123m).Equals(null);
+      o = ((object)0m).Equals(null);
+      a = (123m).CompareTo((object)(123m));
+      a = (123m).CompareTo((object)(-123m));
+      a = (123m).CompareTo(null);
+      a = (-123m).CompareTo(null);
+  }
+#endif
 
     static void test()
     {

@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using rat = System.Numerics.BigRational;
 
 namespace System.Numerics
 {
-  /// <summary>
-  /// Provides constants and static methods for trigonometric, logarithmic, and other
-  /// common mathematical functions for <see cref="BigRational"/>.
-  /// </summary>
-  public unsafe static class MathR
+  partial struct BigRational
   {
     /// <summary>
     /// Gets the absolute value of a <see cref="BigRational"/> number.
@@ -20,7 +15,7 @@ namespace System.Numerics
     /// <returns>The absolute value of the <see cref="BigRational"/> number.</returns>
     public static BigRational Abs(BigRational a)
     {
-      return rat.Sign(a) >= 0 ? a : -a;
+      return Sign(a) >= 0 ? a : -a;
     }
     /// <summary>
     /// Returns the smaller of two <see cref="BigRational"/> numbers.
@@ -52,7 +47,7 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Truncate(BigRational a)
     {
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0, 0); return cpu.popr();
     }
     /// <summary>
@@ -66,7 +61,7 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Floor(BigRational a)
     {
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0, cpu.sign() >= 0 ? 0 : 4); return cpu.popr();
     }
     /// <summary>
@@ -78,7 +73,7 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Ceiling(BigRational a)
     {
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0, cpu.sign() < 0 ? 0 : 4); return cpu.popr();
     }
     /// <summary>
@@ -100,7 +95,7 @@ namespace System.Numerics
     /// <returns></returns>
     public static BigRational Round(BigRational a)
     {
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = task_cpu; cpu.push(a);
       cpu.rnd(0, 1); return cpu.popr();
     }
     /// <summary>
@@ -113,7 +108,7 @@ namespace System.Numerics
     public static BigRational Round(BigRational a, int digits)
     {
       //var e = Pow10(digits); return Round(a * e) / e;
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = task_cpu; cpu.push(a);
       cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
@@ -133,10 +128,10 @@ namespace System.Numerics
       switch (mode)
       {
         case MidpointRounding.ToZero: f = 0; break;
-        case MidpointRounding.ToPositiveInfinity: if (rat.Sign(a) < 0) f = 0; else f = 4; break;
-        case MidpointRounding.ToNegativeInfinity: if (rat.Sign(a) > 0) f = 0; else f = 4; break;
+        case MidpointRounding.ToPositiveInfinity: if (Sign(a) < 0) f = 0; else f = 4; break;
+        case MidpointRounding.ToNegativeInfinity: if (Sign(a) > 0) f = 0; else f = 4; break;
       }
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = task_cpu; cpu.push(a);
       cpu.rnd(digits, f); return cpu.popr();
     }
     /// <summary>
@@ -147,7 +142,7 @@ namespace System.Numerics
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
     public static BigRational Pow(int a, int b)
     {
-      var cpu = rat.task_cpu; cpu.pow(a, b); return cpu.popr();
+      var cpu = task_cpu; cpu.pow(a, b); return cpu.popr();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.
@@ -157,7 +152,7 @@ namespace System.Numerics
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
     public static BigRational Pow(BigRational a, int b)
     {
-      var cpu = rat.task_cpu; cpu.push(a); cpu.pow(b); return cpu.popr();
+      var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.popr();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.<br/>
@@ -168,25 +163,22 @@ namespace System.Numerics
     /// </remarks>
     /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
     /// <param name="y">A <see cref="BigRational"/> number that specifies a power.</param>
-    /// <param name="digits">
-    /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
-    /// </param>
+    /// <param name="digits"> The maximum number of fractional decimal digits in the return value.</param>
     /// <returns>The <see cref="BigRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less zero and <paramref name="y"/> is fractional..</exception>
-    public static BigRational Pow(BigRational x, BigRational y, int digits = 0)
+    public static BigRational Pow(BigRational x, BigRational y, int digits)
     {
       //return Exp(y * Log(x, digits), digits);
-      var s = rat.Sign(x); if (s == 0) return default;
+      var s = Sign(x); if (s == 0) return default;
       if (s < 0)
       {
-        if (rat.IsInt(y)) return Round(Pow(x, (int)y, digits), digits); //todo: inline, cases
+        if (IsInteger(y)) return Round(Pow(x, (int)y, digits), digits); //todo: inline, cases
         throw new ArgumentException(nameof(x));
       }
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
+      var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.log(c);
       cpu.push(y); cpu.mul(); cpu.exp(c);
-      cpu.rnd(d); return cpu.popr();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.
@@ -197,13 +189,12 @@ namespace System.Numerics
     /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
-    public static BigRational Pow2(BigRational x, int digits = 0)
+    public static BigRational Pow2(BigRational x, int digits)
     {
       //todo: pow2 alg + inline since log is fast but exp is slow
-      return Exp(x * Log(2, digits), digits);
+      return Exp(x * Log(2, digits), digits); //todo: opt. cpu
     }
     /// <summary>
     /// Returns the square root of a specified number.
@@ -214,15 +205,14 @@ namespace System.Numerics
     /// <param name="a">The number whose square root is to be found.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>Zero or positive – The positive square root of <paramref name="a"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="a"/> is less zero.</exception>
-    public static BigRational Sqrt(BigRational a, int digits = 0)
+    public static BigRational Sqrt(BigRational a, int digits)
     {
-      if (rat.Sign(a) < 0) throw new ArgumentException(nameof(a));
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
-      cpu.push(a); cpu.sqrt(c); cpu.rnd(d);
+      if (Sign(a) < 0) throw new ArgumentException(nameof(a));
+      var cpu = task_cpu; var c = prec(digits);
+      cpu.push(a); cpu.sqrt(c); cpu.rnd(digits);
       return cpu.popr();
     }
     /// <summary>
@@ -234,16 +224,15 @@ namespace System.Numerics
     /// <param name="x">The number whose logarithm is to be found.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>The base 2 logarithm of <paramref name="x"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static BigRational Log2(BigRational x, int digits = 0)
+    public static BigRational Log2(BigRational x, int digits)
     {
-      if (rat.Sign(x) <= 0) throw new ArgumentException(nameof(x));
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
+      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
+      var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.log2(c);
-      cpu.rnd(d); return cpu.popr();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the base 10 logarithm of a specified number.
@@ -251,14 +240,13 @@ namespace System.Numerics
     /// <param name="x">The number whose logarithm is to be found.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
     /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <returns>The base 10 logarithm of <paramref name="x"/>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static BigRational Log10(BigRational x, int digits = 0)
+    public static BigRational Log10(BigRational x, int digits)
     {
       return Round(Log2(x, digits) / Log2(10, digits), digits); //todo: inline
     }
@@ -273,7 +261,7 @@ namespace System.Numerics
     /// <returns>The integer base 10 logarithm of the <see cref="BigRational"/> number.</returns>
     public static int ILog10(BigRational a)
     {
-      var cpu = rat.task_cpu; cpu.push(a);
+      var cpu = task_cpu; cpu.push(a);
       cpu.tos(default, out _, out var e, out _, false); return e;
     }
     /// <summary>
@@ -285,16 +273,15 @@ namespace System.Numerics
     /// <param name="x">The number whose logarithm is to be found.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>The natural logarithm of <paramref name="x"/>; that is, <c>ln <paramref name="x"/></c>, or <c>log e <paramref name="x"/></c>.</returns>
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
-    public static BigRational Log(BigRational x, int digits = 0)
+    public static BigRational Log(BigRational x, int digits)
     {
-      if (rat.Sign(x) <= 0) throw new ArgumentException(nameof(x));
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
+      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
+      var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.log(c);
-      cpu.rnd(d); return cpu.popr();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns e raised to the specified power.
@@ -303,20 +290,17 @@ namespace System.Numerics
     /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">A number specifying a power.</param>
-    /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>
     /// The number e raised to the power <paramref name="x"/>.
     /// </returns>
-    public static BigRational Exp(BigRational x, int digits = 0)
+    public static BigRational Exp(BigRational x, int digits)
     {
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
+      var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.exp(c);
-      cpu.rnd(d); return cpu.popr();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Calculates π rounded to the specified number of decimal digits.<br/>
@@ -326,27 +310,44 @@ namespace System.Numerics
     /// </remarks>
     /// <param name="digits">
     /// The number of decimal digits to calculate.
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>π rounded to the specified number of decimal digits.</returns>
-    public static BigRational Pi(int digits = 0)
+    public static BigRational Pi(int digits)
     {
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
-      cpu.pi(c); cpu.rnd(d); return cpu.popr();
+      var cpu = task_cpu; var c = prec(digits);
+      cpu.pi(c); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
-    /// Calculates π rounded to the specified number of decimal digits.<br/>
+    /// Calculates π rounded to <see cref="DefaultDigits"/>.
+    /// </summary>
+    /// <remarks>
+    /// Represents the ratio of the circumference of a circle to its diameter, specified by the constant, π.
+    /// </remarks>
+    /// <returns>π rounded to <see cref="DefaultDigits"/>.</returns>
+    public static BigRational Pi()
+    {
+      return Pi(DefaultDigits); //todo: opt. cpu
+    }
+    /// <summary>
     /// Calculates the number of radians in one turn, specified by the constant, τ rounded to the specified number of decimal digits..
     /// </summary>
     /// <param name="digits">
     /// The number of decimal digits to calculate.
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>τ rounded to the specified number of decimal digits.</returns>
-    public static BigRational Tau(int digits = 0)
+    public static BigRational Tau(int digits)
     {
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
-      cpu.pi(c); cpu.mul(2u); cpu.mul(); cpu.rnd(d); return cpu.popr();
+      var cpu = task_cpu; var c = prec(digits);
+      cpu.pi(c); cpu.mul(2u); cpu.mul(); cpu.rnd(digits); return cpu.popr();
+    }
+    /// <summary>
+    /// Calculates π rounded to <see cref="DefaultDigits"/>.<br/>
+    /// Calculates the number of radians in one turn, specified by the constant, τ rounded to the specified number of decimal digits..
+    /// </summary>
+    /// <returns>τ rounded to <see cref="DefaultDigits"/>.</returns>
+    public static BigRational Tau()
+    {
+      return Tau(DefaultDigits); //todo: opt. cpu
     }
     /// <summary>
     /// Returns the sine of the specified angle.
@@ -357,14 +358,13 @@ namespace System.Numerics
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>The sine of <paramref name="x"/>.</returns>
-    public static BigRational Sin(BigRational x, int digits = 0)
+    public static BigRational Sin(BigRational x, int digits)
     {
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
+      var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.sin(c, false);
-      cpu.rnd(d); return cpu.popr();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the cosine of the specified angle.
@@ -375,14 +375,13 @@ namespace System.Numerics
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>The cosine of <paramref name="x"/>.</returns>
-    public static BigRational Cos(BigRational x, int digits = 0)
+    public static BigRational Cos(BigRational x, int digits)
     {
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
+      var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.sin(c, true);
-      cpu.rnd(d); return cpu.popr();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the tangent of the specified angle.
@@ -393,10 +392,9 @@ namespace System.Numerics
     /// <param name="x">An angle, measured in radians.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>The tangent of <paramref name="x"/>.</returns>
-    public static BigRational Tan(BigRational x, int digits = 0)
+    public static BigRational Tan(BigRational x, int digits)
     {
       return Sin(x, digits) / Cos(x, digits); //todo: inline
     }
@@ -406,7 +404,6 @@ namespace System.Numerics
     /// <param name="x">A number representing a sine, where d must be greater than or equal to -1, but less than or equal to 1.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
     /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
@@ -415,7 +412,7 @@ namespace System.Numerics
     /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
     /// -or- NaN if <paramref name="x"/> &lt; -1 or <paramref name="x"/> &gt; 1.
     /// </returns>
-    public static BigRational Asin(BigRational x, int digits = 0)
+    public static BigRational Asin(BigRational x, int digits)
     {
       return Atan(x / Sqrt(1 - x * x, digits), digits); //todo: inline
     }
@@ -425,7 +422,6 @@ namespace System.Numerics
     /// <param name="x">A number representing a cosine, where d must be greater than or equal to -1, but less than or equal to 1.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <remarks>
     /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
@@ -434,7 +430,7 @@ namespace System.Numerics
     /// An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2. 
     /// -or- NaN if <paramref name="x"/> &lt; -1 or <paramref name="x"/> &gt; 1.
     /// </returns>
-    public static BigRational Acos(BigRational x, int digits = 0)
+    public static BigRational Acos(BigRational x, int digits)
     {
       return Atan(Sqrt(1 - x * x, digits) / x, digits); //todo: inline
     }
@@ -447,14 +443,13 @@ namespace System.Numerics
     /// <param name="x">A number representing a tangent.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2.</returns>
-    public static BigRational Atan(BigRational x, int digits = 0)
+    public static BigRational Atan(BigRational x, int digits)
     {
-      var cpu = rat.task_cpu; var (c, d) = getprec(cpu, digits);
+      var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.atan(c);
-      cpu.rnd(d); return cpu.popr();
+      cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the angle whose tangent is the quotient of two specified numbers.
@@ -466,7 +461,6 @@ namespace System.Numerics
     /// <param name="x">The x coordinate of a point.</param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="DefaultDigits"/> is used.
     /// </param>
     /// <returns>
     /// An angle, θ, measured in radians, such that -π ≤ θ ≤ π, and tan(θ) = y / x, where
@@ -482,7 +476,7 @@ namespace System.Numerics
     /// - If y is negative and x is 0, θ = -π/2.<br/>
     /// - If y is 0 and x is 0, θ = 0.<br/>
     /// </returns>
-    public static BigRational Atan2(BigRational y, BigRational x, int digits = 0)
+    public static BigRational Atan2(BigRational y, BigRational x, int digits)
     {
       if (x > 0)
         return 2 * Atan(y / (Sqrt(x * x + y * y, digits) + x), digits);
@@ -537,7 +531,7 @@ namespace System.Numerics
     public static BigRational IDiv(BigRational a, BigRational b)
     {
       if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = rat.task_cpu; //cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
+      var cpu = task_cpu; //cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
       return cpu.popr();
     }
@@ -555,7 +549,7 @@ namespace System.Numerics
     public static BigRational IMod(BigRational a, BigRational b)
     {
       if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = rat.task_cpu; //cpu.push(a); cpu.push(b); cpu.imod(); var c = cpu.popr(); return c;
+      var cpu = task_cpu; //cpu.push(a); cpu.push(b); cpu.imod(); var c = cpu.popr(); return c;
       cpu.div(b, b); cpu.mod(); cpu.pop();
       return cpu.popr();
     }
@@ -574,7 +568,7 @@ namespace System.Numerics
     public static BigRational DivRem(BigRational a, BigRational b, out BigRational r)
     {
       if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = rat.task_cpu; cpu.div(b, b); cpu.mod();
+      var cpu = task_cpu; cpu.div(b, b); cpu.mod();
       r = cpu.popr(); return cpu.popr();
     }
     /// <summary>
@@ -595,7 +589,7 @@ namespace System.Numerics
     /// <param name="a">A <see cref="BigRational"/> integer number</param>
     /// <param name="den">returns the denominator of <paramref name="a"/> always positive integer.</param>
     /// <returns>Returns the numerator of <paramref name="a"/>.</returns>
-    public static BigRational GetNumerator(BigRational a, out BigRational den)
+    public static BigRational NumDen(BigRational a, out BigRational den)
     {
       var cpu = BigRational.task_cpu; cpu.push(a);
       cpu.mod(8); var s = cpu.sign();
@@ -603,30 +597,22 @@ namespace System.Numerics
       if (s < 0) cpu.neg(); return cpu.popr();
     }
     /// <summary>
-    /// Gets or sets the default number of digits used by <see cref="MathR"/> functions 
-    /// with an optional digits parameter with default value = 0.<br/>
-    /// This allows for a flat interface, easily interchangeable with <see cref="Math"/> or <see cref="MathF"/>.
+    /// Gets or sets the default maximum number of decimal digits computed by functions with irrational results.<br/> 
+    /// Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic functions without an explicit digits parameter.
     /// </summary>
     /// <remarks>
+    /// The initial value is 30 in difference to <see cref="double"/> with a fixed precision of around 15 decimal digits.<br/>
     /// This is a thread static property.
     /// </remarks>  
-    public static int DefaultDigits
+    /// <value>Maximum number of decimal digits.</value>
+    public static int DefaultDigits //todo: find better name
     {
-      get => rat.task_cpu.digits;
-      set => rat.task_cpu.digits = value;
+      get => task_cpu.digits;
+      set => task_cpu.digits = value;
     }
-    static (uint c, int d) getprec(rat.CPU cpu, int digits)
+    static uint prec(int digits)
     {
-      var d = digits != 0 ? digits : cpu.digits;
-      var c = (uint)Math.Ceiling(d * 3.321928094887362); // * ((Math.Log(2) + Math.Log(5)) / Math.Log(2))
-      return (c, d);
+      return (uint)Math.Ceiling(digits * 3.321928094887362); // * ((Math.Log(2) + Math.Log(5)) / Math.Log(2))
     }
-    //static (uint c, int d) getprec(rat.CPU cpu, int digits) //todo: find better solution or cache
-    //{
-    //  if (digits == 0) digits = cpu.digits != 0 ? cpu.digits : 30;
-    //  //cpu.pow(10, digits); var c = cpu.msb(); cpu.pop();
-    //  var c = (uint)Math.Ceiling(digits * 3.321928094887362); //digits * ((Math.Log(2) + Math.Log(5)) / Math.Log(2))
-    //  return (c, digits);
-    //}
   }
 }
