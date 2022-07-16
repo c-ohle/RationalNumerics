@@ -332,7 +332,7 @@ namespace System.Numerics
     /// Greater than zero – The current instance is greater than other.<br/>
     /// </returns>
     /// <exception cref="ArgumentException">If obj is not null and not of type <see cref="BigRational"/>.</exception>
-    public int CompareTo(object? obj)
+    public readonly int CompareTo(object? obj)
     {
       if (obj == null) return 1;
       if (obj is not BigRational v) throw new ArgumentException(nameof(obj));
@@ -1067,7 +1067,7 @@ namespace System.Numerics
       }
       /// <summary>
       /// Returns a temporary absolute index of the current stack top
-      /// from which subsequent commands can index stack entries.
+      /// from which subsequent instructions can index stack entries.
       /// </summary>
       /// <remarks>
       /// The absolute indices are encoded as <see cref="uint"/>, which is different from the relative indices, 

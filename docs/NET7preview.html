@@ -1,0 +1,596 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>BigRational for .NET 7.0 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="BigRational for .NET 7.0 ">
+    <meta name="generator" content="docfx 2.59.1.0">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc">
+    <meta property="docfx:tocrel" content="toc">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+                
+                <ul class="nav level1 navbar-nav">
+                      <li>
+                          <a href="api/System.Numerics.html" title="Api Documentation">Api Documentation</a>
+                      </li>
+                </ul>    </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h3 id="bigrational-for-net-70">BigRational for .NET 7.0</h3>
+
+<h3 id="background-and-motivation">Background and motivation</h3>
+<p>A base number type for arbitrary precisission that is really usable in practice is missing in .NET 7.<br>
+Such a number type should have the properties of a System.String:<br>
+a simple binary unique always normalized immutable readonly struct in machine-word size.<br>
+This would ensure that it can be passed around internally as quickly as possible and
+makes it efficient to use it for client types like vectors and matrices.</p>
+<h3 id="the-general-problem-with-net-and-arbitrary-number-types">The general problem with .NET and arbitrary number types.</h3>
+<p>It is so nice and easy to implement custom number types in C# by define numeric operators and implicit or explicit conversions.<br>
+For value struct types it works perfectly as long as they have a fixed size.<br>
+However, there are major problems for any kind of arbitrary precision type.<br>
+No problem if we have a single operation like: a = b + c;<br>
+The the + operator function can alloc the necessary memory resources, create and return a final object as needed for a.<br>
+But in practice we have expressions like this: a = (b * c + d * e) / f;<br>
+We usually have many intermediate results, much more than final results, but the intermediate results don't require memory allocs and setting up fully qualified, normalized final result objects.<br>
+The C# compiler simply generate code that calls the operator functions and the operator function gets no indication that only an intermediate result is needed, which could be managed in buffers.</p>
+<h3 id="biginteger-and-bigrational">BigInteger and BigRational.</h3>
+<p>Both types are closely related.<br>
+They need the same arithmetic big-integer calculation core whereby, for efficient rational arithmetics it needs some more bit level functions..<br>
+It looks like a logical consequence to setup a BigRational type from two BigInteger.<br>
+But that only doubles the problems:<br>
+BigInteger has already a 2 machine-word size, a BigRational based on BigInteger gets 4.<br>
+A Vector3R with X, Y, Z gets 12 and so on.<br>
+For every interimes result we get 12 times allocations and unnecessary normalizations.<br>
+This is far from any efficency.</p>
+<h3 id="the-new-approach-a-bigrational-type-for-net-that-solves-the-problems">The new approach, a BigRational type for .NET that solves the problems</h3>
+<p>To bypass the mentioned problems I want to propose a general new system with significantly better performance and better memory usage.
+At first the data structure:</p>
+<pre><code class="lang-C#">  public unsafe readonly struct BigRational : IComparable&lt;BigRational&gt;, IEquatable&lt;BigRational&gt;, ...
+  {
+    private readonly uint[] p; // the one and only instance field what gives BigRational a machine word size
+    
+    public class CPU // nested for access to BigRational uint[] p
+    {
+       private int i; private uint[][] p; //only this two fields, necessary to build a stack-machine
+    }
+
+    [ThreadStatic]
+    private static CPU? cpu; // a static threadlocal shared instance of a CPU object
+    public static CPU task_cpu =&gt; cpu ??= new CPU(); // accessor as static property  
+  }
+</code></pre>
+<p>This is all, BigRational has only one array field and therefore the desired machine-word size and has furthermore the immutable properties like a string object.
+A nested public class CPU what represents a stack-machine and encapsulates the calculation core.
+Nested as only class that has access to the private BigRational creator and access to the data pointer - for safety.
+Everything as small and secure as possible, no additional system resources required. Not even predefined default values, nothing.</p>
+<p>The data format used in the BigRational uint[] data pointer is the same as used in the stack-machine stack entries and is also simple as possible:</p>
+<p><img src="https://user-images.githubusercontent.com/63112403/178110558-f4c91c42-02cb-4a87-a257-21fbaf18b9bf.png" alt="image"></p>
+<p>The first uint a sign bit and the number of following uint digits for the numerator, followed by a uint with the number of  unit digits for the denominator.<br>
+This sequential format has the benefit that the internal integer arithmetics need only one pointer and not ranges, conversions, case handling  etc. and this allows the best possible troughput.<br>
+A BigRational with null data pointer is defined as the number Zero (0) and therfore the value struct default is a valid number.</p>
+<h3 id="the-interfaces">The Interfaces</h3>
+<p>BigRational itself acts like a empty hull to encapsulate the data pointer and provides a save first level user interface for a number type with all the number typical operators:</p>
+<pre><code class="lang-C#">  public readonly struct BigRational :
+    IComparable&lt;BigRational&gt;, IComparable, IEquatable&lt;BigRational&gt;, IFormattable, ISpanFormattable,
+    INumber&lt;BigRational&gt;, ISignedNumber&lt;BigRational&gt;, IPowerFunctions&lt;BigRational&gt;, IRootFunctions&lt;BigRational&gt;,
+    IExponentialFunctions&lt;BigRational&gt;, ILogarithmicFunctions&lt;BigRational&gt;, ITrigonometricFunctions&lt;BigRational&gt;,
+    IHyperbolicFunctions&lt;BigRational&gt;
+  {
+    public override readonly string ToString();
+    public readonly string ToString(string? format, IFormatProvider? provider = default);
+    public readonly bool TryFormat(Span&lt;char&gt; destination, out int charsWritten, ReadOnlySpan&lt;char&gt; format = default, IFormatProvider? provider = null); public static BigRational Parse(ReadOnlySpan&lt;char&gt; value, IFormatProvider? provider = null)
+    public static BigRational Parse(ReadOnlySpan&lt;char&gt; s, NumberStyles style, IFormatProvider? provider);
+    public static BigRational Parse(string s, NumberStyles style, IFormatProvider? provider);
+    public static BigRational Parse(string s, IFormatProvider? provider);
+    public static bool TryParse(ReadOnlySpan&lt;char&gt; s, NumberStyles style, IFormatProvider? provider, out BigRational result);
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out BigRational result);
+    public static bool TryParse(ReadOnlySpan&lt;char&gt; s, IFormatProvider? provider, out BigRational result);
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out BigRational result);
+    public readonly int WriteToBytes(ref Span&lt;byte&gt; destination);
+    public static BigRational ReadFromBytes(ref ReadOnlySpan&lt;byte&gt; value);
+    public override readonly int GetHashCode();
+    public override readonly bool Equals([NotNullWhen(true)] object? obj);
+    public readonly bool Equals(BigRational b);
+    public readonly int CompareTo(object? obj);
+    public readonly int CompareTo(BigRational b);
+    public readonly int CompareTo(long b);
+    public BigRational(float value);
+    public BigRational(double v);
+    public static implicit operator BigRational(byte value);
+    public static implicit operator BigRational(sbyte value);
+    public static implicit operator BigRational(ushort value);
+    public static implicit operator BigRational(char value);
+    public static implicit operator BigRational(short value);
+    public static implicit operator BigRational(int value);
+    public static implicit operator BigRational(uint value);
+    public static implicit operator BigRational(long value);
+    public static implicit operator BigRational(nint value);
+    public static implicit operator BigRational(nuint value);
+    public static implicit operator BigRational(ulong value);
+    public static implicit operator BigRational(Int128 value);
+    public static implicit operator BigRational(UInt128 value);
+    public static implicit operator BigRational(BigInteger value);
+    public static implicit operator BigRational(Half value);
+    public static implicit operator BigRational(float value);
+    public static implicit operator BigRational(double value);
+    public static implicit operator BigRational(NFloat value);
+    public static implicit operator BigRational(decimal value);
+    public static explicit operator BigRational(string value);
+    public static explicit operator byte(BigRational value);
+    public static explicit operator sbyte(BigRational value);
+    public static explicit operator short(BigRational value);
+    public static explicit operator char(BigRational value);
+    public static explicit operator int(BigRational value);
+    public static explicit operator ushort(BigRational value);
+    public static explicit operator long(BigRational value);
+    public static explicit operator ulong(BigRational value);
+    public static explicit operator nint(BigRational value);
+    public static explicit operator nuint(BigRational value);
+    public static explicit operator Int128(BigRational value);
+    public static explicit operator UInt128(BigRational value);
+    public static explicit operator BigInteger(BigRational value);
+    public static explicit operator Half(BigRational value);
+    public static explicit operator float(BigRational value);
+    public static explicit operator double(BigRational value);
+    public static explicit operator NFloat(BigRational value);
+    public static explicit operator decimal(BigRational value);
+    public static explicit operator ReadOnlySpan&lt;uint&gt;(BigRational value);
+    public static BigRational operator +(BigRational a);
+    public static BigRational operator -(BigRational a);
+    public static BigRational operator ++(BigRational value);
+    public static BigRational operator --(BigRational value);
+    public static BigRational operator +(BigRational a, BigRational b);
+    public static BigRational operator -(BigRational a, BigRational b);
+    public static BigRational operator *(BigRational a, BigRational b);
+    public static BigRational operator /(BigRational a, BigRational b);
+    public static BigRational operator %(BigRational a, BigRational b);
+    public static BigRational operator +(BigRational a, long b);
+    public static BigRational operator -(BigRational a, long b);
+    public static BigRational operator *(BigRational a, long b);
+    public static BigRational operator /(BigRational a, long b);
+    public static BigRational operator +(long a, BigRational b);
+    public static BigRational operator -(long a, BigRational b);
+    public static BigRational operator *(long a, BigRational b);
+    public static BigRational operator /(long a, BigRational b);
+    public static bool operator ==(BigRational a, BigRational b);
+    public static bool operator !=(BigRational a, BigRational b);
+    public static bool operator &lt;=(BigRational a, BigRational b);
+    public static bool operator &gt;=(BigRational a, BigRational b);
+    public static bool operator &lt;(BigRational a, BigRational b);
+    public static bool operator &gt;(BigRational a, BigRational b);
+    public static bool operator ==(BigRational a, long b);
+    public static bool operator !=(BigRational a, long b);
+    public static bool operator &lt;=(BigRational a, long b);
+    public static bool operator &gt;=(BigRational a, long b);
+    public static bool operator &lt;(BigRational a, long b);
+    public static bool operator &gt;(BigRational a, long b);
+    public static int Sign(BigRational a);
+    public static bool IsInteger(BigRational a);
+    public static bool IsNaN(BigRational a);
+    public static BigRational Abs(BigRational a);
+    public static BigRational Min(BigRational a, BigRational b);
+    public static BigRational Max(BigRational a, BigRational b);
+    public static BigRational Truncate(BigRational a);
+    public static BigRational Floor(BigRational a);
+    public static BigRational Ceiling(BigRational a);
+    public static BigRational Factorial(int a);
+    public static BigRational Round(BigRational a);
+    public static BigRational Round(BigRational a, int digits);
+    public static BigRational Round(BigRational a, int digits, MidpointRounding mode);
+    public static BigRational Pow(int a, int b);
+    public static BigRational Pow(BigRational a, int b);
+    public static BigRational Pow(BigRational x, BigRational y, int digits);
+    public static BigRational Pow2(BigRational x, int digits);
+    public static BigRational Sqrt(BigRational a, int digits);
+    public static BigRational Log2(BigRational x, int digits);
+    public static BigRational Log10(BigRational x, int digits);
+    public static int ILog10(BigRational a);
+    public static BigRational Log(BigRational x, int digits);
+    public static BigRational Exp(BigRational x, int digits);
+    public static BigRational Pi(int digits);
+    public static BigRational Pi();
+    public static BigRational Tau(int digits);
+    public static BigRational Tau();
+    public static BigRational Sin(BigRational x, int digits);
+    public static BigRational Cos(BigRational x, int digits);
+    public static BigRational Tan(BigRational x, int digits);
+    public static BigRational Asin(BigRational x, int digits);
+    public static BigRational Acos(BigRational x, int digits);
+    public static BigRational Atan(BigRational x, int digits);
+    public static BigRational Atan2(BigRational y, BigRational x, int digits);
+    public static BigRational GreatestCommonDivisor(BigRational a, BigRational b);
+    public static BigRational LeastCommonMultiple(BigRational a, BigRational b);
+    public static BigRational IDiv(BigRational a, BigRational b);
+    public static BigRational IMod(BigRational a, BigRational b);
+    public static BigRational DivRem(BigRational a, BigRational b, out BigRational r);
+    public static (BigRational Quotient, BigRational Remainder) DivRem(BigRational a, BigRational b);
+    public static BigRational NumDen(BigRational a, out BigRational den);
+    public static BigRational Clamp(BigRational value, BigRational min, BigRational max);
+    public static BigRational Pow(BigRational x, BigRational y);
+    public static BigRational Sqrt(BigRational x);
+    public static BigRational Cbrt(BigRational x);
+    public static BigRational Hypot(BigRational x, BigRational y);
+    public static BigRational Root(BigRational x, int n);
+    public static BigRational Exp(BigRational x);
+    public static BigRational Exp10(BigRational x);
+    public static BigRational Exp2(BigRational x);
+    public static BigRational Log(BigRational x);
+    public static BigRational Log(BigRational x, BigRational newBase);
+    public static BigRational Log10(BigRational x);
+    public static BigRational Log2(BigRational x);
+    public static BigRational Sin(BigRational x);
+    public static BigRational Cos(BigRational x);
+    public static BigRational Tan(BigRational x);
+    public static BigRational Asin(BigRational x);
+    public static BigRational Acos(BigRational x);
+    public static BigRational Atan(BigRational x);
+    public static BigRational Atan2(BigRational y, BigRational x);
+    public static (BigRational Sin, BigRational Cos) SinCos(BigRational x);
+    public static BigRational AcosPi(BigRational x);
+    public static BigRational AsinPi(BigRational x);
+    public static BigRational Atan2Pi(BigRational y, BigRational x);
+    public static BigRational AtanPi(BigRational x);
+    public static BigRational CosPi(BigRational x);
+    public static BigRational SinPi(BigRational x);
+    public static BigRational TanPi(BigRational x);
+    public static BigRational Acosh(BigRational x);
+    public static BigRational Asinh(BigRational x);
+    public static BigRational Atanh(BigRational x);
+    public static BigRational Cosh(BigRational x);
+    public static BigRational Sinh(BigRational x);
+    public static BigRational Tanh(BigRational x);
+    public static CPU task_cpu { get; }
+    public static int DefaultDigits { get; set; }
+    public static int Radix =&gt; 1; //todo: check rational Radix ?
+    public static BigRational One =&gt; 1u;
+    public static BigRational Zero =&gt; 0;
+    public static BigRational NegativeOne =&gt; -1;
+    public static BigRational AdditiveIdentity =&gt; 0;
+    public static BigRational MultiplicativeIdentity =&gt; 1u;
+    public static bool IsZero(BigRational value) =&gt; value.p == null;
+    public static bool IsNegative(BigRational value) =&gt; Sign(value) &lt; 0;
+    public static bool IsPositive(BigRational value) =&gt; Sign(value) &gt; 0;
+    public static bool IsEvenInteger(BigRational value);
+    public static bool IsOddInteger(BigRational value);
+    public static bool IsCanonical(BigRational value) =&gt; true;
+    public static bool IsComplexNumber(BigRational value) =&gt; true;
+    public static bool IsFinite(BigRational value) =&gt; !IsNaN(value);
+    public static bool IsImaginaryNumber(BigRational value) =&gt; false;
+    public static bool IsInfinity(BigRational value) =&gt; false;
+    public static bool IsNegativeInfinity(BigRational value) =&gt; false;
+    public static bool IsPositiveInfinity(BigRational value) =&gt; false;
+    public static bool IsRealNumber(BigRational value) =&gt; true;
+    public static bool IsNormal(BigRational value) =&gt; true;
+    public static bool IsSubnormal(BigRational value) =&gt; false;
+    public static BigRational MaxMagnitude(BigRational x, BigRational y);
+    public static BigRational MaxMagnitudeNumber(BigRational x, BigRational y);
+    public static BigRational MinMagnitude(BigRational x, BigRational y);
+    public static BigRational MinMagnitudeNumber(BigRational x, BigRational y);    
+    static bool INumberBase&lt;BigRational&gt;.TryConvertFromChecked&lt;TOther&gt;(TOther value, out BigRational result);
+    static bool INumberBase&lt;BigRational&gt;.TryConvertFromSaturating&lt;TOther&gt;(TOther value, out BigRational result);
+    static bool INumberBase&lt;BigRational&gt;.TryConvertFromTruncating&lt;TOther&gt;(TOther value, out BigRational result);
+    static bool INumberBase&lt;BigRational&gt;.TryConvertToChecked&lt;TOther&gt;(BigRational value, [NotNullWhen(true)] out TOther? result) where TOther : default;
+    static bool INumberBase&lt;BigRational&gt;.TryConvertToSaturating&lt;TOther&gt;(BigRational value, [NotNullWhen(true)] out TOther? result) where TOther : default;
+    static bool INumberBase&lt;BigRational&gt;.TryConvertToTruncating&lt;TOther&gt;(BigRational value, [NotNullWhen(true)] out TOther? result) where TOther : default;    
+  }
+</code></pre>
+<p>Documentation for the particular functions at <a href="https://c-ohle.github.io/RationalNumerics/api/System.Numerics.html">GitHub</a></p>
+<p>For best possible compatibility the high level functions like several <code>Round</code>, <code>Truncate</code>, <code>Floor</code>, <code>Ceiling</code>,
+a set of <code>Log</code> and <code>Exp</code> functions up to trigonometric functions <code>Sin</code>, <code>Cos</code>, <code>Tan</code>, <code>Atan</code>,...
+specials like <code>Factorial</code> etc.<br>
+These all in a static extra <a href="https://github.com/c-ohle/RationalNumerics/blob/master/System.Numerics.Rational/MathR.cs">class MathR</a> as mirror to System.<code>Math</code> and System.Numercs.<code>MathF</code> and similiar as possible.<br>
+This is to reflect the old known standards and to make it easy to change algorythms from for example double to BigRational or back, to check robbustness problems.</p>
+<p>A look at the BigRational and MathR functions always shows the same scheme.<br>
+Gets the task_cpu and execute instructions on it:</p>
+<pre><code class="lang-C#">    public static BigRational operator *(BigRational a, long b)
+    {
+      var cpu = task_cpu; cpu.push(b); cpu.mul(a); return cpu.popr();
+    }
+
+    public static BigRational Round(BigRational a, int digits, MidpointRounding mode)
+    {
+      int f = 1;
+      switch (mode)
+      {
+        case MidpointRounding.ToZero: f = 0; break;
+        case MidpointRounding.ToPositiveInfinity: if (rat.Sign(a) &lt; 0) f = 0; else f = 4; break;
+        case MidpointRounding.ToNegativeInfinity: if (rat.Sign(a) &gt; 0) f = 0; else f = 4; break;
+      }
+      var cpu = rat.task_cpu; cpu.push(a);
+      cpu.rnd(digits, f); return cpu.popr();
+    }    
+
+    public static Vector3R Cross(in Vector3R a, in Vector3R b)
+    {
+      // return new VectorR3(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X);
+      var cpu = BigRational.task_cpu;
+      cpu.mul(a.X, b.Y); cpu.mul(a.Y, b.X); cpu.sub();
+      cpu.mul(a.Z, b.X); cpu.mul(a.X, b.Z); cpu.sub();
+      cpu.mul(a.Y, b.Z); cpu.mul(a.Z, b.Y); cpu.sub();
+      return new Vector3R(cpu.popr(), cpu.popr(), cpu.popr());
+    }
+</code></pre>
+<p>All calculation happens in the CPU object.
+The  high-level API functions are all implemented as short or longer sequences of CPU instructions.
+It all breaks down in such sequences and this is in general short and fast code and allows a rich API with less memory usage.
+Some example client types using this system: <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/ComplexR.cs">ComplexR</a>, <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/Vector2R.cs">Vector2R</a>, <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/Vector3R.cs">Vector3R</a>, <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/Matrix4x3R.cs">Matrix3x4R</a>, <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/PlaneR.cs">PlaneR</a>, <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/VectorR.cs">VectorR</a>.
+A special is <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/VectorR.cs">VectorR</a>, This struct has also only one pointer containing a index and a sequence of the rational data structures and can therefore store lot of numbers very efficently. It is an example for client types taht it is easy using BigRational.CPU but independent from BigRational, using a private data format.</p>
+<h3 id="the-cpu---a-stack-machine">The CPU - a stack-machine</h3>
+<p>Like every stack-machine the CPU has instructions like <code>push</code>,<code> push(double)</code>, <code>push(int)</code>,... and pop's like <code>pop(),</code> <code>BigRational popr()</code>, <code>double popd()</code>,... self explaining instructions like <code>add()</code>, <code>sub()</code>, <code>mul()</code>, <code>div()</code>, <code>mod()</code>, <code>neg()</code>, <code>abs()</code>, <code>inv()</code>, <code>dup()</code>.
+But there is a difference:<br>
+Since we have numbers with arbitrary size <code>mov()</code> instructions are not efficient because it would imply many memory copies.<br>
+Instead of this it fast as possible to swap the stack entry pointer only since the stack is a uint[][] array.
+This explains the versions of <code>swp()</code> instructions.<br>
+A pop command frees nothing. It only decrements the index of the stack top and the buffer there keeps alive for next operations.
+Allocs are only necessary if the current stack top buffer is not big enough for the next push op but this is a successive rar case.
+Not only for the high-level API, the stack-machine itself uses the stack excessively for all internal interimes results and therefore dont need stackalloc or shared buffers.
+It forms a consistent system and enables fast and compact code without special handling.</p>
+<p>The CPU class reduced to the public instruction set:</p>
+<pre><code class="lang-C#">   public sealed class CPU
+    {
+      public CPU(uint capacity = 32)
+      public uint mark()
+      public void push()
+      public void push(BigRational v)
+      public void push(int v)
+      public void push(int v, int n)
+      public void push(uint v)
+      public void push(long v)
+      public void push(ulong v)
+      public void push(float v)
+      public void push(double v)
+      public void push(double v, bool exact)
+      public void push(decimal v)
+      public void push(BigInteger v)
+      public void push(ReadOnlySpan&lt;uint&gt; v)
+      public void get(uint i, out BigRational v)
+      public void get(uint i, out double v)
+      public void get(uint i, out float v)
+      public void get(uint i, out ReadOnlySpan&lt;uint&gt; v)
+      public BigRational popr()
+      public double popd()
+      public int popi()
+      public void pop()
+      public void pop(int n)
+      public void swp()
+      public void swp(int a = 1, int b = 0)
+      public void swp(uint a, uint b)
+      public void swp(uint a)
+      public void dup(int a = 0)
+      public void dup(uint a)
+      public void neg(int a = 0)
+      public void neg(uint a)
+      public void abs(int a = 0)
+      public void add()
+      public void add(int a, int b)
+      public void add(uint a, uint b)
+      public void add(uint a)
+      public void add(BigRational a)
+      public void add(BigRational a, BigRational b)
+      public void sub()
+      public void sub(int a, int b)
+      public void sub(uint a, uint b)
+      public void sub(BigRational a, BigRational b)
+      public void mul()
+      public void mul(int a, int b)
+      public void mul(uint a, uint b)
+      public void mul(uint a)
+      public void mul(BigRational a)
+      public void mul(BigRational a, uint b)
+      public void mul(BigRational a, BigRational b)
+      public void div()
+      public void div(int a, int b)
+      public void div(uint a, uint b)
+      public void div(BigRational a, BigRational b)
+      public void div(BigRational a, int b)
+      public void sqr(int a = 0)
+      public void sqr(uint a)
+      public void inv(int i = 0)
+      public void shl(int c, int i = 0)
+      public void shr(int c, int i = 0)
+      public void and()
+      public void or()
+      public void xor()
+      public void mod(int f = 0)
+      public void rnd(int c, int f = 1)
+      public void pow(int x, int y)
+      public void pow(int y)
+      public void fac(uint c)
+      public int bdi()
+      public void lim(uint c, int i = 0)
+      public int sign(int a = 0)
+      public int cmpa(int a = 0, int b = 1)
+      public int cmpi(int a, int b)
+      public int cmp(int a = 0, int b = 1)
+      public int cmp(uint a, uint b)
+      public int cmp(uint b)
+      public int cmp(BigRational a, BigRational b)
+      public int cmp(BigRational b)
+      public bool equ(BigRational a, BigRational b)
+      public bool equ(uint a, uint b)
+      public void norm(int i = 0)
+      public uint hash(uint i)
+      public uint msb()
+      public uint lsb()
+      public bool isi()
+      public void gcd()
+      public void tos(Span&lt;char&gt; sp, out int ns, out int exp, out int rep, bool reps)
+      public void tor(ReadOnlySpan&lt;char&gt; sp, int bas = 10, char sep = default)
+      public void sqrt(uint c)
+      public void log2(uint c)
+      public void log(uint c)
+      public void exp(uint c) //todo: catch cases fast exp(1), ...
+      public void pi(uint c) //todo: c = f(c), cache
+      public void sin(uint c, bool cos)
+      public void atan(uint c)
+}
+</code></pre>
+<p>It is noticeable that there are many different versions of the same instruction. Since we have number values with arbitrary size it is all to avoid unnecessary memory copies. For example, to add two BigRational numbers it is possible to push both values to the stack, and call a simple add(). But since the data structure on the stack is the same as in BigRational pointers the CPU can access and read the data pointer directly and push the result only on the stack what saves two mem copies and is therfore faster.
+Other operation versions working with absolute stack indices what is more efficent in many situations. For example if one function pushes a vector structure and another function takes this as input.</p>
+<h3 id="the-efficiency">The Efficiency</h3>
+<p>On an example. The CPU implementation of the sine function, which can also calculate cosines.<br>
+This function uses several identities and a final Taylor-series approximation.<br>
+The code looks ugly, but it reduces the computation to a sequence of just 36 short CPU instructions.
+It means that providing a rich set of such common math functions already at this level doesn't involve much overhead.</p>
+<pre><code class="lang-C#"> public void sin(uint c, bool cos)
+  {
+    var e = bdi() &lt;&lt; 2; c += 16; if (e &gt; c) { } // bdi x
+    var m = mark(); pi(e &gt; c ? unchecked((uint)e) : c); shr(1); // push PI2
+    if (cos) add(1, 0); // x += PI2 
+    div(m - 1, m); mod(); swp(); pop(); // push divmod(x, PI2)
+    var s = this.p[this.i - 1][1]; // dup(); var s = pop_int(); // seg
+    mul(0, 1); neg(); add(2, 0); pop(); // x - trunc(x / PI2) * PI2
+    if ((s &amp; 1) != 0) { swp(); sub(); } else pop(); // x = PI2 - x, pop PI2
+    if ((s &amp; 2) != 0) neg(); lim(c); // x = -x, lim x
+    push(6u); dup(1); dup(); sqr(); lim(c); swp(); // 3!, x^2, x
+    for (uint i = 1, k = 4; ; i++, k += 2)
+    {
+      mul(1, 0); lim(c, 1); dup(1); div(0, 3); // x +/-= x^n / n!, n = 3, 5, 7, ...
+      var b = -bdi(); if (b &gt; c) break; lim(c);
+      if ((i &amp; 1) != 0) neg(); add(4, 0); pop(); lim(c, 3); // x += 
+      push(k * (k + 1)); mul(3, 0); pop(); mul(1, 0); // n! *=, x^n *=
+    }
+    pop(4);
+  }
+</code></pre>
+<p>To come back to the begin, the problem with BigInteger and a Rational type based on BigInteger.
+Imagin the same sine calculation with such type. Where every instruction involves not only two new full allocated BigIntegers for a result, Rational itself needs as example, for a simple addition 3<em>mul+1</em>div+1*add and this are all new allocated BigIntegers. But not enough, Rational has to normalize or round the fractions - additional many new BigIntegers.
+It should be obvious that this is inefficient, slow and leads to an impractical solution.</p>
+<p>To show the differences I made the Mandelbrot example in BigRationalTest app. It does exactly this. A conventional BigRational class based on a BigInteger for numerator and denominator is part of the Test app and called <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/OldRational.cs">OldRational</a>.
+At the begin BigInteger profits as it can store small numbers in the sign field but then, deeper in the Mandelbrot set, it slows down exponentially before it stops working in a short break between endless GC loops.</p>
+<p><img src="https://user-images.githubusercontent.com/63112403/178117433-e0169c83-7bee-4694-ae82-394b8c9a4b3a.png" alt="image"></p>
+<p>The bottle-nack for rational arbitrary arithmetic is the integer multiplication and for the normalization the GCD function and the integer division.
+The first benchmarks showing that the BigRational calculation core is aproximatly 15% faster then the equivalent functions in System.Numerics.BigInteger. At least on my machine.
+With other words, using BigRagtional for pure integer arithmetics can improve the performance already.
+For integer algorithms using the CPU the effect is much bigger of course..</p>
+<p>BigInteger in NET 7 will use Spans more stackalloc and shared buffers.
+This benchmarks i made with a NET 7 preview versions are showing that this reduces a little bit the memory pressure
+but further degreads the performance, especialliy for big numbers.
+It is probably the use of System.Buffers.ArrayPool<uint>.Shared what is not the fastest by a threshold of 256 for stackalloc.
+These are  problems that are not existing for a stack-machine solution.<p>
+<p>Latest benchmark results can be found <a href="https://c-ohle.github.io/RationalNumerics/web/ban/Latest-BigRational-Benchmarks.htm">Latest-BigRational-Benchmarks</a>;
+(Same benchmarks with <a href="https://c-ohle.github.io/RationalNumerics/web/ban/BigRational-Benchmarks-NET7.html">NET 7 preview, latest mater-branch</a> a lost of around 10% performance)
+It is currently under construction, but I will be adding more tests daily.</p>
+<h3 id="further-development">Further development</h3>
+<p>There is great potential for further improvements.
+In the calculation core itself, in the algorithms.
+Furthermore, frequently used values ​​like <code>Pow10</code>, <code>PI</code> etc. should efficiently cached, numbers that are currently always new calculated for functions like <code>Exp</code> and <code>Log</code>; and this would give another big performance boost.</p>
+<p>I'm looking for a solution using <code>static AsyncLocal&lt;CPU&gt;? _async_cpu</code>; instead of only <code>[ThreadStatic] CPU _task:cpu</code>;
+This would be more user friendly and save for <code>await</code> functions etc. but access to _async_cpu is 3x times slower, I need to find a trick to detect if a _async_cpu request is necessary, maybe a quick stack baseadress check or something.</p>
+<p>The set of MathR functions should be extended and handle the DefaultPrecision property as it seems to work with a hypothetical floating point type that allows for such precision.</p>
+<p>Especially geometric algorithms are very sensitive to epsilon and robustness problems.
+A vector extension, compatible with the current System.Numercis.Vector types would be useful.
+No one with BigInteger experiences would believe that it makes sense, that it's even possible, especially not in NET.
+But the Polyhedron 3D example shows: It works for thousands of BigRational Vertex, Points and Planes, for Polygon Tessellation, Boolean Intersections of Polyhedra (<a href="https://en.wikipedia.org/wiki/Constructive_solid_geometry">CSG</a>) and this in real time at animation time:</p>
+<p><img src="https://user-images.githubusercontent.com/63112403/178121091-2535e834-447f-49b9-8d4c-874b0460fe01.gif" alt="BigRationalAnimation"></p>
+<h3 id="remarks">Remarks</h3>
+<p>The current implementation is optimized for X64, tuned for RyuJIT code generation.
+For better performance on X86 it would be necessary to put special X86 code in critical pathes.
+Same goes for ARM, but I don't currently have a development environment for it.</p>
+<p>I have created a C++ COM implementation of the CPU where the CPU instructions are COM interface calls.
+Unfortunately, for C# such a solution is about 30% slower due to the many platform calls.
+The same for a C++/CLI solution, which is also about 30% slower.
+But the COM solution inproc in a C++ app is almost 2x faster because of the powerful C++ optimization.</p>
+<p>I checked the possibility of using AVX, SSE, Bmi intrinsics for optimizations. Unfortunately none of the test implementations were faster than the simple scalar arithmetic currently in use. Same experiences as published by many other programmers.
+Only <a href="https://en.wikipedia.org/wiki/Intel_ADX">Bmi2.X64.MultiplyNoFlags (MULX r64a, r64b, reg/m64)</a> could really improve the performance but unfortunatlely, the corresponding ADCX and ADOX instructions are currently not implemented in Bmi2.X64.</p>
+<p>From my point of view the best choice for an System arbitrary-precision number type is BigRational, not BigInteger.
+For BigRational all other types are only special cases. This applies for BigInteger, BigFloat, BigDecimal, BigFixed, in general floating-point types in any fixed or arbitrary size.
+Finally these are all rational number types, only with restricted denumerators, BigInteger 1, BigFLoat or in general floating-point 2^n , BigDecimal 10^n and so on.
+It is easy and efficent to implement such types very compact based on the BigRational CPU. The  CPU has all the instructions that are necessary to calculate for the specific number types, otherwise it's easy to add.
+No problem to use own data formats as shown in example: <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/VectorR.cs">VectorR</a>. Only one core is necessary and the resources can shared for several client types. Not necessary to implement every time again a new calculation core.
+The focus should be on highly optimizing this CPU core for all possible platform- and processor configurations, and all client types would benefit.</p>
+<hr>
+<p>More technical details, example codes etc. can be found at:</p>
+<ul>
+<li>How it works and how to use it: <a href="https://c-ohle.github.io/RationalNumerics">https://c-ohle.github.io/RationalNumerics</a></li>
+<li>ApiDocumentation: <a href="https://c-ohle.github.io/RationalNumerics/api/System.Numerics.html">https://c-ohle.github.io/RationalNumerics/api/System.Numerics.html</a></li>
+<li>Project URL: <a href="https://github.com/c-ohle/RationalNumerics">https://github.com/c-ohle/RationalNumerics</a></li>
+<li>BigRational Test App: <a href="https://github.com/c-ohle/RationalNumerics/releases/BigRational">https://github.com/c-ohle/RationalNumerics/releases/BigRational</a></li>
+</ul>
+<hr>
+</uint></article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>

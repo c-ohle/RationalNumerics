@@ -193,7 +193,7 @@ namespace System.Numerics
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
     public static BigRational Pow2(BigRational x, int digits)
     {
-      //todo: pow2 alg + inline since log is fast but exp is slow
+      //todo: pow2 alg + cpu since log is fast but exp is slow
       return Exp(x * Log(2, digits), digits); //todo: opt. cpu
     }
     /// <summary>

@@ -11,12 +11,93 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); // test();
       Application.Run(new MainFrame());
     }
 
+#if NET7_0
+    static void test()
+    {
+      rat a, b; double d;
+
+      //INumber
+      a = rat.Clamp(0.5, -1, 0.2); b = d = double.Clamp(0.5, -1, 0.2);
+      a = rat.Clamp(-0.2, -1, 0.2); b = d = double.Clamp(-0.2, -1, 0.2);
+      a = rat.Clamp(-4.2, -1, 0.2); b = d = double.Clamp(-4.2, -1, 0.2);
+      a = rat.CopySign(-0.5, -1); b = d = double.CopySign(-0.5, -1);
+      a = rat.CopySign(+0.5, -1); b = d = double.CopySign(+0.5, -1);
+      a = rat.CopySign(0, -1); b = d = double.CopySign(0, -1);
+      a = rat.CopySign(0, +1); b = d = double.CopySign(0, +1);
+      a = rat.CopySign(-1, 0); b = d = double.CopySign(-1, 0);
+      a = rat.CopySign(+1, 0); b = d = double.CopySign(+1, 0);
+
+      //IPowerFunctions
+      a = rat.Pow(0.5, 4d); b = d = double.Pow(0.5, 4d);
+      a = rat.Pow(0.5, 1.23456); b = d = double.Pow(0.5, 1.23456);
+      a = rat.Pow(0.5, -1.23); b = d = double.Pow(0.5, -1.23);
+
+      //IRootFunctions
+      a = rat.Sqrt(0.5); b = d = double.Sqrt(0.5);
+      a = rat.Cbrt(0.5); b = d = double.Cbrt(0.5);
+      a = rat.Hypot(0.5, 1.25); b = d = double.Hypot(0.5, 1.25);
+      a = rat.Root(0.5, 3); b = d = double.Root(0.5, 3);
+      a = rat.Root(0.5, 12); b = d = double.Root(0.5, 12);
+      a = rat.Root(0.5, -12); b = d = double.Root(0.5, -12);
+
+      //ILogarithmicFunctions
+      a = rat.Log(0.5); b = d = double.Log(0.5);
+      a = rat.Log2(0.5); b = d = double.Log2(0.5);
+      a = rat.Log10(0.5); b = d = double.Log10(0.5);
+      a = rat.Log10P1(0.5); b = d = double.Log10P1(0.5);
+      a = rat.Log2P1(0.5); b = d = double.Log2P1(0.5);
+      a = rat.LogP1(0.5); b = d = double.LogP1(0.5);
+      a = rat.ILogB(0.5); b = d = double.ILogB(0.5);
+      a = rat.ILogB(+12345.56); b = d = double.ILogB(+12345.56);
+
+      //IExponentialFunctions
+      a = rat.Exp(0.5); b = d = double.Exp(0.5);
+      a = rat.Exp2(0.5); b = d = double.Exp2(0.5);
+      a = rat.Exp2(-0.5); b = d = double.Exp2(-0.5);
+      a = rat.Exp10(0.5); b = d = double.Exp10(0.5);
+      a = rat.ExpM1(0.5); b = d = double.ExpM1(0.5);
+      a = rat.Exp2M1(0.5); b = d = double.Exp2M1(0.5);
+      a = rat.Exp10M1(0.5); b = d = double.Exp10M1(0.5);
+
+      //ITrigonometricFunctions
+      a = rat.Sin(0.5); b = d = double.Sin(0.5);
+      a = rat.Cos(0.5); b = d = double.Cos(0.5);
+      a = rat.Tan(0.5); b = d = double.Tan(0.5);
+      a = rat.Asin(0.5); b = d = double.Asin(0.5);
+      a = rat.Acos(0.5); b = d = double.Acos(0.5);
+      a = rat.Atan(0.5); b = d = double.Atan(0.5);
+      a = rat.AcosPi(0.5); b = d = double.AcosPi(0.5);
+      a = rat.AsinPi(0.5); b = d = double.AsinPi(0.5);
+      a = rat.Atan2Pi(0.5, 0.2); b = d = double.Atan2Pi(0.5, 0.2);
+      a = rat.AtanPi(0.5); b = d = double.AtanPi(0.5);
+      a = rat.CosPi(0.005); b = d = double.CosPi(0.005);
+      a = rat.SinPi(0.005); b = d = double.SinPi(0.005);
+      a = rat.TanPi(0.005); b = d = double.TanPi(0.005);
+      a = rat.Atan2(0.5, 0.2); b = d = double.Atan2(0.5, 0.2);
+      var t1 = rat.SinCos(0.5); var t2 = double.SinCos(0.5);
+
+      //IHyperbolicFunctions
+      b = d = double.Asinh(0.5); a = rat.Asinh(0.5);
+      b = d = double.Acosh(2.5); a = rat.Acosh(2.5);
+      b = d = double.Atanh(0.5); a = rat.Atanh(0.5);
+      b = d = double.AsinPi(0.5); a = rat.AsinPi(0.5);
+      b = d = double.AcosPi(0.5); a = rat.AcosPi(0.5);
+      b = d = double.Sinh(0.5); a = rat.Sinh(0.5);
+      b = d = double.Cosh(0.5); a = rat.Cosh(0.5);
+      b = d = double.Tanh(0.5); a = rat.Tanh(0.5);
+
+    }
+#endif
+
 #if false
 #if NET7_0
+
+
+
     static void test()
     {
       rat a, b, c; double d; bool o; decimal m;
@@ -279,6 +360,17 @@ namespace Test
       a = Vector2R.SinCosR(2 * Math.PI); s = a.ToString();
       b = Vector2R.LengthR(a);
     }
+
+    static BigRational ExampleCalcPiHalf()
+    {
+      var cpu = BigRational.task_cpu;
+      cpu.push(Math.PI);
+      cpu.push(2);
+      cpu.div();
+      var result = cpu.popr();
+      return result;
+    }
+
 #endif
   }
 }
