@@ -11,7 +11,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // test();
+      ApplicationConfiguration.Initialize(); //test();
       Application.Run(new MainFrame());
     }
 
@@ -53,6 +53,8 @@ namespace Test
       a = rat.LogP1(0.5); b = d = double.LogP1(0.5);
       a = rat.ILogB(0.5); b = d = double.ILogB(0.5);
       a = rat.ILogB(+12345.56); b = d = double.ILogB(+12345.56);
+
+      a = rat.Log(0.5, (rat)16); b = d = double.Log(0.5, 16);
 
       //IExponentialFunctions
       a = rat.Exp(0.5); b = d = double.Exp(0.5);

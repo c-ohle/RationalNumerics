@@ -671,7 +671,8 @@ Ignores spaces, underscores (_) leading dots (…)</p>
 
 <a id="System_Numerics_BigRational_Parse_" data-uid="System.Numerics.BigRational.Parse*"></a>
 <h4 id="System_Numerics_BigRational_Parse_System_ReadOnlySpan_System_Char__System_Globalization_NumberStyles_System_IFormatProvider_" data-uid="System.Numerics.BigRational.Parse(System.ReadOnlySpan{System.Char},System.Globalization.NumberStyles,System.IFormatProvider)">Parse(ReadOnlySpan&lt;Char&gt;, NumberStyles, IFormatProvider)</h4>
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Parses a span of characters into a value.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
@@ -690,17 +691,20 @@ Ignores spaces, underscores (_) leading dots (…)</p>
     <tr>
       <td><span class="xref">System.ReadOnlySpan</span>&lt;<span class="xref">System.Char</span>&gt;</td>
       <td><span class="parametername">s</span></td>
-      <td></td>
+      <td><p>The span of characters to parse.</p>
+</td>
     </tr>
     <tr>
       <td><span class="xref">System.Globalization.NumberStyles</span></td>
       <td><span class="parametername">style</span></td>
-      <td></td>
+      <td><p>A bitwise combination of number styles that can be present in <code data-dev-comment-type="paramref" class="paramref">s</code>.</p>
+</td>
     </tr>
     <tr>
       <td><span class="xref">System.IFormatProvider</span></td>
       <td><span class="parametername">provider</span></td>
-      <td></td>
+      <td><p>An object that provides culture-specific formatting information about <code data-dev-comment-type="paramref" class="paramref">s</code>.</p>
+</td>
     </tr>
   </tbody>
 </table>
@@ -715,7 +719,37 @@ Ignores spaces, underscores (_) leading dots (…)</p>
   <tbody>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td></td>
+      <td><p>The result of parsing <code data-dev-comment-type="paramref" class="paramref">s</code>.</p>
+</td>
+    </tr>
+  </tbody>
+</table>
+<h5 id="System_Numerics_BigRational_Parse_System_ReadOnlySpan_System_Char__System_Globalization_NumberStyles_System_IFormatProvider__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>Part of the new NET 7 number type system.</p>
+</div>
+<h5 class="exceptions">Exceptions</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Condition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="xref">System.ArgumentException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">style</code> is not a supported <span class="xref">System.Globalization.NumberStyles</span> value.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.FormatException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">s</code> is not in the correct format.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.OverflowException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">s</code> is not representable by result.</p>
+</td>
     </tr>
   </tbody>
 </table>
@@ -723,7 +757,8 @@ Ignores spaces, underscores (_) leading dots (…)</p>
 
 <a id="System_Numerics_BigRational_Parse_" data-uid="System.Numerics.BigRational.Parse*"></a>
 <h4 id="System_Numerics_BigRational_Parse_System_String_System_Globalization_NumberStyles_System_IFormatProvider_" data-uid="System.Numerics.BigRational.Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider)">Parse(String, NumberStyles, IFormatProvider)</h4>
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Parses a string into a value.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
@@ -742,17 +777,20 @@ Ignores spaces, underscores (_) leading dots (…)</p>
     <tr>
       <td><span class="xref">System.String</span></td>
       <td><span class="parametername">s</span></td>
-      <td></td>
+      <td><p>The string to parse.</p>
+</td>
     </tr>
     <tr>
       <td><span class="xref">System.Globalization.NumberStyles</span></td>
       <td><span class="parametername">style</span></td>
-      <td></td>
+      <td><p>A bitwise combination of number styles that can be present in <code data-dev-comment-type="paramref" class="paramref">s</code>.</p>
+</td>
     </tr>
     <tr>
       <td><span class="xref">System.IFormatProvider</span></td>
       <td><span class="parametername">provider</span></td>
-      <td></td>
+      <td><p>An object that provides culture-specific formatting information about <code data-dev-comment-type="paramref" class="paramref">s</code>.</p>
+</td>
     </tr>
   </tbody>
 </table>
@@ -767,7 +805,42 @@ Ignores spaces, underscores (_) leading dots (…)</p>
   <tbody>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td></td>
+      <td><p>The result of parsing <code data-dev-comment-type="paramref" class="paramref">s</code>.</p>
+</td>
+    </tr>
+  </tbody>
+</table>
+<h5 id="System_Numerics_BigRational_Parse_System_String_System_Globalization_NumberStyles_System_IFormatProvider__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>Part of the new NET 7 number type system.</p>
+</div>
+<h5 class="exceptions">Exceptions</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Condition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="xref">System.ArgumentException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">style</code> is not a supported <span class="xref">System.Globalization.NumberStyles</span> value.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.ArgumentNullException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">s</code> is <code>null</code>.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.FormatException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">s</code> is not in the correct format.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.OverflowException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">s</code> is not representable by result.</p>
+</td>
     </tr>
   </tbody>
 </table>
@@ -775,7 +848,8 @@ Ignores spaces, underscores (_) leading dots (…)</p>
 
 <a id="System_Numerics_BigRational_Parse_" data-uid="System.Numerics.BigRational.Parse*"></a>
 <h4 id="System_Numerics_BigRational_Parse_System_String_System_IFormatProvider_" data-uid="System.Numerics.BigRational.Parse(System.String,System.IFormatProvider)">Parse(String, IFormatProvider)</h4>
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Parses a string into a value.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
@@ -794,12 +868,14 @@ Ignores spaces, underscores (_) leading dots (…)</p>
     <tr>
       <td><span class="xref">System.String</span></td>
       <td><span class="parametername">s</span></td>
-      <td></td>
+      <td><p>The string to parse.</p>
+</td>
     </tr>
     <tr>
       <td><span class="xref">System.IFormatProvider</span></td>
       <td><span class="parametername">provider</span></td>
-      <td></td>
+      <td><p>An object that provides culture-specific formatting information about <code data-dev-comment-type="paramref" class="paramref">s</code>.</p>
+</td>
     </tr>
   </tbody>
 </table>
@@ -814,7 +890,37 @@ Ignores spaces, underscores (_) leading dots (…)</p>
   <tbody>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td></td>
+      <td><p>The result of parsing <code data-dev-comment-type="paramref" class="paramref">s</code>.</p>
+</td>
+    </tr>
+  </tbody>
+</table>
+<h5 id="System_Numerics_BigRational_Parse_System_String_System_IFormatProvider__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>Part of the new NET 7 number type system.</p>
+</div>
+<h5 class="exceptions">Exceptions</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Condition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="xref">System.ArgumentNullException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">s</code> is <code>null</code>.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.FormatException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">s</code> is not in the correct format.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.OverflowException</span></td>
+      <td><p><code data-dev-comment-type="paramref" class="paramref">s</code> is not representable by result.</p>
+</td>
     </tr>
   </tbody>
 </table>

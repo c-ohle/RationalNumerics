@@ -1032,7 +1032,7 @@ namespace System.Numerics
     /// Returns a value indicating whether the specified number is an integer. 
     /// </summary>
     /// <param name="a">A <see cref="BigRational"/> number.</param>
-    /// <returns>True if <paramref name="a"/> is integer; otherwise, false.</returns>
+    /// <returns><c>true</c> if <paramref name="a" /> is an integer; otherwise, <c>false</c>.</returns>
     public static bool IsInteger(BigRational a)
     {
       if (a.p == null) return true; //since BigRational is always normalized:
@@ -1040,10 +1040,10 @@ namespace System.Numerics
       // or: return a % 1 == 0; or: var cpu = task_cpu; cpu.push(a); var b = cpu.isi(); cpu.pop(); return b;
     }
     /// <summary>
-    /// Returns a value indicating whether the specified number is not a number. 
+    /// Determines if the value is NaN. 
     /// </summary>
     /// <param name="a">A <see cref="BigRational"/> number.</param>
-    /// <returns>True if <paramref name="a"/> is not a number; otherwise, false.</returns>
+    /// <returns><c>true</c> if <paramref name="a" /> is NaN; otherwise, <c>false</c>.</returns>
     public static bool IsNaN(BigRational a)
     {
       if (a.p == null) return false;
