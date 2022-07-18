@@ -134,6 +134,9 @@
                                   <a href="System.Numerics.BigRational.-ctor.html" title="BigRational" class="">BigRational</a>
                                 </li>
                                 <li class="">
+                                  <a href="System.Numerics.BigRational.op_BitwiseOr.html" title="BitwiseOr" class="">BitwiseOr</a>
+                                </li>
+                                <li class="">
                                   <a href="System.Numerics.BigRational.Cbrt.html" title="Cbrt" class="">Cbrt</a>
                                 </li>
                                 <li class="">
@@ -159,9 +162,6 @@
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.op_Decrement.html" title="Decrement" class="">Decrement</a>
-                                </li>
-                                <li class="">
-                                  <a href="System.Numerics.BigRational.DefaultDigits.html" title="DefaultDigits" class="">DefaultDigits</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.op_Division.html" title="Division" class="">Division</a>
@@ -318,6 +318,9 @@
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.Max.html" title="Max" class="">Max</a>
+                                </li>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.MaxDigits.html" title="MaxDigits" class="">MaxDigits</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.MaxMagnitude.html" title="MaxMagnitude" class="">MaxMagnitude</a>
@@ -696,11 +699,11 @@
 </td>
       </tr>
       <tr>
-        <td id="System_Numerics_BigRational_DefaultDigits" data-uid="System.Numerics.BigRational.DefaultDigits">
-          <a class="xref" href="System.Numerics.BigRational.DefaultDigits.html#System_Numerics_BigRational_DefaultDigits">DefaultDigits</a>
+        <td id="System_Numerics_BigRational_MaxDigits" data-uid="System.Numerics.BigRational.MaxDigits">
+          <a class="xref" href="System.Numerics.BigRational.MaxDigits.html#System_Numerics_BigRational_MaxDigits">MaxDigits</a>
         </td>
         <td class="markdown level1 summary"><p>Gets or sets the default maximum number of decimal digits computed by functions with irrational results.<br>
-Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic functions without an explicit digits parameter.</p>
+Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic function versions without explicit digits parameter.</p>
 </td>
       </tr>
       <tr>
@@ -1369,7 +1372,7 @@ span of characters to its <a class="xref" href="System.Numerics.BigRational.html
         <td id="System_Numerics_BigRational_Pi" data-uid="System.Numerics.BigRational.Pi">
           <a class="xref" href="System.Numerics.BigRational.Pi.html#System_Numerics_BigRational_Pi">Pi()</a>
         </td>
-        <td class="markdown level1 summary"><p>Calculates π rounded to <a class="xref" href="System.Numerics.BigRational.DefaultDigits.html#System_Numerics_BigRational_DefaultDigits">DefaultDigits</a>.</p>
+        <td class="markdown level1 summary"><p>Calculates π rounded to <a class="xref" href="System.Numerics.BigRational.MaxDigits.html#System_Numerics_BigRational_MaxDigits">MaxDigits</a>.</p>
 </td>
       </tr>
       <tr>
@@ -1543,7 +1546,7 @@ using the specified rounding convention.</p>
         <td id="System_Numerics_BigRational_Tau" data-uid="System.Numerics.BigRational.Tau">
           <a class="xref" href="System.Numerics.BigRational.Tau.html#System_Numerics_BigRational_Tau">Tau()</a>
         </td>
-        <td class="markdown level1 summary"><p>Calculates π rounded to <a class="xref" href="System.Numerics.BigRational.DefaultDigits.html#System_Numerics_BigRational_DefaultDigits">DefaultDigits</a>.<br>
+        <td class="markdown level1 summary"><p>Calculates π rounded to <a class="xref" href="System.Numerics.BigRational.MaxDigits.html#System_Numerics_BigRational_MaxDigits">MaxDigits</a>.<br>
 Calculates the number of radians in one turn, specified by the constant, τ rounded to the specified number of decimal digits..</p>
 </td>
       </tr>
@@ -1651,6 +1654,13 @@ If the value is zero, outputs one uint whose element is 0x00000000.</p>
           <a class="xref" href="System.Numerics.BigRational.op_Addition.html#System_Numerics_BigRational_op_Addition_System_Numerics_BigRational_System_Numerics_BigRational_">Addition(BigRational, BigRational)</a>
         </td>
         <td class="markdown level1 summary"><p>Adds the values of two specified <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> numbers.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="System_Numerics_BigRational_op_BitwiseOr_System_Nullable_System_Numerics_BigRational__System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.op_BitwiseOr(System.Nullable{System.Numerics.BigRational},System.Numerics.BigRational)">
+          <a class="xref" href="System.Numerics.BigRational.op_BitwiseOr.html#System_Numerics_BigRational_op_BitwiseOr_System_Nullable_System_Numerics_BigRational__System_Numerics_BigRational_">BitwiseOr(Nullable&lt;BigRational&gt;, BigRational)</a>
+        </td>
+        <td class="markdown level1 summary"><p><strong>Note</strong>: This function does not represent a conventional <code>OR</code> operation.</p>
 </td>
       </tr>
       <tr>
@@ -1915,6 +1925,13 @@ greater than or equal to another <a class="xref" href="System.Numerics.BigRation
           <a class="xref" href="System.Numerics.BigRational.op_Implicit.html#System_Numerics_BigRational_op_Implicit_System_Int16__System_Numerics_BigRational">Implicit(Int16 to BigRational)</a>
         </td>
         <td class="markdown level1 summary"><p>Defines an implicit conversion of a <span class="xref">System.Int16</span> object to a <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="System_Numerics_BigRational_op_Implicit_System_Int32__System_Nullable_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.op_Implicit(System.Int32)~System.Nullable{System.Numerics.BigRational}">
+          <a class="xref" href="System.Numerics.BigRational.op_Implicit.html#System_Numerics_BigRational_op_Implicit_System_Int32__System_Nullable_System_Numerics_BigRational_">Implicit(Int32 to Nullable&lt;BigRational&gt;)</a>
+        </td>
+        <td class="markdown level1 summary"><p><strong>Note</strong>: This operator does not represent a conventional conversion.</p>
 </td>
       </tr>
       <tr>

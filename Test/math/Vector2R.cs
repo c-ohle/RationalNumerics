@@ -113,13 +113,13 @@ namespace System.Numerics.Rational
     /// <param name="a">A <see cref="Vector2R"/></param>
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// With default value (digits = 0) the current value of <see cref="rat.DefaultDigits"/> is used.
+    /// With default value (digits = 0) the current value of <see cref="rat.MaxDigits"/> is used.
     /// </param>
     /// <returns>A length as <see cref="BigRational"/> number.</returns>
     public static BigRational LengthR(Vector2R a, int digits = 0)
     {
       //return rat.Sqrt(a.X * a.X + a.Y * a.Y, digits);      
-      if (digits == 0) digits = rat.DefaultDigits;
+      if (digits == 0) digits = rat.MaxDigits;
       var cpu = rat.task_cpu;
       cpu.pow(10, digits); var c = cpu.msb(); cpu.pop(); //todo: build in      
       cpu.push(a.X); cpu.sqr();

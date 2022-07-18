@@ -52,8 +52,9 @@ namespace System.Numerics
     public readonly string ToString(string? format, IFormatProvider? provider = default)
     {
       var dbg = format != default && format.Length == 0; // DebuggerDisplay("", null);
+      if (dbg && isnan(this.p)) return NumberFormatInfo.InvariantInfo.NaNSymbol; // extra safety at debug
+      //if (dbg) { var cpu = task_cpu; var p = cpu.sp; if (p != null) { cpu.sp = null; var t = ToString(format, provider); cpu.sp = p; return t + " [" + ((long)p - (long)&p).ToString() + "]"; } }
       provider ??= dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo;
-      if (dbg && isnan(this.p)) return NumberFormatInfo.InvariantInfo.NaNSymbol;
       Span<char> sp = stackalloc char[100]; char[]? a = null; string? s = null;
       for (int ns, na = 1024; ;)
       {
@@ -62,12 +63,12 @@ namespace System.Numerics
         if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(na = Math.Max(ns, na << 1));
       }
       #region debug ext
-      if (dbg && p != null && (p[0] & 0x40000000) != 0) // in debug in cpu only ⁰₀ 
+      if (dbg && p != null && (p[0] & 0x40000000) != 0) // debug nd info ₀ ₀  
       {
         var x = p[0] & 0x3fffffff; var i = s.Length; s += ' ' + x.ToString() + ' ' + p[x + 1].ToString();
         fixed (char* p = s) for (int n = s.Length; i < n; i++) { var c = s[i]; if (c != ' ') p[i] = (char)('₀' + (c - '0')); }
       }
-      static bool isnan(uint[] p)
+      static bool isnan(uint[] p) // only for extra safety at debug, to debug into the core
       {
         if (p == null) return false;
         var u = p[0] & 0x3fffffff; if (u == 0 || u + 3 > p.Length) return true;
@@ -93,7 +94,7 @@ namespace System.Numerics
     public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
     {
       int digs = 32, round = -1, emin = -4, emax = +16; char fc = '\0', tc = fc;
-      //if (format != default && format.Length == 0) digs = CPU.DebugDigits; //todo: syn MathR.DefaultDigits
+      //if (format != default && format.Length == 0) digs = DefaultDigits; //todo: check makes sense?
       var info = NumberFormatInfo.GetInstance(provider);
       if (format.Length != 0)
       {
@@ -273,13 +274,13 @@ namespace System.Numerics
     /// <exception cref="FormatException">Signals an invalid format.</exception>
     public static BigRational ReadFromBytes(ref ReadOnlySpan<byte> value)
     {
-      if (value.Length < 4) throw new FormatException();
+      if (value.Length < 4) throw new FormatException(nameof(value));
       fixed (byte* s = &value.GetPinnableReference())
       {
         if (*(uint*)s == 0) { value = value.Slice(4); return default; }
-        if (value.Length < 16) throw new FormatException();
+        if (value.Length < 16) throw new FormatException(nameof(value));
         var n = len((uint*)s); var p = new uint[n];
-        fixed (uint* d = p) cpy(d, (uint*)s, n);
+        fixed (uint* d = p) copy(d, (uint*)s, n);
         value = value.Slice((int)n << 2); return new BigRational(p);
       }
     }
@@ -574,7 +575,7 @@ namespace System.Numerics
       {
         var na = a[0] & 0x3fffffff; var b = a + (na + 1); var nb = b[0];  //todo: opt. check performance using lim(64)
         var ca = BitOperations.LeadingZeroCount(a[na]);
-        var cb = BitOperations.LeadingZeroCount(b[nb]); 
+        var cb = BitOperations.LeadingZeroCount(b[nb]);
         var va = ((ulong)a[na] << 32 + ca) | (na < 2 ? 0 : ((ulong)a[na - 1] << ca) | (na < 3 ? 0 : (ulong)a[na - 2] >> 32 - ca));
         var vb = ((ulong)b[nb] << 32 + cb) | (nb < 2 ? 0 : ((ulong)b[nb - 1] << cb) | (nb < 3 ? 0 : (ulong)b[nb - 2] >> 32 - cb));
         if (vb == 0) return double.NaN;
@@ -602,7 +603,7 @@ namespace System.Numerics
       static decimal dec(uint* p, out int e)
       {
         var n = p[0] & 0x3fffffff; var c = n < 4 ? n : 4;
-        var t = stackalloc uint[5] { c, 0, 0, 0, 0 }; cpy(t + 1, p + 1 + (n - c), c);
+        var t = stackalloc uint[5] { c, 0, 0, 0, 0 }; copy(t + 1, p + 1 + (n - c), c);
         e = (int)(n << 5) - BitOperations.LeadingZeroCount(p[n]) - 96;
         if (e <= 0) e = 0; else CPU.shr(t, e - ((int)(n - c) << 5));
         return new decimal((int)t[1], (int)t[2], (int)t[3], (p[0] & 0x80000000) != 0, 0);
@@ -712,7 +713,7 @@ namespace System.Numerics
     /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(BigRational a, BigRational b)
     {
-      if (b.p == null) throw new DivideByZeroException(nameof(b));
+      if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
       var cpu = task_cpu; cpu.div(a, b); return cpu.popr();
     }
     /// <summary>
@@ -728,11 +729,10 @@ namespace System.Numerics
     public static BigRational operator %(BigRational a, BigRational b)
     {
       //return a - Truncate(a / b) * b;
-      if (b.p == null) throw new DivideByZeroException(nameof(b));
+      if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
       var cpu = task_cpu; //todo: % optimization for integers
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
-      cpu.mul(b); cpu.neg(); cpu.add(a);
-      return cpu.popr();
+      cpu.mul(b); cpu.neg(); cpu.add(a); return cpu.popr();
     }
 
     /// <summary>
@@ -856,7 +856,7 @@ namespace System.Numerics
     /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(BigRational a, long b)
     {
-      if (b == 0) throw new DivideByZeroException(nameof(b));
+      if (b == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
       var cpu = task_cpu; cpu.push(b); cpu.div(a, 0); cpu.swp(); cpu.pop(); return cpu.popr();
     }
     /// <summary>
@@ -914,7 +914,7 @@ namespace System.Numerics
     /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(long a, BigRational b)
     {
-      if (b.p == null) throw new DivideByZeroException(nameof(b));
+      if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
       var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.div(); return cpu.popr();
     }
     /// <summary>
@@ -1107,7 +1107,7 @@ namespace System.Numerics
         fixed (uint* a = v.p)
         {
           var n = len(a);
-          fixed (uint* b = rent(n)) cpy(b, a, n);
+          fixed (uint* b = rent(n)) copy(b, a, n);
         }
       }
       /// <summary>
@@ -1293,7 +1293,7 @@ namespace System.Numerics
         fixed (uint* a = v)
         {
           var n = (uint)v.Length;
-          fixed (uint* b = rent(n)) cpy(b, a, n);
+          fixed (uint* b = rent(n)) copy(b, a, n);
         }
       }
       /// <summary>
@@ -1319,8 +1319,8 @@ namespace System.Numerics
             v = cachx(p, n, 1); return;
           }
           //
-          var a = new uint[n]; fixed (uint* s = a) cpy(s, p, n);
-          v = new BigRational(a); // if (c != 0) cache[c] = v;
+          var a = new uint[n]; fixed (uint* s = a) copy(s, p, n);
+          v = new BigRational(a);
         }
       }
       /// <summary>
@@ -1379,7 +1379,8 @@ namespace System.Numerics
       /// <returns>A always normalized <see cref="BigRational"/> number.</returns>
       public BigRational popr()
       {
-        get(unchecked((uint)(i - 1)), out BigRational t); pop(); return t;
+        if (sp != null) { long d = (long)sp - (long)&d; if (d < 1024) return new BigRational(p[i - 1]); }
+        get(unchecked((uint)(i - 1)), out BigRational r); pop(); return r;
       }
       /// <summary>
       /// Removes the value currently on top of the stack, 
@@ -1494,7 +1495,7 @@ namespace System.Numerics
         fixed (uint* u = this.p[a])
         {
           var n = len(u);
-          fixed (uint* v = rent(n)) cpy(v, u, n);
+          fixed (uint* v = rent(n)) copy(v, u, n);
         }
       }
       /// <summary>
@@ -1861,8 +1862,8 @@ namespace System.Numerics
           fixed (uint* v = rent(len(u) + (c >> 5) + 1))
           {
             var n = (u[0] & 0x3fffffff) + 1;
-            cpy(v, u, n); shl(v, unchecked((int)c));
-            cpy(v + v[0] + 1, u + n, u[n] + 1);
+            copy(v, u, n); shl(v, unchecked((int)c));
+            copy(v + v[0] + 1, u + n, u[n] + 1);
             v[0] |= (u[0] & 0x80000000) | 0x40000000; swp(i + 1); pop();
           }
         }
@@ -1885,7 +1886,7 @@ namespace System.Numerics
         {
           var h = p[0]; var a = h & 0x3fffffff;
           shr(p, unchecked((int)c)); if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; return; }
-          if (p[0] != a) cpy(p + p[0] + 1, p + a + 1, p[a + 1] + 1);
+          if (p[0] != a) copy(p + p[0] + 1, p + a + 1, p[a + 1] + 1);
           p[0] |= (h & 0x80000000) | 0x40000000;
         }
       }
@@ -1904,7 +1905,7 @@ namespace System.Numerics
         {
           uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff, n = nu < nv ? nu : nv, l = 1;
           for (uint i = 1; i <= n; i++) if ((v[i] &= u[i]) != 0) l = i;
-          if (l != nv) { cpy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
+          if (l != nv) { copy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
           pop();
         }
       }
@@ -1942,7 +1943,7 @@ namespace System.Numerics
           uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff;
           if (nv < nu) { swp(); xor(); return; }
           uint l = 1; for (uint i = 1; i <= nu; i++) if ((v[i] ^= u[i]) != 0) l = i;
-          if (nu == nv && l != nv) { cpy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
+          if (nu == nv && l != nv) { copy(v + l + 1, v + nv + 1, v[nv + 1] + 1); v[0] = (v[0] & 0xc0000000) | l; }
           pop();
         }
       }
@@ -1966,7 +1967,7 @@ namespace System.Numerics
         {
           var h = u[0]; u[0] &= 0x3fffffff; var t = u + u[0] + 1;
           if (*(ulong*)t == 1) { pop(); pnan(); return; } //keep NaN
-          if (f != 8) div(u, t, v); else cpy(v, t, t[0] + 1);
+          if (f != 8) div(u, t, v); else copy(v, t, t[0] + 1);
           if ((f & (1 | 2 | 4)) != 0)
           {
             if (f == 4) f = *(ulong*)u != 1 ? 1 : 0;
@@ -2078,7 +2079,7 @@ namespace System.Numerics
           var v = (b << 5) - unchecked((uint)BitOperations.LeadingZeroCount(q[b]));
           if (u > v) u = v; if (u <= c) return;
           var t = (int)(u - c); shr(p, t); shr(q, t);
-          if (p[0] != a) cpy(p + p[0] + 1, q, q[0] + 1);
+          if (p[0] != a) copy(p + p[0] + 1, q, q[0] + 1);
           p[0] |= (h & 0x80000000) | 0x40000000;
         }
       }
@@ -2406,7 +2407,7 @@ namespace System.Numerics
                 for (; t != 0 && sp[i - 1] == '0' && sp[t - 1] == '0'; i--, t--) ;
                 rep = t; ns = i; pop(3); break;
               }
-              cpy(rr + i * nr, tt, tt[0] + 1);
+              copy(rr + i * nr, tt, tt[0] + 1);
             }
           }
           sp[i] = c; swp(); pop();
@@ -2843,11 +2844,11 @@ namespace System.Numerics
         var l = len(p);
         fixed (uint* s = rent(l << 1))
         {
-          cpy(s, p, l); s[0] &= 0x3fffffff;
+          copy(s, p, l); s[0] &= 0x3fffffff;
           var e = gcd(s, s + (s[0] + 1));
           if (*(ulong*)e == 0x100000001) { p[0] &= ~0x40000000u; pop(); return; }
           var t = s + l; var h = p[0];
-          cpy(t, p, l); t[0] &= 0x3fffffff;
+          copy(t, p, l); t[0] &= 0x3fffffff;
           d = t + (t[0] + 1); div(t, e, p); div(d, e, p + (p[0] + 1));
           p[0] |= (h & 0x80000000); pop();
         }
@@ -2882,7 +2883,7 @@ namespace System.Numerics
           switch (f) //jump table
           {
             case 0: *(ulong*)r = 1; return;
-            case 1: cpy(r, a, na + 1); r[0] = na; return;
+            case 1: copy(r, a, na + 1); r[0] = na; return;
               //case 2: //todo: opt. shl(1)
               //case 3: //todo: opt. + +
               //case 4: //todo: opt. shl(2)
@@ -2899,7 +2900,7 @@ namespace System.Numerics
         }
         else if (na >= 00_32) //nb <= na
         {
-          var n = na + nb; clr(r + 1, n); kmu(a + 1, na, b + 1, nb, r + 1, n);
+          var n = na + nb; copy(r + 1, n); kmu(a + 1, na, b + 1, nb, r + 1, n);
         }
         else
         {
@@ -2943,7 +2944,7 @@ namespace System.Numerics
           //((ulong*)v)[0] = t5 << 32 | (uint)t1;
           //((ulong*)v)[1] = t3 + (t4 >> 32) + (t5 >> 32);
         }
-        else if (n >= 0_040) { clr(v, n + n); kmu(a, n, v, n + n); }
+        else if (n >= 0_040) { copy(v, n + n); kmu(a, n, v, n + n); }
         else
         {
           for (uint i = 0; i < n; i++)
@@ -3155,16 +3156,6 @@ namespace System.Numerics
       {
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
       }
-      #region experimental
-      static uint[][]? cache;
-      static BigRational cachx(uint* s, uint n, uint x)
-      {
-        var p = cache != null ? cache[x] : null;
-        if (p == null) lock (string.Empty)
-            fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n])
-              cpy(d, s, n);
-        return new BigRational(p);
-      }
       static void kmu(uint* a, uint na, uint* b, uint nb, uint* r, uint nr) //todo: opt, non recursive on stack
       {
         Debug.Assert(na >= nb && nr == na + nb);
@@ -3184,12 +3175,12 @@ namespace System.Numerics
         kmu(a + n, na - n, b + n, nb - n, r + m, nr - m); // p2 = ah * bh
         uint r1 = na - n + 1, r2 = nb - n + 1, r3 = r1 + r2, r4 = r1 + r2 + r3;
         uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; //todo: opt, use cpu.stack  
-        clr(t1, r4); // for(uint i = 0; i < r4; i++) t1[i] = 0; //todo: optimize
+        copy(t1, r4); // for(uint i = 0; i < r4; i++) t1[i] = 0; //todo: optimize
         add(a + n, na - n, a, n, t1, r1);
         add(b + n, nb - n, b, n, t2, r2);
         kmu(t1, r1, t2, r2, t3, r3); // p3 = (ah + al) * (bh + bl)
         sub(r + m, nr - m, r, m, t3, r3);
-        ada(r + n, nr - n, t3, r3); // (p2 << m) + ((p3 - (p1 + p2)) << n) + p1        
+        add(r + n, nr - n, t3, r3); // (p2 << m) + ((p3 - (p1 + p2)) << n) + p1        
       }
       static void kmu(uint* a, uint na, uint* r, uint nr)
       {
@@ -3208,11 +3199,11 @@ namespace System.Numerics
         kmu(a, n, r, m);
         kmu(a + n, na - n, r + m, nr - m);
         uint r1 = na - n + 1, r2 = r1 + r1;
-        uint* t1 = stackalloc uint[(int)(r1 + r2)], t2 = t1 + r1; clr(t1, r1 + r2); //todo: cpu stack
+        uint* t1 = stackalloc uint[(int)(r1 + r2)], t2 = t1 + r1; copy(t1, r1 + r2); //todo: cpu stack
         add(a + n, na - n, a, n, t1, r1);
         kmu(t1, r1, t2, r2);
         sub(r + m, nr - m, r, m, t2, r2);
-        ada(r + n, (nr - n), t2, r2);
+        add(r + n, (nr - n), t2, r2);
       }
       static void sub(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
       {
@@ -3228,11 +3219,21 @@ namespace System.Numerics
         for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = a[i] + c));
         r[i] = unchecked((uint)c);
       }
-      static void ada(uint* a, uint na, uint* b, uint nb)
+      static void add(uint* a, uint na, uint* b, uint nb)
       {
         uint i = 0; ulong c = 0L, d; Debug.Assert(na >= nb);
         for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
+      }
+      #region experimental
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] static uint[][]? cache;
+      static BigRational cachx(uint* s, uint n, uint x)
+      {
+        var p = cache != null ? cache[x] : null;
+        if (p == null) lock (string.Empty)
+            fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n])
+              copy(d, s, n);
+        return new BigRational(p);
       }
       #endregion
     }
@@ -3259,14 +3260,14 @@ namespace System.Numerics
       var n = p[0] & 0x3fffffff;
       return n + p[n + 1] + 2;
     }
-    static void clr(uint* d, uint n)
+    static void copy(uint* d, uint n)
     {
       uint i = 0, c;
       for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = default; // RyuJIT vxorps, vmovdqu
       for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = default;
       if (i != n) d[i] = 0; //if ?
     }
-    static void cpy(uint* d, uint* s, uint n)
+    static void copy(uint* d, uint* s, uint n)
     {
       //new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; // 10% slower 
       //if (n > 16) { new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; } // 5% slower 
@@ -3295,8 +3296,44 @@ namespace System.Numerics
           }
         }
       }
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-      internal int digits { get; set; } = 30; // used by MathR only to avoid another threadlocal root 
+      //for NET 7 INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30;
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp, wp;
+    }
+    #endregion
+    #region boost operator 
+    /// <summary>
+    /// <b>Note</b>: This function does not represent a conventional <c>OR</c> operation.
+    /// </summary>
+    /// <remarks>
+    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
+    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
+    /// Example:<br/><br/>
+    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
+    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
+    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
+    /// </remarks>
+    public static BigRational operator |(BigRational? a, BigRational b)
+    {
+      if (a != default) throw new ArgumentException(nameof(a)); //todo: message text
+      var cpu = task_cpu; var i = (int)cpu.wp; cpu.sp = null; cpu.swp(i);
+      cpu.pop(unchecked((int)(cpu.mark() - i - 1))); return cpu.popr();
+    }
+    /// <summary>
+    /// <b>Note</b>: This operator does not represent a conventional conversion.
+    /// </summary>
+    /// <remarks>
+    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
+    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
+    /// Example:<br/><br/>
+    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
+    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
+    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
+    /// </remarks>
+    public static implicit operator BigRational?(int value)
+    {
+      var cpu = task_cpu; if (value != 0 || cpu.sp != null) throw new ArgumentException(nameof(value)); //todo: message text
+      cpu.wp = (void*)cpu.mark(); cpu.sp = &value; return default;
     }
     #endregion
   }

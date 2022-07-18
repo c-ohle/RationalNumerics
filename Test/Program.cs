@@ -2,6 +2,7 @@
 global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
+using System;
 using System.Runtime.InteropServices;
 
 namespace Test
@@ -15,10 +16,26 @@ namespace Test
       Application.Run(new MainFrame());
     }
 
+#if NET6_0
+    static void test()
+    {
+      rat a, b, c; //double d;
+      b = Math.PI; c = Math.E;
+      a = b * c + 10 - (c % b + 1.2) * rat.Sqrt(2, 30);
+      a = 0 | b * c + 10 - (c % b + 1.2) * rat.Sqrt(2, 30);
+      a = b * c;
+    }
+#endif
 #if NET7_0
     static void test()
     {
-      rat a, b; double d;
+      rat a, b, c; double d;
+
+      b = Math.PI; c = Math.E;
+
+      a = b * c + 10 - (c % b + 1.2) * rat.Sqrt(2);
+
+      a = 0 | b * c + 10 - (c % b + 1.2) * rat.Sqrt(2) - rat.Pi();
 
       //INumber
       a = rat.Clamp(0.5, -1, 0.2); b = d = double.Clamp(0.5, -1, 0.2);
@@ -372,7 +389,24 @@ namespace Test
       var result = cpu.popr();
       return result;
     }
+     
+    //todo: check later
+    static T Add1<T>(T a, T b) where T : INumber<T> // in release: no inline 
+    {
+      return a + b; 
+    }
+    static T Add2<T>(T a, T b) // in release: inline - and overall slightly faster ?!? 
+    {
+      { if (a is int u && b is int v && (u + v) is T r) return r; }
+      { if (a is float u && b is float v && (u + v) is T r) return r; }
+      { if (a is double u && b is double v && (u + v) is T r) return r; }
+      { if (a is Int128 u && b is Int128 v && (u + v) is T r) return r; }
+      { if (a is BigRational u && b is BigRational v && (u + v) is T r) return r; }
+      { if (a is BigInteger u && b is BigInteger v && (u + v) is T r) return r; }
+      return a;
+    }
 
 #endif
   }
 }
+

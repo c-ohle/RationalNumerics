@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Method abs
+    <title>Operator BitwiseOr
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Method abs
+    <meta name="title" content="Operator BitwiseOr
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -133,8 +133,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.-ctor.html" title="BigRational" class="">BigRational</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.BigRational.op_BitwiseOr.html" title="BitwiseOr" class="">BitwiseOr</a>
+                                <li class="active">
+                                  <a href="System.Numerics.BigRational.op_BitwiseOr.html" title="BitwiseOr" class="active">BitwiseOr</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.Cbrt.html" title="Cbrt" class="">Cbrt</a>
@@ -445,8 +445,8 @@
                             <a href="System.Numerics.BigRational.CPU.html" title="BigRational.CPU" class="">BigRational.CPU</a>
                               
                               <ul class="nav level3">
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.CPU.abs.html" title="abs" class="active">abs</a>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.CPU.abs.html" title="abs" class="">abs</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.CPU.add.html" title="add" class="">add</a>
@@ -604,24 +604,23 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.CPU.abs*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.op_BitwiseOr*">
 
-<h1 id="System_Numerics_BigRational_CPU_abs_" data-uid="System.Numerics.BigRational.CPU.abs*">Method abs
+<h1 id="System_Numerics_BigRational_op_BitwiseOr_" data-uid="System.Numerics.BigRational.op_BitwiseOr*">Operator BitwiseOr
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 
 
-<a id="System_Numerics_BigRational_CPU_abs_" data-uid="System.Numerics.BigRational.CPU.abs*"></a>
-<h4 id="System_Numerics_BigRational_CPU_abs_System_Int32_" data-uid="System.Numerics.BigRational.CPU.abs(System.Int32)">abs(Int32)</h4>
-<div class="markdown level1 summary"><p>Convert the value at index <code data-dev-comment-type="paramref" class="paramref">a</code> relative to the top of the stack to it's absolute value.<br>
-Default index 0 addresses the value on top of the stack.</p>
+<a id="System_Numerics_BigRational_op_BitwiseOr_" data-uid="System.Numerics.BigRational.op_BitwiseOr*"></a>
+<h4 id="System_Numerics_BigRational_op_BitwiseOr_System_Nullable_System_Numerics_BigRational__System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.op_BitwiseOr(System.Nullable{System.Numerics.BigRational},System.Numerics.BigRational)">BitwiseOr(Nullable&lt;BigRational&gt;, BigRational)</h4>
+<div class="markdown level1 summary"><p><strong>Note</strong>: This function does not represent a conventional <code>OR</code> operation.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void abs(int a = 0)</code></pre>
+  <pre><code class="lang-csharp hljs">public static BigRational operator |(Nullable&lt;BigRational&gt; a, BigRational b)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -634,13 +633,40 @@ Default index 0 addresses the value on top of the stack.</p>
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Int32</span></td>
+      <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</td>
       <td><span class="parametername">a</span></td>
-      <td><p>Relative index of a stack entry.</p>
-</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
+      <td><span class="parametername">b</span></td>
+      <td></td>
     </tr>
   </tbody>
 </table>
+<h5 class="returns">Returns</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<h5 id="System_Numerics_BigRational_op_BitwiseOr_System_Nullable_System_Numerics_BigRational__System_Numerics_BigRational__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>Intended to allows a notation that allows the calculation core to apply internal optimizations.<br>
+Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br>
+Example:<br><br>
+<code>var x = a * b + c * d + e * f; // standard notation.</code><br>
+<code>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</code><br><br>
+<em>For C# there is currently no better way to achieve such performance with standard notation<br>since the compiler does not support assign-operators.</em></p>
+</div>
 </article>
           </div>
           

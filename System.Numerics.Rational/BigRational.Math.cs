@@ -83,7 +83,7 @@ namespace System.Numerics
     /// <returns>Returns the factorial of <paramref name="a"/>.</returns>
     public static BigRational Factorial(int a)
     {
-      if (a < 0) throw new ArgumentException();
+      if (a < 0) return double.NaN; //NET 7 req. //throw new ArgumentException();
       var cpu = BigRational.task_cpu; cpu.fac((uint)a);
       return cpu.popr();
     }
@@ -173,7 +173,7 @@ namespace System.Numerics
       if (s < 0)
       {
         if (IsInteger(y)) return Round(Pow(x, (int)y, digits), digits); //todo: inline, cases
-        throw new ArgumentException(nameof(x));
+        return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(x));
       }
       var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.log(c);
@@ -210,7 +210,7 @@ namespace System.Numerics
     /// <exception cref="ArgumentException">For <paramref name="a"/> is less zero.</exception>
     public static BigRational Sqrt(BigRational a, int digits)
     {
-      if (Sign(a) < 0) throw new ArgumentException(nameof(a));
+      if (Sign(a) < 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(a));
       var cpu = task_cpu; var c = prec(digits);
       cpu.push(a); cpu.sqrt(c); cpu.rnd(digits);
       return cpu.popr();
@@ -229,7 +229,7 @@ namespace System.Numerics
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
     public static BigRational Log2(BigRational x, int digits)
     {
-      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
+      if (Sign(x) <= 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(x));
       var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.log2(c);
       cpu.rnd(digits); return cpu.popr();
@@ -278,7 +278,7 @@ namespace System.Numerics
     /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
     public static BigRational Log(BigRational x, int digits)
     {
-      if (Sign(x) <= 0) throw new ArgumentException(nameof(x));
+      if (Sign(x) <= 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(x));
       var cpu = task_cpu; var c = prec(digits);
       cpu.push(x); cpu.log(c);
       cpu.rnd(digits); return cpu.popr();
@@ -318,15 +318,15 @@ namespace System.Numerics
       cpu.pi(c); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
-    /// Calculates π rounded to <see cref="DefaultDigits"/>.
+    /// Calculates π rounded to <see cref="MaxDigits"/>.
     /// </summary>
     /// <remarks>
     /// Represents the ratio of the circumference of a circle to its diameter, specified by the constant, π.
     /// </remarks>
-    /// <returns>π rounded to <see cref="DefaultDigits"/>.</returns>
+    /// <returns>π rounded to <see cref="MaxDigits"/>.</returns>
     public static BigRational Pi()
     {
-      return Pi(DefaultDigits); //todo: opt. cpu
+      return Pi(MaxDigits); //todo: opt. cpu
     }
     /// <summary>
     /// Calculates the number of radians in one turn, specified by the constant, τ rounded to the specified number of decimal digits..
@@ -341,13 +341,13 @@ namespace System.Numerics
       cpu.pi(c); cpu.mul(2u); cpu.mul(); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
-    /// Calculates π rounded to <see cref="DefaultDigits"/>.<br/>
+    /// Calculates π rounded to <see cref="MaxDigits"/>.<br/>
     /// Calculates the number of radians in one turn, specified by the constant, τ rounded to the specified number of decimal digits..
     /// </summary>
-    /// <returns>τ rounded to <see cref="DefaultDigits"/>.</returns>
+    /// <returns>τ rounded to <see cref="MaxDigits"/>.</returns>
     public static BigRational Tau()
     {
-      return Tau(DefaultDigits); //todo: opt. cpu
+      return Tau(MaxDigits); //todo: opt. cpu
     }
     /// <summary>
     /// Returns the sine of the specified angle.
@@ -530,7 +530,7 @@ namespace System.Numerics
     /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational IDiv(BigRational a, BigRational b)
     {
-      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
+      if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
       var cpu = task_cpu; //cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
       return cpu.popr();
@@ -548,7 +548,7 @@ namespace System.Numerics
     /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational IMod(BigRational a, BigRational b)
     {
-      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
+      if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
       var cpu = task_cpu; //cpu.push(a); cpu.push(b); cpu.imod(); var c = cpu.popr(); return c;
       cpu.div(b, b); cpu.mod(); cpu.pop();
       return cpu.popr();
@@ -567,7 +567,7 @@ namespace System.Numerics
     /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational DivRem(BigRational a, BigRational b, out BigRational r)
     {
-      if (BigRational.Sign(b) == 0) throw new DivideByZeroException(nameof(b)); // b.p == null
+      if (BigRational.Sign(b) == 0) return r = double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
       var cpu = task_cpu; cpu.div(b, b); cpu.mod();
       r = cpu.popr(); return cpu.popr();
     }
@@ -598,21 +598,18 @@ namespace System.Numerics
     }
     /// <summary>
     /// Gets or sets the default maximum number of decimal digits computed by functions with irrational results.<br/> 
-    /// Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic functions without an explicit digits parameter.
+    /// Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic function versions without explicit digits parameter.
     /// </summary>
     /// <remarks>
     /// The initial value is 30 in difference to <see cref="double"/> with a fixed precision of around 15 decimal digits.<br/>
     /// This is a thread static property.
     /// </remarks>  
     /// <value>Maximum number of decimal digits.</value>
-    public static int DefaultDigits //todo: find better name
+    public static int MaxDigits //todo: better name
     {
-      get => task_cpu.digits;
-      set => task_cpu.digits = value;
+      get => task_cpu.maxdigits;
+      set => task_cpu.maxdigits = value;
     }
-    static uint prec(int digits)
-    {
-      return (uint)Math.Ceiling(digits * 3.321928094887362); // * ((Math.Log(2) + Math.Log(5)) / Math.Log(2))
-    }
+    static uint prec(int digits) => (uint)Math.Ceiling(digits * 3.321928094887362); // * ((Math.Log(2) + Math.Log(5)) / Math.Log(2))
   }
 }

@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-// This implementation is intended to reflect the public function set of double exactly.
+// The INumber implementation is intended to reflect the public function set of double exactly.
 // It should be possible to check floating point algorithms for precision, epsilon and robustness issues
 // simply by replacing double with BigRational. Therfore some overhead, functions like Clamp, CopySign etc.
 
@@ -138,7 +138,7 @@ namespace System.Numerics
     /// <exception cref="ArgumentException"><paramref name="min" /> is greater than <paramref name="max" />.</exception>
     public static BigRational Clamp(BigRational value, BigRational min, BigRational max)
     {
-      if (min > max) throw new ArgumentException($"{nameof(min)} {nameof(max)}");
+      if (min > max) return double.NaN; //NET 7 req. //throw new ArgumentException($"{nameof(min)} {nameof(max)}");
       if (value < min) return min;
       if (value > max) return max;
       return value;
@@ -287,7 +287,7 @@ namespace System.Numerics
       return !IsNaN(result = Parse(s, provider));
     }
 
-    //INumberBase //todo: test !!!
+    //INumberBase
     static bool INumberBase<BigRational>.TryConvertFromChecked<TOther>(TOther value, out BigRational result) //where TOther : INumberBase<TOther>
     {
       return TryConvertFrom<TOther>(value, out result);
@@ -302,26 +302,41 @@ namespace System.Numerics
     }
     static bool TryConvertFrom<TOther>(TOther value, out BigRational result) where TOther : INumberBase<TOther>
     {
-      if (typeof(TOther) == typeof(Half)) { result = (Half)(object)value; return true; }
-      if (typeof(TOther) == typeof(short)) { result = (short)(object)value; return true; }
-      if (typeof(TOther) == typeof(int)) { result = (int)(object)value; return true; }
-      if (typeof(TOther) == typeof(long)) { result = (long)(object)value; return true; }
-      if (typeof(TOther) == typeof(Int128)) { result = (Int128)(object)value; return true; }
-      if (typeof(TOther) == typeof(nint)) { result = (nint)(object)value; return true; }
-      if (typeof(TOther) == typeof(sbyte)) { result = (sbyte)(object)value; return true; }
-      if (typeof(TOther) == typeof(float)) { result = (float)(object)value; return true; }
+      // others: if (typeof(TOther) == typeof(Half)) { result = (Half)(object)value; return true; } ... no inline
+      // this way no boxing, less code, inline works in release (depends on MethodImplOptions.AggressiveInlining ? check) 
+      { if (value is byte t) { result = t; return true; } }
+      { if (value is sbyte t) { result = t; return true; } }
+      { if (value is ushort t) { result = t; return true; } }
+      { if (value is short t) { result = t; return true; } }
+      { if (value is char t) { result = t; return true; } }
+      { if (value is int t) { result = t; return true; } }
+      { if (value is uint t) { result = t; return true; } }
+      { if (value is long t) { result = t; return true; } }
+      { if (value is ulong t) { result = t; return true; } }
+      { if (value is Int128 t) { result = t; return true; } }
+      { if (value is UInt128 t) { result = t; return true; } }
+      { if (value is nint t) { result = t; return true; } }
+      { if (value is nuint t) { result = t; return true; } }
+      { if (value is Half t) { result = t; return true; } }
+      { if (value is float t) { result = t; return true; } }
+      { if (value is double t) { result = t; return true; } }
+      { if (value is BigInteger t) { result = t; return true; } }
+      //{ if (value is BigRational t) { result = t; return true; } } //todo: check spec
       result = default; return false;
     }
     static bool INumberBase<BigRational>.TryConvertToChecked<TOther>(BigRational value, [NotNullWhen(true)] out TOther? result) where TOther : default
     {
-      if (typeof(TOther) == typeof(byte)) { result = (TOther)(object)checked((byte)value); return true; }
-      if (typeof(TOther) == typeof(char)) { result = (TOther)(object)checked((char)value); return true; }
-      if (typeof(TOther) == typeof(decimal)) { result = (TOther)(object)checked((decimal)value); return true; }
-      if (typeof(TOther) == typeof(ushort)) { result = (TOther)(object)checked((ushort)value); return true; }
-      if (typeof(TOther) == typeof(uint)) { result = (TOther)(object)checked((uint)value); return true; }
-      if (typeof(TOther) == typeof(ulong)) { result = (TOther)(object)checked((ulong)value); return true; }
-      if (typeof(TOther) == typeof(UInt128)) { result = (TOther)(object)checked((UInt128)value); return true; }
-      if (typeof(TOther) == typeof(nuint)) { result = (TOther)(object)checked((nuint)value); return true; }
+      //todo: replace checked with static bool rangecheck<>() func, complete, test 
+      // others: if (typeof(TOther) == typeof(UInt128)) { result = (TOther)(object)checked((UInt128)value); return true; } ... no inline
+      // this way no boxing, less code, inline works in release (depends on MethodImplOptions.AggressiveInlining ? check) 
+      if (typeof(TOther) == typeof(byte)) { result = checked((byte)value) is TOther t ? t : default!; return true; }
+      if (typeof(TOther) == typeof(char)) { result = checked((byte)value) is TOther t ? t : default!; return true; }
+      if (typeof(TOther) == typeof(decimal)) { result = checked((byte)value) is TOther t ? t : default!; return true; }
+      if (typeof(TOther) == typeof(ushort)) { result = checked((byte)value) is TOther t ? t : default!; return true; }
+      if (typeof(TOther) == typeof(uint)) { result = checked((byte)value) is TOther t ? t : default!; return true; }
+      if (typeof(TOther) == typeof(ulong)) { result = checked((byte)value) is TOther t ? t : default!; return true; }
+      if (typeof(TOther) == typeof(UInt128)) { result = checked((byte)value) is TOther t ? t : default!; return true; }
+      if (typeof(TOther) == typeof(nuint)) { result = checked((byte)value) is TOther t ? t : default!; return true; }
       result = default!; return false;
     }
     static bool INumberBase<BigRational>.TryConvertToSaturating<TOther>(BigRational value, [NotNullWhen(true)] out TOther? result) where TOther : default
@@ -334,56 +349,46 @@ namespace System.Numerics
     }
     static bool TryConvertTo<TOther>(BigRational value, [NotNullWhen(true)] out TOther result) where TOther : INumberBase<TOther>
     {
+      //todo: opt. complete, test
       if (typeof(TOther) == typeof(byte))
       {
         byte x = (value >= byte.MaxValue) ? byte.MaxValue : (value <= byte.MinValue) ? byte.MinValue : (byte)value;
-        result = (TOther)(object)x; return true;
+        result = x is TOther t ? t : default!; return true; //this works, no boxing, inlines at least the expr.
       }
       if (typeof(TOther) == typeof(char))
       {
         char x = (value >= char.MaxValue) ? char.MaxValue : (value <= char.MinValue) ? char.MinValue : (char)value;
-        result = (TOther)(object)x; return true;
+        result = x is TOther t ? t : default!; return true; //this works, no boxing, inlines at least the expr.
       }
       if (typeof(TOther) == typeof(decimal))
       {
-        decimal x = (value >= +79228162514264337593543950336.0) ? decimal.MaxValue :
-                               (value <= -79228162514264337593543950336.0) ? decimal.MinValue :
-                               IsNaN(value) ? 0.0m : (decimal)value;
-        result = (TOther)(object)x; return true;
+        var x = (value >= +79228162514264337593543950336.0) ? decimal.MaxValue : (value <= -79228162514264337593543950336.0) ? decimal.MinValue : IsNaN(value) ? 0.0m : (decimal)value;
+        result = x is TOther t ? t : default!; return true; //this works, no boxing, inlines at least the expr.
       }
       if (typeof(TOther) == typeof(ushort))
       {
-        ushort x = (value >= ushort.MaxValue) ? ushort.MaxValue : (value <= ushort.MinValue) ? ushort.MinValue : (ushort)value;
-        result = (TOther)(object)x; return true;
+        var x = (value >= ushort.MaxValue) ? ushort.MaxValue : (value <= ushort.MinValue) ? ushort.MinValue : (ushort)value;
+        result = x is TOther t ? t : default!; return true; //this works, no boxing, inlines at least the expr.
       }
       if (typeof(TOther) == typeof(uint))
       {
-        uint x = (value >= uint.MaxValue) ? uint.MaxValue : (value <= uint.MinValue) ? uint.MinValue : (uint)value;
+        var x = (value >= uint.MaxValue) ? uint.MaxValue : (value <= uint.MinValue) ? uint.MinValue : (uint)value;
         result = (TOther)(object)x; return true;
       }
       if (typeof(TOther) == typeof(ulong))
       {
-        ulong x = (value >= ulong.MaxValue) ? ulong.MaxValue : (value <= ulong.MinValue) ? ulong.MinValue : IsNaN(value) ? 0 : (ulong)value;
-        result = (TOther)(object)x; return true;
+        var x = (value >= ulong.MaxValue) ? ulong.MaxValue : (value <= ulong.MinValue) ? ulong.MinValue : IsNaN(value) ? 0 : (ulong)value;
+        result = x is TOther t ? t : default!; return true; //this works, no boxing, inlines at least the expr.
       }
       if (typeof(TOther) == typeof(UInt128))
       {
-        UInt128 x = (value >= 340282366920938463463374607431768211455.0) ? UInt128.MaxValue : (value <= 0.0) ? UInt128.MinValue : (UInt128)value;
-        result = (TOther)(object)x; return true;
+        var x = (value >= 340282366920938463463374607431768211455.0) ? UInt128.MaxValue : (value <= 0.0) ? UInt128.MinValue : (UInt128)value;
+        result = x is TOther t ? t : default!; return true; //this works, no boxing, inlines at least the expr.
       }
       if (typeof(TOther) == typeof(nuint))
       {
-#if TARGET_64BIT
-        nuint actualResult = (value >= ulong.MaxValue) ? unchecked((nuint)ulong.MaxValue) :
-                             (value <= ulong.MinValue) ? unchecked((nuint)ulong.MinValue) : (nuint)value;
-        result = (TOther)(object)actualResult;
-        return true;
-#else
-        nuint actualResult = (value >= uint.MaxValue) ? uint.MaxValue :
-                             (value <= uint.MinValue) ? uint.MinValue : (nuint)value;
-        result = (TOther)(object)actualResult;
-        return true;
-#endif
+        var x = (value >= uint.MaxValue) ? uint.MaxValue : (value <= uint.MinValue) ? uint.MinValue : (nuint)value;
+        result = x is TOther t ? t : default!; return true; //this works, no boxing, inlines at least the expr.
       }
       result = default!; return false;
     }
@@ -612,6 +617,7 @@ namespace System.Numerics
       return nint.Size == 4 ? new NFloat((float)value) : new NFloat((double)value);
     }
 
+    // todo: expose after checks
     // }
     // #endif // NET 7
     //
@@ -623,32 +629,32 @@ namespace System.Numerics
     /// <summary>Computes a value raised to a given power.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IPowerFunctions{TSelf}.Pow(TSelf,TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value which is raised to the power of <paramref name="x" />.</param>
     /// <param name="y">The power to which <paramref name="x" /> is raised.</param>
     /// <returns><paramref name="x" /> raised to the power of <paramref name="y" />.</returns>
     public static BigRational Pow(BigRational x, BigRational y)
     {
-      return Pow(x, y, DefaultDigits); //todo: opt. cpu
+      return Pow(x, y, MaxDigits); //todo: opt. cpu
     }
 
     //IRootFunctions
     /// <summary>Computes the square-root of a value.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IRootFunctions{TSelf}.Sqrt(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose square-root is to be computed.</param>
     /// <returns>The square-root of <paramref name="x" />.</returns>
     public static BigRational Sqrt(BigRational x)
     {
-      return Sqrt(x, DefaultDigits); //todo: opt. cpu
+      return Sqrt(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the cube-root of a value.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IRootFunctions{TSelf}.Cbrt(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose cube-root is to be computed.</param>
     /// <returns>The cube-root of <paramref name="x" />.</returns>
@@ -659,7 +665,7 @@ namespace System.Numerics
     /// <summary>Computes the hypotenuse given two values representing the lengths of the shorter sides in a right-angled triangle.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IRootFunctions{TSelf}.Hypot(TSelf,TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value to square and add to <paramref name="y" />.</param>
     /// <param name="y">The value to square and add to <paramref name="x" />.</param>
@@ -667,14 +673,14 @@ namespace System.Numerics
     public static BigRational Hypot(BigRational x, BigRational y)
     {
       //return Sqrt(x * x + y * y);
-      var cpu = task_cpu; var d = DefaultDigits; var c = prec(d);
+      var cpu = task_cpu; var d = MaxDigits; var c = prec(d);
       cpu.push(x); cpu.sqr(); cpu.push(y); cpu.sqr(); cpu.add(); //todo: lim x^2, y^2 and check
       cpu.sqrt(c); cpu.rnd(d); return cpu.popr();
     }
     /// <summary>Computes the n-th root of a value.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IRootFunctions{TSelf}.Root(TSelf,int)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose <paramref name="n" />-th root is to be computed.</param>
     /// <param name="n">The degree of the root to be computed.</param>
@@ -688,62 +694,62 @@ namespace System.Numerics
     /// <summary>Computes <c>E</c> raised to a given power.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IExponentialFunctions{TSelf}.Exp(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The power to which <c>E</c> is raised.</param>
     /// <returns><c>E<sup><paramref name="x" /></sup></c></returns>
     public static BigRational Exp(BigRational x)
     {
-      return Exp(x, DefaultDigits); //todo: opt. cpu
+      return Exp(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes <c>2</c> raised to a given power.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IExponentialFunctions{TSelf}.Exp2(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The power to which <c>2</c> is raised.</param>
     /// <returns><c>2<sup><paramref name="x" /></sup></c></returns>
     public static BigRational Exp2(BigRational x)
     {
-      return Pow(2, x, DefaultDigits); //todo: impl
+      return Pow(2, x, MaxDigits); //todo: impl
     }
     /// <summary>Computes <c>10</c> raised to a given power.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IExponentialFunctions{TSelf}.Exp10(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The power to which <c>10</c> is raised.</param>
     /// <returns><c>10<sup><paramref name="x" /></sup></c></returns>
     public static BigRational Exp10(BigRational x)
     {
-      return Pow(10, x, DefaultDigits); //todo: opt. cpu
+      return Pow(10, x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes <c>E</c> raised to a given power and subtracts one.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IExponentialFunctions{TSelf}.ExpM1(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The power to which <c>E</c> is raised.</param>
     /// <returns><c>E<sup><paramref name="x" /></sup> - 1</c></returns>
     public static BigRational ExpM1(BigRational x)
     {
-      return Exp(x, DefaultDigits) - 1; //todo: opt. cpu
+      return Exp(x, MaxDigits) - 1; //todo: opt. cpu
     }
     /// <summary>Computes <c>2</c> raised to a given power and subtracts one.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IExponentialFunctions{TSelf}.Exp2M1(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The power to which <c>2</c> is raised.</param>
     /// <returns><c>2<sup><paramref name="x" /></sup> - 1</c></returns>
     public static BigRational Exp2M1(BigRational x)
     {
-      return Pow(2, x, DefaultDigits) - 1; //todo: opt. cpu
+      return Pow(2, x, MaxDigits) - 1; //todo: opt. cpu
     }
     /// <summary>Computes <c>10</c> raised to a given power and subtracts one.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IExponentialFunctions{TSelf}.Exp10M1(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The power to which <c>10</c> is raised.</param>
     /// <returns><c>10<sup><paramref name="x" /></sup> - 1</c></returns>
@@ -756,52 +762,52 @@ namespace System.Numerics
     /// <summary>Computes the natural (<c>base-E</c>) logarithm of a value.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ILogarithmicFunctions{TSelf}.Log(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose natural logarithm is to be computed.</param>
     /// <returns><c>log<sub>e</sub>(<paramref name="x" />)</c></returns>
     public static BigRational Log(BigRational x)
     {
-      return Log(x, DefaultDigits); //todo: opt. cpu
+      return Log(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the logarithm of a value in the specified base.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ILogarithmicFunctions{TSelf}.Log(TSelf,TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose logarithm is to be computed.</param>
     /// <param name="newBase">The base in which the logarithm is to be computed.</param>
     /// <returns><c>log<sub><paramref name="newBase" /></sub>(<paramref name="x" />)</c></returns>
     public static BigRational Log(BigRational x, BigRational newBase) //todo: <--> Log(x, digits)
     {
-      return Round(Log(x) / Log(newBase), DefaultDigits); //todo: opt. cpu
+      return Round(Log(x) / Log(newBase), MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the base-2 logarithm of a value.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ILogarithmicFunctions{TSelf}.Log2(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose base-2 logarithm is to be computed.</param>
     /// <returns><c>log<sub>2</sub>(<paramref name="x" />)</c></returns>
     public static BigRational Log2(BigRational x)
     {
-      return Log2(x, DefaultDigits); //todo: opt. cpu
+      return Log2(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the base-10 logarithm of a value.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ILogarithmicFunctions{TSelf}.Log10(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose base-10 logarithm is to be computed.</param>
     /// <returns><c>log<sub>10</sub>(<paramref name="x" />)</c></returns>
     public static BigRational Log10(BigRational x)
     {
-      return Log10(x, DefaultDigits); //todo: opt. cpu
+      return Log10(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the natural (<c>base-E</c>) logarithm of a value plus one.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ILogarithmicFunctions{TSelf}.LogP1(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value to which one is added before computing the natural logarithm.</param>
     /// <returns><c>log<sub>e</sub>(<paramref name="x" /> + 1)</c></returns>
@@ -812,7 +818,7 @@ namespace System.Numerics
     /// <summary>Computes the base-10 logarithm of a value plus one.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ILogarithmicFunctions{TSelf}.Log10P1(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value to which one is added before computing the base-10 logarithm.</param>
     /// <returns><c>log<sub>10</sub>(<paramref name="x" /> + 1)</c></returns>
@@ -823,7 +829,7 @@ namespace System.Numerics
     /// <summary>Computes the base-2 logarithm of a value plus one.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ILogarithmicFunctions{TSelf}.Log2P1(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value to which one is added before computing the base-2 logarithm.</param>
     /// <returns><c>log<sub>2</sub>(<paramref name="x" /> + 1)</c></returns>
@@ -837,190 +843,190 @@ namespace System.Numerics
     /// <remarks>
     /// This computes <c>sin(x)</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Sin(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value, in radians, whose sine is to be computed.</param>
     /// <returns>The sine of <paramref name="x" />.</returns>
     public static BigRational Sin(BigRational x)
     {
-      return Sin(x, DefaultDigits); //todo: opt. cpu
+      return Sin(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the cosine of a value.</summary>
     /// <remarks>
     /// This computes <c>cos(x)</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Cos(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value, in radians, whose cosine is to be computed.</param>
     /// <returns>The cosine of <paramref name="x" />.</returns>
     public static BigRational Cos(BigRational x)
     {
-      return Cos(x, DefaultDigits); //todo: opt. cpu
+      return Cos(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the tangent of a value.</summary>
     /// <remarks>
     /// This computes <c>tan(x)</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Tan(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value, in radians, whose tangent is to be computed.</param>
     /// <returns>The tangent of <paramref name="x" />.</returns>
     public static BigRational Tan(BigRational x)
     {
-      return Tan(x, DefaultDigits); //todo: opt. cpu
+      return Tan(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the arc-sine of a value.</summary>
     /// <remarks>
     /// This computes <c>arcsin(x)</c> in the interval <c>[-π / 2, +π / 2]</c> radians.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Asin(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose arc-sine is to be computed.</param>
     /// <returns>The arc-sine of <paramref name="x" />.</returns>
     public static BigRational Asin(BigRational x)
     {
-      return Asin(x, DefaultDigits); //todo: opt. cpu
+      return Asin(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the arc-cosine of a value.</summary>
     /// <remarks>
     /// This computes <c>arccos(x)</c> in the interval <c>[+0, +π]</c> radians.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Acos(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose arc-cosine is to be computed.</param>
     /// <returns>The arc-cosine of <paramref name="x" />.</returns>
     public static BigRational Acos(BigRational x)
     {
-      return Acos(x, DefaultDigits); //todo: opt. cpu
+      return Acos(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the arc-tangent of a value.</summary>
     /// <remarks>
     /// This computes <c>arctan(x)</c> in the interval <c>[-π / 2, +π / 2]</c> radians.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Atan(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose arc-tangent is to be computed.</param>
     /// <returns>The arc-tangent of <paramref name="x" />.</returns>
     public static BigRational Atan(BigRational x)
     {
-      return Atan(x, DefaultDigits); //todo: opt. cpu
+      return Atan(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the sine and cosine of a value.</summary>
     /// <remarks>
     /// This computes <c>(sin(x), cos(x))</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.SinCos(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value, in radians, whose sine and cosine are to be computed.</param>
     /// <returns>The sine and cosine of <paramref name="x" />.</returns>
     public static (BigRational Sin, BigRational Cos) SinCos(BigRational x)
     {
-      return (Sin(x, DefaultDigits), Cos(x, DefaultDigits)); //todo: opt. cpu
+      return (Sin(x, MaxDigits), Cos(x, MaxDigits)); //todo: opt. cpu
     }
     /// <summary>Computes the arc-cosine of a value and divides the result by <c>pi</c>.</summary>
     /// <remarks>
     /// This computes <c>arccos(x) / π</c> in the interval <c>[-0.5, +0.5]</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.AcosPi(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose arc-cosine is to be computed.</param>
     /// <returns>The arc-cosine of <paramref name="x" />, divided by <c>pi</c>.</returns>
     public static BigRational AcosPi(BigRational x)
     {
-      return Acos(x, DefaultDigits) / Pi(DefaultDigits); //todo: opt. cpu
+      return Acos(x, MaxDigits) / Pi(MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the arc-sine of a value and divides the result by <c>pi</c>.</summary>
     /// <remarks>
     /// This computes <c>arcsin(x) / π</c> in the interval <c>[-0.5, +0.5]</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.AsinPi(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose arc-sine is to be computed.</param>
     /// <returns>The arc-sine of <paramref name="x" />, divided by <c>pi</c>.</returns>
     public static BigRational AsinPi(BigRational x)
     {
-      return Asin(x, DefaultDigits) / Pi(DefaultDigits); //todo: opt. cpu
+      return Asin(x, MaxDigits) / Pi(MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the arc-tangent of a value and divides the result by pi.</summary>
     /// <remarks>
     /// This computes <c>arctan(x) / π</c> in the interval <c>[-0.5, +0.5]</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.AtanPi(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose arc-tangent is to be computed.</param>
     /// <returns>The arc-tangent of <paramref name="x" />, divided by <c>pi</c>.</returns>
     public static BigRational AtanPi(BigRational x)
     {
-      return Atan(x, DefaultDigits) / Pi(DefaultDigits); //todo: opt. cpu
+      return Atan(x, MaxDigits) / Pi(MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the cosine of a value that has been multipled by <c>pi</c>.</summary>
     /// <remarks>
     /// This computes <c>cos(x * π)</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.CosPi(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value, in half-revolutions, whose cosine is to be computed.</param>
     /// <returns>The cosine of <paramref name="x" /> multiplied-by <c>pi</c>.</returns>
     public static BigRational CosPi(BigRational x)
     {
-      return Cos(x * Pi(DefaultDigits), DefaultDigits); //todo: opt. cpu
+      return Cos(x * Pi(MaxDigits), MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the sine of a value that has been multiplied by <c>pi</c>.</summary>
     /// <remarks>
     /// This computes <c>sin(x * π)</c>.<br/>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.SinPi(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value, in half-revolutions, that is multipled by <c>pi</c> before computing its sine.</param>
     /// <returns>The sine of <paramref name="x" /> multiplied-by <c>pi</c>.</returns>
     public static BigRational SinPi(BigRational x)
     {
-      return Sin(x * Pi(DefaultDigits), DefaultDigits); //todo: opt. cpu
+      return Sin(x * Pi(MaxDigits), MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the tangent of a value that has been multipled by <c>pi</c>.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.TanPi(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value, in half-revolutions, that is multipled by <c>pi</c> before computing its tangent.</param>
     /// <returns>The tangent of <paramref name="x"/> multiplied-by <c>pi</c>.</returns>
     /// <remarks>This computes <c>tan(x * π)</c>.</remarks>
     public static BigRational TanPi(BigRational x)
     {
-      return Tan(x * Pi(DefaultDigits), DefaultDigits); //todo: opt. cpu
+      return Tan(x * Pi(MaxDigits), MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the arc-tangent of the quotient of two values.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Atan2(TSelf,TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="y">The y-coordinate of a point.</param>
     /// <param name="x">The x-coordinate of a point.</param>
     /// <returns>The arc-tangent of y divided by x.</returns>
     public static BigRational Atan2(BigRational y, BigRational x)
     {
-      return Atan2(y, x, DefaultDigits); //todo: opt. cpu
+      return Atan2(y, x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>
     /// Computes the arc-tangent of the quotient of two values and divides the result by pi.
     /// </summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Atan2Pi(TSelf,TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="y">The y-coordinate of a point.</param>
     /// <param name="x">The x-coordinate of a point.</param>
     /// <returns>The arc-tangent of y divided by x divided by pi.</returns>
     public static BigRational Atan2Pi(BigRational y, BigRational x)
     {
-      return Atan2(y, x, DefaultDigits) / Pi(DefaultDigits); //todo: opt. cpu
+      return Atan2(y, x, MaxDigits) / Pi(MaxDigits); //todo: opt. cpu
     }
 
     // IFloatingPointIeee754 (double compat.)
     /// <summary>Computes the integer logarithm of a value.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IFloatingPointIeee754{TSelf}.ILogB(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose integer logarithm is to be computed.</param>
     /// <returns>The integer logarithm of <paramref name="x" />.</returns>
@@ -1034,7 +1040,7 @@ namespace System.Numerics
     /// <param name="x">The value, in radians, whose hyperbolic arc-sine is to be computed.</param>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IHyperbolicFunctions{TSelf}.Asinh(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <returns>The hyperbolic arc-sine of <paramref name="x" />.</returns>
     public static BigRational Asinh(BigRational x)
@@ -1045,7 +1051,7 @@ namespace System.Numerics
     /// <param name="x">The value, in radians, whose hyperbolic arc-cosine is to be computed.</param>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IHyperbolicFunctions{TSelf}.Acosh(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <returns>The hyperbolic arc-cosine of <paramref name="x" />.</returns>
     public static BigRational Acosh(BigRational x)
@@ -1056,7 +1062,7 @@ namespace System.Numerics
     /// <param name="x">The value, in radians, whose hyperbolic arc-tangent is to be computed.</param>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IHyperbolicFunctions{TSelf}.Atanh(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <returns>The hyperbolic arc-tangent of <paramref name="x" />.</returns>
     public static BigRational Atanh(BigRational x)
@@ -1067,7 +1073,7 @@ namespace System.Numerics
     /// <param name="x">The value, in radians, whose hyperbolic sine is to be computed.</param>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IHyperbolicFunctions{TSelf}.Sinh(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <returns>The hyperbolic sine of <paramref name="x" />.</returns>
     public static BigRational Sinh(BigRational x)
@@ -1078,7 +1084,7 @@ namespace System.Numerics
     /// <param name="x">The value, in radians, whose hyperbolic cosine is to be computed.</param>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IHyperbolicFunctions{TSelf}.Cosh(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <returns>The hyperbolic cosine of <paramref name="x" />.</returns>
     public static BigRational Cosh(BigRational x)
@@ -1088,7 +1094,7 @@ namespace System.Numerics
     /// <summary>Computes the hyperbolic tangent of a value.</summary>
     /// <remarks>
     /// Part of the new NET 7 number type system see <see cref="IHyperbolicFunctions{TSelf}.Tanh(TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="DefaultDigits"/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value, in radians, whose hyperbolic tangent is to be computed.</param>
     /// <returns>The hyperbolic tangent of <paramref name="x" />.</returns>
