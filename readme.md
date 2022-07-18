@@ -51,3 +51,4 @@ More detailed benchmarks coming soon.
 * How it works and how to use it: [https://c-ohle.github.io/RationalNumerics](https://c-ohle.github.io/RationalNumerics)
 * Api Documentation: [https://c-ohle.github.io/RationalNumerics/api/System.Numerics.html](https://c-ohle.github.io/RationalNumerics/api/System.Numerics.html)
 * NuGet Package: [https://www.nuget.org/packages/BigRational](https://www.nuget.org/packages/BigRational)
+* State and discussion [.NET7 version](https://github.com/dotnet/runtime/issues/71791)
