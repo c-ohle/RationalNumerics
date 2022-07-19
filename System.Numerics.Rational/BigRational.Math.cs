@@ -80,7 +80,7 @@ namespace System.Numerics
     /// Calculates the factorial of <paramref name="a"/>.
     /// </summary>
     /// <param name="a">A positive number.</param>
-    /// <returns>Returns the factorial of <paramref name="a"/>.</returns>
+    /// <returns>Returns the factorial of <paramref name="a"/>. NaN if <paramref name="a"/> less zero.</returns>
     public static BigRational Factorial(int a)
     {
       if (a < 0) return double.NaN; //NET 7 req. //throw new ArgumentException();
@@ -164,8 +164,11 @@ namespace System.Numerics
     /// <param name="x">A <see cref="BigRational"/> number to be raised to a power.</param>
     /// <param name="y">A <see cref="BigRational"/> number that specifies a power.</param>
     /// <param name="digits"> The maximum number of fractional decimal digits in the return value.</param>
-    /// <returns>The <see cref="BigRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="x"/> is less zero and <paramref name="y"/> is fractional..</exception>
+    /// <returns>
+    /// The <see cref="BigRational"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.<br/>
+    /// NaN if <paramref name="x"/> is less zero and <paramref name="y"/> is fractional.
+    /// </returns>
+    // /// <exception cref="ArgumentException">For <paramref name="x"/> is less zero and <paramref name="y"/> is fractional.</exception>
     public static BigRational Pow(BigRational x, BigRational y, int digits)
     {
       //return Exp(y * Log(x, digits), digits);
@@ -206,8 +209,11 @@ namespace System.Numerics
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
     /// </param>
-    /// <returns>Zero or positive – The positive square root of <paramref name="a"/>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="a"/> is less zero.</exception>
+    /// <returns>
+    /// Zero or positive – The positive square root of <paramref name="a"/>.<br/>
+    /// NaN if <paramref name="a"/> is less zero.
+    /// </returns>
+    // /// <exception cref="ArgumentException">For <paramref name="a"/> is less zero.</exception>
     public static BigRational Sqrt(BigRational a, int digits)
     {
       if (Sign(a) < 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(a));
@@ -225,8 +231,11 @@ namespace System.Numerics
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
     /// </param>
-    /// <returns>The base 2 logarithm of <paramref name="x"/>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
+    /// <returns>
+    /// The base 2 logarithm of <paramref name="x"/>.<br/>
+    /// NaN if <paramref name="x"/> is less or equal zero.
+    /// </returns>
+    // /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
     public static BigRational Log2(BigRational x, int digits)
     {
       if (Sign(x) <= 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(x));
@@ -274,8 +283,11 @@ namespace System.Numerics
     /// <param name="digits">
     /// The maximum number of fractional decimal digits in the return value.<br/>
     /// </param>
-    /// <returns>The natural logarithm of <paramref name="x"/>; that is, <c>ln <paramref name="x"/></c>, or <c>log e <paramref name="x"/></c>.</returns>
-    /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
+    /// <returns>
+    /// The natural logarithm of <paramref name="x"/>; that is, <c>ln <paramref name="x"/></c>, or <c>log e <paramref name="x"/></c>.<br/>
+    /// NaN if <paramref name="x"/> is less or equal zero.
+    /// </returns>
+    // /// <exception cref="ArgumentException">For <paramref name="x"/> is less or equal zero.</exception>
     public static BigRational Log(BigRational x, int digits)
     {
       if (Sign(x) <= 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(x));
@@ -526,8 +538,8 @@ namespace System.Numerics
     /// </remarks>
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
-    /// <returns>A <see cref="BigRational "/> integer value.</returns>
-    /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
+    /// <returns>A <see cref="BigRational "/> integer value. NaN when divided by zero.</returns>
+    // /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational IDiv(BigRational a, BigRational b)
     {
       if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
@@ -544,8 +556,8 @@ namespace System.Numerics
     /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger"/> modulo (%) operation.<br/>
     /// This in contrast to <paramref name="a"/> % <paramref name="b"/>, where for <see cref="BigInteger"/> a corresponding fraction results.
     /// </remarks>
-    /// <returns>A <see cref="BigRational "/> integer value.</returns>
-    /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
+    /// <returns>A <see cref="BigRational "/> integer value. NaN when divided by zero.</returns>
+    // /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational IMod(BigRational a, BigRational b)
     {
       if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
@@ -563,8 +575,8 @@ namespace System.Numerics
     /// <param name="a">The dividend.</param>
     /// <param name="b">The divisor.</param>
     /// <param name="r">The remainder.</param>
-    /// <returns>The quotient of the specified numbers.</returns>
-    /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
+    /// <returns>The quotient of the specified numbers. NaN when divided by zero.</returns>
+    // /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational DivRem(BigRational a, BigRational b, out BigRational r)
     {
       if (BigRational.Sign(b) == 0) return r = double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null

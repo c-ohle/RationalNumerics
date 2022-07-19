@@ -709,8 +709,8 @@ namespace System.Numerics
     /// </summary>
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
-    /// <returns>The result of the division.</returns>
-    /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
+    /// <returns>The result of the division. NaN when divided by zero.</returns>
+    // /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(BigRational a, BigRational b)
     {
       if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
@@ -725,7 +725,7 @@ namespace System.Numerics
     /// </remarks>
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (divisor)</param>
-    /// <returns>The remainder that results from the division.</returns>
+    // /// <returns>The remainder that results from the division. NaN when divided by zero.</returns>
     public static BigRational operator %(BigRational a, BigRational b)
     {
       //return a - Truncate(a / b) * b;
@@ -852,8 +852,8 @@ namespace System.Numerics
     /// </remarks>
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
-    /// <returns>The result of the division.</returns>
-    /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
+    /// <returns>The result of the division. NaN when divided by zero.</returns>
+    // /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(BigRational a, long b)
     {
       if (b == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
@@ -910,8 +910,8 @@ namespace System.Numerics
     /// </remarks>
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
-    /// <returns>The result of the division.</returns>
-    /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
+    /// <returns>The result of the division. NaN when divided by zero.</returns>
+    // /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(long a, BigRational b)
     {
       if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));

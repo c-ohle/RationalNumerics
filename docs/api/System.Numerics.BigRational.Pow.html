@@ -766,7 +766,8 @@ For fractional exponents, the result is rounded to the specified number of decim
   <tbody>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><p>The <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number <code data-dev-comment-type="paramref" class="paramref">x</code> raised to the power <code data-dev-comment-type="paramref" class="paramref">y</code>.</p>
+      <td><p>The <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number <code data-dev-comment-type="paramref" class="paramref">x</code> raised to the power <code data-dev-comment-type="paramref" class="paramref">y</code>.<br>
+NaN if <code data-dev-comment-type="paramref" class="paramref">x</code> is less zero and <code data-dev-comment-type="paramref" class="paramref">y</code> is fractional.</p>
 </td>
     </tr>
   </tbody>
@@ -774,22 +775,6 @@ For fractional exponents, the result is rounded to the specified number of decim
 <h5 id="System_Numerics_BigRational_Pow_System_Numerics_BigRational_System_Numerics_BigRational_System_Int32__remarks">Remarks</h5>
 <div class="markdown level1 remarks"><p><strong>Note</strong>: In the current version, the function has not yet been finally optimized for performance<br>and the accuracy of the last digits has not yet been ensured!</p>
 </div>
-<h5 class="exceptions">Exceptions</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Condition</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.ArgumentException</span></td>
-      <td><p>For <code data-dev-comment-type="paramref" class="paramref">x</code> is less zero and <code data-dev-comment-type="paramref" class="paramref">y</code> is fractional..</p>
-</td>
-    </tr>
-  </tbody>
-</table>
 
 
 <a id="System_Numerics_BigRational_Pow_" data-uid="System.Numerics.BigRational.Pow*"></a>
