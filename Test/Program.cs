@@ -12,30 +12,57 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); // test();
       Application.Run(new MainFrame());
     }
 
-#if NET6_0
+
+#if false // NET6_0
     static void test()
     {
       rat a, b, c; //double d;
       b = Math.PI; c = Math.E;
+    
+      var x = (long)b;
+      var y = checked((long)b);
+    
       a = b * c + 10 - (c % b + 1.2) * rat.Sqrt(2, 30);
       a = 0 | b * c + 10 - (c % b + 1.2) * rat.Sqrt(2, 30);
       a = b * c;
     }
 #endif
-#if NET7_0
+#if false //NET7_0
+    // todo: query DivRem NumDen
+    // todo: query double decimal behavior?
+    // todo: change spec exceptions, checked,...
+    // todo: check checked decimal
+    // todo: check boost operator over funcs
+
     static void test()
     {
       rat a, b, c; double d;
 
       b = Math.PI; c = Math.E;
 
-      a = b * c + 10 - (c % b + 1.2) * rat.Sqrt(2);
+      a = b * c + 10 - (c % b + 1.2) * rat.Sqrt(2) - rat.Pi() * 0.123m;
+      a = 0 | b * c + 10 - (c % b + 1.2) * rat.Sqrt(2) - rat.Pi() * 0.123m;
+      
+      var t1 = (int)b; t1 = (int)(-b); a = int.MaxValue; t1 = (int)a; a++; t1 = (int)a; a = int.MinValue; t1 = (int)a; a--; t1 = (int)a;
+      var t2 = (uint)b; t2 = (uint)(-b); a = uint.MaxValue; t2 = (uint)a; a++; t2 = (uint)a; a = uint.MinValue; t2 = (uint)a;
+      var t3 = (long)b; t3 = (long)(-b); a = long.MaxValue; t3 = (long)a; a++; t3 = (long)a; a = long.MinValue; t3 = (long)a; a--; t3 = (long)a;
+      var t4 = (ulong)b; t4 = (ulong)(-b); a = ulong.MaxValue; t4 = (ulong)a; a++; t4 = (ulong)a; a = ulong.MinValue; t4 = (ulong)a;
+      var t5 = (Int128)b; t5 = (Int128)(-b); a = Int128.MaxValue; t5 = (Int128)a; a++; t5 = (Int128)a; a = Int128.MinValue; t5 = (Int128)a; a--; t5 = (Int128)a;
+      var t6 = (UInt128)b; t6 = (UInt128)(-b); a = UInt128.MaxValue; t6 = (UInt128)a; a++; t6 = (UInt128)a; a = UInt128.MinValue; t6 = (UInt128)a;
 
-      a = 0 | b * c + 10 - (c % b + 1.2) * rat.Sqrt(2) - rat.Pi();
+      //checked
+      //{
+      //  t1 = (int)b; t1 = (int)(-b); a = int.MaxValue; t1 = (int)a; a++; t1 = (int)a; a = int.MinValue; t1 = (int)a; a--; t1 = (int)a;
+      //  t2 = (uint)b; t2 = (uint)(-b); a = uint.MaxValue; t2 = (uint)a; a++; t2 = (uint)a; a = uint.MinValue; t2 = (uint)a;
+      //  t3 = (long)b; t3 = (long)(-b); a = long.MaxValue; t3 = (long)a; a++; t3 = (long)a; a = long.MinValue; t3 = (long)a; a--; t3 = (long)a;
+      //  t4 = (ulong)b; t4 = (ulong)(-b); a = ulong.MaxValue; t4 = (ulong)a; a++; t4 = (ulong)a; a = ulong.MinValue; t4 = (ulong)a;
+      //  t5 = (Int128)b; t5 = (Int128)(-b); a = Int128.MaxValue; t5 = (Int128)a; a++; t5 = (Int128)a; a = Int128.MinValue; t5 = (Int128)a; a--; t5 = (Int128)a;
+      //  t6 = (UInt128)b; t6 = (UInt128)(-b); a = UInt128.MaxValue; t6 = (UInt128)a; a++; t6 = (UInt128)a; a = UInt128.MinValue; t6 = (UInt128)a;
+      //}
 
       //INumber
       a = rat.Clamp(0.5, -1, 0.2); b = d = double.Clamp(0.5, -1, 0.2);
@@ -97,7 +124,7 @@ namespace Test
       a = rat.SinPi(0.005); b = d = double.SinPi(0.005);
       a = rat.TanPi(0.005); b = d = double.TanPi(0.005);
       a = rat.Atan2(0.5, 0.2); b = d = double.Atan2(0.5, 0.2);
-      var t1 = rat.SinCos(0.5); var t2 = double.SinCos(0.5);
+      var o1 = rat.SinCos(0.5); var o2 = double.SinCos(0.5);
 
       //IHyperbolicFunctions
       b = d = double.Asinh(0.5); a = rat.Asinh(0.5);
@@ -114,8 +141,6 @@ namespace Test
 
 #if false
 #if NET7_0
-
-
 
     static void test()
     {

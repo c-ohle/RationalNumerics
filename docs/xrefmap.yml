@@ -67,6 +67,12 @@ references:
   commentId: M:System.Numerics.BigRational.Acosh(System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.Acosh(System.Numerics.BigRational)
   nameWithType: BigRational.Acosh(BigRational)
+- uid: System.Numerics.BigRational.Acosh(System.Numerics.BigRational,System.Int32)
+  name: Acosh(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Acosh.html#System_Numerics_BigRational_Acosh_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Acosh(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Acosh(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Acosh(BigRational, Int32)
 - uid: System.Numerics.BigRational.Acosh*
   name: Acosh
   href: api/System.Numerics.BigRational.Acosh.html
@@ -121,6 +127,12 @@ references:
   commentId: M:System.Numerics.BigRational.Asinh(System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.Asinh(System.Numerics.BigRational)
   nameWithType: BigRational.Asinh(BigRational)
+- uid: System.Numerics.BigRational.Asinh(System.Numerics.BigRational,System.Int32)
+  name: Asinh(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Asinh.html#System_Numerics_BigRational_Asinh_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Asinh(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Asinh(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Asinh(BigRational, Int32)
 - uid: System.Numerics.BigRational.Asinh*
   name: Asinh
   href: api/System.Numerics.BigRational.Asinh.html
@@ -193,6 +205,12 @@ references:
   commentId: M:System.Numerics.BigRational.Atanh(System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.Atanh(System.Numerics.BigRational)
   nameWithType: BigRational.Atanh(BigRational)
+- uid: System.Numerics.BigRational.Atanh(System.Numerics.BigRational,System.Int32)
+  name: Atanh(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Atanh.html#System_Numerics_BigRational_Atanh_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Atanh(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Atanh(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Atanh(BigRational, Int32)
 - uid: System.Numerics.BigRational.Atanh*
   name: Atanh
   href: api/System.Numerics.BigRational.Atanh.html
@@ -217,6 +235,12 @@ references:
   commentId: M:System.Numerics.BigRational.Cbrt(System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.Cbrt(System.Numerics.BigRational)
   nameWithType: BigRational.Cbrt(BigRational)
+- uid: System.Numerics.BigRational.Cbrt(System.Numerics.BigRational,System.Int32)
+  name: Cbrt(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Cbrt.html#System_Numerics_BigRational_Cbrt_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Cbrt(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Cbrt(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Cbrt(BigRational, Int32)
 - uid: System.Numerics.BigRational.Cbrt*
   name: Cbrt
   href: api/System.Numerics.BigRational.Cbrt.html
@@ -307,6 +331,12 @@ references:
   commentId: M:System.Numerics.BigRational.Cosh(System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.Cosh(System.Numerics.BigRational)
   nameWithType: BigRational.Cosh(BigRational)
+- uid: System.Numerics.BigRational.Cosh(System.Numerics.BigRational,System.Int32)
+  name: Cosh(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Cosh.html#System_Numerics_BigRational_Cosh_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Cosh(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Cosh(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Cosh(BigRational, Int32)
 - uid: System.Numerics.BigRational.Cosh*
   name: Cosh
   href: api/System.Numerics.BigRational.Cosh.html
@@ -1405,6 +1435,12 @@ references:
   commentId: M:System.Numerics.BigRational.Hypot(System.Numerics.BigRational,System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.Hypot(System.Numerics.BigRational, System.Numerics.BigRational)
   nameWithType: BigRational.Hypot(BigRational, BigRational)
+- uid: System.Numerics.BigRational.Hypot(System.Numerics.BigRational,System.Numerics.BigRational,System.Int32)
+  name: Hypot(BigRational, BigRational, Int32)
+  href: api/System.Numerics.BigRational.Hypot.html#System_Numerics_BigRational_Hypot_System_Numerics_BigRational_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Hypot(System.Numerics.BigRational,System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Hypot(System.Numerics.BigRational, System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Hypot(BigRational, BigRational, Int32)
 - uid: System.Numerics.BigRational.Hypot*
   name: Hypot
   href: api/System.Numerics.BigRational.Hypot.html
@@ -1945,6 +1981,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.op_BitwiseOr
   fullName: System.Numerics.BigRational.BitwiseOr
   nameWithType: BigRational.BitwiseOr
+- uid: System.Numerics.BigRational.op_CheckedExplicit(System.Numerics.BigRational)
+  name: op_CheckedExplicit(BigRational)
+  href: api/System.Numerics.BigRational.op_CheckedExplicit.html#System_Numerics_BigRational_op_CheckedExplicit_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.op_CheckedExplicit(System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.op_CheckedExplicit(System.Numerics.BigRational)
+  nameWithType: BigRational.op_CheckedExplicit(BigRational)
+- uid: System.Numerics.BigRational.op_CheckedExplicit*
+  name: op_CheckedExplicit
+  href: api/System.Numerics.BigRational.op_CheckedExplicit.html
+  commentId: Overload:System.Numerics.BigRational.op_CheckedExplicit
+  fullName: System.Numerics.BigRational.op_CheckedExplicit
+  nameWithType: BigRational.op_CheckedExplicit
 - uid: System.Numerics.BigRational.op_Decrement(System.Numerics.BigRational)
   name: Decrement(BigRational)
   href: api/System.Numerics.BigRational.op_Decrement.html#System_Numerics_BigRational_op_Decrement_System_Numerics_BigRational_
@@ -2152,6 +2200,15 @@ references:
   fullName.vb: System.Numerics.BigRational.Narrowing(System.Numerics.BigRational to System.UInt16)
   nameWithType: BigRational.Explicit(BigRational to UInt16)
   nameWithType.vb: BigRational.Narrowing(BigRational to UInt16)
+- uid: System.Numerics.BigRational.op_Explicit(System.Numerics.BigRational)~System.UInt32
+  name: Explicit(BigRational to UInt32)
+  href: api/System.Numerics.BigRational.op_Explicit.html#System_Numerics_BigRational_op_Explicit_System_Numerics_BigRational__System_UInt32
+  commentId: M:System.Numerics.BigRational.op_Explicit(System.Numerics.BigRational)~System.UInt32
+  name.vb: Narrowing(BigRational to UInt32)
+  fullName: System.Numerics.BigRational.Explicit(System.Numerics.BigRational to System.UInt32)
+  fullName.vb: System.Numerics.BigRational.Narrowing(System.Numerics.BigRational to System.UInt32)
+  nameWithType: BigRational.Explicit(BigRational to UInt32)
+  nameWithType.vb: BigRational.Narrowing(BigRational to UInt32)
 - uid: System.Numerics.BigRational.op_Explicit(System.Numerics.BigRational)~System.UInt64
   name: Explicit(BigRational to UInt64)
   href: api/System.Numerics.BigRational.op_Explicit.html#System_Numerics_BigRational_op_Explicit_System_Numerics_BigRational__System_UInt64
@@ -2692,6 +2749,12 @@ references:
   commentId: M:System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32)
   fullName: System.Numerics.BigRational.Root(System.Numerics.BigRational, System.Int32)
   nameWithType: BigRational.Root(BigRational, Int32)
+- uid: System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32,System.Int32)
+  name: Root(BigRational, Int32, Int32)
+  href: api/System.Numerics.BigRational.Root.html#System_Numerics_BigRational_Root_System_Numerics_BigRational_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.Root(System.Numerics.BigRational, System.Int32, System.Int32)
+  nameWithType: BigRational.Root(BigRational, Int32, Int32)
 - uid: System.Numerics.BigRational.Root*
   name: Root
   href: api/System.Numerics.BigRational.Root.html
@@ -2770,6 +2833,12 @@ references:
   commentId: M:System.Numerics.BigRational.Sinh(System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.Sinh(System.Numerics.BigRational)
   nameWithType: BigRational.Sinh(BigRational)
+- uid: System.Numerics.BigRational.Sinh(System.Numerics.BigRational,System.Int32)
+  name: Sinh(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Sinh.html#System_Numerics_BigRational_Sinh_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Sinh(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Sinh(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Sinh(BigRational, Int32)
 - uid: System.Numerics.BigRational.Sinh*
   name: Sinh
   href: api/System.Numerics.BigRational.Sinh.html
@@ -2830,6 +2899,12 @@ references:
   commentId: M:System.Numerics.BigRational.Tanh(System.Numerics.BigRational)
   fullName: System.Numerics.BigRational.Tanh(System.Numerics.BigRational)
   nameWithType: BigRational.Tanh(BigRational)
+- uid: System.Numerics.BigRational.Tanh(System.Numerics.BigRational,System.Int32)
+  name: Tanh(BigRational, Int32)
+  href: api/System.Numerics.BigRational.Tanh.html#System_Numerics_BigRational_Tanh_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Tanh(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Tanh(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Tanh(BigRational, Int32)
 - uid: System.Numerics.BigRational.Tanh*
   name: Tanh
   href: api/System.Numerics.BigRational.Tanh.html

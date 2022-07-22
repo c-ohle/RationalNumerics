@@ -13,12 +13,12 @@
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Company></Company>
     <Copyright>© Christian Ohle</Copyright>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageId>BigRational</PackageId>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>BigRationalNET7preview</PackageId>
     <Authors>Christian Ohle</Authors>
-    <Description>BigRational based on a specialized stack machine to create an arbitrary-precision rational number type.
-MathR provides constants and static methods for trigonometric, logarithmic, and other
-common mathematical functions for BigRational.</Description>
+    <Description>BigRational based on a stack machine to create an arbitrary-precision rational number type.
+Provides constants and functions for power, root, trigonometric, exponential, logarithmic, trigonometric, hyperbolic and other
+common mathematical functions.</Description>
     <PackageProjectUrl>https://github.com/c-ohle/RationalNumerics</PackageProjectUrl>
     <PackageReadmeFile></PackageReadmeFile>
     <RepositoryUrl>https://github.com/c-ohle/RationalNumerics</RepositoryUrl>
@@ -30,10 +30,12 @@ common mathematical functions for BigRational.</Description>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
     <AnalysisLevel>none</AnalysisLevel>
     <PackageIcon></PackageIcon>
-    <Version>1.0.0.4</Version>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>1.0.0.5</Version>
     <RepositoryType></RepositoryType>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <PackageReleaseNotes>This release is for the .NET 7 preview with full support for the new number type system.
+The new range of functions is fully implemented in this version, but not finally optimized for performance.</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

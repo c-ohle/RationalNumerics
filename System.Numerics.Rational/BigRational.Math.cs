@@ -206,9 +206,7 @@ namespace System.Numerics
     /// For fractional roots, the result is rounded to the specified number of decimal places.
     /// </remarks>
     /// <param name="a">The number whose square root is to be found.</param>
-    /// <param name="digits">
-    /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// </param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
     /// <returns>
     /// Zero or positive – The positive square root of <paramref name="a"/>.<br/>
     /// NaN if <paramref name="a"/> is less zero.
@@ -220,6 +218,35 @@ namespace System.Numerics
       var cpu = task_cpu; var c = prec(digits);
       cpu.push(a); cpu.sqrt(c); cpu.rnd(digits);
       return cpu.popr();
+    }
+    /// <summary>Computes the cube-root of a value.</summary>
+    /// <param name="x">The value whose cube-root is to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The cube-root of <paramref name="x" />.</returns>
+    public static BigRational Cbrt(BigRational x, int digits)
+    {
+      return Pow(x, (BigRational)1 / 3, digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the n-th root of a value.</summary>
+    /// <param name="x">The value whose <paramref name="n" />-th root is to be computed.</param>
+    /// <param name="n">The degree of the root to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The <paramref name="n" />-th root of <paramref name="x" />.</returns>
+    public static BigRational Root(BigRational x, int n, int digits)
+    {
+      return Pow(x, (BigRational)1 / n, digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the hypotenuse given two values representing the lengths of the shorter sides in a right-angled triangle.</summary>
+    /// <param name="x">The value to square and add to <paramref name="y" />.</param>
+    /// <param name="y">The value to square and add to <paramref name="x" />.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The square root of <paramref name="x" />-squared plus <paramref name="y" />-squared.</returns>
+    public static BigRational Hypot(BigRational x, BigRational y, int digits)
+    {
+      //return Sqrt(x * x + y * y);
+      var cpu = task_cpu; var c = prec(digits);
+      cpu.push(x); cpu.sqr(); cpu.push(y); cpu.sqr(); cpu.add(); //todo: lim x^2, y^2 and check
+      cpu.sqrt(c); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the base 2 logarithm of a specified number.
@@ -432,9 +459,7 @@ namespace System.Numerics
     /// Returns the angle whose cosine is the specified number.
     /// </summary>
     /// <param name="x">A number representing a cosine, where d must be greater than or equal to -1, but less than or equal to 1.</param>
-    /// <param name="digits">
-    /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// </param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
     /// <remarks>
     /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
@@ -497,6 +522,55 @@ namespace System.Numerics
       else if (x < 0 && y == 0)
         return Pi(digits);
       return default(BigRational) / 0; //NaN
+    }
+
+    /// <summary>Computes the hyperbolic arc-sine of a value.</summary>
+    /// <param name="x">The value, in radians, whose hyperbolic arc-sine is to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The hyperbolic arc-sine of <paramref name="x" />.</returns>
+    public static BigRational Asinh(BigRational x, int digits)
+    {
+      return Log(x + Sqrt(x * x + 1, digits), digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the hyperbolic arc-cosine of a value.</summary>
+    /// <param name="x">The value, in radians, whose hyperbolic arc-cosine is to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The hyperbolic arc-cosine of <paramref name="x" />.</returns>
+    public static BigRational Acosh(BigRational x, int digits)
+    {
+      return Log(x + Sqrt(x * x - 1, digits), digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the hyperbolic arc-tangent of a value.</summary>
+    /// <param name="x">The value, in radians, whose hyperbolic arc-tangent is to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The hyperbolic arc-tangent of <paramref name="x" />.</returns>
+    public static BigRational Atanh(BigRational x, int digits)
+    {
+      return Log((1 + x) / (1 - x), digits) / 2; //todo: opt. cpu
+    }
+    /// <summary>Computes the hyperbolic sine of a value.</summary>
+    /// <param name="x">The value, in radians, whose hyperbolic sine is to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The hyperbolic sine of <paramref name="x" />.</returns>
+    public static BigRational Sinh(BigRational x, int digits)
+    {
+      return (Exp(x, digits) - Exp(-x, digits)) / 2; //todo: opt. cpu
+    }
+    /// <summary>Computes the hyperbolic cosine of a value.</summary>
+    /// <param name="x">The value, in radians, whose hyperbolic cosine is to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The hyperbolic cosine of <paramref name="x" />.</returns>
+    public static BigRational Cosh(BigRational x, int digits)
+    {
+      return (Exp(x, digits) + Exp(-x, digits)) / 2; //todo: opt. cpu
+    }
+    /// <summary>Computes the hyperbolic tangent of a value.</summary>
+    /// <param name="x">The value, in radians, whose hyperbolic tangent is to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns>The hyperbolic tangent of <paramref name="x" />.</returns>
+    public static BigRational Tanh(BigRational x, int digits)
+    {
+      return 1 - 2 / (Exp(x * 2, digits) + 1); //todo: opt. cpu
     }
     /// <summary>
     /// Finds the greatest common divisor (GCD) of two <see cref="BigRational"/> integer values.
@@ -608,6 +682,7 @@ namespace System.Numerics
       if (s < 0) cpu.neg(); den = cpu.popr();
       if (s < 0) cpu.neg(); return cpu.popr();
     }
+
     /// <summary>
     /// Gets or sets the default maximum number of decimal digits computed by functions with irrational results.<br/> 
     /// Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic function versions without explicit digits parameter.

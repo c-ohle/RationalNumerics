@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using static System.Numerics.BigRational;
 
 namespace System.Numerics
 {
@@ -517,7 +518,7 @@ namespace System.Numerics
     {
       return Parse(value);
     }
-
+    
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="int"/> value.
     /// </summary>
@@ -525,16 +526,16 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="int"/>.</returns>
     public static explicit operator int(BigRational value)
     {
-      return (int)(double)value; //todo: opt
+      var a = default(int); task_cpu.toi(value, (uint*)&a, 0x0001); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="uint"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="uint"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="uint"/>.</returns>
-    public static explicit operator ushort(BigRational value)
+    public static explicit operator uint(BigRational value)
     {
-      return (ushort)(double)value; //todo: opt
+      var a = default(uint); task_cpu.toi(value, (uint*)&a, 0x0101); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="long"/> value.
@@ -543,7 +544,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="long"/>.</returns>
     public static explicit operator long(BigRational value)
     {
-      return (long)(decimal)value; //todo: opt. urgend check vs. against cpu lim mod 
+      var a = default(long); task_cpu.toi(value, (uint*)&a, 0x0002); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="ulong"/> value.
@@ -552,7 +553,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="ulong"/>.</returns>
     public static explicit operator ulong(BigRational value)
     {
-      return (ulong)(decimal)value; //todo: opt. urgend check performance vs. cpu lim mod 
+      var a = default(ulong); task_cpu.toi(value, (uint*)&a, 0x0102); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="float"/> value.
@@ -1982,12 +1983,19 @@ namespace System.Numerics
       /// Rounds the value at the top of the stack 
       /// to the specified number of fractional decimal digits.<br/>
       /// </summary>
+      /// <remarks>
+      /// Parameter <paramref name="f"/> midpoint rounding see: <see cref="mod(int)"/><br/>
+      /// 0 quotient truncated towards zero.<br/>
+      /// 1 rounded away from zero. (default)<br/>
+      /// 2 rounded to even.<br/>
+      /// 4 ceiling.<br/>
+      /// </remarks>
       /// <param name="c">Specifies the number of decimal digits to round to.</param>
       /// <param name="f">Midpoint rounding see: <see cref="mod(int)"/>.</param>
       public void rnd(int c, int f = 1)
       {
         if (c >= 0) fixed (uint* p = this.p[this.i - 1]) if (isint(p)) return;
-        if (c == 0) { mod(f); swp(); pop(); }
+        if (c == 0) { mod(f); swp(); pop(); } //trunc, cail, ... 
         else { pow(10, c); swp(); mul(0, 1); mod(f); swp(); pop(); swp(); div(); }
       }
       /// <summary>
@@ -3225,7 +3233,7 @@ namespace System.Numerics
         for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
-      #region experimental
+      #region NET7 experimental
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] static uint[][]? cache;
       static BigRational cachx(uint* s, uint n, uint x)
       {
@@ -3234,6 +3242,73 @@ namespace System.Numerics
             fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n])
               copy(d, s, n);
         return new BigRational(p);
+      }
+      internal bool ip2() //NET7 fast range checks
+      {
+        fixed (uint* p = this.p[this.i - 1])
+        {
+          var u = p[0] & 0x3fffffff;
+          if (!BitOperations.IsPow2(p[u])) return false; //NET7 currently not intrinsic ?!?
+          for (uint i = 1; i < u; i++) if (p[i] != 0) return false; //todo: cmpz
+        }
+        return true;
+      }
+      //internal void get(uint i, uint* d, uint n) //internal fast int type cast's
+      //{
+      //  fixed (uint* p = this.p[i])
+      //  {
+      //    var u = p[0] & 0x3fffffff;
+      //    if (u == 1) *d = p[1]; //most common case 
+      //    else copy(d, p + 1, n < u ? n : u);
+      //  }
+      //}
+      internal void toi(BigRational v, uint* p, uint f) //NET7 spec int type conversions, Int32,Unt32,...,Int128,UInt128,... 
+      {
+        if (v.p == null) return; uint n = f & 0xff;
+        push(v); var s = sign();
+        if ((f & 0x0100) != 0 && s <= 0) //uint <= 0 -> 0 incl. NaN 
+        {
+          pop(); if ((f & 0x1000) != 0 && s < 0 || IsNaN(v)) throw new OverflowException(); //todo: message text range       
+          return;
+        }
+        rnd(0, 0); uint b = msb(), c = n << 5;
+        if (b >= c)
+        {
+          if ((f & 0x0100) == 0) //si
+          {
+            if (((f & 0x1000) == 0) || !(b == c && s < 0 && ip2()))
+            {
+              pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
+              n--; //todo: opt. small types after tests
+              if (s > 0) { for (c = 0; c < n; c++) p[c] = 0xffffffff; p[n] = 0x7fffffff; } // MinValue
+              else p[n] = 0x80000000; // MinValue
+              return;
+            }
+          }
+          else //ui
+          {
+            if (b > c)
+            {
+              pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
+              for (c = 0; c < n; c++) p[c] = 0xffffffff; //MaxValue
+              return;
+            }
+          }
+        }
+        //get(mark() - 1, p, n);
+        fixed (uint* t = this.p[this.i - 1])
+        {
+          var u = t[0] & 0x3fffffff;
+          if (u == 1) *p = t[1]; //most common case 
+          else copy(p, t + 1, n < u ? n : u);
+        }
+
+        pop(); if (s > 0) return;
+        for (b = 0, c = 1; b < n; b++) //todo: opt. small std types after tests
+        {
+          var x = unchecked((ulong)(p[b] ^ 0xffffffff) + c);
+          p[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
+        }
       }
       #endregion
     }
@@ -3316,7 +3391,7 @@ namespace System.Numerics
     public static BigRational operator |(BigRational? a, BigRational b)
     {
       if (a != default) throw new ArgumentException(nameof(a)); //todo: message text
-      var cpu = task_cpu; var i = (int)cpu.wp; cpu.sp = null; cpu.swp(i);
+      var cpu = task_cpu; var i = unchecked((uint)cpu.wp); cpu.sp = null; cpu.swp(i);
       cpu.pop(unchecked((int)(cpu.mark() - i - 1))); return cpu.popr();
     }
     /// <summary>
@@ -3335,6 +3410,7 @@ namespace System.Numerics
       var cpu = task_cpu; if (value != 0 || cpu.sp != null) throw new ArgumentException(nameof(value)); //todo: message text
       cpu.wp = (void*)cpu.mark(); cpu.sp = &value; return default;
     }
+    //[SpecialNameAttribute] private static void op_Help(bool begin) { }
     #endregion
   }
 }
