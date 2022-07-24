@@ -3,6 +3,8 @@ global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
 using System;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Test
@@ -12,7 +14,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // test();
+      ApplicationConfiguration.Initialize(); //test();
       Application.Run(new MainFrame());
     }
 
@@ -31,22 +33,44 @@ namespace Test
       a = b * c;
     }
 #endif
-#if false //NET7_0
+#if false // NET7_0
     // todo: query DivRem NumDen
     // todo: query double decimal behavior?
     // todo: change spec exceptions, checked,...
     // todo: check checked decimal
     // todo: check boost operator over funcs
+ 
+    static rat gamma1(rat x)
+    {
+      var a = x * x + 0.1m;
+      return x * x + x * x + a;
+    }
+    static rat gamma(rat x)
+    {
+      var a = 0 | x * x + 0.1m;
+      return x * x + x * x + a;
+    }
 
     static void test()
     {
       rat a, b, c; double d;
 
+      //var xx = TestTest.iter2().ToArray();
+
+      { var cpu = rat.task_cpu; cpu.push(Math.PI); cpu.push(2); cpu.mul(); a = cpu.popr(); }
+      { var cpu = new rat.CPU(8); cpu.push(Math.PI); cpu.push(2); cpu.mul(); a = cpu.popr(); }
+
+      b = rat.Pi(100);
+
       b = Math.PI; c = Math.E;
+
+      a = b * c + gamma1(1.5) + 10;
+      a = b * c + gamma(1.5) + 10;
+      a = 0 | b * c + gamma(1.5) + 10;
 
       a = b * c + 10 - (c % b + 1.2) * rat.Sqrt(2) - rat.Pi() * 0.123m;
       a = 0 | b * c + 10 - (c % b + 1.2) * rat.Sqrt(2) - rat.Pi() * 0.123m;
-      
+
       var t1 = (int)b; t1 = (int)(-b); a = int.MaxValue; t1 = (int)a; a++; t1 = (int)a; a = int.MinValue; t1 = (int)a; a--; t1 = (int)a;
       var t2 = (uint)b; t2 = (uint)(-b); a = uint.MaxValue; t2 = (uint)a; a++; t2 = (uint)a; a = uint.MinValue; t2 = (uint)a;
       var t3 = (long)b; t3 = (long)(-b); a = long.MaxValue; t3 = (long)a; a++; t3 = (long)a; a = long.MinValue; t3 = (long)a; a--; t3 = (long)a;

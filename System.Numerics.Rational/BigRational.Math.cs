@@ -1,13 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace System.Numerics
 {
-  partial struct BigRational
+  unsafe partial struct BigRational
   {
+    /// <summary>
+    /// Gets a <see cref="int"/> number that indicates the sign 
+    /// (negative, positive, or zero) of a <see cref="BigRational"/> number.
+    /// </summary>
+    /// <param name="a">A <see cref="BigRational"/> number.</param>
+    /// <returns>
+    /// A <see cref="int"/> that indicates the sign of the <see cref="BigRational"/> number, as
+    /// shown in the following table.<br/>
+    /// Number – Description<br/>
+    /// -1 – The value of the object is negative.<br/>
+    ///  0 – The value of the object is 0 (zero).<br/>
+    /// +1 – The value of the object is positive.<br/>
+    /// </returns>
+    public static int Sign(BigRational a)
+    {
+      return a.p == null ? 0 :
+        (a.p[0] & 0x80000000) != 0 ? -1 :
+        (a.p[0] & 0x3fffffff) == 1 && a.p[1] == 0 ? 0 : +1; //debug view 
+    }
+    /// <summary>
+    /// Returns a value indicating whether the specified number is an integer. 
+    /// </summary>
+    /// <param name="a">A <see cref="BigRational"/> number.</param>
+    /// <returns><c>true</c> if <paramref name="a" /> is an integer; otherwise, <c>false</c>.</returns>
+    public static bool IsInteger(BigRational a)
+    {
+      if (a.p == null) return true; //since BigRational is always normalized:
+      fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000001;
+      // or: return a % 1 == 0; or: var cpu = main_cpu; cpu.push(a); var b = cpu.isi(); cpu.pop(); return b;
+    }
+    /// <summary>
+    /// Determines if the value is NaN. 
+    /// </summary>
+    /// <param name="a">A <see cref="BigRational"/> number.</param>
+    /// <returns><c>true</c> if <paramref name="a" /> is NaN; otherwise, <c>false</c>.</returns>
+    public static bool IsNaN(BigRational a)
+    {
+      if (a.p == null) return false;
+      fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
+    }
     /// <summary>
     /// Gets the absolute value of a <see cref="BigRational"/> number.
     /// </summary>
@@ -47,7 +82,7 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Truncate(BigRational a)
     {
-      var cpu = task_cpu; cpu.push(a);
+      var cpu = main_cpu; cpu.push(a);
       cpu.rnd(0, 0); return cpu.popr();
     }
     /// <summary>
@@ -61,7 +96,7 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Floor(BigRational a)
     {
-      var cpu = task_cpu; cpu.push(a);
+      var cpu = main_cpu; cpu.push(a);
       cpu.rnd(0, cpu.sign() >= 0 ? 0 : 4); return cpu.popr();
     }
     /// <summary>
@@ -73,7 +108,7 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Ceiling(BigRational a)
     {
-      var cpu = task_cpu; cpu.push(a);
+      var cpu = main_cpu; cpu.push(a);
       cpu.rnd(0, cpu.sign() < 0 ? 0 : 4); return cpu.popr();
     }
     /// <summary>
@@ -84,7 +119,7 @@ namespace System.Numerics
     public static BigRational Factorial(int a)
     {
       if (a < 0) return double.NaN; //NET 7 req. //throw new ArgumentException();
-      var cpu = BigRational.task_cpu; cpu.fac((uint)a);
+      var cpu = main_cpu; cpu.fac((uint)a);
       return cpu.popr();
     }
     /// <summary>
@@ -95,7 +130,7 @@ namespace System.Numerics
     /// <returns></returns>
     public static BigRational Round(BigRational a)
     {
-      var cpu = task_cpu; cpu.push(a);
+      var cpu = main_cpu; cpu.push(a);
       cpu.rnd(0, 1); return cpu.popr();
     }
     /// <summary>
@@ -108,7 +143,7 @@ namespace System.Numerics
     public static BigRational Round(BigRational a, int digits)
     {
       //var e = Pow10(digits); return Round(a * e) / e;
-      var cpu = task_cpu; cpu.push(a);
+      var cpu = main_cpu; cpu.push(a);
       cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
@@ -131,7 +166,7 @@ namespace System.Numerics
         case MidpointRounding.ToPositiveInfinity: if (Sign(a) < 0) f = 0; else f = 4; break;
         case MidpointRounding.ToNegativeInfinity: if (Sign(a) > 0) f = 0; else f = 4; break;
       }
-      var cpu = task_cpu; cpu.push(a);
+      var cpu = main_cpu; cpu.push(a);
       cpu.rnd(digits, f); return cpu.popr();
     }
     /// <summary>
@@ -142,7 +177,7 @@ namespace System.Numerics
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
     public static BigRational Pow(int a, int b)
     {
-      var cpu = task_cpu; cpu.pow(a, b); return cpu.popr();
+      var cpu = main_cpu; cpu.pow(a, b); return cpu.popr();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.
@@ -152,7 +187,7 @@ namespace System.Numerics
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
     public static BigRational Pow(BigRational a, int b)
     {
-      var cpu = task_cpu; cpu.push(a); cpu.pow(b); return cpu.popr();
+      var cpu = main_cpu; cpu.push(a); cpu.pow(b); return cpu.popr();
     }
     /// <summary>
     /// Returns a specified number raised to the specified power.<br/>
@@ -178,7 +213,7 @@ namespace System.Numerics
         if (IsInteger(y)) return Round(Pow(x, (int)y, digits), digits); //todo: inline, cases
         return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(x));
       }
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.log(c);
       cpu.push(y); cpu.mul(); cpu.exp(c);
       cpu.rnd(digits); return cpu.popr();
@@ -215,7 +250,7 @@ namespace System.Numerics
     public static BigRational Sqrt(BigRational a, int digits)
     {
       if (Sign(a) < 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(a));
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(a); cpu.sqrt(c); cpu.rnd(digits);
       return cpu.popr();
     }
@@ -244,7 +279,7 @@ namespace System.Numerics
     public static BigRational Hypot(BigRational x, BigRational y, int digits)
     {
       //return Sqrt(x * x + y * y);
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.sqr(); cpu.push(y); cpu.sqr(); cpu.add(); //todo: lim x^2, y^2 and check
       cpu.sqrt(c); cpu.rnd(digits); return cpu.popr();
     }
@@ -266,7 +301,7 @@ namespace System.Numerics
     public static BigRational Log2(BigRational x, int digits)
     {
       if (Sign(x) <= 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(x));
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.log2(c);
       cpu.rnd(digits); return cpu.popr();
     }
@@ -297,7 +332,7 @@ namespace System.Numerics
     /// <returns>The integer base 10 logarithm of the <see cref="BigRational"/> number.</returns>
     public static int ILog10(BigRational a)
     {
-      var cpu = task_cpu; cpu.push(a);
+      var cpu = main_cpu; cpu.push(a);
       cpu.tos(default, out _, out var e, out _, false); return e;
     }
     /// <summary>
@@ -318,7 +353,7 @@ namespace System.Numerics
     public static BigRational Log(BigRational x, int digits)
     {
       if (Sign(x) <= 0) return double.NaN; //NET 7 req. //throw new ArgumentException(nameof(x));
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.log(c);
       cpu.rnd(digits); return cpu.popr();
     }
@@ -337,7 +372,7 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Exp(BigRational x, int digits)
     {
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.exp(c);
       cpu.rnd(digits); return cpu.popr();
     }
@@ -353,7 +388,7 @@ namespace System.Numerics
     /// <returns>π rounded to the specified number of decimal digits.</returns>
     public static BigRational Pi(int digits)
     {
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.pi(c); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
@@ -376,7 +411,7 @@ namespace System.Numerics
     /// <returns>τ rounded to the specified number of decimal digits.</returns>
     public static BigRational Tau(int digits)
     {
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.pi(c); cpu.mul(2u); cpu.mul(); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
@@ -401,7 +436,7 @@ namespace System.Numerics
     /// <returns>The sine of <paramref name="x"/>.</returns>
     public static BigRational Sin(BigRational x, int digits)
     {
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.sin(c, false);
       cpu.rnd(digits); return cpu.popr();
     }
@@ -418,7 +453,7 @@ namespace System.Numerics
     /// <returns>The cosine of <paramref name="x"/>.</returns>
     public static BigRational Cos(BigRational x, int digits)
     {
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.sin(c, true);
       cpu.rnd(digits); return cpu.popr();
     }
@@ -484,7 +519,7 @@ namespace System.Numerics
     /// <returns>An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2.</returns>
     public static BigRational Atan(BigRational x, int digits)
     {
-      var cpu = task_cpu; var c = prec(digits);
+      var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.atan(c);
       cpu.rnd(digits); return cpu.popr();
     }
@@ -583,7 +618,7 @@ namespace System.Numerics
     /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
     public static BigRational GreatestCommonDivisor(BigRational a, BigRational b)
     {
-      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
+      var cpu = main_cpu; cpu.push(a); cpu.push(b);
       cpu.gcd(); //cpu.pop(); return default;
       return cpu.popr();
     }
@@ -599,7 +634,7 @@ namespace System.Numerics
     public static BigRational LeastCommonMultiple(BigRational a, BigRational b)
     {
       //|a * b| / gcd(a, b) == |a / gcd(a, b) * b| 
-      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
+      var cpu = main_cpu; cpu.push(a); cpu.push(b);
       cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
       return cpu.popr();
     }
@@ -617,7 +652,7 @@ namespace System.Numerics
     public static BigRational IDiv(BigRational a, BigRational b)
     {
       if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = task_cpu; //cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
+      var cpu = main_cpu; //cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
       return cpu.popr();
     }
@@ -635,7 +670,7 @@ namespace System.Numerics
     public static BigRational IMod(BigRational a, BigRational b)
     {
       if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = task_cpu; //cpu.push(a); cpu.push(b); cpu.imod(); var c = cpu.popr(); return c;
+      var cpu = main_cpu; //cpu.push(a); cpu.push(b); cpu.imod(); var c = cpu.popr(); return c;
       cpu.div(b, b); cpu.mod(); cpu.pop();
       return cpu.popr();
     }
@@ -654,7 +689,7 @@ namespace System.Numerics
     public static BigRational DivRem(BigRational a, BigRational b, out BigRational r)
     {
       if (BigRational.Sign(b) == 0) return r = double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = task_cpu; cpu.div(b, b); cpu.mod();
+      var cpu = main_cpu; cpu.div(b, b); cpu.mod();
       r = cpu.popr(); return cpu.popr();
     }
     /// <summary>
@@ -677,12 +712,12 @@ namespace System.Numerics
     /// <returns>Returns the numerator of <paramref name="a"/>.</returns>
     public static BigRational NumDen(BigRational a, out BigRational den)
     {
-      var cpu = BigRational.task_cpu; cpu.push(a);
+      var cpu = main_cpu; cpu.push(a);
       cpu.mod(8); var s = cpu.sign();
       if (s < 0) cpu.neg(); den = cpu.popr();
       if (s < 0) cpu.neg(); return cpu.popr();
     }
-
+    
     /// <summary>
     /// Gets or sets the default maximum number of decimal digits computed by functions with irrational results.<br/> 
     /// Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic function versions without explicit digits parameter.
@@ -692,10 +727,10 @@ namespace System.Numerics
     /// This is a thread static property.
     /// </remarks>  
     /// <value>Maximum number of decimal digits.</value>
-    public static int MaxDigits //todo: better name
+    public static int MaxDigits
     {
-      get => task_cpu.maxdigits;
-      set => task_cpu.maxdigits = value;
+      get => main_cpu.maxdigits;
+      set => main_cpu.maxdigits = value;
     }
     static uint prec(int digits) => (uint)Math.Ceiling(digits * 3.321928094887362); // * ((Math.Log(2) + Math.Log(5)) / Math.Log(2))
   }

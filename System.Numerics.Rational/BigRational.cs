@@ -4,9 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using static System.Numerics.BigRational;
 
 namespace System.Numerics
 {
@@ -127,7 +125,7 @@ namespace System.Numerics
       var pb = digs <= 0x8000 ? null : ArrayPool<char>.Shared.Rent(digs);
       var ts = stackalloc char[pb != null ? 0 : digs];
       var ss = pb != null ? pb.AsSpan().Slice(0, digs) : new Span<char>(ts, digs);
-      var cpu = task_cpu; cpu.push(this);
+      var cpu = main_cpu; cpu.push(this);
       if (round >= 0) cpu.rnd(fc == 'E' ? Math.Max(0, round - ILog10(this)) : round);
       cpu.tos(ss, out var ns, out var exp, out var rep, round == -1);
       var ofl = ns == ss.Length && round == -1;
@@ -196,7 +194,7 @@ namespace System.Numerics
         if (n <= 0) return; if (n > ws.Length) { ws = default; return; }
         ws.Slice(0, n).Fill(c); ws = ws.Slice(n);
       }
-      static void fra(ref Span<char> ws, BigRational.CPU cpu)
+      static void fra(ref Span<char> ws, CPU cpu)
       {
         var s = cpu.sign(); int x = 0; cpu.mod(8);
         for (int i = 2; ;)
@@ -236,7 +234,7 @@ namespace System.Numerics
       //  break;
       //}
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
-      var cpu = task_cpu; cpu.tor(value, 10, info != null ? info.NumberDecimalSeparator[0] : default);
+      var cpu = main_cpu; cpu.tor(value, 10, info != null ? info.NumberDecimalSeparator[0] : default);
       return cpu.popr();
     }
     /// <summary>
@@ -318,7 +316,7 @@ namespace System.Numerics
     /// <returns>true if this <see cref="BigRational"/> number and other have the same value; otherwise, false.</returns>
     public readonly bool Equals(BigRational b)
     {
-      return task_cpu.equ(this, b);
+      return main_cpu.equ(this, b);
     }
     /// <summary>
     /// Compares this object to another object, returning an instance of System.Relation.<br/>
@@ -356,7 +354,7 @@ namespace System.Numerics
     /// </returns>
     public readonly int CompareTo(BigRational b)
     {
-      return task_cpu.cmp(this, b);
+      return main_cpu.cmp(this, b);
     }
     /// <summary>
     /// Compares this instance to a second <see cref = "long" /> and returns an
@@ -379,7 +377,7 @@ namespace System.Numerics
     {
       if (b == 0) return Sign(this);
       if (p == null) return -Math.Sign(b);
-      var cpu = task_cpu; cpu.push(b); var s = -cpu.cmp(this); cpu.pop(); return s;
+      var cpu = main_cpu; cpu.push(b); var s = -cpu.cmp(this); cpu.pop(); return s;
     }
 
     /// <summary>
@@ -397,7 +395,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public BigRational(float value)
     {
-      var cpu = task_cpu; cpu.push(value, true); p = cpu.popr().p;
+      var cpu = main_cpu; cpu.push(value, true); p = cpu.popr().p;
     }
     /// <summary>
     /// Defines an explicit bit-exact conversion of a <see cref="double"/> value to a <see cref="BigRational"/> value.
@@ -414,7 +412,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public BigRational(double v)
     {
-      var cpu = task_cpu; cpu.push(v, true); p = cpu.popr().p;
+      var cpu = main_cpu; cpu.push(v, true); p = cpu.popr().p;
     }
 
     /// <summary>
@@ -425,7 +423,7 @@ namespace System.Numerics
     public static implicit operator BigRational(int value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="uint"/> object to a <see cref="BigRational"/> value.
@@ -435,7 +433,7 @@ namespace System.Numerics
     public static implicit operator BigRational(uint value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="long"/> object to a <see cref="BigRational"/> value.
@@ -445,7 +443,7 @@ namespace System.Numerics
     public static implicit operator BigRational(long value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="ulong"/> object to a <see cref="BigRational"/> value.
@@ -455,7 +453,7 @@ namespace System.Numerics
     public static implicit operator BigRational(ulong value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="float"/> object to a <see cref="BigRational"/> value.
@@ -470,7 +468,7 @@ namespace System.Numerics
     public static implicit operator BigRational(float value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="double"/> object to a <see cref="BigRational"/> value.
@@ -485,7 +483,7 @@ namespace System.Numerics
     public static implicit operator BigRational(double value)
     {
       if (value == 0) return default;
-      var cpu = task_cpu; cpu.push(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="decimal"/> object to a <see cref="BigRational"/> value.
@@ -494,7 +492,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public static implicit operator BigRational(decimal value)
     {
-      var cpu = task_cpu; cpu.push(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an implicit conversion of a <see cref="BigInteger"/> object to a <see cref="BigRational"/> value.
@@ -503,7 +501,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public static implicit operator BigRational(BigInteger value)
     {
-      var cpu = task_cpu; cpu.push(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); return cpu.popr();
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="string"/> object to a <see cref="BigRational"/> value.
@@ -518,7 +516,7 @@ namespace System.Numerics
     {
       return Parse(value);
     }
-    
+
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="int"/> value.
     /// </summary>
@@ -526,7 +524,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="int"/>.</returns>
     public static explicit operator int(BigRational value)
     {
-      var a = default(int); task_cpu.toi(value, (uint*)&a, 0x0001); return a;
+      var a = default(int); main_cpu.toi(value, (uint*)&a, 0x0001); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="uint"/> value.
@@ -535,7 +533,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="uint"/>.</returns>
     public static explicit operator uint(BigRational value)
     {
-      var a = default(uint); task_cpu.toi(value, (uint*)&a, 0x0101); return a;
+      var a = default(uint); main_cpu.toi(value, (uint*)&a, 0x0101); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="long"/> value.
@@ -544,7 +542,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="long"/>.</returns>
     public static explicit operator long(BigRational value)
     {
-      var a = default(long); task_cpu.toi(value, (uint*)&a, 0x0002); return a;
+      var a = default(long); main_cpu.toi(value, (uint*)&a, 0x0002); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="ulong"/> value.
@@ -553,7 +551,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="ulong"/>.</returns>
     public static explicit operator ulong(BigRational value)
     {
-      var a = default(ulong); task_cpu.toi(value, (uint*)&a, 0x0102); return a;
+      var a = default(ulong); main_cpu.toi(value, (uint*)&a, 0x0102); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="float"/> value.
@@ -655,7 +653,7 @@ namespace System.Numerics
     /// <returns>The result of the value parameter multiplied by negative one (-1).</returns>
     public static BigRational operator -(BigRational a)
     {
-      var cpu = task_cpu; cpu.push(a); cpu.neg(); return cpu.popr();
+      var cpu = main_cpu; cpu.push(a); cpu.neg(); return cpu.popr();
     }
     /// <summary>
     /// Increments a <see cref="BigRational"/> value by one.
@@ -664,7 +662,7 @@ namespace System.Numerics
     /// <returns>The result of incrementing <paramref name="value" />.</returns>
     public static BigRational operator ++(BigRational value)
     {
-      var cpu = task_cpu; cpu.push(1u); cpu.add(value); return cpu.popr();
+      var cpu = main_cpu; cpu.push(1u); cpu.add(value); return cpu.popr();
     }
     /// <summary>
     /// Decrements a <see cref="BigRational"/> value by one.
@@ -673,7 +671,7 @@ namespace System.Numerics
     /// <returns>The result of decrementing <paramref name="value" />.</returns>
     public static BigRational operator --(BigRational value)
     {
-      var cpu = task_cpu; cpu.push(value); cpu.push(1u); cpu.sub(); return cpu.popr();
+      var cpu = main_cpu; cpu.push(value); cpu.push(1u); cpu.sub(); return cpu.popr();
     }
     /// <summary>
     /// Adds the values of two specified <see cref="BigRational"/> numbers.
@@ -683,7 +681,7 @@ namespace System.Numerics
     /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
     public static BigRational operator +(BigRational a, BigRational b)
     {
-      var cpu = task_cpu; cpu.add(a, b); return cpu.popr();
+      var cpu = main_cpu; cpu.add(a, b); return cpu.popr();
     }
     /// <summary>
     /// Subtracts a <see cref="BigRational"/> value from another <see cref="BigRational"/> value.
@@ -693,7 +691,7 @@ namespace System.Numerics
     /// <returns>The result of subtracting b from a.</returns>
     public static BigRational operator -(BigRational a, BigRational b)
     {
-      var cpu = task_cpu; cpu.sub(a, b); return cpu.popr();
+      var cpu = main_cpu; cpu.sub(a, b); return cpu.popr();
     }
     /// <summary>
     /// Multiplies two specified <see cref="BigRational"/> values.
@@ -703,7 +701,7 @@ namespace System.Numerics
     /// <returns>The product of left and right.</returns>
     public static BigRational operator *(BigRational a, BigRational b)
     {
-      var cpu = task_cpu; cpu.mul(a, b); return cpu.popr();
+      var cpu = main_cpu; cpu.mul(a, b); return cpu.popr();
     }
     /// <summary>
     /// Divides a specified <see cref="BigRational"/> value by another specified <see cref="BigRational"/> value.
@@ -715,7 +713,7 @@ namespace System.Numerics
     public static BigRational operator /(BigRational a, BigRational b)
     {
       if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
-      var cpu = task_cpu; cpu.div(a, b); return cpu.popr();
+      var cpu = main_cpu; cpu.div(a, b); return cpu.popr();
     }
     /// <summary>
     /// Returns the remainder that results from division with two specified <see cref="BigRational"/> values.
@@ -731,7 +729,7 @@ namespace System.Numerics
     {
       //return a - Truncate(a / b) * b;
       if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
-      var cpu = task_cpu; //todo: % optimization for integers
+      var cpu = main_cpu; //todo: % optimization for integers
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
       cpu.mul(b); cpu.neg(); cpu.add(a); return cpu.popr();
     }
@@ -814,7 +812,7 @@ namespace System.Numerics
     /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
     public static BigRational operator +(BigRational a, long b)
     {
-      var cpu = task_cpu; cpu.push(b); cpu.add(a); return cpu.popr();
+      var cpu = main_cpu; cpu.push(b); cpu.add(a); return cpu.popr();
     }
     /// <summary>
     /// Subtracts the values of a specified <see cref="BigRational"/> from another <see cref="long"/> value.
@@ -828,7 +826,7 @@ namespace System.Numerics
     /// <returns>The result of subtracting b from a.</returns>
     public static BigRational operator -(BigRational a, long b)
     {
-      return a + -b; // var cpu = task_cpu; cpu.push(-b); cpu.add(a); return cpu.pop_rat();
+      return a + -b; // var cpu = main_cpu; cpu.push(-b); cpu.add(a); return cpu.pop_rat();
     }
     /// <summary>
     /// Multiplies the values of a specified <see cref="BigRational"/> and a <see cref="long"/> number.
@@ -842,7 +840,7 @@ namespace System.Numerics
     /// <returns>The product of left and right.</returns>
     public static BigRational operator *(BigRational a, long b)
     {
-      var cpu = task_cpu; cpu.push(b); cpu.mul(a); return cpu.popr();
+      var cpu = main_cpu; cpu.push(b); cpu.mul(a); return cpu.popr();
     }
     /// <summary>
     /// Divides the values of a specified <see cref="BigRational"/> and a <see cref="long"/> number.
@@ -858,7 +856,7 @@ namespace System.Numerics
     public static BigRational operator /(BigRational a, long b)
     {
       if (b == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
-      var cpu = task_cpu; cpu.push(b); cpu.div(a, 0); cpu.swp(); cpu.pop(); return cpu.popr();
+      var cpu = main_cpu; cpu.push(b); cpu.div(a, 0); cpu.swp(); cpu.pop(); return cpu.popr();
     }
     /// <summary>
     /// Adds the values of a specified <see cref="long"/> and a <see cref="BigRational"/> number.
@@ -872,7 +870,7 @@ namespace System.Numerics
     /// <returns>The sum of <paramref name="a"/> and <paramref name="b"/>.</returns>
     public static BigRational operator +(long a, BigRational b)
     {
-      return b + a; // var cpu = task_cpu; cpu.push(a); cpu.add(b); return cpu.pop_rat();
+      return b + a; // var cpu = main_cpu; cpu.push(a); cpu.add(b); return cpu.pop_rat();
     }
     /// <summary>
     /// Subtracts the values of a specified <see cref="long"/> from another <see cref="BigRational"/> value.
@@ -886,7 +884,7 @@ namespace System.Numerics
     /// <returns>The result of subtracting b from a.</returns>
     public static BigRational operator -(long a, BigRational b)
     {
-      var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.sub(); return cpu.popr();
+      var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.sub(); return cpu.popr();
     }
     /// <summary>
     /// Multiplies the values of a specified <see cref="long"/> and a <see cref="BigRational"/> number.
@@ -900,7 +898,7 @@ namespace System.Numerics
     /// <returns>The product of left and right.</returns>
     public static BigRational operator *(long a, BigRational b)
     {
-      return b * a; //var cpu = task_cpu; cpu.push(a); cpu.mul(b); return cpu.pop_rat();
+      return b * a; //var cpu = main_cpu; cpu.push(a); cpu.mul(b); return cpu.pop_rat();
     }
     /// <summary>
     /// Divides the values of a specified <see cref="long"/> and a <see cref="BigRational"/> number.
@@ -916,7 +914,7 @@ namespace System.Numerics
     public static BigRational operator /(long a, BigRational b)
     {
       if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
-      var cpu = task_cpu; cpu.push(a); cpu.push(b); cpu.div(); return cpu.popr();
+      var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.div(); return cpu.popr();
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="BigRational"/> value and
@@ -1011,52 +1009,16 @@ namespace System.Numerics
     #endregion
 
     /// <summary>
-    /// Gets a <see cref="int"/> number that indicates the sign 
-    /// (negative, positive, or zero) of a <see cref="BigRational"/> number.
+    /// Represents a virtual stack machine for rational and arbitrary arithmetic.
     /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number.</param>
-    /// <returns>
-    /// A <see cref="int"/> that indicates the sign of the <see cref="BigRational"/> number, as
-    /// shown in the following table.<br/>
-    /// Number – Description<br/>
-    /// -1 – The value of the object is negative.<br/>
-    ///  0 – The value of the object is 0 (zero).<br/>
-    /// +1 – The value of the object is positive.<br/>
-    /// </returns>
-    public static int Sign(BigRational a)
+    /// <remarks>
+    /// <b>Note</b>: In difference to a <see cref="SafeCPU"/> a <see cref="CPU"/> instance can also be used in:<br/> 
+    /// in asynchronous methods, asynchronous lambda expressions, query expressions, iterator blocks and inside non-static nested functions.<br/>
+    /// </remarks>
+    [DebuggerTypeProxy(typeof(DebugView)), DebuggerDisplay("Count = {i}")]
+    public sealed class CPU
     {
-      return a.p == null ? 0 :
-        (a.p[0] & 0x80000000) != 0 ? -1 :
-        (a.p[0] & 0x3fffffff) == 1 && a.p[1] == 0 ? 0 : +1; //debug view 
-    }
-    /// <summary>
-    /// Returns a value indicating whether the specified number is an integer. 
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number.</param>
-    /// <returns><c>true</c> if <paramref name="a" /> is an integer; otherwise, <c>false</c>.</returns>
-    public static bool IsInteger(BigRational a)
-    {
-      if (a.p == null) return true; //since BigRational is always normalized:
-      fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000001;
-      // or: return a % 1 == 0; or: var cpu = task_cpu; cpu.push(a); var b = cpu.isi(); cpu.pop(); return b;
-    }
-    /// <summary>
-    /// Determines if the value is NaN. 
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number.</param>
-    /// <returns><c>true</c> if <paramref name="a" /> is NaN; otherwise, <c>false</c>.</returns>
-    public static bool IsNaN(BigRational a)
-    {
-      if (a.p == null) return false;
-      fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
-    }
-
-    /// <summary>
-    /// Represents a stack machine for rational arithmetics.
-    /// </summary>
-    public sealed partial class CPU
-    {
-      int i; uint[][] p;
+      internal int i; internal uint[][] p;
       /// <summary>
       /// Initializes a new instance of a <see cref="CPU"/> class that
       /// has the specified initial stack capacity.
@@ -2722,51 +2684,6 @@ namespace System.Numerics
         cpu = null;
       }
 
-      //todo: remove, div(a, b); mod(); swp(); pop(); must!!! have the same performance      
-      // /// <summary>
-      // /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      // /// and replaces them with the integral result.
-      // /// </summary>
-      // /// <remarks>
-      // /// Divides a / b where b is the value on top of the stack.<br/>
-      // /// This is a integer division with always non-farctional integer results.<br/>
-      // /// When calculating with integers and integer results are required,<br/>
-      // /// this operation is faster than dividing and then rounding to an integer result.
-      // /// </remarks>
-      // public void idiv()
-      // {
-      //   fixed (uint* u = p[this.i - 1])
-      //   fixed (uint* v = p[this.i - 2])
-      //   fixed (uint* w = rent(len(u))) // nu - nv + 1
-      //   {
-      //     var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
-      //     *(ulong*)(w + w[0] + 1) = 0x100000001;
-      //     if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
-      //   }
-      //   swp(2); pop(2);
-      // }
-      // /// <summary>
-      // /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      // /// and replaces them with the integral result.
-      // /// </summary>
-      // /// <remarks>
-      // /// Divides a / b where b is the value on top of the stack.<br/>
-      // /// This is a integer division with always non-farctional integer results.<br/>
-      // /// When calculating with integers and integer results are required,<br/>
-      // /// this operation is faster than dividing and then rounding to an integer result.<br/>
-      // /// </remarks>
-      // public void imod()
-      // {
-      //   fixed (uint* u = p[this.i - 1])
-      //   fixed (uint* v = p[this.i - 2])
-      //   {
-      //     var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
-      //     *(ulong*)(v + v[0] + 1) = 0x100000001;
-      //     v[0] |= h & 0x80000000;
-      //   }
-      //   pop();
-      // }
-
       uint[] rent(uint n)
       {
         var a = p[i++];
@@ -3233,8 +3150,8 @@ namespace System.Numerics
         for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
-      #region NET7 experimental
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] static uint[][]? cache;
+      #region NET7 INumber experimental
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] static uint[][]? cache; //INumber constants on request 
       static BigRational cachx(uint* s, uint n, uint x)
       {
         var p = cache != null ? cache[x] : null;
@@ -3243,25 +3160,6 @@ namespace System.Numerics
               copy(d, s, n);
         return new BigRational(p);
       }
-      internal bool ip2() //NET7 fast range checks
-      {
-        fixed (uint* p = this.p[this.i - 1])
-        {
-          var u = p[0] & 0x3fffffff;
-          if (!BitOperations.IsPow2(p[u])) return false; //NET7 currently not intrinsic ?!?
-          for (uint i = 1; i < u; i++) if (p[i] != 0) return false; //todo: cmpz
-        }
-        return true;
-      }
-      //internal void get(uint i, uint* d, uint n) //internal fast int type cast's
-      //{
-      //  fixed (uint* p = this.p[i])
-      //  {
-      //    var u = p[0] & 0x3fffffff;
-      //    if (u == 1) *d = p[1]; //most common case 
-      //    else copy(d, p + 1, n < u ? n : u);
-      //  }
-      //}
       internal void toi(BigRational v, uint* p, uint f) //NET7 spec int type conversions, Int32,Unt32,...,Int128,UInt128,... 
       {
         if (v.p == null) return; uint n = f & 0xff;
@@ -3276,7 +3174,7 @@ namespace System.Numerics
         {
           if ((f & 0x0100) == 0) //si
           {
-            if (((f & 0x1000) == 0) || !(b == c && s < 0 && ip2()))
+            if (((f & 0x1000) == 0) || !(b == c && s < 0 && ipt()))
             {
               pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
               n--; //todo: opt. small types after tests
@@ -3302,7 +3200,6 @@ namespace System.Numerics
           if (u == 1) *p = t[1]; //most common case 
           else copy(p, t + 1, n < u ? n : u);
         }
-
         pop(); if (s > 0) return;
         for (b = 0, c = 1; b < n; b++) //todo: opt. small std types after tests
         {
@@ -3310,25 +3207,71 @@ namespace System.Numerics
           p[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
         }
       }
+      internal bool ipt() //todo: public?
+      {
+        fixed (uint* p = this.p[this.i - 1])
+        {
+          var u = p[0] & 0x3fffffff;
+          if (!BitOperations.IsPow2(p[u])) return false; //NET7 currently not intrinsic ?!?
+          for (uint i = 1; i < u; i++) if (p[i] != 0) return false; //todo: cmpz
+        }
+        return true;
+      }
+      //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //for debug visualizer cross thread access protection only
+      #endregion
+      #region integer
+      //todo: check, remove?, div(a, b); mod(); swp(); pop(); must!!! have same performance      
+      // /// <summary>
+      // /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      // /// and replaces them with the integral result.
+      // /// </summary>
+      // /// <remarks>
+      // /// Divides a / b where b is the value on top of the stack.<br/>
+      // /// This is a integer division with always non-farctional integer results.<br/>
+      // /// When calculating with integers and integer results are required,<br/>
+      // /// this operation is faster than dividing and then rounding to integer result.
+      // /// </remarks>
+      // public void idiv()
+      // {
+      //   fixed (uint* u = p[this.i - 1])
+      //   fixed (uint* v = p[this.i - 2])
+      //   fixed (uint* w = rent(len(u))) // nu - nv + 1
+      //   {
+      //     var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
+      //     *(ulong*)(w + w[0] + 1) = 0x100000001;
+      //     if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
+      //   }
+      //   swp(2); pop(2);
+      // }
+      // /// <summary>
+      // /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      // /// and replaces them with the integral result.
+      // /// </summary>
+      // /// <remarks>
+      // /// Divides a / b where b is the value on top of the stack.<br/>
+      // /// This is a integer division with always non-farctional integer results.<br/>
+      // /// When calculating with integers and integer results are required,<br/>
+      // /// this operation is faster than dividing and then rounding to integer result.<br/>
+      // /// </remarks>
+      // public void imod()
+      // {
+      //   fixed (uint* u = p[this.i - 1])
+      //   fixed (uint* v = p[this.i - 2])
+      //   {
+      //     var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
+      //     *(ulong*)(v + v[0] + 1) = 0x100000001;
+      //     v[0] |= h & 0x80000000;
+      //   }
+      //   pop();
+      // }
       #endregion
     }
-    /// <summary>
-    /// Thread static instance of a <see cref="CPU"/> for general use.
-    /// </summary>
-    /// <remarks>
-    /// Recomandation add to Watch for Debug 
-    /// </remarks>
-    public static CPU task_cpu
-    {
-      get { return cpu ??= new CPU(); }
-    }
-
     #region private 
     private readonly uint[] p;
-    [ThreadStatic, DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private static CPU? cpu;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    BigRational(uint[] p) { this.p = p; }
+    private BigRational(uint[] p) => this.p = p;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static uint len(uint* p)
     {
@@ -3351,49 +3294,31 @@ namespace System.Numerics
       for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = *(ulong*)&((byte*)s)[i << 2];
       if (i != n) d[i] = s[i]; //if ?
     }
+    [ThreadStatic, DebuggerBrowsable(DebuggerBrowsableState.Never)] //avoid debug visualizer cross thread calls
+    private static CPU? cpu;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] //avoid debug visualizer cross thread calls
+    private static CPU main_cpu => cpu ??= new CPU();
     #endregion
     #region debug support
-    [DebuggerTypeProxy(typeof(DebugView)), DebuggerDisplay("Count = {i}")]
-    partial class CPU
+    sealed class DebugView
     {
-      sealed class DebugView
+      readonly CPU p;
+      public DebugView(CPU p) => this.p = p;
+      public DebugView(SafeCPU p) => this.p = p.p;
+      [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+      public BigRational[] Items
       {
-        CPU p; public DebugView(CPU p) { this.p = p; }
-        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-        public BigRational[] Items
+        get
         {
-          get
-          {
-            var a = new BigRational[p.i];
-            for (int i = 0; i < p.i; i++)
-              a[i] = new BigRational(p.p[p.i - 1 - i]);
-            return a;
-          }
+          var a = new BigRational[p.i];
+          for (int i = 0; i < p.i; i++)
+            a[i] = new BigRational(p.p[p.i - 1 - i]);
+          return a;
         }
       }
-      //for NET 7 INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30;
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp, wp;
     }
     #endregion
     #region boost operator 
-    /// <summary>
-    /// <b>Note</b>: This function does not represent a conventional <c>OR</c> operation.
-    /// </summary>
-    /// <remarks>
-    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
-    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
-    /// Example:<br/><br/>
-    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
-    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
-    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
-    /// </remarks>
-    public static BigRational operator |(BigRational? a, BigRational b)
-    {
-      if (a != default) throw new ArgumentException(nameof(a)); //todo: message text
-      var cpu = task_cpu; var i = unchecked((uint)cpu.wp); cpu.sp = null; cpu.swp(i);
-      cpu.pop(unchecked((int)(cpu.mark() - i - 1))); return cpu.popr();
-    }
     /// <summary>
     /// <b>Note</b>: This operator does not represent a conventional conversion.
     /// </summary>
@@ -3407,10 +3332,29 @@ namespace System.Numerics
     /// </remarks>
     public static implicit operator BigRational?(int value)
     {
-      var cpu = task_cpu; if (value != 0 || cpu.sp != null) throw new ArgumentException(nameof(value)); //todo: message text
-      cpu.wp = (void*)cpu.mark(); cpu.sp = &value; return default;
+      //todo: spec opt. and protect //if (...) throw new ArgumentException();      
+      var cpu = main_cpu; if (cpu.sp == null) cpu.sp = &value; //debug visualizer security
+      return cpu.i != 0 ? new BigRational(cpu.p[cpu.i - 1]) : default;
     }
-    //[SpecialNameAttribute] private static void op_Help(bool begin) { }
+    /// <summary>
+    /// <b>Note</b>: This function does not represent a conventional <c>OR</c> operation.
+    /// </summary>
+    /// <remarks>
+    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
+    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
+    /// Example:<br/><br/>
+    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
+    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
+    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
+    /// </remarks>
+    public static BigRational operator |(BigRational? a, BigRational b)
+    {
+      //todo: spec opt. and protect //if (...) throw new ArgumentException();      
+      var cpu = main_cpu; var p = a.GetValueOrDefault();
+      var k = 0u; if (p.p != null) { for (; k < cpu.i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
+      var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r); //fetch
+      if (k != 0) cpu.sp = t; cpu.pop(unchecked((int)(cpu.i - k))); return r;
+    }
     #endregion
   }
 }

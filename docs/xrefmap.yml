@@ -2785,6 +2785,903 @@ references:
   commentId: Overload:System.Numerics.BigRational.Round
   fullName: System.Numerics.BigRational.Round
   nameWithType: BigRational.Round
+- uid: System.Numerics.BigRational.SafeCPU
+  name: BigRational.SafeCPU
+  href: api/System.Numerics.BigRational.SafeCPU.html
+  commentId: T:System.Numerics.BigRational.SafeCPU
+  fullName: System.Numerics.BigRational.SafeCPU
+  nameWithType: BigRational.SafeCPU
+- uid: System.Numerics.BigRational.SafeCPU.abs(System.Int32)
+  name: abs(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.abs.html#System_Numerics_BigRational_SafeCPU_abs_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.abs(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.abs(System.Int32)
+  nameWithType: BigRational.SafeCPU.abs(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.abs*
+  name: abs
+  href: api/System.Numerics.BigRational.SafeCPU.abs.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.abs
+  fullName: System.Numerics.BigRational.SafeCPU.abs
+  nameWithType: BigRational.SafeCPU.abs
+- uid: System.Numerics.BigRational.SafeCPU.add
+  name: add()
+  href: api/System.Numerics.BigRational.SafeCPU.add.html#System_Numerics_BigRational_SafeCPU_add
+  commentId: M:System.Numerics.BigRational.SafeCPU.add
+  fullName: System.Numerics.BigRational.SafeCPU.add()
+  nameWithType: BigRational.SafeCPU.add()
+- uid: System.Numerics.BigRational.SafeCPU.add(System.Int32,System.Int32)
+  name: add(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.add.html#System_Numerics_BigRational_SafeCPU_add_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.add(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.add(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.add(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.add(System.Numerics.BigRational)
+  name: add(BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.add.html#System_Numerics_BigRational_SafeCPU_add_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.add(System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.add(System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.add(BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.add(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: add(BigRational, BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.add.html#System_Numerics_BigRational_SafeCPU_add_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.add(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.add(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.add(BigRational, BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.add(System.UInt32)
+  name: add(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.add.html#System_Numerics_BigRational_SafeCPU_add_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.add(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.add(System.UInt32)
+  nameWithType: BigRational.SafeCPU.add(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.add(System.UInt32,System.UInt32)
+  name: add(UInt32, UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.add.html#System_Numerics_BigRational_SafeCPU_add_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.add(System.UInt32,System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.add(System.UInt32, System.UInt32)
+  nameWithType: BigRational.SafeCPU.add(UInt32, UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.add*
+  name: add
+  href: api/System.Numerics.BigRational.SafeCPU.add.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.add
+  fullName: System.Numerics.BigRational.SafeCPU.add
+  nameWithType: BigRational.SafeCPU.add
+- uid: System.Numerics.BigRational.SafeCPU.and
+  name: and()
+  href: api/System.Numerics.BigRational.SafeCPU.and.html#System_Numerics_BigRational_SafeCPU_and
+  commentId: M:System.Numerics.BigRational.SafeCPU.and
+  fullName: System.Numerics.BigRational.SafeCPU.and()
+  nameWithType: BigRational.SafeCPU.and()
+- uid: System.Numerics.BigRational.SafeCPU.and*
+  name: and
+  href: api/System.Numerics.BigRational.SafeCPU.and.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.and
+  fullName: System.Numerics.BigRational.SafeCPU.and
+  nameWithType: BigRational.SafeCPU.and
+- uid: System.Numerics.BigRational.SafeCPU.atan(System.UInt32)
+  name: atan(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.atan.html#System_Numerics_BigRational_SafeCPU_atan_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.atan(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.atan(System.UInt32)
+  nameWithType: BigRational.SafeCPU.atan(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.atan*
+  name: atan
+  href: api/System.Numerics.BigRational.SafeCPU.atan.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.atan
+  fullName: System.Numerics.BigRational.SafeCPU.atan
+  nameWithType: BigRational.SafeCPU.atan
+- uid: System.Numerics.BigRational.SafeCPU.bdi
+  name: bdi()
+  href: api/System.Numerics.BigRational.SafeCPU.bdi.html#System_Numerics_BigRational_SafeCPU_bdi
+  commentId: M:System.Numerics.BigRational.SafeCPU.bdi
+  fullName: System.Numerics.BigRational.SafeCPU.bdi()
+  nameWithType: BigRational.SafeCPU.bdi()
+- uid: System.Numerics.BigRational.SafeCPU.bdi*
+  name: bdi
+  href: api/System.Numerics.BigRational.SafeCPU.bdi.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.bdi
+  fullName: System.Numerics.BigRational.SafeCPU.bdi
+  nameWithType: BigRational.SafeCPU.bdi
+- uid: System.Numerics.BigRational.SafeCPU.cmp(System.Int32,System.Int32)
+  name: cmp(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.cmp.html#System_Numerics_BigRational_SafeCPU_cmp_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.cmp(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.cmp(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.cmp(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.cmp(System.Numerics.BigRational)
+  name: cmp(BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.cmp.html#System_Numerics_BigRational_SafeCPU_cmp_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.cmp(System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.cmp(System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.cmp(BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.cmp(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: cmp(BigRational, BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.cmp.html#System_Numerics_BigRational_SafeCPU_cmp_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.cmp(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.cmp(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.cmp(BigRational, BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.cmp(System.UInt32)
+  name: cmp(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.cmp.html#System_Numerics_BigRational_SafeCPU_cmp_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.cmp(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.cmp(System.UInt32)
+  nameWithType: BigRational.SafeCPU.cmp(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.cmp(System.UInt32,System.UInt32)
+  name: cmp(UInt32, UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.cmp.html#System_Numerics_BigRational_SafeCPU_cmp_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.cmp(System.UInt32,System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.cmp(System.UInt32, System.UInt32)
+  nameWithType: BigRational.SafeCPU.cmp(UInt32, UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.cmp*
+  name: cmp
+  href: api/System.Numerics.BigRational.SafeCPU.cmp.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.cmp
+  fullName: System.Numerics.BigRational.SafeCPU.cmp
+  nameWithType: BigRational.SafeCPU.cmp
+- uid: System.Numerics.BigRational.SafeCPU.cmpa(System.Int32,System.Int32)
+  name: cmpa(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.cmpa.html#System_Numerics_BigRational_SafeCPU_cmpa_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.cmpa(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.cmpa(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.cmpa(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.cmpa*
+  name: cmpa
+  href: api/System.Numerics.BigRational.SafeCPU.cmpa.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.cmpa
+  fullName: System.Numerics.BigRational.SafeCPU.cmpa
+  nameWithType: BigRational.SafeCPU.cmpa
+- uid: System.Numerics.BigRational.SafeCPU.cmpi(System.Int32,System.Int32)
+  name: cmpi(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.cmpi.html#System_Numerics_BigRational_SafeCPU_cmpi_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.cmpi(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.cmpi(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.cmpi(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.cmpi*
+  name: cmpi
+  href: api/System.Numerics.BigRational.SafeCPU.cmpi.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.cmpi
+  fullName: System.Numerics.BigRational.SafeCPU.cmpi
+  nameWithType: BigRational.SafeCPU.cmpi
+- uid: System.Numerics.BigRational.SafeCPU.div
+  name: div()
+  href: api/System.Numerics.BigRational.SafeCPU.div.html#System_Numerics_BigRational_SafeCPU_div
+  commentId: M:System.Numerics.BigRational.SafeCPU.div
+  fullName: System.Numerics.BigRational.SafeCPU.div()
+  nameWithType: BigRational.SafeCPU.div()
+- uid: System.Numerics.BigRational.SafeCPU.div(System.Int32,System.Int32)
+  name: div(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.div.html#System_Numerics_BigRational_SafeCPU_div_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.div(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.div(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.div(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.div(System.Numerics.BigRational,System.Int32)
+  name: div(BigRational, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.div.html#System_Numerics_BigRational_SafeCPU_div_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.div(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.div(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.SafeCPU.div(BigRational, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.div(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: div(BigRational, BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.div.html#System_Numerics_BigRational_SafeCPU_div_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.div(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.div(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.div(BigRational, BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.div(System.UInt32,System.UInt32)
+  name: div(UInt32, UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.div.html#System_Numerics_BigRational_SafeCPU_div_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.div(System.UInt32,System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.div(System.UInt32, System.UInt32)
+  nameWithType: BigRational.SafeCPU.div(UInt32, UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.div*
+  name: div
+  href: api/System.Numerics.BigRational.SafeCPU.div.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.div
+  fullName: System.Numerics.BigRational.SafeCPU.div
+  nameWithType: BigRational.SafeCPU.div
+- uid: System.Numerics.BigRational.SafeCPU.dup(System.Int32)
+  name: dup(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.dup.html#System_Numerics_BigRational_SafeCPU_dup_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.dup(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.dup(System.Int32)
+  nameWithType: BigRational.SafeCPU.dup(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.dup(System.UInt32)
+  name: dup(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.dup.html#System_Numerics_BigRational_SafeCPU_dup_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.dup(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.dup(System.UInt32)
+  nameWithType: BigRational.SafeCPU.dup(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.dup*
+  name: dup
+  href: api/System.Numerics.BigRational.SafeCPU.dup.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.dup
+  fullName: System.Numerics.BigRational.SafeCPU.dup
+  nameWithType: BigRational.SafeCPU.dup
+- uid: System.Numerics.BigRational.SafeCPU.equ(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: equ(BigRational, BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.equ.html#System_Numerics_BigRational_SafeCPU_equ_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.equ(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.equ(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.equ(BigRational, BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.equ(System.UInt32,System.Numerics.BigRational)
+  name: equ(UInt32, BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.equ.html#System_Numerics_BigRational_SafeCPU_equ_System_UInt32_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.equ(System.UInt32,System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.equ(System.UInt32, System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.equ(UInt32, BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.equ(System.UInt32,System.UInt32)
+  name: equ(UInt32, UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.equ.html#System_Numerics_BigRational_SafeCPU_equ_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.equ(System.UInt32,System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.equ(System.UInt32, System.UInt32)
+  nameWithType: BigRational.SafeCPU.equ(UInt32, UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.equ*
+  name: equ
+  href: api/System.Numerics.BigRational.SafeCPU.equ.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.equ
+  fullName: System.Numerics.BigRational.SafeCPU.equ
+  nameWithType: BigRational.SafeCPU.equ
+- uid: System.Numerics.BigRational.SafeCPU.exp(System.UInt32)
+  name: exp(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.exp.html#System_Numerics_BigRational_SafeCPU_exp_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.exp(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.exp(System.UInt32)
+  nameWithType: BigRational.SafeCPU.exp(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.exp*
+  name: exp
+  href: api/System.Numerics.BigRational.SafeCPU.exp.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.exp
+  fullName: System.Numerics.BigRational.SafeCPU.exp
+  nameWithType: BigRational.SafeCPU.exp
+- uid: System.Numerics.BigRational.SafeCPU.fac(System.UInt32)
+  name: fac(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.fac.html#System_Numerics_BigRational_SafeCPU_fac_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.fac(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.fac(System.UInt32)
+  nameWithType: BigRational.SafeCPU.fac(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.fac*
+  name: fac
+  href: api/System.Numerics.BigRational.SafeCPU.fac.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.fac
+  fullName: System.Numerics.BigRational.SafeCPU.fac
+  nameWithType: BigRational.SafeCPU.fac
+- uid: System.Numerics.BigRational.SafeCPU.free
+  name: free()
+  href: api/System.Numerics.BigRational.SafeCPU.free.html#System_Numerics_BigRational_SafeCPU_free
+  commentId: M:System.Numerics.BigRational.SafeCPU.free
+  fullName: System.Numerics.BigRational.SafeCPU.free()
+  nameWithType: BigRational.SafeCPU.free()
+- uid: System.Numerics.BigRational.SafeCPU.free*
+  name: free
+  href: api/System.Numerics.BigRational.SafeCPU.free.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.free
+  fullName: System.Numerics.BigRational.SafeCPU.free
+  nameWithType: BigRational.SafeCPU.free
+- uid: System.Numerics.BigRational.SafeCPU.gcd
+  name: gcd()
+  href: api/System.Numerics.BigRational.SafeCPU.gcd.html#System_Numerics_BigRational_SafeCPU_gcd
+  commentId: M:System.Numerics.BigRational.SafeCPU.gcd
+  fullName: System.Numerics.BigRational.SafeCPU.gcd()
+  nameWithType: BigRational.SafeCPU.gcd()
+- uid: System.Numerics.BigRational.SafeCPU.gcd*
+  name: gcd
+  href: api/System.Numerics.BigRational.SafeCPU.gcd.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.gcd
+  fullName: System.Numerics.BigRational.SafeCPU.gcd
+  nameWithType: BigRational.SafeCPU.gcd
+- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Double@)
+  name: get(UInt32, out Double)
+  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Double__
+  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Double@)
+  name.vb: get(UInt32, ByRef Double)
+  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.Double)
+  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Double)
+  nameWithType: BigRational.SafeCPU.get(UInt32, out Double)
+  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef Double)
+- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigRational@)
+  name: get(UInt32, out BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Numerics_BigRational__
+  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigRational@)
+  name.vb: get(UInt32, ByRef BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.Numerics.BigRational)
+  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.get(UInt32, out BigRational)
+  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)
+  name: get(UInt32, out ReadOnlySpan<UInt32>)
+  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___
+  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)
+  name.vb: get(UInt32, ByRef ReadOnlySpan(Of UInt32))
+  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.ReadOnlySpan<System.UInt32>)
+  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.ReadOnlySpan(Of System.UInt32))
+  nameWithType: BigRational.SafeCPU.get(UInt32, out ReadOnlySpan<UInt32>)
+  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef ReadOnlySpan(Of UInt32))
+- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Single@)
+  name: get(UInt32, out Single)
+  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Single__
+  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Single@)
+  name.vb: get(UInt32, ByRef Single)
+  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.Single)
+  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Single)
+  nameWithType: BigRational.SafeCPU.get(UInt32, out Single)
+  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef Single)
+- uid: System.Numerics.BigRational.SafeCPU.get*
+  name: get
+  href: api/System.Numerics.BigRational.SafeCPU.get.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.get
+  fullName: System.Numerics.BigRational.SafeCPU.get
+  nameWithType: BigRational.SafeCPU.get
+- uid: System.Numerics.BigRational.SafeCPU.hash(System.UInt32)
+  name: hash(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.hash.html#System_Numerics_BigRational_SafeCPU_hash_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.hash(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.hash(System.UInt32)
+  nameWithType: BigRational.SafeCPU.hash(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.hash*
+  name: hash
+  href: api/System.Numerics.BigRational.SafeCPU.hash.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.hash
+  fullName: System.Numerics.BigRational.SafeCPU.hash
+  nameWithType: BigRational.SafeCPU.hash
+- uid: System.Numerics.BigRational.SafeCPU.inv(System.Int32)
+  name: inv(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.inv.html#System_Numerics_BigRational_SafeCPU_inv_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.inv(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.inv(System.Int32)
+  nameWithType: BigRational.SafeCPU.inv(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.inv*
+  name: inv
+  href: api/System.Numerics.BigRational.SafeCPU.inv.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.inv
+  fullName: System.Numerics.BigRational.SafeCPU.inv
+  nameWithType: BigRational.SafeCPU.inv
+- uid: System.Numerics.BigRational.SafeCPU.isi
+  name: isi()
+  href: api/System.Numerics.BigRational.SafeCPU.isi.html#System_Numerics_BigRational_SafeCPU_isi
+  commentId: M:System.Numerics.BigRational.SafeCPU.isi
+  fullName: System.Numerics.BigRational.SafeCPU.isi()
+  nameWithType: BigRational.SafeCPU.isi()
+- uid: System.Numerics.BigRational.SafeCPU.isi*
+  name: isi
+  href: api/System.Numerics.BigRational.SafeCPU.isi.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.isi
+  fullName: System.Numerics.BigRational.SafeCPU.isi
+  nameWithType: BigRational.SafeCPU.isi
+- uid: System.Numerics.BigRational.SafeCPU.lim(System.UInt32,System.Int32)
+  name: lim(UInt32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.lim.html#System_Numerics_BigRational_SafeCPU_lim_System_UInt32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.lim(System.UInt32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.lim(System.UInt32, System.Int32)
+  nameWithType: BigRational.SafeCPU.lim(UInt32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.lim*
+  name: lim
+  href: api/System.Numerics.BigRational.SafeCPU.lim.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.lim
+  fullName: System.Numerics.BigRational.SafeCPU.lim
+  nameWithType: BigRational.SafeCPU.lim
+- uid: System.Numerics.BigRational.SafeCPU.log(System.UInt32)
+  name: log(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.log.html#System_Numerics_BigRational_SafeCPU_log_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.log(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.log(System.UInt32)
+  nameWithType: BigRational.SafeCPU.log(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.log*
+  name: log
+  href: api/System.Numerics.BigRational.SafeCPU.log.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.log
+  fullName: System.Numerics.BigRational.SafeCPU.log
+  nameWithType: BigRational.SafeCPU.log
+- uid: System.Numerics.BigRational.SafeCPU.log2(System.UInt32)
+  name: log2(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.log2.html#System_Numerics_BigRational_SafeCPU_log2_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.log2(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.log2(System.UInt32)
+  nameWithType: BigRational.SafeCPU.log2(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.log2*
+  name: log2
+  href: api/System.Numerics.BigRational.SafeCPU.log2.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.log2
+  fullName: System.Numerics.BigRational.SafeCPU.log2
+  nameWithType: BigRational.SafeCPU.log2
+- uid: System.Numerics.BigRational.SafeCPU.lsb
+  name: lsb()
+  href: api/System.Numerics.BigRational.SafeCPU.lsb.html#System_Numerics_BigRational_SafeCPU_lsb
+  commentId: M:System.Numerics.BigRational.SafeCPU.lsb
+  fullName: System.Numerics.BigRational.SafeCPU.lsb()
+  nameWithType: BigRational.SafeCPU.lsb()
+- uid: System.Numerics.BigRational.SafeCPU.lsb*
+  name: lsb
+  href: api/System.Numerics.BigRational.SafeCPU.lsb.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.lsb
+  fullName: System.Numerics.BigRational.SafeCPU.lsb
+  nameWithType: BigRational.SafeCPU.lsb
+- uid: System.Numerics.BigRational.SafeCPU.mark
+  name: mark()
+  href: api/System.Numerics.BigRational.SafeCPU.mark.html#System_Numerics_BigRational_SafeCPU_mark
+  commentId: M:System.Numerics.BigRational.SafeCPU.mark
+  fullName: System.Numerics.BigRational.SafeCPU.mark()
+  nameWithType: BigRational.SafeCPU.mark()
+- uid: System.Numerics.BigRational.SafeCPU.mark*
+  name: mark
+  href: api/System.Numerics.BigRational.SafeCPU.mark.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.mark
+  fullName: System.Numerics.BigRational.SafeCPU.mark
+  nameWithType: BigRational.SafeCPU.mark
+- uid: System.Numerics.BigRational.SafeCPU.mod(System.Int32)
+  name: mod(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.mod.html#System_Numerics_BigRational_SafeCPU_mod_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.mod(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.mod(System.Int32)
+  nameWithType: BigRational.SafeCPU.mod(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.mod*
+  name: mod
+  href: api/System.Numerics.BigRational.SafeCPU.mod.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.mod
+  fullName: System.Numerics.BigRational.SafeCPU.mod
+  nameWithType: BigRational.SafeCPU.mod
+- uid: System.Numerics.BigRational.SafeCPU.msb
+  name: msb()
+  href: api/System.Numerics.BigRational.SafeCPU.msb.html#System_Numerics_BigRational_SafeCPU_msb
+  commentId: M:System.Numerics.BigRational.SafeCPU.msb
+  fullName: System.Numerics.BigRational.SafeCPU.msb()
+  nameWithType: BigRational.SafeCPU.msb()
+- uid: System.Numerics.BigRational.SafeCPU.msb*
+  name: msb
+  href: api/System.Numerics.BigRational.SafeCPU.msb.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.msb
+  fullName: System.Numerics.BigRational.SafeCPU.msb
+  nameWithType: BigRational.SafeCPU.msb
+- uid: System.Numerics.BigRational.SafeCPU.mul
+  name: mul()
+  href: api/System.Numerics.BigRational.SafeCPU.mul.html#System_Numerics_BigRational_SafeCPU_mul
+  commentId: M:System.Numerics.BigRational.SafeCPU.mul
+  fullName: System.Numerics.BigRational.SafeCPU.mul()
+  nameWithType: BigRational.SafeCPU.mul()
+- uid: System.Numerics.BigRational.SafeCPU.mul(System.Int32,System.Int32)
+  name: mul(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.mul.html#System_Numerics_BigRational_SafeCPU_mul_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.mul(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.mul(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.mul(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational)
+  name: mul(BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.mul.html#System_Numerics_BigRational_SafeCPU_mul_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.mul(BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: mul(BigRational, BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.mul.html#System_Numerics_BigRational_SafeCPU_mul_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.mul(BigRational, BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational,System.UInt32)
+  name: mul(BigRational, UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.mul.html#System_Numerics_BigRational_SafeCPU_mul_System_Numerics_BigRational_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational,System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.mul(System.Numerics.BigRational, System.UInt32)
+  nameWithType: BigRational.SafeCPU.mul(BigRational, UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.mul(System.UInt32)
+  name: mul(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.mul.html#System_Numerics_BigRational_SafeCPU_mul_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.mul(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.mul(System.UInt32)
+  nameWithType: BigRational.SafeCPU.mul(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.mul(System.UInt32,System.UInt32)
+  name: mul(UInt32, UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.mul.html#System_Numerics_BigRational_SafeCPU_mul_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.mul(System.UInt32,System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.mul(System.UInt32, System.UInt32)
+  nameWithType: BigRational.SafeCPU.mul(UInt32, UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.mul*
+  name: mul
+  href: api/System.Numerics.BigRational.SafeCPU.mul.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.mul
+  fullName: System.Numerics.BigRational.SafeCPU.mul
+  nameWithType: BigRational.SafeCPU.mul
+- uid: System.Numerics.BigRational.SafeCPU.neg(System.Int32)
+  name: neg(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.neg.html#System_Numerics_BigRational_SafeCPU_neg_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.neg(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.neg(System.Int32)
+  nameWithType: BigRational.SafeCPU.neg(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.neg(System.UInt32)
+  name: neg(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.neg.html#System_Numerics_BigRational_SafeCPU_neg_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.neg(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.neg(System.UInt32)
+  nameWithType: BigRational.SafeCPU.neg(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.neg*
+  name: neg
+  href: api/System.Numerics.BigRational.SafeCPU.neg.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.neg
+  fullName: System.Numerics.BigRational.SafeCPU.neg
+  nameWithType: BigRational.SafeCPU.neg
+- uid: System.Numerics.BigRational.SafeCPU.norm(System.Int32)
+  name: norm(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.norm.html#System_Numerics_BigRational_SafeCPU_norm_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.norm(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.norm(System.Int32)
+  nameWithType: BigRational.SafeCPU.norm(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.norm*
+  name: norm
+  href: api/System.Numerics.BigRational.SafeCPU.norm.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.norm
+  fullName: System.Numerics.BigRational.SafeCPU.norm
+  nameWithType: BigRational.SafeCPU.norm
+- uid: System.Numerics.BigRational.SafeCPU.or
+  name: or()
+  href: api/System.Numerics.BigRational.SafeCPU.or.html#System_Numerics_BigRational_SafeCPU_or
+  commentId: M:System.Numerics.BigRational.SafeCPU.or
+  fullName: System.Numerics.BigRational.SafeCPU.or()
+  nameWithType: BigRational.SafeCPU.or()
+- uid: System.Numerics.BigRational.SafeCPU.or*
+  name: or
+  href: api/System.Numerics.BigRational.SafeCPU.or.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.or
+  fullName: System.Numerics.BigRational.SafeCPU.or
+  nameWithType: BigRational.SafeCPU.or
+- uid: System.Numerics.BigRational.SafeCPU.pi(System.UInt32)
+  name: pi(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.pi.html#System_Numerics_BigRational_SafeCPU_pi_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.pi(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.pi(System.UInt32)
+  nameWithType: BigRational.SafeCPU.pi(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.pi*
+  name: pi
+  href: api/System.Numerics.BigRational.SafeCPU.pi.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.pi
+  fullName: System.Numerics.BigRational.SafeCPU.pi
+  nameWithType: BigRational.SafeCPU.pi
+- uid: System.Numerics.BigRational.SafeCPU.pop
+  name: pop()
+  href: api/System.Numerics.BigRational.SafeCPU.pop.html#System_Numerics_BigRational_SafeCPU_pop
+  commentId: M:System.Numerics.BigRational.SafeCPU.pop
+  fullName: System.Numerics.BigRational.SafeCPU.pop()
+  nameWithType: BigRational.SafeCPU.pop()
+- uid: System.Numerics.BigRational.SafeCPU.pop(System.Int32)
+  name: pop(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.pop.html#System_Numerics_BigRational_SafeCPU_pop_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.pop(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.pop(System.Int32)
+  nameWithType: BigRational.SafeCPU.pop(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.pop*
+  name: pop
+  href: api/System.Numerics.BigRational.SafeCPU.pop.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.pop
+  fullName: System.Numerics.BigRational.SafeCPU.pop
+  nameWithType: BigRational.SafeCPU.pop
+- uid: System.Numerics.BigRational.SafeCPU.popd
+  name: popd()
+  href: api/System.Numerics.BigRational.SafeCPU.popd.html#System_Numerics_BigRational_SafeCPU_popd
+  commentId: M:System.Numerics.BigRational.SafeCPU.popd
+  fullName: System.Numerics.BigRational.SafeCPU.popd()
+  nameWithType: BigRational.SafeCPU.popd()
+- uid: System.Numerics.BigRational.SafeCPU.popd*
+  name: popd
+  href: api/System.Numerics.BigRational.SafeCPU.popd.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.popd
+  fullName: System.Numerics.BigRational.SafeCPU.popd
+  nameWithType: BigRational.SafeCPU.popd
+- uid: System.Numerics.BigRational.SafeCPU.popi
+  name: popi()
+  href: api/System.Numerics.BigRational.SafeCPU.popi.html#System_Numerics_BigRational_SafeCPU_popi
+  commentId: M:System.Numerics.BigRational.SafeCPU.popi
+  fullName: System.Numerics.BigRational.SafeCPU.popi()
+  nameWithType: BigRational.SafeCPU.popi()
+- uid: System.Numerics.BigRational.SafeCPU.popi*
+  name: popi
+  href: api/System.Numerics.BigRational.SafeCPU.popi.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.popi
+  fullName: System.Numerics.BigRational.SafeCPU.popi
+  nameWithType: BigRational.SafeCPU.popi
+- uid: System.Numerics.BigRational.SafeCPU.popr
+  name: popr()
+  href: api/System.Numerics.BigRational.SafeCPU.popr.html#System_Numerics_BigRational_SafeCPU_popr
+  commentId: M:System.Numerics.BigRational.SafeCPU.popr
+  fullName: System.Numerics.BigRational.SafeCPU.popr()
+  nameWithType: BigRational.SafeCPU.popr()
+- uid: System.Numerics.BigRational.SafeCPU.popr*
+  name: popr
+  href: api/System.Numerics.BigRational.SafeCPU.popr.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.popr
+  fullName: System.Numerics.BigRational.SafeCPU.popr
+  nameWithType: BigRational.SafeCPU.popr
+- uid: System.Numerics.BigRational.SafeCPU.pow(System.Int32)
+  name: pow(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.pow.html#System_Numerics_BigRational_SafeCPU_pow_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.pow(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.pow(System.Int32)
+  nameWithType: BigRational.SafeCPU.pow(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.pow(System.Int32,System.Int32)
+  name: pow(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.pow.html#System_Numerics_BigRational_SafeCPU_pow_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.pow(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.pow(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.pow(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.pow*
+  name: pow
+  href: api/System.Numerics.BigRational.SafeCPU.pow.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.pow
+  fullName: System.Numerics.BigRational.SafeCPU.pow
+  nameWithType: BigRational.SafeCPU.pow
+- uid: System.Numerics.BigRational.SafeCPU.push
+  name: push()
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push
+  commentId: M:System.Numerics.BigRational.SafeCPU.push
+  fullName: System.Numerics.BigRational.SafeCPU.push()
+  nameWithType: BigRational.SafeCPU.push()
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Decimal)
+  name: push(Decimal)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Decimal_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Decimal)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Decimal)
+  nameWithType: BigRational.SafeCPU.push(Decimal)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Double)
+  name: push(Double)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Double_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Double)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Double)
+  nameWithType: BigRational.SafeCPU.push(Double)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Double,System.Boolean)
+  name: push(Double, Boolean)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Double_System_Boolean_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Double,System.Boolean)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Double, System.Boolean)
+  nameWithType: BigRational.SafeCPU.push(Double, Boolean)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Int32)
+  name: push(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Int32)
+  nameWithType: BigRational.SafeCPU.push(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Int32,System.Int32)
+  name: push(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.push(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Int64)
+  name: push(Int64)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Int64_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Int64)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Int64)
+  nameWithType: BigRational.SafeCPU.push(Int64)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Numerics.BigInteger)
+  name: push(BigInteger)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Numerics_BigInteger_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Numerics.BigInteger)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Numerics.BigInteger)
+  nameWithType: BigRational.SafeCPU.push(BigInteger)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Numerics.BigRational)
+  name: push(BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.push(BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.ReadOnlySpan{System.UInt32})
+  name: push(ReadOnlySpan<UInt32>)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_ReadOnlySpan_System_UInt32__
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.ReadOnlySpan{System.UInt32})
+  name.vb: push(ReadOnlySpan(Of UInt32))
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.ReadOnlySpan<System.UInt32>)
+  fullName.vb: System.Numerics.BigRational.SafeCPU.push(System.ReadOnlySpan(Of System.UInt32))
+  nameWithType: BigRational.SafeCPU.push(ReadOnlySpan<UInt32>)
+  nameWithType.vb: BigRational.SafeCPU.push(ReadOnlySpan(Of UInt32))
+- uid: System.Numerics.BigRational.SafeCPU.push(System.Single)
+  name: push(Single)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_Single_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.Single)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.Single)
+  nameWithType: BigRational.SafeCPU.push(Single)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.UInt32)
+  name: push(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.UInt32)
+  nameWithType: BigRational.SafeCPU.push(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.push(System.UInt64)
+  name: push(UInt64)
+  href: api/System.Numerics.BigRational.SafeCPU.push.html#System_Numerics_BigRational_SafeCPU_push_System_UInt64_
+  commentId: M:System.Numerics.BigRational.SafeCPU.push(System.UInt64)
+  fullName: System.Numerics.BigRational.SafeCPU.push(System.UInt64)
+  nameWithType: BigRational.SafeCPU.push(UInt64)
+- uid: System.Numerics.BigRational.SafeCPU.push*
+  name: push
+  href: api/System.Numerics.BigRational.SafeCPU.push.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.push
+  fullName: System.Numerics.BigRational.SafeCPU.push
+  nameWithType: BigRational.SafeCPU.push
+- uid: System.Numerics.BigRational.SafeCPU.rnd(System.Int32,System.Int32)
+  name: rnd(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.rnd.html#System_Numerics_BigRational_SafeCPU_rnd_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.rnd(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.rnd(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.rnd(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.rnd*
+  name: rnd
+  href: api/System.Numerics.BigRational.SafeCPU.rnd.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.rnd
+  fullName: System.Numerics.BigRational.SafeCPU.rnd
+  nameWithType: BigRational.SafeCPU.rnd
+- uid: System.Numerics.BigRational.SafeCPU.shl(System.UInt32,System.Int32)
+  name: shl(UInt32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.shl.html#System_Numerics_BigRational_SafeCPU_shl_System_UInt32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.shl(System.UInt32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.shl(System.UInt32, System.Int32)
+  nameWithType: BigRational.SafeCPU.shl(UInt32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.shl*
+  name: shl
+  href: api/System.Numerics.BigRational.SafeCPU.shl.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.shl
+  fullName: System.Numerics.BigRational.SafeCPU.shl
+  nameWithType: BigRational.SafeCPU.shl
+- uid: System.Numerics.BigRational.SafeCPU.shr(System.UInt32,System.Int32)
+  name: shr(UInt32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.shr.html#System_Numerics_BigRational_SafeCPU_shr_System_UInt32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.shr(System.UInt32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.shr(System.UInt32, System.Int32)
+  nameWithType: BigRational.SafeCPU.shr(UInt32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.shr*
+  name: shr
+  href: api/System.Numerics.BigRational.SafeCPU.shr.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.shr
+  fullName: System.Numerics.BigRational.SafeCPU.shr
+  nameWithType: BigRational.SafeCPU.shr
+- uid: System.Numerics.BigRational.SafeCPU.sign(System.Int32)
+  name: sign(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.sign.html#System_Numerics_BigRational_SafeCPU_sign_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.sign(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.sign(System.Int32)
+  nameWithType: BigRational.SafeCPU.sign(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.sign*
+  name: sign
+  href: api/System.Numerics.BigRational.SafeCPU.sign.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.sign
+  fullName: System.Numerics.BigRational.SafeCPU.sign
+  nameWithType: BigRational.SafeCPU.sign
+- uid: System.Numerics.BigRational.SafeCPU.sin(System.UInt32,System.Boolean)
+  name: sin(UInt32, Boolean)
+  href: api/System.Numerics.BigRational.SafeCPU.sin.html#System_Numerics_BigRational_SafeCPU_sin_System_UInt32_System_Boolean_
+  commentId: M:System.Numerics.BigRational.SafeCPU.sin(System.UInt32,System.Boolean)
+  fullName: System.Numerics.BigRational.SafeCPU.sin(System.UInt32, System.Boolean)
+  nameWithType: BigRational.SafeCPU.sin(UInt32, Boolean)
+- uid: System.Numerics.BigRational.SafeCPU.sin*
+  name: sin
+  href: api/System.Numerics.BigRational.SafeCPU.sin.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.sin
+  fullName: System.Numerics.BigRational.SafeCPU.sin
+  nameWithType: BigRational.SafeCPU.sin
+- uid: System.Numerics.BigRational.SafeCPU.sqr(System.Int32)
+  name: sqr(Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.sqr.html#System_Numerics_BigRational_SafeCPU_sqr_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.sqr(System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.sqr(System.Int32)
+  nameWithType: BigRational.SafeCPU.sqr(Int32)
+- uid: System.Numerics.BigRational.SafeCPU.sqr(System.UInt32)
+  name: sqr(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.sqr.html#System_Numerics_BigRational_SafeCPU_sqr_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.sqr(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.sqr(System.UInt32)
+  nameWithType: BigRational.SafeCPU.sqr(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.sqr*
+  name: sqr
+  href: api/System.Numerics.BigRational.SafeCPU.sqr.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.sqr
+  fullName: System.Numerics.BigRational.SafeCPU.sqr
+  nameWithType: BigRational.SafeCPU.sqr
+- uid: System.Numerics.BigRational.SafeCPU.sqrt(System.UInt32)
+  name: sqrt(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.sqrt.html#System_Numerics_BigRational_SafeCPU_sqrt_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.sqrt(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.sqrt(System.UInt32)
+  nameWithType: BigRational.SafeCPU.sqrt(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.sqrt*
+  name: sqrt
+  href: api/System.Numerics.BigRational.SafeCPU.sqrt.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.sqrt
+  fullName: System.Numerics.BigRational.SafeCPU.sqrt
+  nameWithType: BigRational.SafeCPU.sqrt
+- uid: System.Numerics.BigRational.SafeCPU.sub
+  name: sub()
+  href: api/System.Numerics.BigRational.SafeCPU.sub.html#System_Numerics_BigRational_SafeCPU_sub
+  commentId: M:System.Numerics.BigRational.SafeCPU.sub
+  fullName: System.Numerics.BigRational.SafeCPU.sub()
+  nameWithType: BigRational.SafeCPU.sub()
+- uid: System.Numerics.BigRational.SafeCPU.sub(System.Int32,System.Int32)
+  name: sub(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.sub.html#System_Numerics_BigRational_SafeCPU_sub_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.sub(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.sub(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.sub(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.sub(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: sub(BigRational, BigRational)
+  href: api/System.Numerics.BigRational.SafeCPU.sub.html#System_Numerics_BigRational_SafeCPU_sub_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SafeCPU.sub(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SafeCPU.sub(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: BigRational.SafeCPU.sub(BigRational, BigRational)
+- uid: System.Numerics.BigRational.SafeCPU.sub(System.UInt32,System.UInt32)
+  name: sub(UInt32, UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.sub.html#System_Numerics_BigRational_SafeCPU_sub_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.sub(System.UInt32,System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.sub(System.UInt32, System.UInt32)
+  nameWithType: BigRational.SafeCPU.sub(UInt32, UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.sub*
+  name: sub
+  href: api/System.Numerics.BigRational.SafeCPU.sub.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.sub
+  fullName: System.Numerics.BigRational.SafeCPU.sub
+  nameWithType: BigRational.SafeCPU.sub
+- uid: System.Numerics.BigRational.SafeCPU.swp
+  name: swp()
+  href: api/System.Numerics.BigRational.SafeCPU.swp.html#System_Numerics_BigRational_SafeCPU_swp
+  commentId: M:System.Numerics.BigRational.SafeCPU.swp
+  fullName: System.Numerics.BigRational.SafeCPU.swp()
+  nameWithType: BigRational.SafeCPU.swp()
+- uid: System.Numerics.BigRational.SafeCPU.swp(System.Int32,System.Int32)
+  name: swp(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.swp.html#System_Numerics_BigRational_SafeCPU_swp_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.swp(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.swp(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.swp(Int32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.swp(System.UInt32)
+  name: swp(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.swp.html#System_Numerics_BigRational_SafeCPU_swp_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.swp(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.swp(System.UInt32)
+  nameWithType: BigRational.SafeCPU.swp(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.swp(System.UInt32,System.UInt32)
+  name: swp(UInt32, UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.swp.html#System_Numerics_BigRational_SafeCPU_swp_System_UInt32_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.swp(System.UInt32,System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.swp(System.UInt32, System.UInt32)
+  nameWithType: BigRational.SafeCPU.swp(UInt32, UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.swp*
+  name: swp
+  href: api/System.Numerics.BigRational.SafeCPU.swp.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.swp
+  fullName: System.Numerics.BigRational.SafeCPU.swp
+  nameWithType: BigRational.SafeCPU.swp
+- uid: System.Numerics.BigRational.SafeCPU.tor(System.ReadOnlySpan{System.Char},System.Int32,System.Char)
+  name: tor(ReadOnlySpan<Char>, Int32, Char)
+  href: api/System.Numerics.BigRational.SafeCPU.tor.html#System_Numerics_BigRational_SafeCPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char_
+  commentId: M:System.Numerics.BigRational.SafeCPU.tor(System.ReadOnlySpan{System.Char},System.Int32,System.Char)
+  name.vb: tor(ReadOnlySpan(Of Char), Int32, Char)
+  fullName: System.Numerics.BigRational.SafeCPU.tor(System.ReadOnlySpan<System.Char>, System.Int32, System.Char)
+  fullName.vb: System.Numerics.BigRational.SafeCPU.tor(System.ReadOnlySpan(Of System.Char), System.Int32, System.Char)
+  nameWithType: BigRational.SafeCPU.tor(ReadOnlySpan<Char>, Int32, Char)
+  nameWithType.vb: BigRational.SafeCPU.tor(ReadOnlySpan(Of Char), Int32, Char)
+- uid: System.Numerics.BigRational.SafeCPU.tor*
+  name: tor
+  href: api/System.Numerics.BigRational.SafeCPU.tor.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.tor
+  fullName: System.Numerics.BigRational.SafeCPU.tor
+  nameWithType: BigRational.SafeCPU.tor
+- uid: System.Numerics.BigRational.SafeCPU.tos(System.Span{System.Char},System.Int32@,System.Int32@,System.Int32@,System.Boolean)
+  name: tos(Span<Char>, out Int32, out Int32, out Int32, Boolean)
+  href: api/System.Numerics.BigRational.SafeCPU.tos.html#System_Numerics_BigRational_SafeCPU_tos_System_Span_System_Char__System_Int32__System_Int32__System_Int32__System_Boolean_
+  commentId: M:System.Numerics.BigRational.SafeCPU.tos(System.Span{System.Char},System.Int32@,System.Int32@,System.Int32@,System.Boolean)
+  name.vb: tos(Span(Of Char), ByRef Int32, ByRef Int32, ByRef Int32, Boolean)
+  fullName: System.Numerics.BigRational.SafeCPU.tos(System.Span<System.Char>, out System.Int32, out System.Int32, out System.Int32, System.Boolean)
+  fullName.vb: System.Numerics.BigRational.SafeCPU.tos(System.Span(Of System.Char), ByRef System.Int32, ByRef System.Int32, ByRef System.Int32, System.Boolean)
+  nameWithType: BigRational.SafeCPU.tos(Span<Char>, out Int32, out Int32, out Int32, Boolean)
+  nameWithType.vb: BigRational.SafeCPU.tos(Span(Of Char), ByRef Int32, ByRef Int32, ByRef Int32, Boolean)
+- uid: System.Numerics.BigRational.SafeCPU.tos*
+  name: tos
+  href: api/System.Numerics.BigRational.SafeCPU.tos.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.tos
+  fullName: System.Numerics.BigRational.SafeCPU.tos
+  nameWithType: BigRational.SafeCPU.tos
+- uid: System.Numerics.BigRational.SafeCPU.xor
+  name: xor()
+  href: api/System.Numerics.BigRational.SafeCPU.xor.html#System_Numerics_BigRational_SafeCPU_xor
+  commentId: M:System.Numerics.BigRational.SafeCPU.xor
+  fullName: System.Numerics.BigRational.SafeCPU.xor()
+  nameWithType: BigRational.SafeCPU.xor()
+- uid: System.Numerics.BigRational.SafeCPU.xor*
+  name: xor
+  href: api/System.Numerics.BigRational.SafeCPU.xor.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.xor
+  fullName: System.Numerics.BigRational.SafeCPU.xor
+  nameWithType: BigRational.SafeCPU.xor
 - uid: System.Numerics.BigRational.Sign(System.Numerics.BigRational)
   name: Sign(BigRational)
   href: api/System.Numerics.BigRational.Sign.html#System_Numerics_BigRational_Sign_System_Numerics_BigRational_

@@ -28,7 +28,7 @@ namespace System.Numerics.Rational
     {
       sp = sp.Trim().Trim("[]").Trim(); //trim for param_..., tor don't need it
       int n = SpanTools.param_count(sp); //todo: if(n > anylim) -> chunks
-      var cpu = rat.task_cpu; 
+      var cpu = rat.task_cpu; //var cpux = rat._task_cpu;
       for (int i = 0; i < n; i++) cpu.tor(SpanTools.param_slice(ref sp), 10, default);
       var r = Create(cpu, n); cpu.pop(n); return r;
     }
@@ -120,7 +120,7 @@ namespace System.Numerics.Rational
     //  }
     //  return new VectorR(p);
     //}
-    public static VectorR Create(BigRational.CPU cpu, int count)
+    public static VectorR Create(BigRational.SafeCPU cpu, int count)
     {
       uint c = checked((uint)count), m = cpu.mark() - c; int a = 0;
       for (uint i = 0; i < count; i++)

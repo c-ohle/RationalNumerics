@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 // The INumber implementation is intended to reflect the public function set of double exactly.
 // It should be possible to check floating point algorithms for precision, epsilon and robustness issues
 // simply by replacing double with BigRational. Therfore some overhead, functions like Clamp, CopySign etc.
 
-namespace System.Numerics
-{
 #if NET7_0 
 
+namespace System.Numerics
+{
   unsafe partial struct BigRational :
     INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, //IConvertible, //todo: check IConvertible, does it makes much sens for non system types?
     IPowerFunctions<BigRational>, IRootFunctions<BigRational>, IExponentialFunctions<BigRational>,
@@ -156,7 +147,7 @@ namespace System.Numerics
 
     static int cmpa(BigRational x, BigRational y)
     {
-      var cpu = task_cpu; cpu.push(x); cpu.push(y);
+      var cpu = main_cpu; cpu.push(x); cpu.push(y);
       var i = cpu.cmpa(); cpu.pop(2); return i;
     }
     /// <summary>Compares two values to compute which is greater.</summary>
@@ -287,23 +278,24 @@ namespace System.Numerics
       if (s == null) { result = default; return false; }
       return !IsNaN(result = Parse(s, provider));
     }
-
+    
     //INumberBase
     static bool INumberBase<BigRational>.TryConvertFromChecked<T>(T value, out BigRational result) 
     {
-      return TryConvertFrom<T>(value, out result); //BigRational unlimited
+      return TryConvertFrom<T>(value, out result); //BigRational - no limits
     }
     static bool INumberBase<BigRational>.TryConvertFromSaturating<T>(T value, out BigRational result) 
     {
-      return TryConvertFrom<T>(value, out result); //BigRational unlimited
+      return TryConvertFrom<T>(value, out result); //BigRational - no limits
     }
     static bool INumberBase<BigRational>.TryConvertFromTruncating<T>(T value, out BigRational result) 
     {
-      return TryConvertFrom<T>(value, out result); //BigRational unlimited
+      //todo: ask/check spec, intended should truncate or only if it would be necessary?
+      return TryConvertFrom<T>(value, out result); //BigRational - no limits
     }
     static bool TryConvertFrom<T>(T value, out BigRational result) where T : INumberBase<T>
     {
-      // this way no boxing, less code, inline works in release -> passed to operator, (depends on MethodImplOptions.AggressiveInlining ? check) 
+      //this implementation works without boxing, for X64 checked: inline straight to a single operator call
       { if (value is byte t) { result = t; return true; } }
       { if (value is sbyte t) { result = t; return true; } }
       { if (value is ushort t) { result = t; return true; } }
@@ -331,83 +323,85 @@ namespace System.Numerics
     }
     static bool INumberBase<BigRational>.TryConvertToSaturating<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
     {
-      return TryConvertTo<T>(value, 0, out result);
+      return TryConvertTo<T>(value, 0, out result); //truncating and saturating is implicite for rat 
     }
     static bool INumberBase<BigRational>.TryConvertToTruncating<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
     {
-      return TryConvertTo<T>(value, 0, out result);
+      return TryConvertTo<T>(value, 0, out result); //truncating and saturating is implicite for rat 
     }
     static bool TryConvertTo<T>(BigRational value, uint f, [NotNullWhen(true)] out T result) where T : INumberBase<T>
     {
-      result = default!; //todo: crosscheck
+      //this implementation works without boxing, for X64 checked: inline straight to the single operator call
+      //todo: ask / check spec for the fp types, currently diffs in NET7 double, decimal, ... and for int types too
+      result = default!; 
       if (typeof(T) == typeof(byte))
       {
         var u = (uint)value; var v = unchecked((byte)Math.Min(Math.Max(u, byte.MinValue), byte.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; //todo: ask throw like in the double impl?  
-        if (v is T t) result = t; return true; //this works, no boxing, inlines at least the expr.
+        if (f != 0 && u != v) throw new ArgumentException(); // return false;
+        if (v is T t) result = t; return true; 
       }
       if (typeof(T) == typeof(sbyte))
       {
         var u = (int)value; var v = unchecked((sbyte)Math.Min(Math.Max(u, sbyte.MinValue), sbyte.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; //todo: ask throw like in the double impl?  
+        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(short))
       {
         var u = (int)value; var v = unchecked((short)Math.Min(Math.Max(u, short.MinValue), short.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; //todo: ask throw like in the double impl?  
+        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(ushort))
       {
         var u = (uint)value; var v = unchecked((ushort)Math.Min(Math.Max(u, ushort.MinValue), ushort.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; //todo: ask throw like in the double impl?  
+        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(char))
       {
         var u = (uint)value; var v = unchecked((char)Math.Min(Math.Max(u, char.MinValue), char.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; //todo: ask throw like in the double impl?  
+        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(int))
       {
-        var v = default(int); task_cpu.toi(value, (uint*)&v, 0x0001 | f);
+        var v = default(int); main_cpu.toi(value, (uint*)&v, 0x0001 | f);
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(uint))
       {
-        var v = default(uint); task_cpu.toi(value, (uint*)&v, 0x0101 | f);
+        var v = default(uint); main_cpu.toi(value, (uint*)&v, 0x0101 | f);
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(long))
       {
-        var v = default(long); task_cpu.toi(value, (uint*)&v, 0x0002 | f);
+        var v = default(long); main_cpu.toi(value, (uint*)&v, 0x0002 | f);
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(ulong))
       {
-        var v = default(ulong); task_cpu.toi(value, (uint*)&v, 0x0102 | f);
+        var v = default(ulong); main_cpu.toi(value, (uint*)&v, 0x0102 | f);
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(Int128))
       {
-        var v = default(Int128); task_cpu.toi(value, (uint*)&v, 0x0004 | f);
+        var v = default(Int128); main_cpu.toi(value, (uint*)&v, 0x0004 | f);
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(UInt128))
       {
-        var v = default(UInt128); task_cpu.toi(value, (uint*)&v, 0x0104 | f);
+        var v = default(UInt128); main_cpu.toi(value, (uint*)&v, 0x0104 | f);
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(nint))
       {
-        var v = default(nint); task_cpu.toi(value, (uint*)&v, ((uint)sizeof(nint) >> 2) | f);
+        var v = default(nint); main_cpu.toi(value, (uint*)&v, ((uint)sizeof(nint) >> 2) | f);
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(nuint))
       {
-        var v = default(nuint); task_cpu.toi(value, (uint*)&v, ((uint)sizeof(nuint) >> 2) | 0x0100 | f);
+        var v = default(nuint); main_cpu.toi(value, (uint*)&v, ((uint)sizeof(nuint) >> 2) | 0x0100 | f);
         if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(decimal))
@@ -449,18 +443,27 @@ namespace System.Numerics
 
     static BigRational INumberBase<BigRational>.CreateChecked<T>(T value) 
     {
-      if (typeof(T) == typeof(BigRational)) return (BigRational)(object)value;
+      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
+      if (typeof(T) == typeof(BigRational)) return value is BigRational t ? t : default; // no boxing like (BigRational)(object)value;
       if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToChecked(value, out r))
         throw new NotSupportedException(typeof(T).Name);
       return r;
     }
     static BigRational INumberBase<BigRational>.CreateSaturating<T>(T value) 
     {
-      TryConvertFrom<T>(value, out var r); return r;
+      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
+      if (typeof(T) == typeof(BigRational)) return value is BigRational t ? t : default; // no boxing like (BigRational)(object)value;
+      if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToSaturating(value, out r))
+        throw new NotSupportedException(typeof(T).Name);
+      return r;
     }
     static BigRational INumberBase<BigRational>.CreateTruncating<T>(T value) 
     {
-      TryConvertFrom<T>(value, out var r); return r;
+      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
+      if (typeof(T) == typeof(BigRational)) return value is BigRational t ? t : default; // no boxing like (BigRational)(object)value;
+      if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToTruncating(value, out r))
+        throw new NotSupportedException(typeof(T).Name);
+      return r;
     }
 
     //NET7 spec, all possible conversions explicitly (even if it is actually mapped automatically).
@@ -544,7 +547,7 @@ namespace System.Numerics
     public static implicit operator BigRational(Int128 value)
     {
       var p = (ulong*)&value; var s = (p[1] >> 63) != 0; if (s) value = -value;
-      var cpu = task_cpu; cpu.push(p[0]); if (p[1] != 0) { cpu.push(p[1]); cpu.shl(64); cpu.or(); }
+      var cpu = main_cpu; cpu.push(p[0]); if (p[1] != 0) { cpu.push(p[1]); cpu.shl(64); cpu.or(); }
       if (s) cpu.neg(); return cpu.popr();
     }
     /// <summary>
@@ -554,7 +557,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public static implicit operator BigRational(UInt128 value)
     {
-      var cpu = task_cpu; var p = (ulong*)&value;
+      var cpu = main_cpu; var p = (ulong*)&value;
       cpu.push(p[0]); if (p[1] != 0) { cpu.push(p[1]); cpu.shl(64); cpu.or(); }
       return cpu.popr();
     }
@@ -665,6 +668,46 @@ namespace System.Numerics
       return checked((char)(uint)value);
     }
     /// <summary>
+    /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="int"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="int"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="int"/>.</returns>
+    /// <exception cref="OverflowException"></exception>
+    public static explicit operator checked int(BigRational value)
+    {
+      var a = default(int); main_cpu.toi(value, (uint*)&a, 0x1001); return a;
+    }
+    /// <summary>
+    /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="uint"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="uint"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="uint"/>.</returns>
+    /// <exception cref="OverflowException"></exception>
+    public static explicit operator checked uint(BigRational value)
+    {
+      var a = default(uint); main_cpu.toi(value, (uint*)&a, 0x1101); return a;
+    }
+    /// <summary>
+    /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="long"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="long"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="long"/>.</returns>
+    /// <exception cref="OverflowException"></exception>
+    public static explicit operator checked long(BigRational value)
+    {
+      var a = default(long); main_cpu.toi(value, (uint*)&a, 0x1002); return a;
+    }
+    /// <summary>
+    /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="ulong"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="ulong"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="ulong"/>.</returns>
+    /// <exception cref="OverflowException"></exception>
+    public static explicit operator checked ulong(BigRational value)
+    {
+      var a = default(ulong); main_cpu.toi(value, (uint*)&a, 0x1102); return a;
+    }
+    /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="nint"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="nint"/>.</param>
@@ -709,7 +752,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="Int128"/>.</returns>
     public static explicit operator Int128(BigRational value)
     {
-      var a = default(Int128); task_cpu.toi(value, (uint*)&a, 0x0004); return a;
+      var a = default(Int128); main_cpu.toi(value, (uint*)&a, 0x0004); return a;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="Int128"/> value.
@@ -719,7 +762,7 @@ namespace System.Numerics
     /// <exception cref="OverflowException"></exception>
     public static explicit operator checked Int128(BigRational value)
     {
-      var a = default(Int128); task_cpu.toi(value, (uint*)&a, 0x1004); return a;
+      var a = default(Int128); main_cpu.toi(value, (uint*)&a, 0x1004); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="UInt128"/> value.
@@ -728,7 +771,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="UInt128"/>.</returns>
     public static explicit operator UInt128(BigRational value)
     {
-      var a = default(UInt128); task_cpu.toi(value, (uint*)&a, 0x0104); return a;
+      var a = default(UInt128); main_cpu.toi(value, (uint*)&a, 0x0104); return a;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="UInt128"/> value.
@@ -738,7 +781,7 @@ namespace System.Numerics
     /// <exception cref="OverflowException"></exception>
     public static explicit operator checked UInt128(BigRational value)
     {
-      var a = default(UInt128); task_cpu.toi(value, (uint*)&a, 0x1104); return a;
+      var a = default(UInt128); main_cpu.toi(value, (uint*)&a, 0x1104); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="Half"/> value.
@@ -758,56 +801,6 @@ namespace System.Numerics
     {
       return nint.Size == 4 ? new NFloat((float)value) : new NFloat((double)value);
     }
-
-    //NET6 ext
-    /// <summary>
-    /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="int"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="int"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="int"/>.</returns>
-    /// <exception cref="OverflowException"></exception>
-    public static explicit operator checked int(BigRational value)
-    {
-      var a = default(int); task_cpu.toi(value, (uint*)&a, 0x1001); return a;
-    }
-    /// <summary>
-    /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="uint"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="uint"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="uint"/>.</returns>
-    /// <exception cref="OverflowException"></exception>
-    public static explicit operator checked uint(BigRational value)
-    {
-      var a = default(uint); task_cpu.toi(value, (uint*)&a, 0x1101); return a;
-    }
-    /// <summary>
-    /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="long"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="long"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="long"/>.</returns>
-    /// <exception cref="OverflowException"></exception>
-    public static explicit operator checked long(BigRational value)
-    {
-      var a = default(long); task_cpu.toi(value, (uint*)&a, 0x1002); return a;
-    }
-    /// <summary>
-    /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="ulong"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="ulong"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="ulong"/>.</returns>
-    /// <exception cref="OverflowException"></exception>
-    public static explicit operator checked ulong(BigRational value)
-    {
-      var a = default(ulong); task_cpu.toi(value, (uint*)&a, 0x1102); return a;
-    }
-
-    // todo: expose after checks for NET6
-    // }
-    // #endif // NET 7
-    //
-    // // general public 
-    // unsafe partial struct BigRational
-    // {
 
     //IPowerFunctions
     /// <summary>Computes a value raised to a given power.</summary>
@@ -1284,9 +1277,8 @@ namespace System.Numerics
       return Tanh(x, MaxDigits);
     }
   }
-
-#endif // NET 7
-
 }
+
+#endif //NET7_0
 
 
