@@ -14,10 +14,9 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); // test();
       Application.Run(new MainFrame());
     }
-
 
 #if false // NET6_0
     static void test()
@@ -33,12 +32,17 @@ namespace Test
       a = b * c;
     }
 #endif
+
+#if NET7_0
+
+    static void test()
+    {
+      TestBigIntegerBuilder.TestBuilder();
+    }
+
+#endif
+
 #if false // NET7_0
-    // todo: query DivRem NumDen
-    // todo: query double decimal behavior?
-    // todo: change spec exceptions, checked,...
-    // todo: check checked decimal
-    // todo: check boost operator over funcs
  
     static rat gamma1(rat x)
     {

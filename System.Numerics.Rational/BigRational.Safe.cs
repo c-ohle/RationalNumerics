@@ -163,6 +163,16 @@ namespace System.Numerics
       /// <param name="v">Returns the value.</param>
       public void get(uint i, out float v) => p.get(i, out v);
       /// <summary>
+      /// Converts the numerator of the value at absolute position <paramref name="i"/> on stack to a 
+      /// <see cref="BigInteger"/> number and returns it.
+      /// </summary>
+      /// <remarks>
+      /// In the case of fractional values, it is advisable to round them beforehand using the desired rounding mode.
+      /// </remarks>
+      /// <param name="i">Absolute index of the value to get.</param>
+      /// <param name="v">Returns the value.</param>
+      public void get(uint i, out BigInteger v) => p.get(i, out v);
+      /// <summary>
       /// Exposes the internal data representation of the value at absolute position i on the stack.<br/>
       /// </summary>
       /// <remarks>

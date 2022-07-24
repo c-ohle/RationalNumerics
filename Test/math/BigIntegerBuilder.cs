@@ -1,0 +1,287 @@
+﻿using Test;
+
+#if NET7_0
+
+namespace System.Numerics.Rational
+{
+  /// <summary>
+  /// A type 1 BigIntegerBuilder
+  /// </summary>
+  /// <remarks>
+  /// Properties:<br/>
+  /// * Definitly the most simple, flexible, memory efficient and performant solution.<br/> 
+  /// * Function list not complete, only to show the system, can easily extend to mutch more than BigInteger currently can.<br/> 
+  /// * For .NET7 and numbers with little bit more than 32 bit - about 20% faster than using the internal BigInteger.Calculator<br/>
+  /// * For all functions: IndexOutOfRangeException if called without enough params on stack<br/>
+  /// Negatives:<br/>
+  /// * The user need to understand the stack concept.<br/>
+  /// Security:<br/>
+  /// * This builder has a private instance of a BigRational.CPU - no static refs are in use.<br/>
+  /// * It represents simply a class that the GC can collect if no more referenced.<br/>
+  /// * One instance can be used in several threads, user managed using lock(builder) {} etc.
+  /// </remarks>
+  public class BigIntegerBuilder1
+  {
+    // inital capacity 8 - for integer calculations more than enough
+    readonly BigRational.CPU cpu = new BigRational.CPU(8);
+
+    // for debug only: not mutch effort, simply show stack as list
+    public override string ToString()
+    {
+      return string.Join("; ", Enumerable.Range(0, (int)cpu.mark()).Reverse().
+        Select(i => { cpu.get((uint)i, out BigInteger r); return r.ToString(); }));
+    }
+
+    // after exceptions or for the case someone lose control 
+    public void Clear() { cpu.pop((int)cpu.mark()); }
+
+    public void Push(BigInteger value) { cpu.push(value); }
+
+    // for integer types > Int32 explicitly, since the implicite BigInteger casts would include allocs
+    public void Push(int value) { cpu.push(value); } // but then it needs int32 too - to avoid ambigous ...
+    public void Push(uint value) { cpu.push(value); }
+    public void Push(long value) { cpu.push(value); }
+    public void Push(ulong value) { cpu.push(value); }
+    public void Push(Int128 value) { cpu.push(value); }
+    public void Push(UInt128 value) { cpu.push(value); }
+    // and so on...
+
+    // binary ops     
+    public void Add() { cpu.add(); }
+    public void Subtract() { cpu.sub(); }
+    public void Multiply() { cpu.mul(); }
+    public void Divide()
+    {
+      if (cpu.sign() == 0) throw new DivideByZeroException(); //BigInteger behavior 
+      cpu.div(); cpu.rnd(0, 0); // trunc
+    }
+    // and so on...
+
+    // unary ops
+    public void Negate() { cpu.neg(); }
+    public void Pow(int exponent) { cpu.pow(exponent); }
+    public void Sqr() { cpu.sqr(); }
+    public void ShiftLeft(int count) { cpu.shl(checked((uint)count)); }
+    public void ShiftRight(int count) { cpu.shr(checked((uint)count)); }
+    // and so on...
+
+    // ops necessary to support vector calculations or complex ones using temps etc. 
+    public void Swap(int a, int b) { cpu.swp(a, b); }
+    public void Duplicate() { cpu.dup(); }
+
+    // fetch, the one and only final alloc (if the cpu was already in use)
+    public BigInteger PopResult()
+    {
+      cpu.get(cpu.mark() - 1, out BigInteger r);
+      cpu.pop(); return r;
+    }
+  }
+
+  /// <summary>
+  /// A type 2 BigIntegerBuilder
+  /// </summary>
+  /// <remarks>
+  /// * System, Security, all like for BigIntegerBuilder1<br/> 
+  /// * Just to show the system, assuming BigIntegerBuilder2 params always the same, div 0 not handled etc.<br/>
+  /// Positives:<br/>
+  /// * Syntax similiar to standard notation: a * b + c * d -> Add(Multiply(a, b), Multiply(c, d));<br/>
+  /// * Syntax very restricted but safe and user dont need to understand the stack concept behind.<br/>
+  /// Negatives:<br/>
+  /// * To get the same memory efficency like for BigIntegerBuilder1 it would need thousands of function parameter versions.<br/>
+  /// * More complex calculations, vectors or with temps nearly impossible.<br/>
+  /// </remarks>
+  public class BigIntegerBuilder2
+  {
+    // inital capacity 8 - for integer calculations more than enough
+    readonly BigRational.CPU cpu = new BigRational.CPU(8);
+
+    // for debug: nothing to show at runtime because of the syntax restictions; otherwise always empty
+    public override string? ToString() => base.ToString();
+
+    // binary ops
+    public BigIntegerBuilder2 Add(BigInteger a, BigInteger b) { cpu.push(a); cpu.push(b); cpu.add(); return this; }
+    public BigIntegerBuilder2 Add(BigIntegerBuilder2 a, BigInteger b) { cpu.push(b); cpu.add(); return this; }
+    public BigIntegerBuilder2 Add(BigInteger a, BigIntegerBuilder2 b) { cpu.push(a); cpu.add(); return this; }
+    public BigIntegerBuilder2 Add(BigIntegerBuilder2 a, BigIntegerBuilder2 b) { cpu.add(); return this; }
+    public BigIntegerBuilder2 Substract(BigInteger a, BigInteger b) { cpu.push(a); cpu.push(b); cpu.sub(); return this; }
+    public BigIntegerBuilder2 Substract(BigIntegerBuilder2 a, BigInteger b) { cpu.push(b); cpu.sub(); return this; }
+    public BigIntegerBuilder2 Substract(BigInteger a, BigIntegerBuilder2 b) { cpu.push(a); cpu.swp(); cpu.sub(); return this; }
+    public BigIntegerBuilder2 Substract(BigIntegerBuilder2 a, BigIntegerBuilder2 b) { cpu.sub(); return this; }
+    public BigIntegerBuilder2 Multiply(BigInteger a, BigInteger b) { cpu.push(a); cpu.push(b); cpu.mul(); return this; }
+    public BigIntegerBuilder2 Multiply(BigIntegerBuilder2 a, BigInteger b) { cpu.push(b); cpu.mul(); return this; }
+    public BigIntegerBuilder2 Multiply(BigInteger a, BigIntegerBuilder2 b) { cpu.push(a); cpu.mul(); return this; }
+    public BigIntegerBuilder2 Multiply(BigIntegerBuilder2 a, BigIntegerBuilder2 b) { cpu.mul(); return this; }
+    public BigIntegerBuilder2 Divide(BigInteger a, BigInteger b) { cpu.push(a); cpu.push(b); cpu.div(); cpu.rnd(0, 0); return this; }
+    public BigIntegerBuilder2 Divide(BigIntegerBuilder2 a, BigInteger b) { cpu.push(b); cpu.div(); cpu.rnd(0, 0); return this; }
+    public BigIntegerBuilder2 Divide(BigInteger a, BigIntegerBuilder2 b) { cpu.push(a); cpu.swp(); cpu.div(); cpu.rnd(0, 0); return this; }
+    public BigIntegerBuilder2 Divide(BigIntegerBuilder2 a, BigIntegerBuilder2 b) { cpu.div(); cpu.rnd(0, 0); return this; }
+    // and so on...
+
+    // unary ops
+    public BigIntegerBuilder2 Negate(BigInteger a) { cpu.push(a); cpu.neg(); return this; }
+    public BigIntegerBuilder2 Negate(BigIntegerBuilder2 a) { cpu.neg(); return this; }
+    public BigIntegerBuilder2 Pow(BigInteger a, int exponent) { cpu.push(a); cpu.pow(exponent); return this; }
+    public BigIntegerBuilder2 Pow(BigIntegerBuilder2 a, int exponent) { cpu.pow(exponent); return this; }
+    // and so on...
+
+    // fetch, the one and only final alloc (if the cpu was already in use)
+    public BigInteger ToBigInteger()
+    {
+      cpu.get(cpu.mark() - 1, out BigInteger r); cpu.pop(); return r;
+    }
+
+    // eg. after exceptions
+    public void Clear() { cpu.pop((int)cpu.mark()); }
+
+  }
+
+  /// <summary>
+  /// A type 3 BigIntegerBuilder
+  /// </summary>
+  /// <remarks>
+  /// Properties:<br/>
+  /// * System, Security, all like for BigIntegerBuilder1 and BigIntegerBuilder2<br/> 
+  /// * Based on a fast Expressions compilation it allows hig-optimized specialized typesafe function sets for exactly the cases that needed.<br/>
+  /// * BigIntegerBuilder3 is small, the ExpressionsCompiler currently 4k in-assembly size provides much more functionality than needed.<br/>
+  /// * Without debug support full templates and Linq support - it could be small private BigIntegerBuilder3.ExpressionsCompiler version.<br/>
+  /// * Or, to support INumber, with less effort could be extended to support static interfaces with correct inlining.<br/>
+  /// * Builder librarys could be load from any sources, online etc.<br/>
+  /// Negatives:<br/>
+  /// * Users would need to write simple oldstyle C# code. This can be done in C# as draft but needs knowladge.<br/>
+  /// * Debug only possible with a small VS extension I wrote, edit and continue currently not supported.
+  /// </remarks>
+  public class BigIntegerBuilder3
+  {
+    readonly object[] funcs;
+    public BigIntegerBuilder3(string script)
+    {
+      var t1 = BigInteger.One; var t2 = BigRational.One; // to speed up compilation, ensure assemblys are loaded 
+      var expr = ExpressionsCompiler.Compile(script);
+      var ctor = expr.Compile();
+      funcs = ctor(null); // simple static, single instance, could be compiled as BigIntegerBuilder3 extension with much more possebilities
+    }
+    public T GetFunc<T>(string name) where T : MulticastDelegate
+    {
+      //this as slow but readable accessor, should be for(...) loop and/or with dictionary for bigger libs
+      return funcs.OfType<T>().First(f => f.Method.Name == name); 
+    }      
+  }
+
+  public static class TestBigIntegerBuilder
+  {
+    public static void TestBuilder()
+    {
+      TestType1();
+      TestType2();
+      TestType3();
+    }
+
+    public static void TestType1()
+    {
+      BigInteger a = 10, b = 20, c = 30, d = 40, x;
+
+      var builder = new BigIntegerBuilder1();
+
+      builder.Push(BigInteger.One);
+      builder.Push(BigInteger.MinusOne);
+      builder.Add();
+      x = builder.PopResult();
+
+      // the case: x = a * b + c * d;
+      builder.Push(a);   // a
+      builder.Push(b);   // b
+      builder.Multiply(); // a * b
+      builder.Push(c);   // c
+      builder.Push(d);   // d
+      builder.Multiply(); // c * d
+      builder.Add();      // (a * b) + (c * d) 
+      x = builder.PopResult();
+
+      builder.Push(Int128.MaxValue);
+      builder.Push(-1000);
+      builder.Multiply();
+      x = builder.PopResult();
+
+      builder.Push(1000);
+      builder.Push(123);
+      builder.Divide();
+      x = builder.PopResult();
+
+      builder.Push(10); // 10 ^ 100
+      builder.Pow(100);
+      x = builder.PopResult();
+
+      // // div 0 test -> exception
+      // builder.Push(10);
+      // builder.Push(0);
+      // try { builder.Divide(); result = builder.PopResult(); }
+      // catch (Exception e) { Debug.WriteLine(e.Message); builder.Clear(); }
+
+      builder.Clear();
+    }
+
+
+    public static void TestType2()
+    {
+      var builder = new BigIntegerBuilder2();
+      BigInteger a = 10, b = 20, c = 30, d = 40, x;
+
+      // x = a * b + c * d; 
+      x = builder.Add(builder.Multiply(a, b), builder.Multiply(c, d)).ToBigInteger();
+
+      // x = a * b + c; 
+      x = builder.Add(builder.Multiply(a, b), c).ToBigInteger();
+
+    }
+
+    public static void TestType3()
+    {
+      // some simple examples only:
+
+      var builder = new BigIntegerBuilder3(@"
+        using System; // Int128
+        using System.Numerics;
+        using System.Numerics.Rational; 
+        
+        BigRational.CPU cpu = new BigRational.CPU((uint)8); // 8 enough for integer calculations
+        
+        public BigInteger Add(BigInteger a, int b) 
+        {
+          cpu.push(a); cpu.push(b); 
+          return pop_result();                            
+        }
+
+        // a * b + c * d
+        public BigInteger MulAddMul(BigInteger a, BigInteger b, BigInteger c, BigInteger d) 
+        {
+          cpu.push(a); cpu.push(b); cpu.mul(); 
+          cpu.push(c); cpu.push(d); cpu.mul(); cpu.add(); 
+          return pop_result();                            
+        }
+
+        public BigInteger Int128BigMul(Int128 a, Int128 b) 
+        {
+          cpu.push(a); cpu.push(b); cpu.mul(); 
+          return pop_result();                            
+        }
+          
+        BigInteger pop_result() // helper
+        {
+          BigInteger r; cpu.get(cpu.mark() - 1, out r); cpu.pop(); return r;
+        }
+        ");
+
+      BigInteger a = 10, b = 20, c = 30, d = 40, x;
+
+      // x = a * b + c * d; 
+      var MulAddMul = builder.GetFunc<Func<BigInteger, BigInteger, BigInteger, BigInteger, BigInteger>>("MulAddMul");
+      x = MulAddMul(a, b, c, d);
+
+      var Int128BigMul = builder.GetFunc<Func<Int128, Int128, BigInteger>>("Int128BigMul");
+      x = Int128BigMul(Int128.MaxValue, Int128.MaxValue);
+    }
+
+  }
+}
+
+#endif

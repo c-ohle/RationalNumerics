@@ -620,13 +620,15 @@ namespace System.Numerics
     public static explicit operator BigInteger(BigRational value)
     {
       if (value.p == null) return default;
-      fixed (uint* p = value.p)
-      {
-        var n = p[0] & 0x3fffffff; var b = p + (n + 1);
-        var r = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), (int)n << 2), true, false);
-        if (*(ulong*)b != 0x100000001) r /= new BigInteger(new ReadOnlySpan<byte>(b + 1, (int)b[0] << 2), true);
-        return (p[0] & 0x80000000) == 0 ? r : -r;
-      }
+      var cpu = main_cpu; cpu.push(value); cpu.rnd(0, 0); // trunc
+      cpu.get(cpu.mark() - 1, out BigInteger r); cpu.pop(); return r;
+      //fixed (uint* p = value.p)
+      //{
+      //  var n = p[0] & 0x3fffffff; var b = p + (n + 1);
+      //  var r = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), (int)n << 2), true, false);
+      //  if (*(ulong*)b != 0x100000001) r /= new BigInteger(new ReadOnlySpan<byte>(b + 1, (int)b[0] << 2), true);
+      //  return (p[0] & 0x80000000) == 0 ? r : -r;
+      //}
     }
     /// <summary>
     /// Defines an explicit access to the internal data representation of a <see cref="BigRational"/> number.
@@ -1276,7 +1278,7 @@ namespace System.Numerics
           if (isz(p)) { v = default; return; }
           if ((p[0] & 0x40000000) != 0) norm(p);
           uint n = len(p);
-          //check: experimental
+          //todo: NET7 experimental, extend for INumber const's
           if (n == 4 && ((ulong*)p)[0] == 0x100000001 && ((ulong*)p)[1] == 0x100000001)
           {
             v = cachx(p, n, 1); return;
@@ -1315,6 +1317,23 @@ namespace System.Numerics
         v = (float)new BigRational(p[i]);
       }
       /// <summary>
+      /// Converts the numerator of the value at absolute position <paramref name="i"/> on stack to a 
+      /// <see cref="BigInteger"/> number and returns it.
+      /// </summary>
+      /// <remarks>
+      /// In the case of fractional values, it is advisable to round them beforehand using the desired rounding mode.
+      /// </remarks>
+      /// <param name="i">Absolute index of the value to get.</param>
+      /// <param name="v">Returns the value.</param>
+      public void get(uint i, out BigInteger v)
+      {
+        fixed (uint* p = this.p[i])
+        {
+          v = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), unchecked((int)(p[0] & 0x3fffffff) << 2)), true, false);
+          if (sig(p) < 0) v = -v; //fast BigInteger
+        }
+      }
+      /// <summary>
       /// Exposes the internal data representation of the value at absolute position i on the stack.<br/>
       /// </summary>
       /// <remarks>
@@ -1334,7 +1353,7 @@ namespace System.Numerics
         var p = this.p[i];
         fixed (uint* u = p) v = new ReadOnlySpan<uint>(p).Slice(0, unchecked((int)len(u)));
       }
-
+      
       /// <summary>
       /// Removes the value currently on top of the stack, 
       /// convert and returns it as always normalized <see cref="BigRational"/> number.<br/>

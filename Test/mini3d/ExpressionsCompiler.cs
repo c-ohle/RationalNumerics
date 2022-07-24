@@ -27,7 +27,7 @@ namespace Test
         Compiler.wr = new WeakReference(p = new Compiler());
       return p.Compile(@this ?? typeof(object), code, usings, dbg);
     }
-    public delegate object[] Creator(object @this);
+    public delegate object[] Creator(object? @this);
     public delegate object Exchange(string name, object value);
     public delegate void Accessor(Exchange func);
     public delegate Expression Debugger(int i, int n, object p);

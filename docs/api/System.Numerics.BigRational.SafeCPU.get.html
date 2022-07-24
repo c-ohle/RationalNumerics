@@ -890,6 +890,45 @@ For absolute positions see: <a class="xref" href="System.Numerics.BigRational.Sa
 
 
 <a id="System_Numerics_BigRational_SafeCPU_get_" data-uid="System.Numerics.BigRational.SafeCPU.get*"></a>
+<h4 id="System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Numerics_BigInteger__" data-uid="System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigInteger@)">get(UInt32, out BigInteger)</h4>
+<div class="markdown level1 summary"><p>Converts the numerator of the value at absolute position <code data-dev-comment-type="paramref" class="paramref">i</code> on stack to a
+<span class="xref">System.Numerics.BigInteger</span> number and returns it.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+<h5 class="decalaration">Declaration</h5>
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public void get(uint i, out BigInteger v)</code></pre>
+</div>
+<h5 class="parameters">Parameters</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="xref">System.UInt32</span></td>
+      <td><span class="parametername">i</span></td>
+      <td><p>Absolute index of the value to get.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.Numerics.BigInteger</span></td>
+      <td><span class="parametername">v</span></td>
+      <td><p>Returns the value.</p>
+</td>
+    </tr>
+  </tbody>
+</table>
+<h5 id="System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Numerics_BigInteger___remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>In the case of fractional values, it is advisable to round them beforehand using the desired rounding mode.</p>
+</div>
+
+
+<a id="System_Numerics_BigRational_SafeCPU_get_" data-uid="System.Numerics.BigRational.SafeCPU.get*"></a>
 <h4 id="System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___" data-uid="System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)">get(UInt32, out ReadOnlySpan&lt;UInt32&gt;)</h4>
 <div class="markdown level1 summary"><p>Exposes the internal data representation of the value at absolute position i on the stack.<br></p>
 </div>

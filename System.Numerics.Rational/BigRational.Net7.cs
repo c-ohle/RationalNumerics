@@ -1281,4 +1281,18 @@ namespace System.Numerics
 
 #endif //NET7_0
 
+namespace System.Numerics
+{
+  /*
+   if (value.p == null) return default;
+fixed (uint* p = value.p)
+{
+  var n = p[0] & 0x3fffffff; var b = p + (n + 1);
+  var r = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), (int)n << 2), true, false);
+  if (*(ulong*)b != 0x100000001) r /= new BigInteger(new ReadOnlySpan<byte>(b + 1, (int)b[0] << 2), true);
+  return (p[0] & 0x80000000) == 0 ? r : -r;
+}
+   */
+}
+
 

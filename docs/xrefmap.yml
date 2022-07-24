@@ -658,6 +658,15 @@ references:
   fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.Double)
   nameWithType: BigRational.CPU.get(UInt32, out Double)
   nameWithType.vb: BigRational.CPU.get(UInt32, ByRef Double)
+- uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.Numerics.BigInteger@)
+  name: get(UInt32, out BigInteger)
+  href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Numerics_BigInteger__
+  commentId: M:System.Numerics.BigRational.CPU.get(System.UInt32,System.Numerics.BigInteger@)
+  name.vb: get(UInt32, ByRef BigInteger)
+  fullName: System.Numerics.BigRational.CPU.get(System.UInt32, out System.Numerics.BigInteger)
+  fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.Numerics.BigInteger)
+  nameWithType: BigRational.CPU.get(UInt32, out BigInteger)
+  nameWithType.vb: BigRational.CPU.get(UInt32, ByRef BigInteger)
 - uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.Numerics.BigRational@)
   name: get(UInt32, out BigRational)
   href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Numerics_BigRational__
@@ -3076,6 +3085,15 @@ references:
   fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Double)
   nameWithType: BigRational.SafeCPU.get(UInt32, out Double)
   nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef Double)
+- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigInteger@)
+  name: get(UInt32, out BigInteger)
+  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Numerics_BigInteger__
+  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigInteger@)
+  name.vb: get(UInt32, ByRef BigInteger)
+  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.Numerics.BigInteger)
+  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Numerics.BigInteger)
+  nameWithType: BigRational.SafeCPU.get(UInt32, out BigInteger)
+  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef BigInteger)
 - uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigRational@)
   name: get(UInt32, out BigRational)
   href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Numerics_BigRational__
