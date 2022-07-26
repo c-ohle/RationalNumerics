@@ -703,7 +703,9 @@ namespace System.Numerics
     /// <returns>The product of left and right.</returns>
     public static BigRational operator *(BigRational a, BigRational b)
     {
-      var cpu = main_cpu; cpu.mul(a, b); return cpu.popr();
+      var cpu = main_cpu;
+      if (a.p == b.p) { cpu.push(a); cpu.sqr(); } else cpu.mul(a, b);
+      return cpu.popr();
     }
     /// <summary>
     /// Divides a specified <see cref="BigRational"/> value by another specified <see cref="BigRational"/> value.
@@ -1353,7 +1355,7 @@ namespace System.Numerics
         var p = this.p[i];
         fixed (uint* u = p) v = new ReadOnlySpan<uint>(p).Slice(0, unchecked((int)len(u)));
       }
-      
+
       /// <summary>
       /// Removes the value currently on top of the stack, 
       /// convert and returns it as always normalized <see cref="BigRational"/> number.<br/>
@@ -3338,42 +3340,103 @@ namespace System.Numerics
     }
     #endregion
     #region boost operator 
-    /// <summary>
-    /// <b>Note</b>: This operator does not represent a conventional conversion.
-    /// </summary>
-    /// <remarks>
-    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
-    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
-    /// Example:<br/><br/>
-    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
-    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
-    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
-    /// </remarks>
-    public static implicit operator BigRational?(int value)
-    {
-      //todo: spec opt. and protect //if (...) throw new ArgumentException();      
-      var cpu = main_cpu; if (cpu.sp == null) cpu.sp = &value; //debug visualizer security
-      return cpu.i != 0 ? new BigRational(cpu.p[cpu.i - 1]) : default;
-    }
-    /// <summary>
-    /// <b>Note</b>: This function does not represent a conventional <c>OR</c> operation.
-    /// </summary>
-    /// <remarks>
-    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
-    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
-    /// Example:<br/><br/>
-    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
-    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
-    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
-    /// </remarks>
-    public static BigRational operator |(BigRational? a, BigRational b)
-    {
-      //todo: spec opt. and protect //if (...) throw new ArgumentException();      
-      var cpu = main_cpu; var p = a.GetValueOrDefault();
-      var k = 0u; if (p.p != null) { for (; k < cpu.i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
-      var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r); //fetch
-      if (k != 0) cpu.sp = t; cpu.pop(unchecked((int)(cpu.i - k))); return r;
-    }
+    // /// <summary>
+    // /// <b>Note</b>: This operator does not represent a conventional conversion.
+    // /// </summary>
+    // /// <remarks>
+    // /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
+    // /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
+    // /// Example:<br/><br/>
+    // /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
+    // /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
+    // /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
+    // /// </remarks>
+    // public static implicit operator BigRational?(int value)
+    // {
+    //   //todo: spec opt. and protect //if (...) throw new ArgumentException();      
+    //   var cpu = main_cpu; if (cpu.sp == null) cpu.sp = &value; //debug visualizer security
+    //   return cpu.i != 0 ? new BigRational(cpu.p[cpu.i - 1]) : default;
+    // }
+    // /// <summary>
+    // /// <b>Note</b>: This function does not represent a conventional <c>OR</c> operation.
+    // /// </summary>
+    // /// <remarks>
+    // /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
+    // /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
+    // /// Example:<br/><br/>
+    // /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
+    // /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
+    // /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
+    // /// </remarks>
+    // public static BigRational operator |(BigRational? a, BigRational b)
+    // {
+    //   //todo: spec opt. and protect //if (...) throw new ArgumentException();      
+    //   var cpu = main_cpu; var p = a.GetValueOrDefault();
+    //   var k = 0u; if (p.p != null) { for (; k < cpu.i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
+    //   var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r); //fetch
+    //   if (k != 0) cpu.sp = t; cpu.pop(unchecked((int)(cpu.i - k))); return r;
+    // }
     #endregion
+
+#pragma warning disable CS1591
+#pragma warning disable CS8981
+
+    public readonly ref struct Builder
+    {
+      readonly BigRational p;
+      public override string ToString() => p.ToString();
+
+      public static implicit operator Builder(BigRational v)
+      {
+        var cpu = main_cpu; if (cpu.i == 0 || v.p != cpu.p[cpu.i - 1]) cpu.push(v);
+        return new Builder(cpu);
+      }
+      public static implicit operator Builder(long v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
+      public static implicit operator Builder(double v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
+      public static implicit operator Builder(BigInteger v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
+
+      public static Builder operator +(Builder a, Builder b) => a.p + b.p;
+      public static Builder operator -(Builder a, Builder b) => a.p - b.p;
+      public static Builder operator *(Builder a, Builder b) => a.p * b.p;
+      public static Builder operator /(Builder a, Builder b) => a.p / b.p;
+      public static Builder operator %(Builder a, Builder b) => a.p % b.p;
+
+      public static Builder operator +(Builder a, BigRational b) => a.p + b;
+      public static Builder operator -(Builder a, BigRational b) => a.p - b;
+      public static Builder operator *(Builder a, BigRational b) => a.p * b;
+      public static Builder operator /(Builder a, BigRational b) => a.p / b;
+      public static Builder operator %(Builder a, BigRational b) => a.p % b;
+
+      public static Builder operator +(Builder a, long b) => a.p + b;
+      public static Builder operator -(Builder a, long b) => a.p - b;
+      public static Builder operator *(Builder a, long b) => a.p * b;
+      public static Builder operator /(Builder a, long b) => a.p / b;
+      public static Builder operator %(Builder a, long b) => a.p % b;
+
+      public static Builder operator +(Builder a, double b) => a.p + b;
+      public static Builder operator -(Builder a, double b) => a.p - b;
+      public static Builder operator *(Builder a, double b) => a.p * b;
+      public static Builder operator /(Builder a, double b) => a.p / b;
+      public static Builder operator %(Builder a, double b) => a.p / b;
+
+      public static Builder operator +(Builder a, BigInteger b) => a.p + b;
+      public static Builder operator -(Builder a, BigInteger b) => a.p - b;
+      public static Builder operator *(Builder a, BigInteger b) => a.p * b;
+      public static Builder operator /(Builder a, BigInteger b) => a.p / b;
+      public static Builder operator %(Builder a, BigInteger b) => a.p / b;
+
+      private Builder(CPU cpu)
+      {
+        var i = cpu.i; if (cpu.sp == null) cpu.sp = &i; // security debug visualize
+        this.p = new BigRational(cpu.p[i - 1]);
+      }
+      public static implicit operator BigRational(Builder v)
+      {
+        var cpu = main_cpu; cpu.sp = null;
+        cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r);
+        cpu.pop(cpu.i); return r;
+      }
+    }
   }
+
 }

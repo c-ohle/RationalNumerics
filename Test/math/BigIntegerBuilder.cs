@@ -1,4 +1,5 @@
 ﻿using Test;
+using static System.Numerics.BigRational;
 
 #if NET7_0
 
@@ -163,8 +164,72 @@ namespace System.Numerics.Rational
     public T GetFunc<T>(string name) where T : MulticastDelegate
     {
       //this as slow but readable accessor, should be for(...) loop and/or with dictionary for bigger libs
-      return funcs.OfType<T>().First(f => f.Method.Name == name); 
-    }      
+      return funcs.OfType<T>().First(f => f.Method.Name == name);
+    }
+  }
+
+  /// <summary>
+  /// A type 4 BigIntegerBuilder
+  /// </summary>
+  /// <remarks>
+  /// <see cref="BigInt"/> represents an arbitrarily large signed integer like <see cref="BigInteger"/>.<br/>
+  /// It is only for testing the cooperation with <see cref="BigInt.Builder"/> and is not fully implemented.<br/>
+  /// However, could easily extend to the <see cref="BigInteger"/> functionality with identical interface and much better performance.<br/>
+  /// <see cref="BigInt.Builder"/> Properties:<br/>
+  /// * As ref struct the builder shares the same properties like <see cref="BigRational.Builder"/> or <see cref="BigRational.SafeCPU"/>.<br/>
+  /// * With implicit conversions from and to <see cref="BigInt"/> the default behavior is neutral.<br/>
+  /// * However, applied in standard numeric expressions, the operators activate the stack-machine internal builder functionality in a secure way.<br/>
+  /// </remarks>
+  public readonly struct BigInt
+  {
+    readonly BigRational p;
+
+    public override string ToString() => ((BigInteger)p).ToString();
+
+    public static implicit operator BigInt(long value) { var cpu = rat.task_cpu; cpu.push(value); return new BigInt(cpu); }
+    public static implicit operator BigInt(Int128 value) { var cpu = rat.task_cpu; cpu.push(value); return new BigInt(cpu); }
+    public static implicit operator BigInt(BigInteger value) { var cpu = rat.task_cpu; cpu.push(value); return new BigInt(cpu); }
+
+    public static BigInt operator +(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.add(a.p, b.p); return new BigInt(cpu); }
+    public static BigInt operator -(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.sub(a.p, b.p); return new BigInt(cpu); }
+    public static BigInt operator *(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.mul(a.p, b.p); return new BigInt(cpu); }
+    public static BigInt operator /(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.div(a.p, b.p); cpu.rnd(0, 0); return new BigInt(cpu); }
+
+    public static BigInt Pow(BigInt value, int exponent)
+    {
+      var cpu = rat.task_cpu; cpu.push(value.p);
+      cpu.pow(exponent); return new BigInt(cpu);
+    }
+    public static BigInt Negate(BigInt a) 
+    { 
+      var cpu = rat.task_cpu; cpu.push(a.p); 
+      cpu.neg(); return new BigInt(cpu); 
+    }
+
+    BigInt(BigRational.SafeCPU cpu) => p = cpu.popr();
+    BigInt(BigRational p) => this.p = p;
+
+    public readonly ref struct Builder
+    {
+      readonly BigRational.Builder p;
+      public override string ToString() => p.ToString();
+
+      public static implicit operator Builder(BigInt v) { return new Builder(v.p); }
+
+      public static Builder operator +(Builder a, Builder b) => new Builder(a.p + b.p);
+      public static Builder operator -(Builder a, Builder b) => new Builder(a.p - b.p);
+      public static Builder operator *(Builder a, Builder b) => new Builder(a.p * b.p);
+      public static Builder operator /(Builder a, Builder b) => new Builder(a.p / b.p);
+
+      public static Builder operator +(Builder a, BigInt b) => new Builder(a.p + b.p);
+      public static Builder operator -(Builder a, BigInt b) => new Builder(a.p - b.p);
+      public static Builder operator *(Builder a, BigInt b) => new Builder(a.p * b.p);
+      public static Builder operator /(Builder a, BigInt b) => new Builder(a.p / b.p); 
+
+      Builder(rat p) => this.p = p;
+      Builder(BigRational.Builder p) => this.p = p;
+      public static implicit operator BigInt(Builder v) => new BigInt((BigRational)v.p);
+    }
   }
 
   public static class TestBigIntegerBuilder
@@ -174,6 +239,7 @@ namespace System.Numerics.Rational
       TestType1();
       TestType2();
       TestType3();
+      TestType4();
     }
 
     public static void TestType1()
@@ -188,11 +254,11 @@ namespace System.Numerics.Rational
       x = builder.PopResult();
 
       // the case: x = a * b + c * d;
-      builder.Push(a);   // a
-      builder.Push(b);   // b
+      builder.Push(a);
+      builder.Push(b);
       builder.Multiply(); // a * b
-      builder.Push(c);   // c
-      builder.Push(d);   // d
+      builder.Push(c);
+      builder.Push(d);
       builder.Multiply(); // c * d
       builder.Add();      // (a * b) + (c * d) 
       x = builder.PopResult();
@@ -220,7 +286,6 @@ namespace System.Numerics.Rational
       builder.Clear();
     }
 
-
     public static void TestType2()
     {
       var builder = new BigIntegerBuilder2();
@@ -237,11 +302,9 @@ namespace System.Numerics.Rational
     public static void TestType3()
     {
       // some simple examples only:
-
-      var builder = new BigIntegerBuilder3(@"
-        using System; // Int128
+      var builder = new BigIntegerBuilder3("""
+        using System;
         using System.Numerics;
-        using System.Numerics.Rational; 
         
         BigRational.CPU cpu = new BigRational.CPU((uint)8); // 8 enough for integer calculations
         
@@ -269,7 +332,7 @@ namespace System.Numerics.Rational
         {
           BigInteger r; cpu.get(cpu.mark() - 1, out r); cpu.pop(); return r;
         }
-        ");
+        """);
 
       BigInteger a = 10, b = 20, c = 30, d = 40, x;
 
@@ -281,6 +344,26 @@ namespace System.Numerics.Rational
       x = Int128BigMul(Int128.MaxValue, Int128.MaxValue);
     }
 
+    public static void TestType4()
+    {
+      BigInt a = 10, b = 20, c = 30, d = 40, x;
+
+      x = a * b + c * d;
+      x = (BigInt.Builder)a * b + c * d;
+
+      x = a * b + c * d + 1234;
+      x = (BigInt.Builder)a * b + c * d + 1234;
+
+      a = Int128.MaxValue; b = Int128.MinValue; c = long.MaxValue; d = long.MinValue;
+      x = a * b + c * d;
+      x = (BigInt.Builder)a * b + c * d;
+
+      a = 10; b = 20; c = 32; d = 40;
+
+      x = a * b + c * d + BigInt.Pow(d, 100) + 1234;
+      x = (BigInt.Builder)a * b + c * d + BigInt.Pow(d, 100) + 1234;
+
+    }
   }
 }
 

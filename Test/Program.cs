@@ -2,10 +2,7 @@
 global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
-using System;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
+global using Builder = System.Numerics.BigRational.Builder;
 
 namespace Test
 {
@@ -14,66 +11,50 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // test();
+      ApplicationConfiguration.Initialize(); //test();
       Application.Run(new MainFrame());
     }
+             
+#if false //NET7_0
+    //todo: cachex -1, pi
+    //todo: nuget multipack...
+    //todo: decimal checked...
 
-#if false // NET6_0
-    static void test()
-    {
-      rat a, b, c; //double d;
-      b = Math.PI; c = Math.E;
-    
-      var x = (long)b;
-      var y = checked((long)b);
-    
-      a = b * c + 10 - (c % b + 1.2) * rat.Sqrt(2, 30);
-      a = 0 | b * c + 10 - (c % b + 1.2) * rat.Sqrt(2, 30);
-      a = b * c;
-    }
-#endif
-
-#if NET7_0
-
-    static void test()
-    {
-      TestBigIntegerBuilder.TestBuilder();
-    }
-
-#endif
-
-#if false // NET7_0
- 
     static rat gamma1(rat x)
     {
-      var a = x * x + 0.1m;
-      return x * x + x * x + a;
+      return x * x + x * x - x;
     }
-    static rat gamma(rat x)
+    static rat gamma2(rat x)
     {
-      var a = 0 | x * x + 0.1m;
-      return x * x + x * x + a;
+      return (Builder)x * x + x * x - x;
     }
-
+    static Builder gamma3(Builder x)
+    {
+      return x * x + x * x - x;
+    }
+     
     static void test()
     {
-      rat a, b, c; double d;
+      TestBigIntegerBuilder.TestType4();
+     
+      TestBigIntegerBuilder.TestBuilder();
 
-      //var xx = TestTest.iter2().ToArray();
+      rat a, b, c, x; double d;
+                  
+      b = Math.PI; c = Math.E; //b = rat.Pi(100);
 
-      { var cpu = rat.task_cpu; cpu.push(Math.PI); cpu.push(2); cpu.mul(); a = cpu.popr(); }
-      { var cpu = new rat.CPU(8); cpu.push(Math.PI); cpu.push(2); cpu.mul(); a = cpu.popr(); }
+      a = b * c + c / b;
+      a = (Builder)b * c + c / b;
+      
+      a = b * c + c / b + gamma1(1.5) + 1;
+      a = (Builder)b * c + c / b + gamma1(1.5) + 1;
+      a = (Builder)b * c + c / b + gamma3(1.5) + 1;
+      a = (Builder)b * c + c / b + gamma2(1.5) + 1;
 
-      b = rat.Pi(100);
+      x = (Builder)a * b - BigRational.Truncate(c / 3);
 
-      b = Math.PI; c = Math.E;
-
-      a = b * c + gamma1(1.5) + 10;
-      a = b * c + gamma(1.5) + 10;
-      a = 0 | b * c + gamma(1.5) + 10;
-
-      a = b * c + 10 - (c % b + 1.2) * rat.Sqrt(2) - rat.Pi() * 0.123m;
-      a = 0 | b * c + 10 - (c % b + 1.2) * rat.Sqrt(2) - rat.Pi() * 0.123m;
+      a = b * c + c / b + BigRational.Sinh(0.1) + 1;
+      a = (Builder)b * c + c / b + BigRational.Sinh(0.1) + 1;
 
       var t1 = (int)b; t1 = (int)(-b); a = int.MaxValue; t1 = (int)a; a++; t1 = (int)a; a = int.MinValue; t1 = (int)a; a--; t1 = (int)a;
       var t2 = (uint)b; t2 = (uint)(-b); a = uint.MaxValue; t2 = (uint)a; a++; t2 = (uint)a; a = uint.MinValue; t2 = (uint)a;
