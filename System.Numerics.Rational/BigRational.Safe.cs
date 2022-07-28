@@ -909,6 +909,30 @@ namespace System.Numerics
       /// More precisely, the operation does not destroy anything. The current CPU instance can continue to be used. But the GC can collect them later when there are no more references to them.
       /// </remarks>
       public void free() => p.free();
+      #region NET7 INumber experimental
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to integer result.
+      /// </remarks>
+      public void idiv() => p.idiv();
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to integer result.<br/>
+      /// </remarks>
+      public void imod() => p.imod();
+      #endregion
     }
 
     /// <summary>

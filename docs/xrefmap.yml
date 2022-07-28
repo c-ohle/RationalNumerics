@@ -712,6 +712,30 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.hash
   fullName: System.Numerics.BigRational.CPU.hash
   nameWithType: BigRational.CPU.hash
+- uid: System.Numerics.BigRational.CPU.idiv
+  name: idiv()
+  href: api/System.Numerics.BigRational.CPU.idiv.html#System_Numerics_BigRational_CPU_idiv
+  commentId: M:System.Numerics.BigRational.CPU.idiv
+  fullName: System.Numerics.BigRational.CPU.idiv()
+  nameWithType: BigRational.CPU.idiv()
+- uid: System.Numerics.BigRational.CPU.idiv*
+  name: idiv
+  href: api/System.Numerics.BigRational.CPU.idiv.html
+  commentId: Overload:System.Numerics.BigRational.CPU.idiv
+  fullName: System.Numerics.BigRational.CPU.idiv
+  nameWithType: BigRational.CPU.idiv
+- uid: System.Numerics.BigRational.CPU.imod
+  name: imod()
+  href: api/System.Numerics.BigRational.CPU.imod.html#System_Numerics_BigRational_CPU_imod
+  commentId: M:System.Numerics.BigRational.CPU.imod
+  fullName: System.Numerics.BigRational.CPU.imod()
+  nameWithType: BigRational.CPU.imod()
+- uid: System.Numerics.BigRational.CPU.imod*
+  name: imod
+  href: api/System.Numerics.BigRational.CPU.imod.html
+  commentId: Overload:System.Numerics.BigRational.CPU.imod
+  fullName: System.Numerics.BigRational.CPU.imod
+  nameWithType: BigRational.CPU.imod
 - uid: System.Numerics.BigRational.CPU.inv(System.Int32)
   name: inv(Int32)
   href: api/System.Numerics.BigRational.CPU.inv.html#System_Numerics_BigRational_CPU_inv_System_Int32_
@@ -3139,6 +3163,30 @@ references:
   commentId: Overload:System.Numerics.BigRational.SafeCPU.hash
   fullName: System.Numerics.BigRational.SafeCPU.hash
   nameWithType: BigRational.SafeCPU.hash
+- uid: System.Numerics.BigRational.SafeCPU.idiv
+  name: idiv()
+  href: api/System.Numerics.BigRational.SafeCPU.idiv.html#System_Numerics_BigRational_SafeCPU_idiv
+  commentId: M:System.Numerics.BigRational.SafeCPU.idiv
+  fullName: System.Numerics.BigRational.SafeCPU.idiv()
+  nameWithType: BigRational.SafeCPU.idiv()
+- uid: System.Numerics.BigRational.SafeCPU.idiv*
+  name: idiv
+  href: api/System.Numerics.BigRational.SafeCPU.idiv.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.idiv
+  fullName: System.Numerics.BigRational.SafeCPU.idiv
+  nameWithType: BigRational.SafeCPU.idiv
+- uid: System.Numerics.BigRational.SafeCPU.imod
+  name: imod()
+  href: api/System.Numerics.BigRational.SafeCPU.imod.html#System_Numerics_BigRational_SafeCPU_imod
+  commentId: M:System.Numerics.BigRational.SafeCPU.imod
+  fullName: System.Numerics.BigRational.SafeCPU.imod()
+  nameWithType: BigRational.SafeCPU.imod()
+- uid: System.Numerics.BigRational.SafeCPU.imod*
+  name: imod
+  href: api/System.Numerics.BigRational.SafeCPU.imod.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.imod
+  fullName: System.Numerics.BigRational.SafeCPU.imod
+  nameWithType: BigRational.SafeCPU.imod
 - uid: System.Numerics.BigRational.SafeCPU.inv(System.Int32)
   name: inv(Int32)
   href: api/System.Numerics.BigRational.SafeCPU.inv.html#System_Numerics_BigRational_SafeCPU_inv_System_Int32_

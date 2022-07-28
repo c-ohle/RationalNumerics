@@ -62,7 +62,7 @@ namespace Test
       esvg = XElement.Parse(doc.GetElementById("svg").InnerHtml);
     }
 
-    (float[] times, int count)[]? passes; float lastav;
+    (float[] times, int count)[]? passes; //float lastav;
 
     void runtest(HtmlElement svg, Action<int, Func<bool>> test, int ex)
     {
@@ -85,14 +85,14 @@ namespace Test
       }
       test(8, () => true);
 
-      if (ex == 0x00003fbf && (lastav = lastav * 0.01f) < 1) //to get realist times for cpu internal bigint div it makes sense to sub the av from mul as IDiv changed for comapibillity and has an additional mul
-        for (int i = 1; i < 256; i++) passes[0].times[i] *= lastav;
+      //if (ex == 0x00003fbf && (lastav = lastav * 0.01f) < 1) //to get realist times for cpu internal bigint div it makes sense to sub the av from mul as IDiv changed for comapibillity and has an additional mul
+      //  for (int i = 1; i < 256; i++) passes[0].times[i] *= lastav;
 
       update_svg(svg, ex);
 
       var a1 = passes[0].times.Take(255);//.Average();
       var a2 = passes[1].times.Take(255);//.Average();
-      var av = MathF.Round(a1.Average() * 100 / a2.Average()); this.lastav = av;
+      var av = MathF.Round(a1.Average() * 100 / a2.Average()); //this.lastav = av;
       var mi = Math.Min(a1.Max(), a2.Max());
       var ma = Math.Max(a1.Max(), a2.Max());
 
@@ -129,7 +129,12 @@ namespace Test
       runtest(tag, test, ex);
       if (old == null) tag.ScrollIntoView(false);
       for (int i = 0; i < 3; i++) { Thread.Sleep(0); Application.DoEvents(); }
-       
+
+      test = _test_bigint_biginteger_1(out ex); tag = wb.Document.GetElementById("9");
+      runtest(tag, test, ex);
+      if (old == null) tag.ScrollIntoView(false);
+      for (int i = 0; i < 3; i++) { Thread.Sleep(0); Application.DoEvents(); }
+
       Cursor = Cursors.Default;
       return;
     }
@@ -210,8 +215,8 @@ namespace Test
       e = rat.ILog10(rr[255]);
       return (pass, f) =>
       {
-        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = rat.IDiv(rr[i], rr[i - 1]);
-        if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = ii[i] / ii[i - 1];
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = BigRational.IDiv(rr[i], rr[i - 1]);
+        if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = ii[i] / (ii[i - 1]);
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second));
       };
     }
@@ -224,11 +229,28 @@ namespace Test
       e = rat.ILog10(rr[255]);
       return (pass, f) =>
       {
-        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = rat.GreatestCommonDivisor(rr[i - 1], rr[i]);
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = BigRational.GreatestCommonDivisor(rr[i - 1], rr[i]);
         if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = BigInteger.GreatestCommonDivisor(ii[i - 1], ii[i]);
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second));
       };
     }
+
+    static Action<int, Func<bool>> _test_bigint_biginteger_1(out int e)
+    {
+      var rr = new BigInt[256]; var ii = new BigInteger[256];
+      var cr = new BigInt[256]; var ci = new BigInteger[256];
+      var ra = new Random(13); //E+2040
+      for (int i = 0; i < 256; i++) ii[i] = (BigInteger)(rr[i] = (BigInt)random_rat(ra, i << 3));
+      e = rat.ILog10(rr[255]);
+      return (pass, f) =>
+      {
+        // (a * b + a * b - a + a * a) / a; // a * a -> sqr() 
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = (rr[i] * rr[i - 1] + rr[i] * rr[i - 1] - rr[i] + rr[i] * rr[i]) / rr[i];
+        if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = (ii[i] * ii[i - 1] + ii[i] * ii[i - 1] - ii[i] + ii[i] * ii[i]) / ii[i];
+        if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second)); // ii[1+(i>>2)]
+      };
+    }
+
 
     static BigRational random_rat(Random rnd, int digits) //todo: make more precise
     {
@@ -240,7 +262,6 @@ namespace Test
         var v = rnd.Next(); if (i + 32 >= x) v = (int)((long)v >> ((int)(i + 32) - (int)x + 1));
         cpu.push(v); cpu.shl(i); cpu.xor();
       }
-      //var y = cpu.msb(); if(x != y) { }
       var r = cpu.popr(); return r;
     }
 

@@ -278,43 +278,69 @@ namespace System.Numerics
       if (s == null) { result = default; return false; }
       return !IsNaN(result = Parse(s, provider));
     }
-    
+
     //INumberBase
-    static bool INumberBase<BigRational>.TryConvertFromChecked<T>(T value, out BigRational result) 
+    static bool INumberBase<BigRational>.TryConvertFromChecked<T>(T value, out BigRational result)
     {
       return TryConvertFrom<T>(value, out result); //BigRational - no limits
     }
-    static bool INumberBase<BigRational>.TryConvertFromSaturating<T>(T value, out BigRational result) 
+    static bool INumberBase<BigRational>.TryConvertFromSaturating<T>(T value, out BigRational result)
     {
       return TryConvertFrom<T>(value, out result); //BigRational - no limits
     }
-    static bool INumberBase<BigRational>.TryConvertFromTruncating<T>(T value, out BigRational result) 
+    static bool INumberBase<BigRational>.TryConvertFromTruncating<T>(T value, out BigRational result)
     {
       //todo: ask/check spec, intended should truncate or only if it would be necessary?
       return TryConvertFrom<T>(value, out result); //BigRational - no limits
     }
     static bool TryConvertFrom<T>(T value, out BigRational result) where T : INumberBase<T>
     {
-      //this implementation works without boxing, for X64 checked: inline straight to a single operator call
-      { if (value is byte t) { result = t; return true; } }
-      { if (value is sbyte t) { result = t; return true; } }
-      { if (value is ushort t) { result = t; return true; } }
-      { if (value is short t) { result = t; return true; } }
-      { if (value is char t) { result = t; return true; } }
-      { if (value is int t) { result = t; return true; } }
-      { if (value is uint t) { result = t; return true; } }
-      { if (value is long t) { result = t; return true; } }
-      { if (value is ulong t) { result = t; return true; } }
-      { if (value is Int128 t) { result = t; return true; } }
-      { if (value is UInt128 t) { result = t; return true; } }
-      { if (value is nint t) { result = t; return true; } }
-      { if (value is nuint t) { result = t; return true; } }
-      { if (value is Half t) { result = t; return true; } }
-      { if (value is float t) { result = t; return true; } }
-      { if (value is double t) { result = t; return true; } }
-      { if (value is BigInteger t) { result = t; return true; } }
-      { if (value is BigRational t) { result = t; return true; } }
+      //this implementation works without boxing
+      switch (Type.GetTypeCode(typeof(T))) //so long it does not realy work with inline ...
+      {
+        case TypeCode.Byte: { result = value is byte t ? t : default; return true; }
+        case TypeCode.SByte: { result = value is sbyte t ? t : default; return true; }
+        case TypeCode.Int16: { result = value is short t ? t : default; return true; }
+        case TypeCode.UInt16: { result = value is ushort t ? t : default; return true; }
+        case TypeCode.Char: { result = value is char t ? t : default; return true; }
+        case TypeCode.Int32: { result = value is int t ? t : default; return true; }
+        case TypeCode.UInt32: { result = value is uint t ? t : default; return true; }
+        case TypeCode.Int64: { result = value is long t ? t : default; return true; }
+        case TypeCode.UInt64: { result = value is ulong t ? t : default; return true; }
+        case TypeCode.Single: { result = value is float t ? t : default; return true; }
+        case TypeCode.Double: { result = value is float t ? t : default; return true; }
+        case TypeCode.Decimal: { result = value is decimal t ? t : default; return true; }
+        default:
+          { if (value is BigRational t) { result = t; return true; } }
+          { if (value is Int128 t) { result = t; return true; } }
+          { if (value is UInt128 t) { result = t; return true; } }
+          { if (value is nint t) { result = t; return true; } }
+          { if (value is nuint t) { result = t; return true; } }
+          { if (value is Half t) { result = t; return true; } }
+          { if (value is BigInteger t) { result = t; return true; } }
+          break;
+      }
       result = default; return false;
+      //{ if (value is byte t) { result = t; return true; } }
+      //{ if (value is sbyte t) { result = t; return true; } }
+      //{ if (value is ushort t) { result = t; return true; } }
+      //{ if (value is short t) { result = t; return true; } }
+      //{ if (value is char t) { result = t; return true; } }
+      //{ if (value is int t) { result = t; return true; } }
+      //{ if (value is uint t) { result = t; return true; } }
+      //{ if (value is long t) { result = t; return true; } }
+      //{ if (value is ulong t) { result = t; return true; } }
+      //{ if (value is float t) { result = t; return true; } }
+      //{ if (value is double t) { result = t; return true; } }
+      //{ if (value is decimal t) { result = t; return true; } }
+      //{ if (value is Int128 t) { result = t; return true; } }
+      //{ if (value is UInt128 t) { result = t; return true; } }
+      //{ if (value is nint t) { result = t; return true; } }
+      //{ if (value is nuint t) { result = t; return true; } }
+      //{ if (value is Half t) { result = t; return true; } }
+      //{ if (value is BigInteger t) { result = t; return true; } }
+      //{ if (value is BigRational t) { result = t; return true; } }
+      //result = default; return false;
     }
 
     static bool INumberBase<BigRational>.TryConvertToChecked<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
@@ -333,12 +359,12 @@ namespace System.Numerics
     {
       //this implementation works without boxing, for X64 checked: inline straight to the single operator call
       //todo: ask / check spec for the fp types, currently diffs in NET7 double, decimal, ... and for int types too
-      result = default!; 
+      result = default!;
       if (typeof(T) == typeof(byte))
       {
         var u = (uint)value; var v = unchecked((byte)Math.Min(Math.Max(u, byte.MinValue), byte.MaxValue));
         if (f != 0 && u != v) throw new ArgumentException(); // return false;
-        if (v is T t) result = t; return true; 
+        if (v is T t) result = t; return true;
       }
       if (typeof(T) == typeof(sbyte))
       {
@@ -441,23 +467,21 @@ namespace System.Numerics
       return false;
     }
 
-    static BigRational INumberBase<BigRational>.CreateChecked<T>(T value) 
+    static BigRational INumberBase<BigRational>.CreateChecked<T>(T value)
     {
       //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
-      if (typeof(T) == typeof(BigRational)) return value is BigRational t ? t : default; // no boxing like (BigRational)(object)value;
       if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToChecked(value, out r))
         throw new NotSupportedException(typeof(T).Name);
       return r;
     }
-    static BigRational INumberBase<BigRational>.CreateSaturating<T>(T value) 
+    static BigRational INumberBase<BigRational>.CreateSaturating<T>(T value)
     {
       //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
-      if (typeof(T) == typeof(BigRational)) return value is BigRational t ? t : default; // no boxing like (BigRational)(object)value;
       if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToSaturating(value, out r))
         throw new NotSupportedException(typeof(T).Name);
       return r;
     }
-    static BigRational INumberBase<BigRational>.CreateTruncating<T>(T value) 
+    static BigRational INumberBase<BigRational>.CreateTruncating<T>(T value)
     {
       //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
       if (typeof(T) == typeof(BigRational)) return value is BigRational t ? t : default; // no boxing like (BigRational)(object)value;
@@ -1280,19 +1304,4 @@ namespace System.Numerics
 }
 
 #endif //NET7_0
-
-namespace System.Numerics
-{
-  /*
-   if (value.p == null) return default;
-fixed (uint* p = value.p)
-{
-  var n = p[0] & 0x3fffffff; var b = p + (n + 1);
-  var r = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), (int)n << 2), true, false);
-  if (*(ulong*)b != 0x100000001) r /= new BigInteger(new ReadOnlySpan<byte>(b + 1, (int)b[0] << 2), true);
-  return (p[0] & 0x80000000) == 0 ? r : -r;
-}
-   */
-}
-
 

@@ -651,10 +651,10 @@ namespace System.Numerics
     // /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational IDiv(BigRational a, BigRational b)
     {
-      if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = main_cpu; //cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
-      cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
-      return cpu.popr();
+      //if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
+      var cpu = main_cpu; 
+      cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
+      //cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop(); return cpu.popr();
     }
     /// <summary>
     /// Performes an integer modulo operation <paramref name="a"/> % <paramref name="b"/> what is the remainder that results from a division.

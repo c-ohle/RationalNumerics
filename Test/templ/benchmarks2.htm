@@ -40,9 +40,9 @@
       </defs>
       <g transform="translate(10 237) scale(1 -1)" clip-path="url(#path-1)">
         <rect name="F" transform="scale(1 1)" fill="url(#grid)" width="720" height="237" />
-        <polyline name="R" fill="none" stroke="red" points="" />
-        <polyline name="G" fill="none" stroke="green" points="" />
-        <polyline name="B" fill="none" stroke="blue" points="" />
+        <polyline name="R" fill="none" stroke="red" points="0,0" />
+        <polyline name="G" fill="none" stroke="green" points="0,0" />
+        <polyline name="B" fill="none" stroke="blue" points="0,0" />
       </g>
       <g name="X" transform="translate(4.5 248)">
         <text x="0">0</text>
@@ -61,12 +61,12 @@
       <div class="group" onclick="toggle(this)">◢ Environment</div>
       <div style="display: block; margin-left: 16px">
         <p>Processor: <span id="3"></span></p>
-        <p>System: <span id="0"/></p>
+        <p>System: <span id="0" /></p>
         <p>BigRational: <span id="1"></span></p>
       </div>
       <hr />
     </div>
-    <p id="4" style="padding: 8px; background-color: #ffffDC;">App is in debug or a debugger is attached - Benchmark results are not realistic!</p> 
+    <p id="4" style="padding: 8px; background-color: #ffffDC;">App is in debug or a debugger is attached - Benchmark results are not realistic!</p>
     <div name="Mul">
       <div class="group">Simple integer multiplication in comparison to BigInteger </div>
       <div style="display: none; margin-left: 16px">
@@ -99,6 +99,16 @@
       </div>
       <hr />
     </div>
+
+    <div name="Sqr">
+      <div class="group">BigInt comparison to BigInteger ((a * b + a * b - a + a * a) / a)</div>
+      <div style="display: none; margin-left: 16px">
+        <p id="9" style="font-size: 7pt" />
+        <p>BigInt (<span style="color: blue">blue</span>); BigInteger (<span style="color: red">red</span>); Average Ratio:</p>
+      </div>
+      <hr />
+    </div>
+
     <p>
       And so on...<br />
       Under construction

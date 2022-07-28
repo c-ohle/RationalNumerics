@@ -2952,15 +2952,18 @@ namespace System.Numerics
           }
           ulong di = vh / dh;
           if (di > 0xffffffff) di = 0xffffffff;
-          for (; ; )
+          for (; ; di--)
           {
-            ulong th = dh * di;
-            ulong tl = dl * di;
-            th = th + (tl >> 32);
-            tl = tl & 0xffffffff;
-            if (th < vh) break; if (th > vh) { di--; continue; }
-            if (tl < vl) break; if (tl > vl) { di--; continue; }
-            break;
+            ulong th = dh * di, tl = dl * di; th = th + (tl >> 32);
+            if (th < vh) break; if (th > vh) continue;
+            if ((tl & 0xffffffff) > vl) continue; break;
+            //ulong th = dh * di;
+            //ulong tl = dl * di;
+            //th = th + (tl >> 32);
+            //tl = tl & 0xffffffff;
+            //if (th < vh) break; if (th > vh) { di--; continue; }
+            //if (tl < vl) break; if (tl > vl) { di--; continue; }
+            //break;
           }
           if (di != 0)
           {
@@ -2984,12 +2987,12 @@ namespace System.Numerics
           if (r != null && di != 0)
           {
             var x = n + 1; for (var j = r[0] + 1; j < x; j++) r[j] = 0;
-            if (r[0] < x) r[0] = x; else { }
+            if (r[0] < x) r[0] = x; //else { }
             r[x] = unchecked((uint)di);
           }
           if (i < na) a[i + 1] = 0;
         }
-        for (; a[0] > 1 && a[a[0]] == 0; a[0]--) ;
+        for (; a[0] > 1 && a[a[0]] == 0; a[0]--) ; //todo: nb == 1 case, test and rem
       }
       static void shl(uint* p, int c)
       {
@@ -3241,52 +3244,51 @@ namespace System.Numerics
       //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //for debug visualizer cross thread access protection only
-      #endregion
-      #region integer
       //todo: check, remove?, div(a, b); mod(); swp(); pop(); must!!! have same performance      
-      // /// <summary>
-      // /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      // /// and replaces them with the integral result.
-      // /// </summary>
-      // /// <remarks>
-      // /// Divides a / b where b is the value on top of the stack.<br/>
-      // /// This is a integer division with always non-farctional integer results.<br/>
-      // /// When calculating with integers and integer results are required,<br/>
-      // /// this operation is faster than dividing and then rounding to integer result.
-      // /// </remarks>
-      // public void idiv()
-      // {
-      //   fixed (uint* u = p[this.i - 1])
-      //   fixed (uint* v = p[this.i - 2])
-      //   fixed (uint* w = rent(len(u))) // nu - nv + 1
-      //   {
-      //     var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
-      //     *(ulong*)(w + w[0] + 1) = 0x100000001;
-      //     if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
-      //   }
-      //   swp(2); pop(2);
-      // }
-      // /// <summary>
-      // /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      // /// and replaces them with the integral result.
-      // /// </summary>
-      // /// <remarks>
-      // /// Divides a / b where b is the value on top of the stack.<br/>
-      // /// This is a integer division with always non-farctional integer results.<br/>
-      // /// When calculating with integers and integer results are required,<br/>
-      // /// this operation is faster than dividing and then rounding to integer result.<br/>
-      // /// </remarks>
-      // public void imod()
-      // {
-      //   fixed (uint* u = p[this.i - 1])
-      //   fixed (uint* v = p[this.i - 2])
-      //   {
-      //     var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
-      //     *(ulong*)(v + v[0] + 1) = 0x100000001;
-      //     v[0] |= h & 0x80000000;
-      //   }
-      //   pop();
-      // }
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to integer result.
+      /// </remarks>
+      public void idiv()
+      {
+        //uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff; if (nu < nv || (nu == nv && BitOperations.LeadingZeroCount(u[nu]) < BitOperations.LeadingZeroCount(v[nv]))) { pop(2); push(); return; }
+        fixed (uint* u = p[this.i - 1])
+        fixed (uint* v = p[this.i - 2])
+        fixed (uint* w = rent(len(u))) // nu - nv + 1
+        {
+          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
+          *(ulong*)(w + w[0] + 1) = 0x100000001;
+          if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
+        }
+        swp(2); pop(2);
+      }
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to integer result.<br/>
+      /// </remarks>
+      public void imod()
+      {
+        fixed (uint* u = p[this.i - 1])
+        fixed (uint* v = p[this.i - 2])
+        {
+          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
+          *(ulong*)(v + v[0] + 1) = 0x100000001;
+          v[0] |= h & 0x80000000;
+        }
+        pop();
+      }
       #endregion
     }
     #region private 
@@ -3340,103 +3342,101 @@ namespace System.Numerics
     }
     #endregion
     #region boost operator 
-    // /// <summary>
-    // /// <b>Note</b>: This operator does not represent a conventional conversion.
-    // /// </summary>
-    // /// <remarks>
-    // /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
-    // /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
-    // /// Example:<br/><br/>
-    // /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
-    // /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
-    // /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
-    // /// </remarks>
-    // public static implicit operator BigRational?(int value)
-    // {
-    //   //todo: spec opt. and protect //if (...) throw new ArgumentException();      
-    //   var cpu = main_cpu; if (cpu.sp == null) cpu.sp = &value; //debug visualizer security
-    //   return cpu.i != 0 ? new BigRational(cpu.p[cpu.i - 1]) : default;
-    // }
-    // /// <summary>
-    // /// <b>Note</b>: This function does not represent a conventional <c>OR</c> operation.
-    // /// </summary>
-    // /// <remarks>
-    // /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
-    // /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
-    // /// Example:<br/><br/>
-    // /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
-    // /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
-    // /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
-    // /// </remarks>
-    // public static BigRational operator |(BigRational? a, BigRational b)
-    // {
-    //   //todo: spec opt. and protect //if (...) throw new ArgumentException();      
-    //   var cpu = main_cpu; var p = a.GetValueOrDefault();
-    //   var k = 0u; if (p.p != null) { for (; k < cpu.i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
-    //   var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r); //fetch
-    //   if (k != 0) cpu.sp = t; cpu.pop(unchecked((int)(cpu.i - k))); return r;
-    // }
-    #endregion
-
-#pragma warning disable CS1591
-#pragma warning disable CS8981
-
-    public readonly ref struct Builder
+    /// <summary>
+    /// <b>Note</b>: This operator does not represent a conventional conversion.
+    /// </summary>
+    /// <remarks>
+    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
+    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
+    /// Example:<br/><br/>
+    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
+    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
+    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
+    /// </remarks>
+    public static implicit operator BigRational?(int value)
     {
-      readonly BigRational p;
-      public override string ToString() => p.ToString();
-
-      public static implicit operator Builder(BigRational v)
-      {
-        var cpu = main_cpu; if (cpu.i == 0 || v.p != cpu.p[cpu.i - 1]) cpu.push(v);
-        return new Builder(cpu);
-      }
-      public static implicit operator Builder(long v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
-      public static implicit operator Builder(double v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
-      public static implicit operator Builder(BigInteger v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
-
-      public static Builder operator +(Builder a, Builder b) => a.p + b.p;
-      public static Builder operator -(Builder a, Builder b) => a.p - b.p;
-      public static Builder operator *(Builder a, Builder b) => a.p * b.p;
-      public static Builder operator /(Builder a, Builder b) => a.p / b.p;
-      public static Builder operator %(Builder a, Builder b) => a.p % b.p;
-
-      public static Builder operator +(Builder a, BigRational b) => a.p + b;
-      public static Builder operator -(Builder a, BigRational b) => a.p - b;
-      public static Builder operator *(Builder a, BigRational b) => a.p * b;
-      public static Builder operator /(Builder a, BigRational b) => a.p / b;
-      public static Builder operator %(Builder a, BigRational b) => a.p % b;
-
-      public static Builder operator +(Builder a, long b) => a.p + b;
-      public static Builder operator -(Builder a, long b) => a.p - b;
-      public static Builder operator *(Builder a, long b) => a.p * b;
-      public static Builder operator /(Builder a, long b) => a.p / b;
-      public static Builder operator %(Builder a, long b) => a.p % b;
-
-      public static Builder operator +(Builder a, double b) => a.p + b;
-      public static Builder operator -(Builder a, double b) => a.p - b;
-      public static Builder operator *(Builder a, double b) => a.p * b;
-      public static Builder operator /(Builder a, double b) => a.p / b;
-      public static Builder operator %(Builder a, double b) => a.p / b;
-
-      public static Builder operator +(Builder a, BigInteger b) => a.p + b;
-      public static Builder operator -(Builder a, BigInteger b) => a.p - b;
-      public static Builder operator *(Builder a, BigInteger b) => a.p * b;
-      public static Builder operator /(Builder a, BigInteger b) => a.p / b;
-      public static Builder operator %(Builder a, BigInteger b) => a.p / b;
-
-      private Builder(CPU cpu)
-      {
-        var i = cpu.i; if (cpu.sp == null) cpu.sp = &i; // security debug visualize
-        this.p = new BigRational(cpu.p[i - 1]);
-      }
-      public static implicit operator BigRational(Builder v)
-      {
-        var cpu = main_cpu; cpu.sp = null;
-        cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r);
-        cpu.pop(cpu.i); return r;
-      }
+      var cpu = main_cpu; if (cpu.sp == null) cpu.sp = &value; //debug visualizer security
+      return cpu.i != 0 ? new BigRational(cpu.p[cpu.i - 1]) : default;
     }
+    /// <summary>
+    /// <b>Note</b>: This function does not represent a conventional <c>OR</c> operation.
+    /// </summary>
+    /// <remarks>
+    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
+    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
+    /// Example:<br/><br/>
+    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
+    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
+    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
+    /// </remarks>
+    public static BigRational operator |(BigRational? a, BigRational b)
+    {
+      var cpu = main_cpu; var p = a.GetValueOrDefault(); //todo: a == 0 && k out of index is the perfect RT check, but also safe to distinguish - boost or op
+      var k = 0u; if (p.p != null) { for (; k < cpu.i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
+      var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r); //fetch
+      if (k != 0) cpu.sp = t; cpu.pop(unchecked((int)(cpu.i - k))); return r;
+    }
+    #endregion
+    #region ref struct builder
+    //#pragma warning disable CS1591
+    //#pragma warning disable CS8981
+    //public readonly ref struct Builder
+    //{
+    //  readonly BigRational p;
+    //  public override string ToString() => p.ToString();
+    //
+    //  public static implicit operator Builder(BigRational v)
+    //  {
+    //    var cpu = main_cpu; if (cpu.i == 0 || v.p != cpu.p[cpu.i - 1]) cpu.push(v);
+    //    return new Builder(cpu);
+    //  }
+    //  public static implicit operator Builder(long v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
+    //  public static implicit operator Builder(double v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
+    //  public static implicit operator Builder(BigInteger v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
+    //
+    //  public static Builder operator +(Builder a, Builder b) => a.p + b.p;
+    //  public static Builder operator -(Builder a, Builder b) => a.p - b.p;
+    //  public static Builder operator *(Builder a, Builder b) => a.p * b.p;
+    //  public static Builder operator /(Builder a, Builder b) => a.p / b.p;
+    //  public static Builder operator %(Builder a, Builder b) => a.p % b.p;
+    //
+    //  public static Builder operator +(Builder a, BigRational b) => a.p + b;
+    //  public static Builder operator -(Builder a, BigRational b) => a.p - b;
+    //  public static Builder operator *(Builder a, BigRational b) => a.p * b;
+    //  public static Builder operator /(Builder a, BigRational b) => a.p / b;
+    //  public static Builder operator %(Builder a, BigRational b) => a.p % b;
+    //
+    //  public static Builder operator +(Builder a, long b) => a.p + b;
+    //  public static Builder operator -(Builder a, long b) => a.p - b;
+    //  public static Builder operator *(Builder a, long b) => a.p * b;
+    //  public static Builder operator /(Builder a, long b) => a.p / b;
+    //  public static Builder operator %(Builder a, long b) => a.p % b;
+    //
+    //  public static Builder operator +(Builder a, double b) => a.p + b;
+    //  public static Builder operator -(Builder a, double b) => a.p - b;
+    //  public static Builder operator *(Builder a, double b) => a.p * b;
+    //  public static Builder operator /(Builder a, double b) => a.p / b;
+    //  public static Builder operator %(Builder a, double b) => a.p / b;
+    //
+    //  public static Builder operator +(Builder a, BigInteger b) => a.p + b;
+    //  public static Builder operator -(Builder a, BigInteger b) => a.p - b;
+    //  public static Builder operator *(Builder a, BigInteger b) => a.p * b;
+    //  public static Builder operator /(Builder a, BigInteger b) => a.p / b;
+    //  public static Builder operator %(Builder a, BigInteger b) => a.p / b;
+    //
+    //  private Builder(CPU cpu)
+    //  {
+    //    var i = cpu.i; if (cpu.sp == null) cpu.sp = &i; // security debug visualize
+    //    this.p = new BigRational(cpu.p[i - 1]);
+    //  }
+    //  public static implicit operator BigRational(Builder v)
+    //  {
+    //    var cpu = main_cpu; cpu.sp = null;
+    //    cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r);
+    //    cpu.pop(cpu.i); return r;
+    //  }
+    //}
+    #endregion
   }
 
 }

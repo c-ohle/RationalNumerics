@@ -2,7 +2,7 @@
 global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
-global using Builder = System.Numerics.BigRational.Builder;
+using static System.Numerics.BigRational;
 
 namespace Test
 {
@@ -14,47 +14,39 @@ namespace Test
       ApplicationConfiguration.Initialize(); //test();
       Application.Run(new MainFrame());
     }
-             
-#if false //NET7_0
+
+#if NET7_0
     //todo: cachex -1, pi
     //todo: nuget multipack...
     //todo: decimal checked...
+    //todo: drop in net7
 
-    static rat gamma1(rat x)
+    static void new_net7_bugs()
     {
-      return x * x + x * x - x;
+      //new NET7 BigInteger GCD bugs
+      var a = new BigInteger(53106192116790780990m);
+      var b = new BigInteger(34300000000000000000m);
+      var c = BigInteger.GreatestCommonDivisor(a, b); //the old one
+
+      a = new BigInteger(20479246345654817161m);
+      b = new BigInteger(25000000000000000000m);
+      c = BigInteger.GreatestCommonDivisor(a, b); 
+
+      //todo: reproduce the new NET7 BigInteger div bugs, Shared.Rent -> maybe they forgot a Clear() ?
+      // 20479246345654817161 25000000000000000000
+      // 116327140517305469521 100000000000000000000
+      // 91784767803406978729 25000000000000000000
     }
-    static rat gamma2(rat x)
-    {
-      return (Builder)x * x + x * x - x;
-    }
-    static Builder gamma3(Builder x)
-    {
-      return x * x + x * x - x;
-    }
-     
+
     static void test()
     {
       TestBigIntegerBuilder.TestType4();
      
       TestBigIntegerBuilder.TestBuilder();
 
-      rat a, b, c, x; double d;
+      rat a, b, c; double d;
                   
       b = Math.PI; c = Math.E; //b = rat.Pi(100);
-
-      a = b * c + c / b;
-      a = (Builder)b * c + c / b;
-      
-      a = b * c + c / b + gamma1(1.5) + 1;
-      a = (Builder)b * c + c / b + gamma1(1.5) + 1;
-      a = (Builder)b * c + c / b + gamma3(1.5) + 1;
-      a = (Builder)b * c + c / b + gamma2(1.5) + 1;
-
-      x = (Builder)a * b - BigRational.Truncate(c / 3);
-
-      a = b * c + c / b + BigRational.Sinh(0.1) + 1;
-      a = (Builder)b * c + c / b + BigRational.Sinh(0.1) + 1;
 
       var t1 = (int)b; t1 = (int)(-b); a = int.MaxValue; t1 = (int)a; a++; t1 = (int)a; a = int.MinValue; t1 = (int)a; a--; t1 = (int)a;
       var t2 = (uint)b; t2 = (uint)(-b); a = uint.MaxValue; t2 = (uint)a; a++; t2 = (uint)a; a = uint.MinValue; t2 = (uint)a;
