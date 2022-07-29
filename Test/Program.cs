@@ -11,16 +11,64 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize();
+      // test_INumberBuilder(); //can be activated for NET7 complilation
       Application.Run(new MainFrame());
     }
 
 #if NET7_0
-    //todo: cachex -1, pi
+
+    static void test_INumberBuilder()
+    {
+      var builder = (INumberBuilder)new MyNumberBuilder();
+
+      // 2 * 3 + 4 * 5
+      builder.Push(2.0f);
+      builder.Push(3.0m);
+      builder.Multiply();
+      builder.Push(4UL);
+      builder.Push(5L);
+      builder.Multiply();
+      builder.Add();
+      var intval = builder.Pop<Int128>();
+
+      // PI * 10^10000
+      builder.Push(Math.PI);
+      builder.Push(BigInteger.Pow(10, 10000));
+      builder.Multiply();
+      var ratval = builder.Pop<BigRational>();
+
+      // result / 10^10000
+      builder.Push(ratval);
+      builder.Push(BigRational.Pow(10, 10000));
+      builder.Divide();
+      var dblval = builder.Pop<double>();
+
+    }
+
+#endif
+
+#if false
+#if NET7_0
+
+    static void test()
+    {
+      test_INumberBuilder();
+      var t1 = new BigInteger(53106192116790780990m);
+      var t2 = new BigInteger(53106192116790780990m);
+      var t3 = t1 / t2;
+
+      var t4 = new BigInt(53106192116790780990m);
+      var t5 = new BigInt(53106192116790780990m);
+      var t6 = t4 / t5;
+
+    }
+
+    //todo: report NET7 drop issue 
+    //todo: NET7 cachex -1, pi
     //todo: nuget multipack...
     //todo: decimal checked...
-    //todo: drop in net7
-
+    
     static void new_net7_bugs()
     {
       //new NET7 BigInteger GCD bugs
@@ -30,7 +78,7 @@ namespace Test
 
       a = new BigInteger(20479246345654817161m);
       b = new BigInteger(25000000000000000000m);
-      c = BigInteger.GreatestCommonDivisor(a, b); 
+      c = BigInteger.GreatestCommonDivisor(a, b);
 
       //todo: reproduce the new NET7 BigInteger div bugs, Shared.Rent -> maybe they forgot a Clear() ?
       // 20479246345654817161 25000000000000000000
@@ -38,14 +86,13 @@ namespace Test
       // 91784767803406978729 25000000000000000000
     }
 
-    static void test()
+    static void test2()
     {
       TestBigIntegerBuilder.TestType4();
-     
       TestBigIntegerBuilder.TestBuilder();
 
       rat a, b, c; double d;
-                  
+
       b = Math.PI; c = Math.E; //b = rat.Pi(100);
 
       var t1 = (int)b; t1 = (int)(-b); a = int.MaxValue; t1 = (int)a; a++; t1 = (int)a; a = int.MinValue; t1 = (int)a; a--; t1 = (int)a;
@@ -138,10 +185,6 @@ namespace Test
       b = d = double.Tanh(0.5); a = rat.Tanh(0.5);
 
     }
-#endif
-
-#if false
-#if NET7_0
 
     static void test()
     {

@@ -12,12 +12,12 @@ namespace System.Numerics
     /// <remarks>
     /// <b>Note</b>: As a <c>ref</c> type, it <b>cannot</b> be used in asynchronous methods, asynchronous lambda expressions.<br/>
     /// query expressions, iterator blocks or inside non-static nested functions.<br/>
-    /// For such cases, however, it is safe to use a local new created instance of a <see cref="CPU"/> object.
+    /// For such cases, however, it is safe to use a private instance of a <see cref="CPU"/> object.
     /// </remarks>
     [DebuggerTypeProxy(typeof(DebugView)), DebuggerDisplay("Count = {p.i}")]
     public readonly ref struct SafeCPU
     {
-      internal readonly CPU p; internal SafeCPU(CPU p) => this.p = p; //internal for DebugView only
+      internal readonly CPU p; internal SafeCPU(CPU p) => this.p = p; //todo: make private, internal currently for DebugView only
       /// <summary>
       /// Returns a temporary absolute index of the current stack top
       /// from which subsequent instructions can index stack entries.

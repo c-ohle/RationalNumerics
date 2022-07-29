@@ -3184,7 +3184,7 @@ namespace System.Numerics
               copy(d, s, n);
         return new BigRational(p);
       }
-      internal void toi(BigRational v, uint* p, uint f) //NET7 spec int type conversions, Int32,Unt32,...,Int128,UInt128,... 
+      internal void toi(BigRational v, uint* p, uint f) //NET7 spec int type conversions, Int32, Unt32,..., Int128, UInt128, Int256, ... 
       {
         if (v.p == null) return; uint n = f & 0xff;
         push(v); var s = sign();
@@ -3237,14 +3237,14 @@ namespace System.Numerics
         {
           var u = p[0] & 0x3fffffff;
           if (!BitOperations.IsPow2(p[u])) return false; //NET7 currently not intrinsic ?!?
-          for (uint i = 1; i < u; i++) if (p[i] != 0) return false; //todo: cmpz
+          for (uint i = 1; i < u; i++) if (p[i] != 0) return false; //todo: cmpz and check
         }
         return true;
       }
       //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //for debug visualizer cross thread access protection only
-      //todo: check, remove?, div(a, b); mod(); swp(); pop(); must!!! have same performance      
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //for debug visualizer and cross thread access protection
+      //todo: check remove?, div(a, b); mod(); swp(); pop(); should have same performance      
       /// <summary>
       /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
       /// and replaces them with the integral result.

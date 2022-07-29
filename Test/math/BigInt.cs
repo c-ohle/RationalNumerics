@@ -22,13 +22,13 @@ namespace System.Numerics.Rational
     //public BigInt(ReadOnlySpan<byte> value, bool isUnsigned = false, bool isBigEndian = false)
 
     public static implicit operator BigInt(long value) => new BigInt(value);
-#if NET7_0
-    public static implicit operator BigInt(Int128 value) => new BigInt(value);
-#endif
     public static implicit operator BigInt(BigInteger value) => new BigInt(value);
     public static implicit operator BigRational(BigInt value) => value.p;
     public static explicit operator BigInt(BigRational value) => new BigInt(BigRational.Truncate(value));
     public static explicit operator BigInteger(BigInt value) => (BigInteger)value.p;
+#if NET7_0
+    public static implicit operator BigInt(Int128 value) => new BigInt(value);
+#endif
 
     public static BigInt operator +(BigInt a) => new BigInt(+a.p);
     public static BigInt operator -(BigInt a) => new BigInt(-a.p);
@@ -38,9 +38,8 @@ namespace System.Numerics.Rational
     public static BigInt operator /(BigInt a, BigInt b)
     {
       var cpu = rat.task_cpu;
-      cpu.push(a.p); var t1 = cpu.msb();
-      cpu.push(b.p); var t2 = cpu.msb();
-      if (t2 > t1) { cpu.pop(2); cpu.push(); return new BigInt(cpu); }
+      cpu.push(a.p); //var t1 = cpu.msb();
+      cpu.push(b.p); //var t2 = cpu.msb(); if (t2 > t1) { cpu.pop(2); cpu.push(); return new BigInt(cpu); }
       cpu.idiv(); return new BigInt(cpu);
     }
     public static BigInt operator <<(BigInt a, int b) { var cpu = rat.task_cpu; var c = checked((uint)b); cpu.push(a.p); cpu.shl(c); return new BigInt(cpu); }
@@ -59,10 +58,11 @@ namespace System.Numerics.Rational
     public static BigInt Pow(BigInt value, int exponent) => new BigInt(BigRational.Pow(value.p, exponent));
     public static BigInt Negate(BigInt a) => new BigInt(-a.p);
 
-    readonly BigRational p; BigInt(BigRational p) => this.p = p;
-    BigInt(BigRational.SafeCPU cpu) => p = cpu.popr();
+    private readonly BigRational p; 
+    private BigInt(BigRational p) => this.p = p;
+    private BigInt(BigRational.SafeCPU cpu) => p = cpu.popr();
 
-#region boost operator 
+    #region boost operator 
     /// <summary>
     /// Performs a bitwise Or operation on two <see cref="BigInt"/> values.
     /// </summary>
@@ -71,6 +71,6 @@ namespace System.Numerics.Rational
     /// <returns>The result of the bitwise Or operation.</returns>
     public static BigInt operator |(BigInt? a, BigInt b) => new BigInt((BigRational?)a.GetValueOrDefault().p | b.p);
     public static implicit operator BigInt?(int value) => new BigInt(((BigRational?)value).GetValueOrDefault());
-#endregion
+    #endregion
   }
 }

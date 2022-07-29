@@ -308,7 +308,7 @@ namespace System.Numerics
         case TypeCode.Int64: { result = value is long t ? t : default; return true; }
         case TypeCode.UInt64: { result = value is ulong t ? t : default; return true; }
         case TypeCode.Single: { result = value is float t ? t : default; return true; }
-        case TypeCode.Double: { result = value is float t ? t : default; return true; }
+        case TypeCode.Double: { result = value is double t ? t : default; return true; }
         case TypeCode.Decimal: { result = value is decimal t ? t : default; return true; }
         default:
           { if (value is BigRational t) { result = t; return true; } }
