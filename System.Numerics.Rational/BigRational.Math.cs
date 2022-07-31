@@ -267,7 +267,7 @@ namespace System.Numerics
     /// <param name="n">The degree of the root to be computed.</param>
     /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
     /// <returns>The <paramref name="n" />-th root of <paramref name="x" />.</returns>
-    public static BigRational Root(BigRational x, int n, int digits)
+    public static BigRational RootN(BigRational x, int n, int digits)
     {
       return Pow(x, (BigRational)1 / n, digits); //todo: opt. cpu
     }
@@ -412,7 +412,7 @@ namespace System.Numerics
     public static BigRational Tau(int digits)
     {
       var cpu = main_cpu; var c = prec(digits);
-      cpu.pi(c); cpu.mul(2u); cpu.mul(); cpu.rnd(digits); return cpu.popr();
+      cpu.pi(c); cpu.push(2u); cpu.mul(); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Calculates π rounded to <see cref="MaxDigits"/>.<br/>

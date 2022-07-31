@@ -393,23 +393,18 @@ namespace System.Numerics.Rational
     {
       BigInt a = 10, b = 20, c = 30, d = 40, x;
 
-      x = a * b + c * d;
-      //x = (BigInt.Builder)a * b + c * d;
+      var xx = (BigInteger)a; xx *= xx;
+
+      x = a * b + c * d; 
       x = 0 | a * b + c * d;
-
-      x = a * b + c * d + 1234;
-      //x = (BigInt.Builder)a * b + c * d + 1234;
-      x = 0 | a * b + c * d + 1234;
-
+          
       a = Int128.MaxValue; b = Int128.MinValue; c = long.MaxValue; d = long.MinValue;
       x = a * b + c * d;
-      //x = (BigInt.Builder)a * b + c * d;
       x = 0 | a * b + c * d;
 
       a = 10; b = 20; c = 32; d = 40;
 
       x = a * b + c * d + BigInt.Pow(d, 100) + 1234;
-      //x = (BigInt.Builder)a * b + c * d + BigInt.Pow(d, 100) + 1234;
       x = 0 | a * b + c * d + BigInt.Pow(d, 100) + 1234;
 
     }

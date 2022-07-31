@@ -1,5 +1,6 @@
 ﻿
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 
 namespace System.Numerics
@@ -218,6 +219,7 @@ namespace System.Numerics
       /// <summary>
       /// Removes the value currently on top of the stack.
       /// </summary>
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public void pop() => p.pop();
       /// <summary>
       /// Removes n values currently on top of the stack.

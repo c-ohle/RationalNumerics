@@ -12,11 +12,24 @@ namespace Test
     static void Main()
     {
       ApplicationConfiguration.Initialize();
-      // test_INumberBuilder(); //can be activated for NET7 complilation
+      //test_INumberBuilder(); //can be activated to debug for NET7 complilation
       Application.Run(new MainFrame());
     }
 
-#if NET7_0
+#if false //NET7_0
+    
+    static void test_x()
+    {
+      test_INumberBuilder();
+      var t1 = new BigInteger(53106192116790780990m);
+      var t2 = new BigInteger(53106192116790780990m);
+      var t3 = t1 / t2;
+
+      var t4 = new BigInt(53106192116790780990m);
+      var t5 = new BigInt(53106192116790780990m);
+      var t6 = t4 / t5;
+
+    }
 
     static void test_INumberBuilder()
     {
@@ -51,18 +64,6 @@ namespace Test
 #if false
 #if NET7_0
 
-    static void test()
-    {
-      test_INumberBuilder();
-      var t1 = new BigInteger(53106192116790780990m);
-      var t2 = new BigInteger(53106192116790780990m);
-      var t3 = t1 / t2;
-
-      var t4 = new BigInt(53106192116790780990m);
-      var t5 = new BigInt(53106192116790780990m);
-      var t6 = t4 / t5;
-
-    }
 
     //todo: report NET7 drop issue 
     //todo: NET7 cachex -1, pi

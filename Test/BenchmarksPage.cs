@@ -245,7 +245,7 @@ namespace Test
       return (pass, f) =>
       {
         // (a * b + a * b - a + a * a) / a; // a * a -> sqr() 
-        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = (rr[i] * rr[i - 1] + rr[i] * rr[i - 1] - rr[i] + rr[i] * rr[i]) / rr[i];
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = 0 | (rr[i] * rr[i - 1] + rr[i] * rr[i - 1] - rr[i] + rr[i] * rr[i]) / rr[i];
         if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = (ii[i] * ii[i - 1] + ii[i] * ii[i - 1] - ii[i] + ii[i] * ii[i]) / ii[i];
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second)); // ii[1+(i>>2)]
       };

@@ -20,7 +20,7 @@ namespace Test
   }
 
   // INumberBuilder test implementation, non optimized or efficient implemented
-  // but works already for all NET7 numeric types and BigRational as well. 
+  // but works for all NET7 numeric types and BigRational as well. 
   public class MyNumberBuilder : INumberBuilder
   {
     // for debug only: not mutch effort, simply show stack as list

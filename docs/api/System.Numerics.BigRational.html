@@ -122,9 +122,6 @@
                                   <a href="System.Numerics.BigRational.Atan2.html" title="Atan2" class="">Atan2</a>
                                 </li>
                                 <li class="">
-                                  <a href="System.Numerics.BigRational.Atan2Pi.html" title="Atan2Pi" class="">Atan2Pi</a>
-                                </li>
-                                <li class="">
                                   <a href="System.Numerics.BigRational.Atanh.html" title="Atanh" class="">Atanh</a>
                                 </li>
                                 <li class="">
@@ -377,7 +374,7 @@
                                   <a href="System.Numerics.BigRational.ReadFromBytes.html" title="ReadFromBytes" class="">ReadFromBytes</a>
                                 </li>
                                 <li class="">
-                                  <a href="System.Numerics.BigRational.Root.html" title="Root" class="">Root</a>
+                                  <a href="System.Numerics.BigRational.RootN.html" title="RootN" class="">RootN</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.Round.html" title="Round" class="">Round</a>
@@ -390,6 +387,9 @@
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.SinCos.html" title="SinCos" class="">SinCos</a>
+                                </li>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.SinCosPi.html" title="SinCosPi" class="">SinCosPi</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.Sinh.html" title="Sinh" class="">Sinh</a>
@@ -797,8 +797,8 @@
     <div><span class="xref">System.ISpanParsable</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.IAdditionOperators</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.IAdditiveIdentity</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
-    <div><span class="xref">System.Numerics.IComparisonOperators</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
-    <div><span class="xref">System.Numerics.IEqualityOperators</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
+    <div><span class="xref">System.Numerics.IComparisonOperators</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <span class="xref">System.Boolean</span>&gt;</div>
+    <div><span class="xref">System.Numerics.IEqualityOperators</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <span class="xref">System.Boolean</span>&gt;</div>
     <div><span class="xref">System.Numerics.IDecrementOperators</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.IDivisionOperators</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.IIncrementOperators</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
@@ -812,6 +812,7 @@
     <div><span class="xref">System.Numerics.ISignedNumber</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.IPowerFunctions</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.IRootFunctions</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
+    <div><span class="xref">System.Numerics.IFloatingPointConstants</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.IExponentialFunctions</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.ILogarithmicFunctions</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
     <div><span class="xref">System.Numerics.ITrigonometricFunctions</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</div>
@@ -1020,24 +1021,10 @@ Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic f
 </td>
       </tr>
       <tr>
-        <td id="System_Numerics_BigRational_Atan2_System_Numerics_BigRational_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.Atan2(System.Numerics.BigRational,System.Numerics.BigRational)">
-          <a class="xref" href="System.Numerics.BigRational.Atan2.html#System_Numerics_BigRational_Atan2_System_Numerics_BigRational_System_Numerics_BigRational_">Atan2(BigRational, BigRational)</a>
-        </td>
-        <td class="markdown level1 summary"><p>Computes the arc-tangent of the quotient of two values.</p>
-</td>
-      </tr>
-      <tr>
         <td id="System_Numerics_BigRational_Atan2_System_Numerics_BigRational_System_Numerics_BigRational_System_Int32_" data-uid="System.Numerics.BigRational.Atan2(System.Numerics.BigRational,System.Numerics.BigRational,System.Int32)">
           <a class="xref" href="System.Numerics.BigRational.Atan2.html#System_Numerics_BigRational_Atan2_System_Numerics_BigRational_System_Numerics_BigRational_System_Int32_">Atan2(BigRational, BigRational, Int32)</a>
         </td>
         <td class="markdown level1 summary"><p>Returns the angle whose tangent is the quotient of two specified numbers.</p>
-</td>
-      </tr>
-      <tr>
-        <td id="System_Numerics_BigRational_Atan2Pi_System_Numerics_BigRational_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.Atan2Pi(System.Numerics.BigRational,System.Numerics.BigRational)">
-          <a class="xref" href="System.Numerics.BigRational.Atan2Pi.html#System_Numerics_BigRational_Atan2Pi_System_Numerics_BigRational_System_Numerics_BigRational_">Atan2Pi(BigRational, BigRational)</a>
-        </td>
-        <td class="markdown level1 summary"><p>Computes the arc-tangent of the quotient of two values and divides the result by pi.</p>
 </td>
       </tr>
       <tr>
@@ -1715,15 +1702,15 @@ the values in a read-only span of bytes.</p>
 </td>
       </tr>
       <tr>
-        <td id="System_Numerics_BigRational_Root_System_Numerics_BigRational_System_Int32_" data-uid="System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32)">
-          <a class="xref" href="System.Numerics.BigRational.Root.html#System_Numerics_BigRational_Root_System_Numerics_BigRational_System_Int32_">Root(BigRational, Int32)</a>
+        <td id="System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32_" data-uid="System.Numerics.BigRational.RootN(System.Numerics.BigRational,System.Int32)">
+          <a class="xref" href="System.Numerics.BigRational.RootN.html#System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32_">RootN(BigRational, Int32)</a>
         </td>
         <td class="markdown level1 summary"><p>Computes the n-th root of a value.</p>
 </td>
       </tr>
       <tr>
-        <td id="System_Numerics_BigRational_Root_System_Numerics_BigRational_System_Int32_System_Int32_" data-uid="System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32,System.Int32)">
-          <a class="xref" href="System.Numerics.BigRational.Root.html#System_Numerics_BigRational_Root_System_Numerics_BigRational_System_Int32_System_Int32_">Root(BigRational, Int32, Int32)</a>
+        <td id="System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32_System_Int32_" data-uid="System.Numerics.BigRational.RootN(System.Numerics.BigRational,System.Int32,System.Int32)">
+          <a class="xref" href="System.Numerics.BigRational.RootN.html#System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32_System_Int32_">RootN(BigRational, Int32, Int32)</a>
         </td>
         <td class="markdown level1 summary"><p>Computes the n-th root of a value.</p>
 </td>
@@ -1779,6 +1766,13 @@ using the specified rounding convention.</p>
           <a class="xref" href="System.Numerics.BigRational.SinCos.html#System_Numerics_BigRational_SinCos_System_Numerics_BigRational_">SinCos(BigRational)</a>
         </td>
         <td class="markdown level1 summary"><p>Computes the sine and cosine of a value.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="System_Numerics_BigRational_SinCosPi_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.SinCosPi(System.Numerics.BigRational)">
+          <a class="xref" href="System.Numerics.BigRational.SinCosPi.html#System_Numerics_BigRational_SinCosPi_System_Numerics_BigRational_">SinCosPi(BigRational)</a>
+        </td>
+        <td class="markdown level1 summary"><p>Computes the sine and cosine of a value that has been multiplied by <code>pi</code>.</p>
 </td>
       </tr>
       <tr>

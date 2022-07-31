@@ -169,12 +169,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.Atan
   fullName: System.Numerics.BigRational.Atan
   nameWithType: BigRational.Atan
-- uid: System.Numerics.BigRational.Atan2(System.Numerics.BigRational,System.Numerics.BigRational)
-  name: Atan2(BigRational, BigRational)
-  href: api/System.Numerics.BigRational.Atan2.html#System_Numerics_BigRational_Atan2_System_Numerics_BigRational_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.Atan2(System.Numerics.BigRational,System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.Atan2(System.Numerics.BigRational, System.Numerics.BigRational)
-  nameWithType: BigRational.Atan2(BigRational, BigRational)
 - uid: System.Numerics.BigRational.Atan2(System.Numerics.BigRational,System.Numerics.BigRational,System.Int32)
   name: Atan2(BigRational, BigRational, Int32)
   href: api/System.Numerics.BigRational.Atan2.html#System_Numerics_BigRational_Atan2_System_Numerics_BigRational_System_Numerics_BigRational_System_Int32_
@@ -187,18 +181,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.Atan2
   fullName: System.Numerics.BigRational.Atan2
   nameWithType: BigRational.Atan2
-- uid: System.Numerics.BigRational.Atan2Pi(System.Numerics.BigRational,System.Numerics.BigRational)
-  name: Atan2Pi(BigRational, BigRational)
-  href: api/System.Numerics.BigRational.Atan2Pi.html#System_Numerics_BigRational_Atan2Pi_System_Numerics_BigRational_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.Atan2Pi(System.Numerics.BigRational,System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.Atan2Pi(System.Numerics.BigRational, System.Numerics.BigRational)
-  nameWithType: BigRational.Atan2Pi(BigRational, BigRational)
-- uid: System.Numerics.BigRational.Atan2Pi*
-  name: Atan2Pi
-  href: api/System.Numerics.BigRational.Atan2Pi.html
-  commentId: Overload:System.Numerics.BigRational.Atan2Pi
-  fullName: System.Numerics.BigRational.Atan2Pi
-  nameWithType: BigRational.Atan2Pi
 - uid: System.Numerics.BigRational.Atanh(System.Numerics.BigRational)
   name: Atanh(BigRational)
   href: api/System.Numerics.BigRational.Atanh.html#System_Numerics_BigRational_Atanh_System_Numerics_BigRational_
@@ -2776,24 +2758,24 @@ references:
   commentId: Overload:System.Numerics.BigRational.ReadFromBytes
   fullName: System.Numerics.BigRational.ReadFromBytes
   nameWithType: BigRational.ReadFromBytes
-- uid: System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32)
-  name: Root(BigRational, Int32)
-  href: api/System.Numerics.BigRational.Root.html#System_Numerics_BigRational_Root_System_Numerics_BigRational_System_Int32_
-  commentId: M:System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32)
-  fullName: System.Numerics.BigRational.Root(System.Numerics.BigRational, System.Int32)
-  nameWithType: BigRational.Root(BigRational, Int32)
-- uid: System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32,System.Int32)
-  name: Root(BigRational, Int32, Int32)
-  href: api/System.Numerics.BigRational.Root.html#System_Numerics_BigRational_Root_System_Numerics_BigRational_System_Int32_System_Int32_
-  commentId: M:System.Numerics.BigRational.Root(System.Numerics.BigRational,System.Int32,System.Int32)
-  fullName: System.Numerics.BigRational.Root(System.Numerics.BigRational, System.Int32, System.Int32)
-  nameWithType: BigRational.Root(BigRational, Int32, Int32)
-- uid: System.Numerics.BigRational.Root*
-  name: Root
-  href: api/System.Numerics.BigRational.Root.html
-  commentId: Overload:System.Numerics.BigRational.Root
-  fullName: System.Numerics.BigRational.Root
-  nameWithType: BigRational.Root
+- uid: System.Numerics.BigRational.RootN(System.Numerics.BigRational,System.Int32)
+  name: RootN(BigRational, Int32)
+  href: api/System.Numerics.BigRational.RootN.html#System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.RootN(System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.RootN(System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.RootN(BigRational, Int32)
+- uid: System.Numerics.BigRational.RootN(System.Numerics.BigRational,System.Int32,System.Int32)
+  name: RootN(BigRational, Int32, Int32)
+  href: api/System.Numerics.BigRational.RootN.html#System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.RootN(System.Numerics.BigRational,System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.RootN(System.Numerics.BigRational, System.Int32, System.Int32)
+  nameWithType: BigRational.RootN(BigRational, Int32, Int32)
+- uid: System.Numerics.BigRational.RootN*
+  name: RootN
+  href: api/System.Numerics.BigRational.RootN.html
+  commentId: Overload:System.Numerics.BigRational.RootN
+  fullName: System.Numerics.BigRational.RootN
+  nameWithType: BigRational.RootN
 - uid: System.Numerics.BigRational.Round(System.Numerics.BigRational)
   name: Round(BigRational)
   href: api/System.Numerics.BigRational.Round.html#System_Numerics_BigRational_Round_System_Numerics_BigRational_
@@ -3790,6 +3772,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.SinCos
   fullName: System.Numerics.BigRational.SinCos
   nameWithType: BigRational.SinCos
+- uid: System.Numerics.BigRational.SinCosPi(System.Numerics.BigRational)
+  name: SinCosPi(BigRational)
+  href: api/System.Numerics.BigRational.SinCosPi.html#System_Numerics_BigRational_SinCosPi_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.SinCosPi(System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.SinCosPi(System.Numerics.BigRational)
+  nameWithType: BigRational.SinCosPi(BigRational)
+- uid: System.Numerics.BigRational.SinCosPi*
+  name: SinCosPi
+  href: api/System.Numerics.BigRational.SinCosPi.html
+  commentId: Overload:System.Numerics.BigRational.SinCosPi
+  fullName: System.Numerics.BigRational.SinCosPi
+  nameWithType: BigRational.SinCosPi
 - uid: System.Numerics.BigRational.Sinh(System.Numerics.BigRational)
   name: Sinh(BigRational)
   href: api/System.Numerics.BigRational.Sinh.html#System_Numerics_BigRational_Sinh_System_Numerics_BigRational_

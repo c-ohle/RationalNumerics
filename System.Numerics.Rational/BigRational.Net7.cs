@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 
 // The INumber implementation is intended to reflect the public function set of double exactly.
 // It should be possible to check floating point algorithms for precision, epsilon and robustness issues
-// simply by replacing double with BigRational. Therfore some overhead, functions like Clamp, CopySign etc.
+// simply by replacing double with BigRational.
+// But therfore also some overhead and adapted illogics of the current INumber/double implementation.
 
 #if NET7_0 
 
@@ -13,8 +14,12 @@ namespace System.Numerics
 {
   unsafe partial struct BigRational :
     INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, //IConvertible, //todo: check IConvertible, does it makes much sens for non system types?
-    IPowerFunctions<BigRational>, IRootFunctions<BigRational>, IExponentialFunctions<BigRational>,
-    ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational>
+    IPowerFunctions<BigRational>, 
+    IRootFunctions<BigRational>, 
+    IExponentialFunctions<BigRational>,
+    ILogarithmicFunctions<BigRational>, 
+    ITrigonometricFunctions<BigRational>, //IFloatingPointConstants<BigRational>,
+    IHyperbolicFunctions<BigRational>
   {
     // INumberBase 
     /// <summary>Gets the radix, or base, for the type.</summary>
@@ -37,6 +42,15 @@ namespace System.Numerics
     /// <summary>Gets the multiplicative identity of the current type.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational MultiplicativeIdentity => 1u;
+
+    //todo: or throw new NotImplementedException();?
+    //[DebuggerBrowsable(DebuggerBrowsableState.Never)] 
+    static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); //use MaxDigits
+    //[DebuggerBrowsable(DebuggerBrowsableState.Never)] 
+    static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); //use MaxDigits 
+    //[DebuggerBrowsable(DebuggerBrowsableState.Never)] 
+    static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); //use MaxDigits
+
     /// <summary>Determines if a value is zero.</summary>
     /// <param name="value">The value to be checked.</param>
     /// <returns><c>true</c> if <paramref name="value" /> is zero; otherwise, <c>false</c>.</returns>
@@ -877,15 +891,15 @@ namespace System.Numerics
     }
     /// <summary>Computes the n-th root of a value.</summary>
     /// <remarks>
-    /// Part of the new NET 7 number type system see <see cref="IRootFunctions{TSelf}.Root(TSelf,int)"/>.<br/>
+    /// Part of the new NET 7 number type system see <see cref="IRootFunctions{TSelf}.RootN(TSelf,int)"/>.<br/>
     /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose <paramref name="n" />-th root is to be computed.</param>
     /// <param name="n">The degree of the root to be computed.</param>
     /// <returns>The <paramref name="n" />-th root of <paramref name="x" />.</returns>
-    public static BigRational Root(BigRational x, int n)
+    public static BigRational RootN(BigRational x, int n)
     {
-      return Root(x, n, MaxDigits);
+      return RootN(x, n, MaxDigits);
     }
 
     //IExponentialFunctions
@@ -1121,6 +1135,18 @@ namespace System.Numerics
     {
       return (Sin(x, MaxDigits), Cos(x, MaxDigits)); //todo: opt. cpu
     }
+    /// <summary>Computes the sine and cosine of a value that has been multiplied by <c>pi</c>.</summary>
+    /// <remarks>
+    /// This computes <c>(sin(x * pi), cos(x * pi))</c>.<br/>
+    /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.SinCosPi(TSelf)"/>.<br/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
+    /// </remarks>
+    /// <param name="x">The value, in radians, whose sine and cosine are to be computed.</param>
+    /// <returns>The sine and cosine of <paramref name="x" />.</returns>
+    public static (BigRational SinPi, BigRational CosPi) SinCosPi(BigRational x)
+    {
+      x *= Pi(MaxDigits); return (Sin(x, MaxDigits), Cos(x, MaxDigits)); //todo: opt. cpu
+    }
     /// <summary>Computes the arc-cosine of a value and divides the result by <c>pi</c>.</summary>
     /// <remarks>
     /// This computes <c>arccos(x) / π</c> in the interval <c>[-0.5, +0.5]</c>.<br/>
@@ -1193,32 +1219,33 @@ namespace System.Numerics
     {
       return Tan(x * Pi(MaxDigits), MaxDigits); //todo: opt. cpu
     }
-    /// <summary>Computes the arc-tangent of the quotient of two values.</summary>
-    /// <remarks>
-    /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Atan2(TSelf,TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="MaxDigits"/>
-    /// </remarks>
-    /// <param name="y">The y-coordinate of a point.</param>
-    /// <param name="x">The x-coordinate of a point.</param>
-    /// <returns>The arc-tangent of y divided by x.</returns>
-    public static BigRational Atan2(BigRational y, BigRational x)
-    {
-      return Atan2(y, x, MaxDigits); //todo: opt. cpu
-    }
-    /// <summary>
-    /// Computes the arc-tangent of the quotient of two values and divides the result by pi.
-    /// </summary>
-    /// <remarks>
-    /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Atan2Pi(TSelf,TSelf)"/>.<br/>
-    /// The desired precision can preset by <see cref="MaxDigits"/>
-    /// </remarks>
-    /// <param name="y">The y-coordinate of a point.</param>
-    /// <param name="x">The x-coordinate of a point.</param>
-    /// <returns>The arc-tangent of y divided by x divided by pi.</returns>
-    public static BigRational Atan2Pi(BigRational y, BigRational x)
-    {
-      return Atan2(y, x, MaxDigits) / Pi(MaxDigits); //todo: opt. cpu
-    }
+    // /// <summary>Computes the arc-tangent of the quotient of two values.</summary>
+    // /// <remarks>
+    // /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Atan2(TSelf,TSelf)"/>.<br/>
+    // /// The desired precision can preset by <see cref="MaxDigits"/>
+    // /// </remarks>
+    // /// <param name="y">The y-coordinate of a point.</param>
+    // /// <param name="x">The x-coordinate of a point.</param>
+    // /// <returns>The arc-tangent of y divided by x.</returns>
+    // public static BigRational Atan2(BigRational y, BigRational x)
+    // {
+    //   return Atan2(y, x, MaxDigits); //todo: opt. cpu
+    // }
+    // gone
+    // /// <summary>
+    // /// Computes the arc-tangent of the quotient of two values and divides the result by pi.
+    // /// </summary>
+    // /// <remarks>
+    // /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.Atan2Pi(TSelf,TSelf)"/>.<br/>
+    // /// The desired precision can preset by <see cref="MaxDigits"/>
+    // /// </remarks>
+    // /// <param name="y">The y-coordinate of a point.</param>
+    // /// <param name="x">The x-coordinate of a point.</param>
+    // /// <returns>The arc-tangent of y divided by x divided by pi.</returns>
+    // public static BigRational Atan2Pi(BigRational y, BigRational x)
+    // {
+    //   return Atan2(y, x, MaxDigits) / Pi(MaxDigits); //todo: opt. cpu
+    // }
 
     // IFloatingPointIeee754 (double compat.)
     /// <summary>Computes the integer logarithm of a value.</summary>
@@ -1300,6 +1327,7 @@ namespace System.Numerics
     {
       return Tanh(x, MaxDigits);
     }
+
   }
 }
 

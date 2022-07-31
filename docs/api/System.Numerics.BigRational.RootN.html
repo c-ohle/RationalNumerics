@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Operator GreaterThanOrEqual
+    <title>Method RootN
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Operator GreaterThanOrEqual
+    <meta name="title" content="Method RootN
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -205,8 +205,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.op_GreaterThan.html" title="GreaterThan" class="">GreaterThan</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.op_GreaterThanOrEqual.html" title="GreaterThanOrEqual" class="active">GreaterThanOrEqual</a>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.op_GreaterThanOrEqual.html" title="GreaterThanOrEqual" class="">GreaterThanOrEqual</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.GreatestCommonDivisor.html" title="GreatestCommonDivisor" class="">GreatestCommonDivisor</a>
@@ -373,8 +373,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.ReadFromBytes.html" title="ReadFromBytes" class="">ReadFromBytes</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.BigRational.RootN.html" title="RootN" class="">RootN</a>
+                                <li class="active">
+                                  <a href="System.Numerics.BigRational.RootN.html" title="RootN" class="active">RootN</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.Round.html" title="Round" class="">Round</a>
@@ -772,24 +772,23 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.RootN*">
 
-<h1 id="System_Numerics_BigRational_op_GreaterThanOrEqual_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual*">Operator GreaterThanOrEqual
+<h1 id="System_Numerics_BigRational_RootN_" data-uid="System.Numerics.BigRational.RootN*">Method RootN
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 
 
-<a id="System_Numerics_BigRational_op_GreaterThanOrEqual_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual*"></a>
-<h4 id="System_Numerics_BigRational_op_GreaterThanOrEqual_System_Numerics_BigRational_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual(System.Numerics.BigRational,System.Numerics.BigRational)">GreaterThanOrEqual(BigRational, BigRational)</h4>
-<div class="markdown level1 summary"><p>Returns a value that indicates whether a <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value is
-greater than or equal to another <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value.</p>
+<a id="System_Numerics_BigRational_RootN_" data-uid="System.Numerics.BigRational.RootN*"></a>
+<h4 id="System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32_System_Int32_" data-uid="System.Numerics.BigRational.RootN(System.Numerics.BigRational,System.Int32,System.Int32)">RootN(BigRational, Int32, Int32)</h4>
+<div class="markdown level1 summary"><p>Computes the n-th root of a value.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static bool operator &gt;=(BigRational a, BigRational b)</code></pre>
+  <pre><code class="lang-csharp hljs">public static BigRational RootN(BigRational x, int n, int digits)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -803,14 +802,20 @@ greater than or equal to another <a class="xref" href="System.Numerics.BigRation
   <tbody>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">a</span></td>
-      <td><p>The first value to compare.</p>
+      <td><span class="parametername">x</span></td>
+      <td><p>The value whose <code data-dev-comment-type="paramref" class="paramref">n</code>-th root is to be computed.</p>
 </td>
     </tr>
     <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>The second value to compare.</p>
+      <td><span class="xref">System.Int32</span></td>
+      <td><span class="parametername">n</span></td>
+      <td><p>The degree of the root to be computed.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.Int32</span></td>
+      <td><span class="parametername">digits</span></td>
+      <td><p>The maximum number of fractional decimal digits in the return value.</p>
 </td>
     </tr>
   </tbody>
@@ -825,23 +830,22 @@ greater than or equal to another <a class="xref" href="System.Numerics.BigRation
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Boolean</span></td>
-      <td><p>true if left is greater than or equal to right; otherwise, false.</p>
+      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
+      <td><p>The <code data-dev-comment-type="paramref" class="paramref">n</code>-th root of <code data-dev-comment-type="paramref" class="paramref">x</code>.</p>
 </td>
     </tr>
   </tbody>
 </table>
 
 
-<a id="System_Numerics_BigRational_op_GreaterThanOrEqual_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual*"></a>
-<h4 id="System_Numerics_BigRational_op_GreaterThanOrEqual_System_Numerics_BigRational_System_Int64_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual(System.Numerics.BigRational,System.Int64)">GreaterThanOrEqual(BigRational, Int64)</h4>
-<div class="markdown level1 summary"><p>Returns a value that indicates whether a <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value is
-greater than or equal to an <span class="xref">System.Int64</span> value.</p>
+<a id="System_Numerics_BigRational_RootN_" data-uid="System.Numerics.BigRational.RootN*"></a>
+<h4 id="System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32_" data-uid="System.Numerics.BigRational.RootN(System.Numerics.BigRational,System.Int32)">RootN(BigRational, Int32)</h4>
+<div class="markdown level1 summary"><p>Computes the n-th root of a value.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static bool operator &gt;=(BigRational a, long b)</code></pre>
+  <pre><code class="lang-csharp hljs">public static BigRational RootN(BigRational x, int n)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -855,14 +859,14 @@ greater than or equal to an <span class="xref">System.Int64</span> value.</p>
   <tbody>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">a</span></td>
-      <td><p>The first value to compare.</p>
+      <td><span class="parametername">x</span></td>
+      <td><p>The value whose <code data-dev-comment-type="paramref" class="paramref">n</code>-th root is to be computed.</p>
 </td>
     </tr>
     <tr>
-      <td><span class="xref">System.Int64</span></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>The second value to compare.</p>
+      <td><span class="xref">System.Int32</span></td>
+      <td><span class="parametername">n</span></td>
+      <td><p>The degree of the root to be computed.</p>
 </td>
     </tr>
   </tbody>
@@ -877,15 +881,15 @@ greater than or equal to an <span class="xref">System.Int64</span> value.</p>
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Boolean</span></td>
-      <td><p>true if left is greater than or equal to right; otherwise, false.</p>
+      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
+      <td><p>The <code data-dev-comment-type="paramref" class="paramref">n</code>-th root of <code data-dev-comment-type="paramref" class="paramref">x</code>.</p>
 </td>
     </tr>
   </tbody>
 </table>
-<h5 id="System_Numerics_BigRational_op_GreaterThanOrEqual_System_Numerics_BigRational_System_Int64__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>For fast comparisons of common cases like: <code>x &gt;= 0</code>.<br>
-Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems.</p>
+<h5 id="System_Numerics_BigRational_RootN_System_Numerics_BigRational_System_Int32__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>Part of the new NET 7 number type system see <span class="xref">System.Numerics.IRootFunctions`1.RootN(`0,System.Int32)</span>.<br>
+The desired precision can preset by <a class="xref" href="System.Numerics.BigRational.MaxDigits.html#System_Numerics_BigRational_MaxDigits">MaxDigits</a></p>
 </div>
 </article>
           </div>

@@ -93,7 +93,7 @@ namespace System.Numerics
     public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
     {
       int digs = 32, round = -1, emin = -4, emax = +16; char fc = '\0', tc = fc;
-      //if (format != default && format.Length == 0) digs = DefaultDigits; //todo: check makes sense?
+      //if (format != default && format.Length == 0) digs = DefaultDigits; //todo: check makes sense for debug?
       var info = NumberFormatInfo.GetInstance(provider);
       if (format.Length != 0)
       {
@@ -108,6 +108,7 @@ namespace System.Numerics
               goto def;
             case 'F':
             case 'L': // like F without trailing zeros
+            //case 'N': // NET7 INumber
               if (round == -1) round = info.NumberDecimalDigits;
               digs = Math.Max(0, ILog10(this)) + 1 + round;
               if (digs > destination.Length && destination.Length == 100) { charsWritten = digs; return false; } //hint for ToString(,)
@@ -622,13 +623,6 @@ namespace System.Numerics
       if (value.p == null) return default;
       var cpu = main_cpu; cpu.push(value); cpu.rnd(0, 0); // trunc
       cpu.get(cpu.mark() - 1, out BigInteger r); cpu.pop(); return r;
-      //fixed (uint* p = value.p)
-      //{
-      //  var n = p[0] & 0x3fffffff; var b = p + (n + 1);
-      //  var r = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), (int)n << 2), true, false);
-      //  if (*(ulong*)b != 0x100000001) r /= new BigInteger(new ReadOnlySpan<byte>(b + 1, (int)b[0] << 2), true);
-      //  return (p[0] & 0x80000000) == 0 ? r : -r;
-      //}
     }
     /// <summary>
     /// Defines an explicit access to the internal data representation of a <see cref="BigRational"/> number.
@@ -1097,6 +1091,7 @@ namespace System.Numerics
       public void push(int v, int n)
       {
         for (int i = 0; i < n; i++) push(v);  //todo: optimize
+        //if (n <= 0) return; push(v); for (int i = 1; i < n; i++) dup(); //todo: benchmark
       }
       /// <summary>
       /// Pushes the supplied <see cref="uint"/> value onto the stack.
@@ -1116,12 +1111,12 @@ namespace System.Numerics
       /// <param name="v">The value to push.</param>
       public void push(long v)
       {
-        var u = unchecked((int)v); if (u == v) { push(u); return; }
+        var t = unchecked((uint)v); if (t == v) { push(t); return; } // mcc
+        var s = v < 0; var u = unchecked((ulong)(s ? -v : v)); var n = unchecked((uint)u) == u ? 1u : 2u;
         fixed (uint* p = rent(5))
         {
-          p[0] = (v < 0 ? 0x80000000 : 0) | 2;
-          *(ulong*)(p + 1) = unchecked((ulong)(v < 0 ? -v : v));
-          *(ulong*)(p + 3) = 0x100000001;
+          p[0] = (s ? 0x80000000 : 0) | n;
+          *(ulong*)(p + 1) = u; *(ulong*)(p + (n + 1)) = 0x100000001;
         }
       }
       /// <summary>
@@ -2939,7 +2934,7 @@ namespace System.Numerics
           dh = (dh << sh) | (dl >> sb);
           dl = (dl << sh) | (db >> sb);
         }
-        for (uint i = na; i >= nb; i--)
+        for (uint i = na, d; i >= nb; i--)
         {
           uint n = i - nb, t = i < na ? a[i + 1] : 0;
           ulong vh = ((ulong)t << 32) | a[i];
@@ -2950,45 +2945,31 @@ namespace System.Numerics
             vh = (vh << sh) | (vl >> sb);
             vl = (vl << sh) | (va >> sb);
           }
-          ulong di = vh / dh;
-          if (di > 0xffffffff) di = 0xffffffff;
+          ulong di = vh / dh; if (di > 0xffffffff) di = 0xffffffff;
           for (; ; di--)
           {
-            ulong th = dh * di, tl = dl * di; th = th + (tl >> 32);
+            ulong th = dh * di, tl = dl * di; th += tl >> 32;
             if (th < vh) break; if (th > vh) continue;
             if ((tl & 0xffffffff) > vl) continue; break;
-            //ulong th = dh * di;
-            //ulong tl = dl * di;
-            //th = th + (tl >> 32);
-            //tl = tl & 0xffffffff;
-            //if (th < vh) break; if (th > vh) { di--; continue; }
-            //if (tl < vl) break; if (tl > vl) { di--; continue; }
-            //break;
           }
           if (di != 0)
           {
             ulong c = 0; var p = a + n;
-            for (int k = 1; k <= nb; k++)
+            for (uint k = 1; k <= nb; k++)
             {
-              c += b[k] * di; uint d = unchecked((uint)c);
-              c = c >> 32; if (p[k] < d) ++c;
-              p[k] = unchecked(p[k] - d);
+              c += b[k] * di; d = unchecked((uint)c); c >>= 32;
+              if (p[k] < d) c++; p[k] = p[k] - d; // ryujit
             }
             if (unchecked((uint)c) != t)
             {
-              c = 0; p = a + n; di--;
-              for (int k = 1; k <= nb; k++)
-              {
-                ulong d = (p[k] + c) + b[k];
-                p[k] = unchecked((uint)d); c = d >> 32;
-              }
+              c = 0; p = a + n; di--; ulong g;
+              for (uint k = 1; k <= nb; k++, c = g >> 32) p[k] = unchecked((uint)(g = (p[k] + c) + b[k]));
             }
           }
-          if (r != null && di != 0)
+          if (di != 0 && r != null)
           {
             var x = n + 1; for (var j = r[0] + 1; j < x; j++) r[j] = 0;
-            if (r[0] < x) r[0] = x; //else { }
-            r[x] = unchecked((uint)di);
+            if (r[0] < x) r[0] = x; r[x] = unchecked((uint)di);
           }
           if (i < na) a[i + 1] = 0;
         }
@@ -2996,15 +2977,14 @@ namespace System.Numerics
       }
       static void shl(uint* p, int c)
       {
-        var s = c & 31; uint d = (uint)c >> 5, n = p[0] & 0x3fffffff; p[0] = p[n + 1] = 0;
-        for (int i = (int)n + 1; i > 0; i--) p[i + d] = (p[i] << s) | unchecked((uint)((ulong)p[i - 1] >> (32 - s)));
-        for (int i = 1; i <= d; i++) p[i] = 0;
+        int s = c & 31, r = 32 - s; uint d = unchecked((uint)(c >> 5)), n = p[0] & 0x3fffffff; p[0] = p[n + 1] = 0;
+        for (uint i = n + 1; i > 0; i--) p[i + d] = (p[i] << s) | unchecked((uint)((ulong)p[i - 1] >> r));
+        for (uint i = 1; i <= d; i++) p[i] = 0;
         n += d; p[0] = p[n + 1] != 0 ? n + 1 : n;
       }
       internal static void shr(uint* p, int c)
       {
-        int s = c & 31, r = 32 - s;
-        uint n = p[0] & 0x3fffffff, i = 0, k = 1 + unchecked((uint)c >> 5), l = k <= n ? p[k++] >> s : 0;
+        int s = c & 31, r = 32 - s; uint n = p[0] & 0x3fffffff, i = 0, k = 1 + unchecked((uint)c >> 5), l = k <= n ? p[k++] >> s : 0;
         while (k <= n) { var t = p[k++]; p[++i] = l | unchecked((uint)((ulong)t << r)); l = t >> s; }
         if (l != 0 || i == 0) p[++i] = l; p[0] = i;
       }
@@ -3114,7 +3094,10 @@ namespace System.Numerics
           {
             ulong c = 0, d;
             for (uint k = 0; k < na; k++, c = d >> 32)  //todo: opt
+            {
+              //ref uint h = ref r[i + k]; h = unchecked((uint)(d = h + c + (ulong)a[k] * b[i]));
               r[i + k] = unchecked((uint)(d = r[i + k] + c + (ulong)a[k] * b[i]));
+            }
             r[i + na] = (uint)c;
           }
           return;
@@ -3124,7 +3107,7 @@ namespace System.Numerics
         kmu(a + n, na - n, b + n, nb - n, r + m, nr - m); // p2 = ah * bh
         uint r1 = na - n + 1, r2 = nb - n + 1, r3 = r1 + r2, r4 = r1 + r2 + r3;
         uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; //todo: opt, use cpu.stack  
-        copy(t1, r4); // for(uint i = 0; i < r4; i++) t1[i] = 0; //todo: optimize
+        copy(t1, r4);
         add(a + n, na - n, a, n, t1, r1);
         add(b + n, nb - n, b, n, t2, r2);
         kmu(t1, r1, t2, r2, t3, r3); // p3 = (ah + al) * (bh + bl)
@@ -3138,8 +3121,11 @@ namespace System.Numerics
           for (uint i = 0; i < na; i++) //todo: opt after checks, the 0 row trick
           {
             ulong c = 0, u, v;
-            for (uint k = 0; k < i; k++, c = (v + (u >> 1)) >> 31) //todo: opt 
+            for (uint k = 0; k < i; k++, c = (v + (u >> 1)) >> 31) //todo: opt
+            {
+              //ref uint h = ref r[i + k]; h = unchecked((uint)((u = h + c) + ((v = (ulong)a[k] * a[i]) << 1)));
               r[i + k] = unchecked((uint)((u = r[i + k] + c) + ((v = (ulong)a[k] * a[i]) << 1)));
+            }
             r[i + i] = unchecked((uint)(u = (ulong)a[i] * a[i] + c)); r[i + i + 1] = (uint)(u >> 32);
           }
           return;
@@ -3217,7 +3203,6 @@ namespace System.Numerics
             }
           }
         }
-        //get(mark() - 1, p, n);
         fixed (uint* t = this.p[this.i - 1])
         {
           var u = t[0] & 0x3fffffff;
@@ -3304,7 +3289,7 @@ namespace System.Numerics
     static void copy(uint* d, uint n)
     {
       uint i = 0, c;
-      for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = default; // RyuJIT vxorps, vmovdqu
+      for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = default; // X64 vxorps, vmovdqu
       for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = default;
       if (i != n) d[i] = 0; //if ?
     }
@@ -3371,71 +3356,12 @@ namespace System.Numerics
     /// </remarks>
     public static BigRational operator |(BigRational? a, BigRational b)
     {
-      var cpu = main_cpu; var p = a.GetValueOrDefault(); //todo: a == 0 && k out of index is the perfect RT check, but also safe to distinguish - boost or op
-      var k = 0u; if (p.p != null) { for (; k < cpu.i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
-      var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r); //fetch
-      if (k != 0) cpu.sp = t; cpu.pop(unchecked((int)(cpu.i - k))); return r;
+      var cpu = main_cpu; var i = cpu.i; if (i == 0) return b;
+      var p = a.GetValueOrDefault(); //todo: a == 0 && k out of index is the perfect RT check, but also safe to distinguish - boost or op
+      var k = 0; if (p.p != null) { for (; k < i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
+      var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(i - 1)), out BigRational r); //fetch
+      if (k != 0) cpu.sp = t; cpu.pop(i - k); return r;
     }
-    #endregion
-    #region ref struct builder
-    //#pragma warning disable CS1591
-    //#pragma warning disable CS8981
-    //public readonly ref struct Builder
-    //{
-    //  readonly BigRational p;
-    //  public override string ToString() => p.ToString();
-    //
-    //  public static implicit operator Builder(BigRational v)
-    //  {
-    //    var cpu = main_cpu; if (cpu.i == 0 || v.p != cpu.p[cpu.i - 1]) cpu.push(v);
-    //    return new Builder(cpu);
-    //  }
-    //  public static implicit operator Builder(long v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
-    //  public static implicit operator Builder(double v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
-    //  public static implicit operator Builder(BigInteger v) { var cpu = main_cpu; cpu.push(v); return new Builder(cpu); }
-    //
-    //  public static Builder operator +(Builder a, Builder b) => a.p + b.p;
-    //  public static Builder operator -(Builder a, Builder b) => a.p - b.p;
-    //  public static Builder operator *(Builder a, Builder b) => a.p * b.p;
-    //  public static Builder operator /(Builder a, Builder b) => a.p / b.p;
-    //  public static Builder operator %(Builder a, Builder b) => a.p % b.p;
-    //
-    //  public static Builder operator +(Builder a, BigRational b) => a.p + b;
-    //  public static Builder operator -(Builder a, BigRational b) => a.p - b;
-    //  public static Builder operator *(Builder a, BigRational b) => a.p * b;
-    //  public static Builder operator /(Builder a, BigRational b) => a.p / b;
-    //  public static Builder operator %(Builder a, BigRational b) => a.p % b;
-    //
-    //  public static Builder operator +(Builder a, long b) => a.p + b;
-    //  public static Builder operator -(Builder a, long b) => a.p - b;
-    //  public static Builder operator *(Builder a, long b) => a.p * b;
-    //  public static Builder operator /(Builder a, long b) => a.p / b;
-    //  public static Builder operator %(Builder a, long b) => a.p % b;
-    //
-    //  public static Builder operator +(Builder a, double b) => a.p + b;
-    //  public static Builder operator -(Builder a, double b) => a.p - b;
-    //  public static Builder operator *(Builder a, double b) => a.p * b;
-    //  public static Builder operator /(Builder a, double b) => a.p / b;
-    //  public static Builder operator %(Builder a, double b) => a.p / b;
-    //
-    //  public static Builder operator +(Builder a, BigInteger b) => a.p + b;
-    //  public static Builder operator -(Builder a, BigInteger b) => a.p - b;
-    //  public static Builder operator *(Builder a, BigInteger b) => a.p * b;
-    //  public static Builder operator /(Builder a, BigInteger b) => a.p / b;
-    //  public static Builder operator %(Builder a, BigInteger b) => a.p / b;
-    //
-    //  private Builder(CPU cpu)
-    //  {
-    //    var i = cpu.i; if (cpu.sp == null) cpu.sp = &i; // security debug visualize
-    //    this.p = new BigRational(cpu.p[i - 1]);
-    //  }
-    //  public static implicit operator BigRational(Builder v)
-    //  {
-    //    var cpu = main_cpu; cpu.sp = null;
-    //    cpu.get(unchecked((uint)(cpu.i - 1)), out BigRational r);
-    //    cpu.pop(cpu.i); return r;
-    //  }
-    //}
     #endregion
   }
 

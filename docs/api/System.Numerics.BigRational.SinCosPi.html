@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Operator GreaterThanOrEqual
+    <title>Method SinCosPi
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Operator GreaterThanOrEqual
+    <meta name="title" content="Method SinCosPi
    ">
     <meta name="generator" content="docfx 2.59.1.0">
     
@@ -205,8 +205,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.op_GreaterThan.html" title="GreaterThan" class="">GreaterThan</a>
                                 </li>
-                                <li class="active">
-                                  <a href="System.Numerics.BigRational.op_GreaterThanOrEqual.html" title="GreaterThanOrEqual" class="active">GreaterThanOrEqual</a>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.op_GreaterThanOrEqual.html" title="GreaterThanOrEqual" class="">GreaterThanOrEqual</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.GreatestCommonDivisor.html" title="GreatestCommonDivisor" class="">GreatestCommonDivisor</a>
@@ -388,8 +388,8 @@
                                 <li class="">
                                   <a href="System.Numerics.BigRational.SinCos.html" title="SinCos" class="">SinCos</a>
                                 </li>
-                                <li class="">
-                                  <a href="System.Numerics.BigRational.SinCosPi.html" title="SinCosPi" class="">SinCosPi</a>
+                                <li class="active">
+                                  <a href="System.Numerics.BigRational.SinCosPi.html" title="SinCosPi" class="active">SinCosPi</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.Sinh.html" title="Sinh" class="">Sinh</a>
@@ -772,24 +772,23 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual*">
+            <article class="content wrap" id="_content" data-uid="System.Numerics.BigRational.SinCosPi*">
 
-<h1 id="System_Numerics_BigRational_op_GreaterThanOrEqual_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual*">Operator GreaterThanOrEqual
+<h1 id="System_Numerics_BigRational_SinCosPi_" data-uid="System.Numerics.BigRational.SinCosPi*">Method SinCosPi
 </h1>
 <div class="markdown level0 summary"></div>
 <div class="markdown level0 conceptual"></div>
 
 
 
-<a id="System_Numerics_BigRational_op_GreaterThanOrEqual_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual*"></a>
-<h4 id="System_Numerics_BigRational_op_GreaterThanOrEqual_System_Numerics_BigRational_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual(System.Numerics.BigRational,System.Numerics.BigRational)">GreaterThanOrEqual(BigRational, BigRational)</h4>
-<div class="markdown level1 summary"><p>Returns a value that indicates whether a <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value is
-greater than or equal to another <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value.</p>
+<a id="System_Numerics_BigRational_SinCosPi_" data-uid="System.Numerics.BigRational.SinCosPi*"></a>
+<h4 id="System_Numerics_BigRational_SinCosPi_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.SinCosPi(System.Numerics.BigRational)">SinCosPi(BigRational)</h4>
+<div class="markdown level1 summary"><p>Computes the sine and cosine of a value that has been multiplied by <code>pi</code>.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static bool operator &gt;=(BigRational a, BigRational b)</code></pre>
+  <pre><code class="lang-csharp hljs">public static (BigRational, BigRational) SinCosPi(BigRational x)</code></pre>
 </div>
 <h5 class="parameters">Parameters</h5>
 <table class="table table-bordered table-striped table-condensed">
@@ -803,14 +802,8 @@ greater than or equal to another <a class="xref" href="System.Numerics.BigRation
   <tbody>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">a</span></td>
-      <td><p>The first value to compare.</p>
-</td>
-    </tr>
-    <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>The second value to compare.</p>
+      <td><span class="parametername">x</span></td>
+      <td><p>The value, in radians, whose sine and cosine are to be computed.</p>
 </td>
     </tr>
   </tbody>
@@ -825,67 +818,16 @@ greater than or equal to another <a class="xref" href="System.Numerics.BigRation
   </thead>
   <tbody>
     <tr>
-      <td><span class="xref">System.Boolean</span></td>
-      <td><p>true if left is greater than or equal to right; otherwise, false.</p>
+      <td><span class="xref">System.ValueTuple</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>, <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</td>
+      <td><p>The sine and cosine of <code data-dev-comment-type="paramref" class="paramref">x</code>.</p>
 </td>
     </tr>
   </tbody>
 </table>
-
-
-<a id="System_Numerics_BigRational_op_GreaterThanOrEqual_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual*"></a>
-<h4 id="System_Numerics_BigRational_op_GreaterThanOrEqual_System_Numerics_BigRational_System_Int64_" data-uid="System.Numerics.BigRational.op_GreaterThanOrEqual(System.Numerics.BigRational,System.Int64)">GreaterThanOrEqual(BigRational, Int64)</h4>
-<div class="markdown level1 summary"><p>Returns a value that indicates whether a <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value is
-greater than or equal to an <span class="xref">System.Int64</span> value.</p>
-</div>
-<div class="markdown level1 conceptual"></div>
-<h5 class="decalaration">Declaration</h5>
-<div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static bool operator &gt;=(BigRational a, long b)</code></pre>
-</div>
-<h5 class="parameters">Parameters</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">a</span></td>
-      <td><p>The first value to compare.</p>
-</td>
-    </tr>
-    <tr>
-      <td><span class="xref">System.Int64</span></td>
-      <td><span class="parametername">b</span></td>
-      <td><p>The second value to compare.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span class="xref">System.Boolean</span></td>
-      <td><p>true if left is greater than or equal to right; otherwise, false.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 id="System_Numerics_BigRational_op_GreaterThanOrEqual_System_Numerics_BigRational_System_Int64__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>For fast comparisons of common cases like: <code>x &gt;= 0</code>.<br>
-Note that all smaller signed and unsigned integer types are automatically mapped to this operator, which is efficient on 64-bit systems.</p>
+<h5 id="System_Numerics_BigRational_SinCosPi_System_Numerics_BigRational__remarks">Remarks</h5>
+<div class="markdown level1 remarks"><p>This computes <code>(sin(x * pi), cos(x * pi))</code>.<br>
+Part of the new NET 7 number type system see <span class="xref">System.Numerics.ITrigonometricFunctions`1.SinCosPi(`0)</span>.<br>
+The desired precision can preset by <a class="xref" href="System.Numerics.BigRational.MaxDigits.html#System_Numerics_BigRational_MaxDigits">MaxDigits</a></p>
 </div>
 </article>
           </div>
