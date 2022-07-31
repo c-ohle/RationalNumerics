@@ -877,13 +877,13 @@ namespace System.Numerics
     }
     /// <summary>Computes the n-th root of a value.</summary>
     /// <remarks>
-    /// Part of the new NET 7 number type system see <see cref="IRootFunctions{TSelf}.Root(TSelf,int)"/>.<br/>
+    /// Part of the new NET 7 number type system see <see cref="IRootFunctions{TSelf}.RootN(TSelf,int)"/>.<br/>
     /// The desired precision can preset by <see cref="MaxDigits"/>
     /// </remarks>
     /// <param name="x">The value whose <paramref name="n" />-th root is to be computed.</param>
     /// <param name="n">The degree of the root to be computed.</param>
     /// <returns>The <paramref name="n" />-th root of <paramref name="x" />.</returns>
-    public static BigRational Root(BigRational x, int n)
+    public static BigRational RootN(BigRational x, int n)
     {
       return Root(x, n, MaxDigits);
     }
@@ -1121,6 +1121,18 @@ namespace System.Numerics
     {
       return (Sin(x, MaxDigits), Cos(x, MaxDigits)); //todo: opt. cpu
     }
+    /// <summary>Computes the sine and cosine of a value.</summary>
+    /// <remarks>
+    /// This computes <c>(sin(x * π), cos(x * π))</c>.<br/>
+    /// Part of the new NET 7 number type system see <see cref="ITrigonometricFunctions{TSelf}.SinCos(TSelf)"/>.<br/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
+    /// </remarks>
+    /// <param name="x">The value, in radians, whose sine and cosine are to be computed.</param>
+    /// <returns>The sine and cosine of <paramref name="x" />.</returns>
+    public static (BigRational SinPi, BigRational CosPi) SinCosPi(BigRational x)
+    {
+      return (Sin(x * Pi(MaxDigits), MaxDigits), Cos(x * Pi(MaxDigits), MaxDigits)); //todo: opt. cpu
+    }
     /// <summary>Computes the arc-cosine of a value and divides the result by <c>pi</c>.</summary>
     /// <remarks>
     /// This computes <c>arccos(x) / π</c> in the interval <c>[-0.5, +0.5]</c>.<br/>
@@ -1219,6 +1231,14 @@ namespace System.Numerics
     {
       return Atan2(y, x, MaxDigits) / Pi(MaxDigits); //todo: opt. cpu
     }
+
+    // IFloatingPointConstants
+    /// <inheritdoc />
+    static BigRational IFloatingPointConstants<BigRational>.Pi => Pi();
+    /// <inheritdoc />
+    static BigRational IFloatingPointConstants<BigRational>.Tau => Tau();
+    /// <inheritdoc />
+    static BigRational IFloatingPointConstants<BigRational>.E => throw new NotImplementedException();
 
     // IFloatingPointIeee754 (double compat.)
     /// <summary>Computes the integer logarithm of a value.</summary>
