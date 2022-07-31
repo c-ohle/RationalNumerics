@@ -34,10 +34,10 @@ namespace Test
       }
       Vector4 tmp; var levels = (FEATURE_LEVEL*)&tmp;
       levels[0] = FEATURE_LEVEL._11_0;
-      levels[1] = FEATURE_LEVEL._10_1;
-      levels[2] = FEATURE_LEVEL._10_0;
+      //levels[1] = FEATURE_LEVEL._10_1;
+      //levels[2] = FEATURE_LEVEL._10_0;
       int hr = D3D11CreateDevice(adapter, adapter != null ? D3D_DRIVER_TYPE.Unknown : D3D_DRIVER_TYPE.Hardware, null, //CREATE_DEVICE_FLAG.Debug |
-        CREATE_DEVICE_FLAG.SingleThreaded | CREATE_DEVICE_FLAG.BGRA_Support, levels, 3, SDK_VERSION.Current, out device, null, out context);
+        CREATE_DEVICE_FLAG.SingleThreaded | CREATE_DEVICE_FLAG.BGRA_Support, levels, 1, SDK_VERSION.Current, out device, null, out context);
       if (hr < 0) { if (id == 0) throw new Exception("D3D11CreateDevice failed!"); CreateDriver(0); return; }
       cbperobject = CreateConstBuffer(sizeof(cbPerObject));
       cbperframe = CreateConstBuffer(sizeof(cbPerFrame));
