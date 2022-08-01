@@ -309,8 +309,7 @@ namespace System.Numerics.Rational
     static bool INumberBase<BigInt>.TryConvertToTruncating<TOther>(BigInt value, [NotNullWhen(true)] out TOther result)
     {
       throw new NotImplementedException();
-    }
-
+    }  
     static bool INumberBase<BigInt>.IsZero(BigInt value)
     {
       throw new NotImplementedException();
