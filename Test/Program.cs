@@ -12,12 +12,81 @@ namespace Test
     static void Main()
     {
       ApplicationConfiguration.Initialize();
-      //test_INumberBuilder(); //can be activated to debug for NET7 complilation
+      //TestBigIntegerBuilder.TestBuilder(); //can be activated to debug for NET7 complilation
+      //test();
       Application.Run(new MainFrame());
     }
 
-#if false //NET7_0
-    
+#if NET7_0
+
+    static void test()
+    {
+      //TestBigIntegerBuilder.TestBuilder();
+
+      BigInteger a; BigInt b;  bool b1, b2;
+
+      a = (BigInteger)12345678;
+      b = (BigInt)12345678;
+      a = ~a;
+      b = ~b;
+
+      a = a % 123;
+      b = b % 123;
+
+      a = BigInteger.DivRem(12345, 123, out var r1);
+      b = BigInt.DivRem(12345, 123, out var r2);
+      var t1 = BigInteger.DivRem(12345, 123);
+      var t2 = BigInt.DivRem(12345, 123);
+
+
+      a = BigInteger.ModPow(12345, 10, 7);
+      b = BigInt.ModPow(12345, 10, 7);
+
+
+      a = (BigInteger)Math.PI;
+      b = (BigInt)Math.PI;
+
+      var t = (BigRational)12345678;
+
+      a = new BigInteger(53106192116790780990m);
+      b = new BigInt(53106192116790780990m);
+      b = (BigInt)a;
+
+      b1 = a.IsOne;
+      b2 = b.IsOne;
+
+      b1 = a.IsEven; 
+      b2 = b.IsEven;
+      b1 = a.IsPowerOfTwo;
+      b2 = b.IsPowerOfTwo;
+
+      a ^= 1;
+      b ^= 1;
+      b1 = a.IsEven;
+      b2 = b.IsEven;
+
+      a = (BigInteger)1u << 100;
+      b = (BigInt)1u << 100;
+      b1 = a.IsPowerOfTwo;
+      b2 = b.IsPowerOfTwo;
+      a++; b++;
+      b1 = a.IsPowerOfTwo;
+      b2 = b.IsPowerOfTwo;
+
+      a = 0; b = 0;
+      b1 = a.IsPowerOfTwo;
+      b2 = b.IsPowerOfTwo;
+
+      a = 1; b = 1;
+      b1 = a.IsPowerOfTwo;
+      b2 = b.IsPowerOfTwo;
+
+      a = -1; b = -1;
+      b1 = a.IsPowerOfTwo;
+      b2 = b.IsPowerOfTwo;
+
+    }
+
     static void test_x()
     {
       test_INumberBuilder();

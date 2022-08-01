@@ -342,9 +342,7 @@ namespace System.Numerics
     /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">The number whose logarithm is to be found.</param>
-    /// <param name="digits">
-    /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// </param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
     /// <returns>
     /// The natural logarithm of <paramref name="x"/>; that is, <c>ln <paramref name="x"/></c>, or <c>log e <paramref name="x"/></c>.<br/>
     /// NaN if <paramref name="x"/> is less or equal zero.
@@ -356,6 +354,15 @@ namespace System.Numerics
       var cpu = main_cpu; var c = prec(digits);
       cpu.push(x); cpu.log(c);
       cpu.rnd(digits); return cpu.popr();
+    }
+    /// <summary>Computes the logarithm of a value in the specified base.</summary>
+    /// <param name="x">The value whose logarithm is to be computed.</param>
+    /// <param name="newBase">The base in which the logarithm is to be computed.</param>
+    /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>
+    /// <returns><c>log<sub><paramref name="newBase" /></sub>(<paramref name="x" />)</c></returns>
+    public static BigRational Log(BigRational x, BigRational newBase, int digits) //todo: <--> Log(x, digits)
+    {
+      return Round(Log(x, digits) / Log(newBase, digits), digits); //todo: opt. cpu
     }
     /// <summary>
     /// Returns e raised to the specified power.
@@ -652,7 +659,7 @@ namespace System.Numerics
     public static BigRational IDiv(BigRational a, BigRational b)
     {
       //if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = main_cpu; 
+      var cpu = main_cpu;
       cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
       //cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop(); return cpu.popr();
     }
@@ -717,7 +724,7 @@ namespace System.Numerics
       if (s < 0) cpu.neg(); den = cpu.popr();
       if (s < 0) cpu.neg(); return cpu.popr();
     }
-    
+
     /// <summary>
     /// Gets or sets the default maximum number of decimal digits computed by functions with irrational results.<br/> 
     /// Applies to power, root, exponential, logarithmic, trigonometric and hyperbolic function versions without explicit digits parameter.

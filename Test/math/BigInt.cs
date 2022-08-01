@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Windows.Forms.Design.Behavior;
-using Test;
 
 namespace System.Numerics.Rational
 {
@@ -14,10 +12,21 @@ namespace System.Numerics.Rational
   /// Currently under construction.<br/>
   /// boost operator public just to test how much performance would be possible.<br/>
   /// </remarks>
-  public readonly partial struct BigInt : IComparable, IComparable<BigInt>, IEquatable<BigInt>, IFormattable
+  [Serializable] //, DebuggerDisplay("{ToString(\"\"),nq}")]
+  public readonly partial struct BigInt : IComparable, IComparable<BigInt>, IEquatable<BigInt>, IFormattable, ISpanFormattable
   {
-    public override readonly string ToString() => p.ToString("L0"); //((BigInteger)p).ToString();
+    public override readonly string ToString() => p.ToString("L0"); // public override readonly string ToString() => ((BigInteger)p).ToString();
     public readonly string ToString(string? format, IFormatProvider? formatProvider) => p.ToString(format, formatProvider);
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => p.TryFormat(destination, out charsWritten, format, provider);
+    public static BigInt Parse(string value) => Parse(value, NumberStyles.Integer);
+    public static BigInt Parse(string value, NumberStyles style) => Parse(value.AsSpan(), style, NumberFormatInfo.CurrentInfo);
+    public static BigInt Parse(string value, IFormatProvider? provider) => Parse(value, NumberStyles.Integer, NumberFormatInfo.GetInstance(provider));
+    public static BigInt Parse(string value, NumberStyles style, IFormatProvider? provider) => Parse(value.AsSpan());
+    public static BigInt Parse(ReadOnlySpan<char> value, NumberStyles style = NumberStyles.Integer, IFormatProvider? provider = null)
+    {
+      //todo: cpu, hex, NumberStyles check  
+      return new BigInt(BigRational.Parse(value, provider)); //return new BigInt(BigRational.Parse(value, style, provider)); 
+    }
     public override readonly int GetHashCode() => p.GetHashCode();
     public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
     public readonly bool Equals(BigInt other) => p.Equals(other.p);
@@ -31,38 +40,42 @@ namespace System.Numerics.Rational
     public BigInt(float value) { var cpu = rat.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
     public BigInt(double value) { var cpu = rat.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
     public BigInt(decimal value) { var cpu = rat.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
-    //public BigInt(byte[] value) // todo:
-    //public BigInt(ReadOnlySpan<byte> value, bool isUnsigned = false, bool isBigEndian = false)
+    public BigInt(byte[] value) : this(new ReadOnlySpan<byte>(value ?? throw new ArgumentNullException())) { }
+    public BigInt(ReadOnlySpan<byte> value, bool isUnsigned = false, bool isBigEndian = false)
+    {
+      //todo: public cpu.toi() for SafeCPU as span version what does the job much faster
+      this = new BigInteger(value, isUnsigned, isBigEndian);
+    }
 
-    public static BigInt Zero => 0;
-    public static BigInt One => 1;
+    public static BigInt Zero => 0u;
+    public static BigInt One => 1u;
     public static BigInt MinusOne => -1;
 
     public readonly int Sign => BigRational.Sign(p);
-    public readonly bool IsZero => p == 0;
-    public readonly bool IsOne => p == 1;
-    public readonly bool IsEven
-    {
-      get
-      {
-        return false;
-      }
-    }
+    //some non-optimal implementations as test for span access:
+    public readonly bool IsZero { get { var s = (ReadOnlySpan<uint>)p; return s.Length < 2 || s[1] == 0; } }
+    public readonly bool IsOne { get { var s = (ReadOnlySpan<uint>)p; return s.Length > 1 && s[1] == 1; } }
+    public readonly bool IsEven { get { var s = (ReadOnlySpan<uint>)p; return s.Length < 2 || (s[1] & 1) == 0; } }
     public readonly bool IsPowerOfTwo
     {
       get
       {
-        return false;
+        if (BigRational.Sign(p) <= 0) return false;
+        var s = (ReadOnlySpan<uint>)p; var n = (int)(s[0] & 0x3fffffff);
+        if (!BitOperations.IsPow2(s[n])) return false; for (int i = 1; i < n; i++) if (s[i] != 0) return false; return true;
+        //NET7: return BitOperations.IsPow2(s[n]) && s.Slice(1, n - 1).IndexOfAnyExcept(0u) == -1;
       }
     }
 
+    public static implicit operator BigInt(int value) => new BigInt(value);
+    public static implicit operator BigInt(uint value) => new BigInt(value);
     public static implicit operator BigInt(long value) => new BigInt(value);
     public static implicit operator BigInt(BigInteger value) => new BigInt(value);
     public static implicit operator BigRational(BigInt value) => value.p;
-    public static explicit operator BigInt(BigRational value) => new BigInt(BigRational.Truncate(value));
+    public static explicit operator BigInt(BigRational value) => new BigInt(BigRational.Truncate(value)); //todo: cpu
     public static explicit operator BigInteger(BigInt value) => (BigInteger)value.p;
 
-    public static BigInt operator +(BigInt a) => new BigInt(+a.p);
+    public static BigInt operator +(BigInt a) => a;
     public static BigInt operator -(BigInt a) => new BigInt(-a.p);
     public static BigInt operator +(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.add(a.p, b.p); return new BigInt(cpu); }
     public static BigInt operator -(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.sub(a.p, b.p); return new BigInt(cpu); }
@@ -70,13 +83,10 @@ namespace System.Numerics.Rational
     public static BigInt operator /(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.idiv(); return new BigInt(cpu); }
     public static BigInt operator %(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.imod(); return new BigInt(cpu); }
     public static BigInt operator <<(BigInt a, int b) { var cpu = rat.task_cpu; var c = checked((uint)b); cpu.push(a.p); cpu.shl(c); return new BigInt(cpu); }
-    public static BigInt operator >>(BigInt a, int b) { var cpu = rat.task_cpu; var c = checked((uint)b); cpu.push(a.p); cpu.shr(c); return new BigInt(cpu); }
+    public static BigInt operator >>(BigInt a, int b) { var cpu = rat.task_cpu; var c = checked((uint)b); cpu.push(a.p); cpu.shr(c); return new BigInt(cpu); } //todo: >> it's actualy a >>>
     public static BigInt operator &(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.and(); return new BigInt(cpu); }
     public static BigInt operator ^(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.xor(); return new BigInt(cpu); }
-    public static BigInt operator ~(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
+    public static BigInt operator ~(BigInt value) => -(value + One);
     public static BigInt operator --(BigInt value) => value - 1u;
     public static BigInt operator ++(BigInt value) => value + 1u;
 
@@ -87,8 +97,23 @@ namespace System.Numerics.Rational
     public static bool operator ==(BigInt a, BigInt b) => a.Equals(b);
     public static bool operator !=(BigInt a, BigInt b) => !a.Equals(b);
 
+    public static BigInt Abs(BigInt value) => new BigInt(BigRational.Abs(value.p));
+    public static BigInt Max(BigInt left, BigInt right) => new BigInt(BigRational.Max(left.p, right.p));
+    public static BigInt Min(BigInt left, BigInt right) => new BigInt(BigRational.Min(left.p, right.p));
+    public static BigInt Add(BigInt left, BigInt right) => left + right;
+    public static BigInt Subtract(BigInt left, BigInt right) => left - right;
+    public static BigInt Multiply(BigInt left, BigInt right) => left * right;
+    public static BigInt Divide(BigInt dividend, BigInt divisor) => dividend / divisor;
+    public static BigInt Remainder(BigInt dividend, BigInt divisor) => dividend % divisor;
+    public static BigInt DivRem(BigInt dividend, BigInt divisor, out BigInt remainder) { remainder = dividend % divisor; return dividend / divisor; }
+    public static (BigInt Quotient, BigInt Remainder) DivRem(BigInt left, BigInt right) { var q = DivRem(left, right, out var r); return (q, r); }
+    public static BigInt Negate(BigInt value) => -value;
+    public static double Log(BigInt value) => Log(value, Math.E);
+    public static double Log(BigInt value, double baseValue) => (double)BigRational.Log(value.p, baseValue, 0);
+    public static double Log10(BigInt value) => (double)BigRational.Log10(value.p, 0);
+    public static BigInt GreatestCommonDivisor(BigInt left, BigInt right) => new BigInt(BigRational.GreatestCommonDivisor(left.p, right.p));
     public static BigInt Pow(BigInt value, int exponent) => new BigInt(BigRational.Pow(value.p, exponent));
-    public static BigInt Negate(BigInt a) => new BigInt(-a.p);
+    public static BigInt ModPow(BigInt value, BigInt exponent, BigInt modulus) => new BigInt(BigRational.Pow(value.p, exponent, 0) % modulus);
 
     private readonly BigRational p;
     private BigInt(BigRational p) => this.p = p;
@@ -115,12 +140,28 @@ namespace System.Numerics.Rational
   }
 
 #if NET7_0
+
   public readonly partial struct BigInt : ISpanFormattable, IBinaryInteger<BigInt>, ISignedNumber<BigInt>
   {
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-      => p.TryFormat(destination, out charsWritten, format, provider);
-    public BigInt(Int128 value) { var cpu = rat.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
+    public BigInt(Int128 value) => this = new BigInt((BigRational)value);
+    public BigInt(UInt128 value) => this = new BigInt((BigRational)value);
+
+    public static implicit operator BigInt(byte value) => new BigInt((uint)value);
+    public static implicit operator BigInt(char value) => new BigInt((uint)value);
+    public static implicit operator BigInt(short value) => new BigInt((int)value);
+    public static implicit operator BigInt(sbyte value) => new BigInt((int)value);
+    public static implicit operator BigInt(ushort value) => new BigInt((uint)value);
+    public static implicit operator BigInt(ulong value) => new BigInt(value);
+    public static implicit operator BigInt(nuint value) => new BigInt(value);
+    public static implicit operator BigInt(nint value) => new BigInt(value);
     public static implicit operator BigInt(Int128 value) => new BigInt(value);
+    public static implicit operator BigInt(UInt128 value) => new BigInt(value);
+
+    public static explicit operator BigInt(Half value) => new BigInt((double)value);
+    public static explicit operator BigInt(float value) => new BigInt((double)value);
+    public static explicit operator BigInt(double value) => new BigInt(value);
+    public static explicit operator BigInt(decimal value) => new BigInt(value);
+    public static explicit operator BigInt(Complex value) => value.Imaginary == 0 ? new BigInt(value.Real) : throw new OverflowException();
 
     // INumber, IBinaryInteger<BigInt>, ISignedNumber<BigInt>
     static BigInt IBitwiseOperators<BigInt, BigInt, BigInt>.operator |(BigInt left, BigInt right)
@@ -129,10 +170,10 @@ namespace System.Numerics.Rational
     }
     public static BigInt operator >>>(BigInt value, int shiftAmount)
     {
-      throw new NotImplementedException();
+      var cpu = rat.task_cpu; cpu.push(value.p); cpu.shr(checked((uint)shiftAmount)); return new BigInt(cpu);
     }
 
-    public static int Radix => 2; //all NET7 BigInteger compatible, what nonsense 
+    public static int Radix => 2; //NET7 nonsense 
     public static BigInt AdditiveIdentity => Zero;
     public static BigInt MultiplicativeIdentity => One;
     public static BigInt NegativeOne => MinusOne;
@@ -140,6 +181,7 @@ namespace System.Numerics.Rational
 
     public int GetByteCount()
     {
+      // ((BigInteger)this).GetByteCount();
       throw new NotImplementedException();
     }
     public int GetShortestBitLength()
@@ -162,110 +204,31 @@ namespace System.Numerics.Rational
     {
       throw new NotImplementedException();
     }
-    public static bool IsPow2(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
+    public static bool IsPow2(BigInt value) => value.IsPowerOfTwo;
     public static BigInt Log2(BigInt value)
     {
       throw new NotImplementedException();
     }
-    public static BigInt Abs(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsCanonical(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsComplexNumber(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsEvenInteger(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsFinite(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsImaginaryNumber(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsInfinity(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsInteger(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsNaN(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsNegative(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsNegativeInfinity(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsNormal(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsOddInteger(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsPositive(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsPositiveInfinity(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsRealNumber(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool IsSubnormal(BigInt value)
-    {
-      throw new NotImplementedException();
-    }
-    public static BigInt MaxMagnitude(BigInt x, BigInt y)
-    {
-      throw new NotImplementedException();
-    }
-    public static BigInt MaxMagnitudeNumber(BigInt x, BigInt y)
-    {
-      throw new NotImplementedException();
-    }
-    public static BigInt MinMagnitude(BigInt x, BigInt y)
-    {
-      throw new NotImplementedException();
-    }
-    public static BigInt MinMagnitudeNumber(BigInt x, BigInt y)
-    {
-      throw new NotImplementedException();
-    }
-    public static BigInt Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
-    {
-      throw new NotImplementedException();
-    }
-    public static BigInt Parse(string s, NumberStyles style, IFormatProvider? provider)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out BigInt result)
-    {
-      throw new NotImplementedException();
-    }
+    public static bool IsCanonical(BigInt value) => true;
+    public static bool IsComplexNumber(BigInt value) => false;
+    public static bool IsEvenInteger(BigInt value) => value.IsEven;
+    public static bool IsFinite(BigInt value) => false;
+    public static bool IsImaginaryNumber(BigInt value) => false;
+    public static bool IsInfinity(BigInt value) => false;
+    public static bool IsInteger(BigInt value) => true;
+    public static bool IsNaN(BigInt value) => false;
+    public static bool IsNegative(BigInt value) => value.Sign < 0;
+    public static bool IsNegativeInfinity(BigInt value) => false;
+    public static bool IsNormal(BigInt value) => true;
+    public static bool IsOddInteger(BigInt value) => value.IsEven;
+    public static bool IsPositive(BigInt value) => value.Sign > 0;
+    public static bool IsPositiveInfinity(BigInt value) => false;
+    public static bool IsRealNumber(BigInt value) => true;
+    public static bool IsSubnormal(BigInt value) => false;
+    public static BigInt MaxMagnitude(BigInt x, BigInt y) => new BigInt(BigRational.MaxMagnitude(x.p, y.p));
+    public static BigInt MaxMagnitudeNumber(BigInt x, BigInt y) => new BigInt(BigRational.MaxMagnitudeNumber(x.p, y.p));
+    public static BigInt MinMagnitude(BigInt x, BigInt y) => new BigInt(BigRational.MinMagnitude(x.p, y.p));
+    public static BigInt MinMagnitudeNumber(BigInt x, BigInt y) => new BigInt(BigRational.MinMagnitudeNumber(x.p, y.p));
     public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out BigInt result)
     {
       throw new NotImplementedException();
@@ -274,18 +237,13 @@ namespace System.Numerics.Rational
     {
       throw new NotImplementedException();
     }
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out BigInt result)
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out BigInt result) => TryParse(s.AsSpan(), provider, out result);
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out BigInt result) => TryParse(s, NumberStyles.Integer, provider, out result);
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out BigInt result)
     {
       throw new NotImplementedException();
     }
-    public static BigInt Parse(string s, IFormatProvider? provider)
-    {
-      throw new NotImplementedException();
-    }
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out BigInt result)
-    {
-      throw new NotImplementedException();
-    }
+
     static bool INumberBase<BigInt>.TryConvertFromChecked<TOther>(TOther value, out BigInt result)
     {
       throw new NotImplementedException();
@@ -309,11 +267,9 @@ namespace System.Numerics.Rational
     static bool INumberBase<BigInt>.TryConvertToTruncating<TOther>(BigInt value, [NotNullWhen(true)] out TOther result)
     {
       throw new NotImplementedException();
-    }  
-    static bool INumberBase<BigInt>.IsZero(BigInt value)
-    {
-      throw new NotImplementedException();
     }
+    static bool INumberBase<BigInt>.IsZero(BigInt value) => value.Sign == 0;
   }
+
 #endif
 }

@@ -14,10 +14,10 @@ namespace System.Numerics
 {
   unsafe partial struct BigRational :
     INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, //IConvertible, //todo: check IConvertible, does it makes much sens for non system types?
-    IPowerFunctions<BigRational>, 
-    IRootFunctions<BigRational>, 
+    IPowerFunctions<BigRational>,
+    IRootFunctions<BigRational>,
     IExponentialFunctions<BigRational>,
-    ILogarithmicFunctions<BigRational>, 
+    ILogarithmicFunctions<BigRational>,
     ITrigonometricFunctions<BigRational>, //IFloatingPointConstants<BigRational>,
     IHyperbolicFunctions<BigRational>
   {
@@ -43,13 +43,9 @@ namespace System.Numerics
     /// <remarks>Part of the new NET 7 number type system.</remarks>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational MultiplicativeIdentity => 1u;
 
-    //todo: or throw new NotImplementedException();?
-    //[DebuggerBrowsable(DebuggerBrowsableState.Never)] 
-    static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); //use MaxDigits
-    //[DebuggerBrowsable(DebuggerBrowsableState.Never)] 
-    static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); //use MaxDigits 
-    //[DebuggerBrowsable(DebuggerBrowsableState.Never)] 
-    static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); //use MaxDigits
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); //use MaxDigits
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); //use MaxDigits 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); //use MaxDigits
 
     /// <summary>Determines if a value is zero.</summary>
     /// <param name="value">The value to be checked.</param>
@@ -990,9 +986,9 @@ namespace System.Numerics
     /// <param name="x">The value whose logarithm is to be computed.</param>
     /// <param name="newBase">The base in which the logarithm is to be computed.</param>
     /// <returns><c>log<sub><paramref name="newBase" /></sub>(<paramref name="x" />)</c></returns>
-    public static BigRational Log(BigRational x, BigRational newBase) //todo: <--> Log(x, digits)
+    static BigRational ILogarithmicFunctions<BigRational>.Log(BigRational x, BigRational newBase) //todo: <--> Log(x, digits)
     {
-      return Round(Log(x) / Log(newBase), MaxDigits); //todo: opt. cpu
+      return Log(x, newBase, MaxDigits); // Round(Log(x) / Log(newBase), MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the base-2 logarithm of a value.</summary>
     /// <remarks>
