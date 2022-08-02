@@ -13,18 +13,120 @@ references:
   commentId: T:System.Numerics.BigRational
   fullName: System.Numerics.BigRational
   nameWithType: BigRational
+- uid: System.Numerics.BigRational.#ctor(System.Byte)
+  name: BigRational(Byte)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Byte_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Byte)
+  fullName: System.Numerics.BigRational.BigRational(System.Byte)
+  nameWithType: BigRational.BigRational(Byte)
+- uid: System.Numerics.BigRational.#ctor(System.Char)
+  name: BigRational(Char)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Char_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Char)
+  fullName: System.Numerics.BigRational.BigRational(System.Char)
+  nameWithType: BigRational.BigRational(Char)
+- uid: System.Numerics.BigRational.#ctor(System.Decimal)
+  name: BigRational(Decimal)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Decimal_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Decimal)
+  fullName: System.Numerics.BigRational.BigRational(System.Decimal)
+  nameWithType: BigRational.BigRational(Decimal)
 - uid: System.Numerics.BigRational.#ctor(System.Double)
   name: BigRational(Double)
   href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Double_
   commentId: M:System.Numerics.BigRational.#ctor(System.Double)
   fullName: System.Numerics.BigRational.BigRational(System.Double)
   nameWithType: BigRational.BigRational(Double)
+- uid: System.Numerics.BigRational.#ctor(System.Half)
+  name: BigRational(Half)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Half_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Half)
+  fullName: System.Numerics.BigRational.BigRational(System.Half)
+  nameWithType: BigRational.BigRational(Half)
+- uid: System.Numerics.BigRational.#ctor(System.Int128)
+  name: BigRational(Int128)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Int128_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Int128)
+  fullName: System.Numerics.BigRational.BigRational(System.Int128)
+  nameWithType: BigRational.BigRational(Int128)
+- uid: System.Numerics.BigRational.#ctor(System.Int16)
+  name: BigRational(Int16)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Int16_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Int16)
+  fullName: System.Numerics.BigRational.BigRational(System.Int16)
+  nameWithType: BigRational.BigRational(Int16)
+- uid: System.Numerics.BigRational.#ctor(System.Int32)
+  name: BigRational(Int32)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Int32_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Int32)
+  fullName: System.Numerics.BigRational.BigRational(System.Int32)
+  nameWithType: BigRational.BigRational(Int32)
+- uid: System.Numerics.BigRational.#ctor(System.Int64)
+  name: BigRational(Int64)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Int64_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Int64)
+  fullName: System.Numerics.BigRational.BigRational(System.Int64)
+  nameWithType: BigRational.BigRational(Int64)
+- uid: System.Numerics.BigRational.#ctor(System.IntPtr)
+  name: BigRational(IntPtr)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_IntPtr_
+  commentId: M:System.Numerics.BigRational.#ctor(System.IntPtr)
+  fullName: System.Numerics.BigRational.BigRational(System.IntPtr)
+  nameWithType: BigRational.BigRational(IntPtr)
+- uid: System.Numerics.BigRational.#ctor(System.Numerics.BigInteger)
+  name: BigRational(BigInteger)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Numerics_BigInteger_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Numerics.BigInteger)
+  fullName: System.Numerics.BigRational.BigRational(System.Numerics.BigInteger)
+  nameWithType: BigRational.BigRational(BigInteger)
+- uid: System.Numerics.BigRational.#ctor(System.Runtime.InteropServices.NFloat)
+  name: BigRational(NFloat)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Runtime_InteropServices_NFloat_
+  commentId: M:System.Numerics.BigRational.#ctor(System.Runtime.InteropServices.NFloat)
+  fullName: System.Numerics.BigRational.BigRational(System.Runtime.InteropServices.NFloat)
+  nameWithType: BigRational.BigRational(NFloat)
+- uid: System.Numerics.BigRational.#ctor(System.SByte)
+  name: BigRational(SByte)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_SByte_
+  commentId: M:System.Numerics.BigRational.#ctor(System.SByte)
+  fullName: System.Numerics.BigRational.BigRational(System.SByte)
+  nameWithType: BigRational.BigRational(SByte)
 - uid: System.Numerics.BigRational.#ctor(System.Single)
   name: BigRational(Single)
   href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_Single_
   commentId: M:System.Numerics.BigRational.#ctor(System.Single)
   fullName: System.Numerics.BigRational.BigRational(System.Single)
   nameWithType: BigRational.BigRational(Single)
+- uid: System.Numerics.BigRational.#ctor(System.UInt128)
+  name: BigRational(UInt128)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_UInt128_
+  commentId: M:System.Numerics.BigRational.#ctor(System.UInt128)
+  fullName: System.Numerics.BigRational.BigRational(System.UInt128)
+  nameWithType: BigRational.BigRational(UInt128)
+- uid: System.Numerics.BigRational.#ctor(System.UInt16)
+  name: BigRational(UInt16)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_UInt16_
+  commentId: M:System.Numerics.BigRational.#ctor(System.UInt16)
+  fullName: System.Numerics.BigRational.BigRational(System.UInt16)
+  nameWithType: BigRational.BigRational(UInt16)
+- uid: System.Numerics.BigRational.#ctor(System.UInt32)
+  name: BigRational(UInt32)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_UInt32_
+  commentId: M:System.Numerics.BigRational.#ctor(System.UInt32)
+  fullName: System.Numerics.BigRational.BigRational(System.UInt32)
+  nameWithType: BigRational.BigRational(UInt32)
+- uid: System.Numerics.BigRational.#ctor(System.UInt64)
+  name: BigRational(UInt64)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_UInt64_
+  commentId: M:System.Numerics.BigRational.#ctor(System.UInt64)
+  fullName: System.Numerics.BigRational.BigRational(System.UInt64)
+  nameWithType: BigRational.BigRational(UInt64)
+- uid: System.Numerics.BigRational.#ctor(System.UIntPtr)
+  name: BigRational(UIntPtr)
+  href: api/System.Numerics.BigRational.-ctor.html#System_Numerics_BigRational__ctor_System_UIntPtr_
+  commentId: M:System.Numerics.BigRational.#ctor(System.UIntPtr)
+  fullName: System.Numerics.BigRational.BigRational(System.UIntPtr)
+  nameWithType: BigRational.BigRational(UIntPtr)
 - uid: System.Numerics.BigRational.#ctor*
   name: BigRational
   href: api/System.Numerics.BigRational.-ctor.html
@@ -1738,12 +1840,12 @@ references:
   commentId: M:System.Numerics.BigRational.Log(System.Numerics.BigRational,System.Int32)
   fullName: System.Numerics.BigRational.Log(System.Numerics.BigRational, System.Int32)
   nameWithType: BigRational.Log(BigRational, Int32)
-- uid: System.Numerics.BigRational.Log(System.Numerics.BigRational,System.Numerics.BigRational)
-  name: Log(BigRational, BigRational)
-  href: api/System.Numerics.BigRational.Log.html#System_Numerics_BigRational_Log_System_Numerics_BigRational_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.Log(System.Numerics.BigRational,System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.Log(System.Numerics.BigRational, System.Numerics.BigRational)
-  nameWithType: BigRational.Log(BigRational, BigRational)
+- uid: System.Numerics.BigRational.Log(System.Numerics.BigRational,System.Numerics.BigRational,System.Int32)
+  name: Log(BigRational, BigRational, Int32)
+  href: api/System.Numerics.BigRational.Log.html#System_Numerics_BigRational_Log_System_Numerics_BigRational_System_Numerics_BigRational_System_Int32_
+  commentId: M:System.Numerics.BigRational.Log(System.Numerics.BigRational,System.Numerics.BigRational,System.Int32)
+  fullName: System.Numerics.BigRational.Log(System.Numerics.BigRational, System.Numerics.BigRational, System.Int32)
+  nameWithType: BigRational.Log(BigRational, BigRational, Int32)
 - uid: System.Numerics.BigRational.Log*
   name: Log
   href: api/System.Numerics.BigRational.Log.html

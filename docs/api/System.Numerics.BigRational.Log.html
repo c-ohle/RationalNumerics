@@ -809,7 +809,7 @@
     <tr>
       <td><span class="xref">System.Int32</span></td>
       <td><span class="parametername">digits</span></td>
-      <td><p>The maximum number of fractional decimal digits in the return value.<br></p>
+      <td><p>The maximum number of fractional decimal digits in the return value.</p>
 </td>
     </tr>
   </tbody>
@@ -834,6 +834,63 @@ NaN if <code data-dev-comment-type="paramref" class="paramref">x</code> is less 
 <h5 id="System_Numerics_BigRational_Log_System_Numerics_BigRational_System_Int32__remarks">Remarks</h5>
 <div class="markdown level1 remarks"><p><strong>Note</strong>: In the current version, the function has not yet been finally optimized for performance<br>and the accuracy of the last digits has not yet been ensured!</p>
 </div>
+
+
+<a id="System_Numerics_BigRational_Log_" data-uid="System.Numerics.BigRational.Log*"></a>
+<h4 id="System_Numerics_BigRational_Log_System_Numerics_BigRational_System_Numerics_BigRational_System_Int32_" data-uid="System.Numerics.BigRational.Log(System.Numerics.BigRational,System.Numerics.BigRational,System.Int32)">Log(BigRational, BigRational, Int32)</h4>
+<div class="markdown level1 summary"><p>Computes the logarithm of a value in the specified base.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+<h5 class="decalaration">Declaration</h5>
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static BigRational Log(BigRational x, BigRational newBase, int digits)</code></pre>
+</div>
+<h5 class="parameters">Parameters</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
+      <td><span class="parametername">x</span></td>
+      <td><p>The value whose logarithm is to be computed.</p>
+</td>
+    </tr>
+    <tr>
+      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
+      <td><span class="parametername">newBase</span></td>
+      <td><p>The base in which the logarithm is to be computed.</p>
+</td>
+    </tr>
+    <tr>
+      <td><span class="xref">System.Int32</span></td>
+      <td><span class="parametername">digits</span></td>
+      <td><p>The maximum number of fractional decimal digits in the return value.</p>
+</td>
+    </tr>
+  </tbody>
+</table>
+<h5 class="returns">Returns</h5>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
+      <td><p><code>log<sub><code data-dev-comment-type="paramref" class="paramref">newBase</code></sub>(<code data-dev-comment-type="paramref" class="paramref">x</code>)</code></p>
+</td>
+    </tr>
+  </tbody>
+</table>
 
 
 <a id="System_Numerics_BigRational_Log_" data-uid="System.Numerics.BigRational.Log*"></a>
@@ -881,61 +938,6 @@ NaN if <code data-dev-comment-type="paramref" class="paramref">x</code> is less 
 </table>
 <h5 id="System_Numerics_BigRational_Log_System_Numerics_BigRational__remarks">Remarks</h5>
 <div class="markdown level1 remarks"><p>Part of the new NET 7 number type system see <span class="xref">System.Numerics.ILogarithmicFunctions`1.Log(`0)</span>.<br>
-The desired precision can preset by <a class="xref" href="System.Numerics.BigRational.MaxDigits.html#System_Numerics_BigRational_MaxDigits">MaxDigits</a></p>
-</div>
-
-
-<a id="System_Numerics_BigRational_Log_" data-uid="System.Numerics.BigRational.Log*"></a>
-<h4 id="System_Numerics_BigRational_Log_System_Numerics_BigRational_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.Log(System.Numerics.BigRational,System.Numerics.BigRational)">Log(BigRational, BigRational)</h4>
-<div class="markdown level1 summary"><p>Computes the logarithm of a value in the specified base.</p>
-</div>
-<div class="markdown level1 conceptual"></div>
-<h5 class="decalaration">Declaration</h5>
-<div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static BigRational Log(BigRational x, BigRational newBase)</code></pre>
-</div>
-<h5 class="parameters">Parameters</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">x</span></td>
-      <td><p>The value whose logarithm is to be computed.</p>
-</td>
-    </tr>
-    <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><span class="parametername">newBase</span></td>
-      <td><p>The base in which the logarithm is to be computed.</p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 class="returns">Returns</h5>
-<table class="table table-bordered table-striped table-condensed">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td><p><code>log<sub><code data-dev-comment-type="paramref" class="paramref">newBase</code></sub>(<code data-dev-comment-type="paramref" class="paramref">x</code>)</code></p>
-</td>
-    </tr>
-  </tbody>
-</table>
-<h5 id="System_Numerics_BigRational_Log_System_Numerics_BigRational_System_Numerics_BigRational__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>Part of the new NET 7 number type system see <span class="xref">System.Numerics.ILogarithmicFunctions`1.Log(`0,`0)</span>.<br>
 The desired precision can preset by <a class="xref" href="System.Numerics.BigRational.MaxDigits.html#System_Numerics_BigRational_MaxDigits">MaxDigits</a></p>
 </div>
 </article>

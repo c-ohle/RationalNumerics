@@ -197,48 +197,17 @@ namespace System.Numerics
       return IsNaN(x) ? y : IsNaN(x) ? x : cmpa(x, y) >= 0 ? x : y;
     }
 
-    /// <summary>Parses a span of characters into a value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="s">The span of characters to parse.</param>
-    /// <param name="style">A bitwise combination of number styles that can be present in <paramref name="s" />.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
-    /// <returns>The result of parsing <paramref name="s" />.</returns>
-    /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
-    /// <exception cref="FormatException"><paramref name="s" /> is not in the correct format.</exception>
-    /// <exception cref="OverflowException"><paramref name="s" /> is not representable by result.</exception>
-    public static BigRational Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
-    {
-      var f = style & NumberStyles.HexNumber; if (f != 0) throw new ArgumentException($"{nameof(s)} {f}"); //todo: hex parse 
-      var r = Parse(s, provider); if (IsNaN(r)) throw new ArgumentException(nameof(s)); return r;
-    }
-    /// <summary>Parses a string into a value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
+    /// <summary>Tries to parses a string into a value.</summary>
     /// <param name="s">The string to parse.</param>
     /// <param name="style">A bitwise combination of number styles that can be present in <paramref name="s" />.</param>
     /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
-    /// <returns>The result of parsing <paramref name="s" />.</returns>
+    /// <param name="result">On return, contains the result of succesfully parsing <paramref name="s" /> or an undefined value on failure.</param>
+    /// <returns><c>true</c> if <paramref name="s" /> was successfully parsed; otherwise, <c>false</c>.</returns>
     /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="s" /> is <c>null</c>.</exception>
-    /// <exception cref="FormatException"><paramref name="s" /> is not in the correct format.</exception>
-    /// <exception cref="OverflowException"><paramref name="s" /> is not representable by result.</exception>
-    public static BigRational Parse(string s, NumberStyles style, IFormatProvider? provider)
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out BigRational result)
     {
-      return Parse(s.AsSpan(), style, provider);
+      return TryParse(s.AsSpan(), style, provider, out result);
     }
-    /// <summary>Parses a string into a value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="s">The string to parse.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
-    /// <returns>The result of parsing <paramref name="s" />.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="s" /> is <c>null</c>.</exception>
-    /// <exception cref="FormatException"><paramref name="s" /> is not in the correct format.</exception>
-    /// <exception cref="OverflowException"><paramref name="s" /> is not representable by result.</exception>
-    public static BigRational Parse(string s, IFormatProvider? provider)
-    {
-      var r = Parse(s.AsSpan(), provider);
-      if (IsNaN(r)) throw new ArgumentException(nameof(s)); return r;
-    }
-
     /// <summary>Tries to parses a span of characters into a value.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
     /// <param name="s">The span of characters to parse.</param>
@@ -249,19 +218,8 @@ namespace System.Numerics
     /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out BigRational result)
     {
-      var f = style & NumberStyles.HexNumber; if (f != 0) { result = default; return false; } //todo: hex parse 
-      return !IsNaN(result = Parse(s, provider));
-    }
-    /// <summary>Tries to parses a string into a value.</summary>
-    /// <param name="s">The string to parse.</param>
-    /// <param name="style">A bitwise combination of number styles that can be present in <paramref name="s" />.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
-    /// <param name="result">On return, contains the result of succesfully parsing <paramref name="s" /> or an undefined value on failure.</param>
-    /// <returns><c>true</c> if <paramref name="s" /> was successfully parsed; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
-    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out BigRational result)
-    {
-      return !IsNaN(result = Parse(s.AsSpan(), provider));
+      if ((style & NumberStyles.HexNumber) != 0) { var cpu = main_cpu; cpu.tor(s, 16, default); result = cpu.popr(); }
+      else result = Parse(s, provider); return !IsNaN(result);
     }
 
     //ISpanParsable
@@ -607,15 +565,6 @@ namespace System.Numerics
     }
 
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="byte"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="byte"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="byte"/>.</returns>
-    public static explicit operator byte(BigRational value)
-    {
-      return (byte)(uint)value;
-    }
-    /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="byte"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="byte"/>.</param>
@@ -624,15 +573,6 @@ namespace System.Numerics
     public static explicit operator checked byte(BigRational value)
     {
       return checked((byte)(uint)value);
-    }
-    /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="sbyte"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="sbyte"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="sbyte"/>.</returns>
-    public static explicit operator sbyte(BigRational value)
-    {
-      return (sbyte)(int)value;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="sbyte"/> value.
@@ -645,15 +585,6 @@ namespace System.Numerics
       return checked((sbyte)(int)value);
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="short"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="short"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="short"/>.</returns>
-    public static explicit operator short(BigRational value)
-    {
-      return (short)(int)value;
-    }
-    /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="short"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="short"/>.</param>
@@ -664,15 +595,6 @@ namespace System.Numerics
       return checked((short)(int)value);
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="ushort"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="ushort"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="ushort"/>.</returns>
-    public static explicit operator ushort(BigRational value)
-    {
-      return (ushort)(uint)value;
-    }
-    /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="ushort"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="ushort"/>.</param>
@@ -681,15 +603,6 @@ namespace System.Numerics
     public static explicit operator checked ushort(BigRational value)
     {
       return checked((ushort)(uint)value);
-    }
-    /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="char"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="char"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="char"/>.</returns>
-    public static explicit operator char(BigRational value)
-    {
-      return (char)(uint)value;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="char"/> value.
@@ -742,15 +655,6 @@ namespace System.Numerics
       var a = default(ulong); main_cpu.toi(value, (uint*)&a, 0x1102); return a;
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="nint"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="nint"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="nint"/>.</returns>
-    public static explicit operator nint(BigRational value)
-    {
-      return (nint)(long)value;
-    }
-    /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="nint"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="nint"/>.</param>
@@ -759,15 +663,6 @@ namespace System.Numerics
     public static explicit operator checked nint(BigRational value)
     {
       return checked((nint)(long)value);
-    }
-    /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="nuint"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="nuint"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="nuint"/>.</returns>
-    public static explicit operator nuint(BigRational value)
-    {
-      return (nuint)(ulong)value;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="nuint"/> value.
@@ -818,23 +713,101 @@ namespace System.Numerics
       var a = default(UInt128); main_cpu.toi(value, (uint*)&a, 0x1104); return a;
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="Half"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="Half"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="Half"/>.</returns>
-    public static explicit operator Half(BigRational value)
-    {
-      return (Half)(double)value;
-    }
-    /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="NFloat"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="NFloat"/>.</param>
     /// <returns>The value of the current instance, converted to an <see cref="NFloat"/>.</returns>
     public static explicit operator NFloat(BigRational value)
     {
+      var x = new decimal(1);
       return nint.Size == 4 ? new NFloat((float)value) : new NFloat((double)value);
     }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(byte value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(sbyte value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(short value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(ushort value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(char value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(int value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(uint value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(long value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(ulong value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(nint value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(nuint value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(Int128 value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(UInt128 value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(BigInteger value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(decimal value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(Half value) => this = value;
+    /// <summary>
+    /// Initializes a new instance of <see cref="BigRational"/> to the value of the number.
+    /// </summary>
+    /// <param name="value">The value to represent as a <see cref="BigRational"/>.</param>
+    public BigRational(NFloat value) => this = value;
 
     //IPowerFunctions
     /// <summary>Computes a value raised to a given power.</summary>

@@ -51,7 +51,7 @@ namespace System.Numerics
     public readonly string ToString(string? format, IFormatProvider? provider = default)
     {
       var dbg = format != default && format.Length == 0; // DebuggerDisplay("", null);
-      if (dbg && isnan(this.p)) return NumberFormatInfo.InvariantInfo.NaNSymbol; // extra safety at debug
+      if (dbg && isnan(this.p)) return NumberFormatInfo.InvariantInfo.NaNSymbol; // extra safety at debug, allows deep stack debug
       //if (dbg) { var cpu = task_cpu; var p = cpu.sp; if (p != null) { cpu.sp = null; var t = ToString(format, provider); cpu.sp = p; return t + " [" + ((long)p - (long)&p).ToString() + "]"; } }
       provider ??= dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo;
       Span<char> sp = stackalloc char[100]; char[]? a = null; string? s = null;
@@ -108,7 +108,6 @@ namespace System.Numerics
               goto def;
             case 'F':
             case 'L': // like F without trailing zeros
-            //case 'N': // NET7 INumber
               if (round == -1) round = info.NumberDecimalDigits;
               digs = Math.Max(0, ILog10(this)) + 1 + round;
               if (digs > destination.Length && destination.Length == 100) { charsWritten = digs; return false; } //hint for ToString(,)
@@ -117,6 +116,36 @@ namespace System.Numerics
               if (round == -1) round = 6; digs = 1 + round;
               if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
               emax = -(emin = int.MaxValue); goto def;
+            case 'X': // 
+              digs = hex(destination, this, round, tc);
+              if (digs > destination.Length) { charsWritten = destination.Length == 100 ? digs : 0; return false; }
+              charsWritten = digs; return true;
+              static int hex(Span<char> s, BigRational v, int l, int a)
+              {
+                fixed (uint* u = v.p)
+                {
+                  var p = u; if (p == null) { ulong t = 1; p = (uint*)&t; }
+                  var n = hex(s, p, l, a); uint* w;
+                  if (u == null || *(ulong*)(w = u + ((u[0] & 0x3fffffff) + 1)) == 0x100000001) return n;
+                  if (n + 2 > s.Length) return n + hex(default, w, 0, a);
+                  s[n++] = '/'; n += hex(s.Slice(n), w, 0, a); return n;
+                }
+                static int hex(Span<char> s, uint* p, int l, int a)
+                {
+                  var n = unchecked((int)(p[0] & 0x3fffffff)); var m = (p[0] & 0x80000000) != 0;
+                  var x = (((n << 5) - BitOperations.LeadingZeroCount(p[n])) >> 2) + 1;
+                  if (l < x) l = x; if (s.Length < l) return l;
+                  a = a == 'X' ? 'A' - 10 : 'a' - 10; var c = 1u;
+                  for (int i = l - 1; i >= 0; i--)
+                  {
+                    int t = l - i - 1, k = 1 + (t >> 3);
+                    var d = (k <= n ? p[k] >> ((t & 7) << 2) : 0) & 0xf;
+                    if (m) if ((d = (~d & 0xf) + c) > 0xf) { d = 0; c = 1; } else c = 0;
+                    s[i] = (char)(d < 10 ? '0' + d : a + d);
+                  }
+                  return l;
+                }
+              }
           }
         var e = ILog10(this);
         if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
@@ -225,18 +254,50 @@ namespace System.Numerics
     /// <returns>A value that is equivalent to the number specified in the value parameter.</returns>
     public static BigRational Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
     {
-      //int a = 0, ba = 10; //driven types can do using the cpu.tor()
-      //for (; a < value.Length - 1;) 
-      //{
-      //  var c = value[a]; if (c <= ' ') { a++; continue; }
-      //  if (c != '0') break; c = (char)(value[a + 1] | 0x20);
-      //  if (c == 'x') { ba = 16; value = value.Slice(1); break; }
-      //  if (c == 'b') { ba = 02; value = value.Slice(1); break; }
-      //  break;
-      //}
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
       var cpu = main_cpu; cpu.tor(value, 10, info != null ? info.NumberDecimalSeparator[0] : default);
       return cpu.popr();
+    }
+    /// <summary>Parses a span of characters into a value.</summary>
+    /// <remarks>Part of the new NET 7 number type system.</remarks>
+    /// <param name="s">The span of characters to parse.</param>
+    /// <param name="style">A bitwise combination of number styles that can be present in <paramref name="s" />.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
+    /// <returns>The result of parsing <paramref name="s" />.</returns>
+    /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
+    /// <exception cref="FormatException"><paramref name="s" /> is not in the correct format.</exception>
+    /// <exception cref="OverflowException"><paramref name="s" /> is not representable by result.</exception>
+    public static BigRational Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
+    {
+      if ((style & NumberStyles.HexNumber) != 0) { var cpu = main_cpu; cpu.tor(s, 16, default); return cpu.popr(); }
+      return Parse(s, provider); //todo: check, exception or NaN ? // var r = Parse(s, provider); if (IsNaN(r)) throw new ArgumentException(nameof(s)); return r;
+    }
+    /// <summary>Parses a string into a value.</summary>
+    /// <remarks>Part of the new NET 7 number type system.</remarks>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="style">A bitwise combination of number styles that can be present in <paramref name="s" />.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
+    /// <returns>The result of parsing <paramref name="s" />.</returns>
+    /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="s" /> is <c>null</c>.</exception>
+    /// <exception cref="FormatException"><paramref name="s" /> is not in the correct format.</exception>
+    /// <exception cref="OverflowException"><paramref name="s" /> is not representable by result.</exception>
+    public static BigRational Parse(string s, NumberStyles style, IFormatProvider? provider = null)
+    {
+      return Parse(s.AsSpan(), style, provider);
+    }
+    /// <summary>Parses a string into a value.</summary>
+    /// <remarks>Part of the new NET 7 number type system.</remarks>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
+    /// <returns>The result of parsing <paramref name="s" />.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="s" /> is <c>null</c>.</exception>
+    /// <exception cref="FormatException"><paramref name="s" /> is not in the correct format.</exception>
+    /// <exception cref="OverflowException"><paramref name="s" /> is not representable by result.</exception>
+    public static BigRational Parse(string s, IFormatProvider? provider)
+    {
+      var r = Parse(s.AsSpan(), provider);
+      if (IsNaN(r)) throw new ArgumentException(nameof(s)); return r;
     }
     /// <summary>
     /// Copies the value of this <see cref="BigRational"/> as little-endian twos-complement bytes.<br/>
@@ -409,13 +470,13 @@ namespace System.Numerics
     /// <c>var x = (<see cref="BigRational"/>)0.1;</c><br/>
     /// results in <c>0.1</c> as this function implicitly rounds to the precision of significant bits of <see cref="double"/>.
     /// </remarks>
-    /// <param name="v">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
-    public BigRational(double v)
+    public BigRational(double value)
     {
-      var cpu = main_cpu; cpu.push(v, true); p = cpu.popr().p;
+      var cpu = main_cpu; cpu.push(value, true); p = cpu.popr().p;
     }
-
+      
     /// <summary>
     /// Defines an implicit conversion of a <see cref="int"/> object to a <see cref="BigRational"/> value.
     /// </summary>
@@ -519,6 +580,51 @@ namespace System.Numerics
     }
 
     /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="byte"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="byte"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="byte"/>.</returns>
+    public static explicit operator byte(BigRational value)
+    {
+      return (byte)(uint)value;
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="sbyte"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="sbyte"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="sbyte"/>.</returns>
+    public static explicit operator sbyte(BigRational value)
+    {
+      return (sbyte)(int)value;
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="short"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="short"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="short"/>.</returns>
+    public static explicit operator short(BigRational value)
+    {
+      return (short)(int)value;
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="ushort"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="ushort"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="ushort"/>.</returns>
+    public static explicit operator ushort(BigRational value)
+    {
+      return (ushort)(uint)value;
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="char"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="char"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="char"/>.</returns>
+    public static explicit operator char(BigRational value)
+    {
+      return (char)(uint)value;
+    }
+    /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="int"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="int"/>.</param>
@@ -562,6 +668,33 @@ namespace System.Numerics
     public static explicit operator float(BigRational value)
     {
       return (float)(double)value; //todo: fast float convert
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="IntPtr"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="IntPtr"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="IntPtr"/>.</returns>
+    public static explicit operator nint(BigRational value)
+    {
+      return (nint)(long)value;
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="UIntPtr"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="UIntPtr"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="UIntPtr"/>.</returns>
+    public static explicit operator nuint(BigRational value)
+    {
+      return (nuint)(ulong)value;
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="Half"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="Half"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="Half"/>.</returns>
+    public static explicit operator Half(BigRational value)
+    {
+      return (Half)(double)value;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="double"/> value.

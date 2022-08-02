@@ -15,17 +15,18 @@ namespace System.Numerics.Rational
   [Serializable] //, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly partial struct BigInt : IComparable, IComparable<BigInt>, IEquatable<BigInt>, IFormattable, ISpanFormattable
   {
-    public override readonly string ToString() => p.ToString("L0"); // public override readonly string ToString() => ((BigInteger)p).ToString();
-    public readonly string ToString(string? format, IFormatProvider? formatProvider) => p.ToString(format, formatProvider);
+    public override readonly string ToString() => p.ToString("L0"); //public override readonly string ToString() => ((BigInteger)p).ToString();
+    public readonly string ToString(string? format, IFormatProvider? formatProvider = default) => p.ToString(format, formatProvider);
     public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => p.TryFormat(destination, out charsWritten, format, provider);
     public static BigInt Parse(string value) => Parse(value, NumberStyles.Integer);
     public static BigInt Parse(string value, NumberStyles style) => Parse(value.AsSpan(), style, NumberFormatInfo.CurrentInfo);
     public static BigInt Parse(string value, IFormatProvider? provider) => Parse(value, NumberStyles.Integer, NumberFormatInfo.GetInstance(provider));
-    public static BigInt Parse(string value, NumberStyles style, IFormatProvider? provider) => Parse(value.AsSpan());
+    public static BigInt Parse(string value, NumberStyles style, IFormatProvider? provider) => Parse(value.AsSpan(), style, provider);
     public static BigInt Parse(ReadOnlySpan<char> value, NumberStyles style = NumberStyles.Integer, IFormatProvider? provider = null)
     {
-      //todo: cpu, hex, NumberStyles check  
-      return new BigInt(BigRational.Parse(value, provider)); //return new BigInt(BigRational.Parse(value, style, provider)); 
+      var p = BigRational.Parse(value, style, provider);
+      if (!BigRational.IsInteger(p)) throw new ArgumentException(nameof(value)); 
+      return new BigInt(p); 
     }
     public override readonly int GetHashCode() => p.GetHashCode();
     public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
@@ -74,6 +75,22 @@ namespace System.Numerics.Rational
     public static implicit operator BigRational(BigInt value) => value.p;
     public static explicit operator BigInt(BigRational value) => new BigInt(BigRational.Truncate(value)); //todo: cpu
     public static explicit operator BigInteger(BigInt value) => (BigInteger)value.p;
+
+    public static explicit operator byte(BigInt value) => (byte)value.p;
+    public static explicit operator sbyte(BigInt value) => (sbyte)value.p;
+    public static explicit operator short(BigInt value) => (short)value.p;
+    public static explicit operator ushort(BigInt value) => (ushort)value.p;
+    public static explicit operator char(BigInt value) => (char)value.p;
+    public static explicit operator int(BigInt value) => (int)value.p;
+    public static explicit operator uint(BigInt value) => (uint)value.p;
+    public static explicit operator long(BigInt value) => (long)value.p;
+    public static explicit operator ulong(BigInt value) => (ulong)value.p;
+    public static explicit operator nint(BigInt value) => (nint)value.p;
+    public static explicit operator nuint(BigInt value) => (nuint)value.p;
+    public static explicit operator Half(BigInt value) => (Half)value.p;
+    public static explicit operator float(BigInt value) => (float)value.p;
+    public static explicit operator double(BigInt value) => (double)value.p;
+    public static explicit operator decimal(BigInt value) => (decimal)value.p;
 
     public static BigInt operator +(BigInt a) => a;
     public static BigInt operator -(BigInt a) => new BigInt(-a.p);
@@ -137,6 +154,24 @@ namespace System.Numerics.Rational
       return new BigInt(value);
     }
     #endregion
+    //works
+    //static unsafe int hex(Span<char> s, BigRational v, int l, int a)
+    //{
+    //  var p = (ReadOnlySpan<uint>)v; //var p = u; if (p == null) { ulong t = 1; p = (uint*)&t; }
+    //  if (p.Length == 0) { ulong t = 1; p = new ReadOnlySpan<uint>(&t, 2); }
+    //  var n = unchecked((int)(p[0] & 0x3fffffff)); var m = (p[0] & 0x80000000) != 0;
+    //  var x = (((n << 5) - BitOperations.LeadingZeroCount(p[n])) >> 2) + 1;
+    //  if (l < x) l = x; if (s.Length < l) return l;
+    //  a = a == 'X' ? 'A' - 10 : 'a' - 10; var c = 1u;
+    //  for (int i = l - 1; i >= 0; i--)
+    //  {
+    //    int t = l - i - 1, k = 1 + (t >> 3);
+    //    var d = (k <= n ? p[k] >> ((t & 7) << 2) : 0) & 0xf;
+    //    if (m) if ((d = (~d & 0xf) + c) > 0xf) { d = 0; c = 1; } else c = 0;
+    //    s[i] = (char)(d < 10 ? '0' + d : a + d);
+    //  }
+    //  return l;
+    //}
   }
 
 #if NET7_0
@@ -163,6 +198,10 @@ namespace System.Numerics.Rational
     public static explicit operator BigInt(decimal value) => new BigInt(value);
     public static explicit operator BigInt(Complex value) => value.Imaginary == 0 ? new BigInt(value.Real) : throw new OverflowException();
 
+    public static explicit operator Int128(BigInt value) => (Int128)value.p;
+    public static explicit operator UInt128(BigInt value) => (UInt128)value.p;
+    public static explicit operator Complex(BigInt value) => new Complex((double)value.p, 0);
+
     // INumber, IBinaryInteger<BigInt>, ISignedNumber<BigInt>
     static BigInt IBitwiseOperators<BigInt, BigInt, BigInt>.operator |(BigInt left, BigInt right)
     {
@@ -182,32 +221,32 @@ namespace System.Numerics.Rational
     public int GetByteCount()
     {
       // ((BigInteger)this).GetByteCount();
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public int GetShortestBitLength()
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public static BigInt PopCount(BigInt value)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public static BigInt TrailingZeroCount(BigInt value)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public bool TryWriteBigEndian(Span<byte> destination, out int bytesWritten)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public bool TryWriteLittleEndian(Span<byte> destination, out int bytesWritten)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public static bool IsPow2(BigInt value) => value.IsPowerOfTwo;
     public static BigInt Log2(BigInt value)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public static bool IsCanonical(BigInt value) => true;
     public static bool IsComplexNumber(BigInt value) => false;
@@ -231,42 +270,42 @@ namespace System.Numerics.Rational
     public static BigInt MinMagnitudeNumber(BigInt x, BigInt y) => new BigInt(BigRational.MinMagnitudeNumber(x.p, y.p));
     public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out BigInt result)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public static BigInt Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out BigInt result) => TryParse(s.AsSpan(), provider, out result);
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out BigInt result) => TryParse(s, NumberStyles.Integer, provider, out result);
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out BigInt result)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
 
     static bool INumberBase<BigInt>.TryConvertFromChecked<TOther>(TOther value, out BigInt result)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     static bool INumberBase<BigInt>.TryConvertFromSaturating<TOther>(TOther value, out BigInt result)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     static bool INumberBase<BigInt>.TryConvertFromTruncating<TOther>(TOther value, out BigInt result)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     static bool INumberBase<BigInt>.TryConvertToChecked<TOther>(BigInt value, [NotNullWhen(true)] out TOther result)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     static bool INumberBase<BigInt>.TryConvertToSaturating<TOther>(BigInt value, [NotNullWhen(true)] out TOther result)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     static bool INumberBase<BigInt>.TryConvertToTruncating<TOther>(BigInt value, [NotNullWhen(true)] out TOther result)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException("under construction");
     }
     static bool INumberBase<BigInt>.IsZero(BigInt value) => value.Sign == 0;
   }
