@@ -111,6 +111,7 @@ namespace Test
               if (list[k] == ")") l++;
               else if (list[k] == "(") l--;
               else if (l == 0) { if (char.IsLetter(list[k][0])) continue; k++; break; }
+            if (k == list.Count) k = 0;
             list.Insert(k, st); if (list[k + 1] != "(") { list.Insert(k + 1, "("); list.Add(")"); }
             state = 2; break;
           }

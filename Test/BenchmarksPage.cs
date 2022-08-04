@@ -62,7 +62,7 @@ namespace Test
       esvg = XElement.Parse(doc.GetElementById("svg").InnerHtml);
     }
 
-    (float[] times, int count)[]? passes; //float lastav;
+    (float[] times, int count)[]? passes;
 
     void runtest(HtmlElement svg, Action<int, Func<bool>> test, int ex)
     {
@@ -85,14 +85,11 @@ namespace Test
       }
       test(8, () => true);
 
-      //if (ex == 0x00003fbf && (lastav = lastav * 0.01f) < 1) //to get realist times for cpu internal bigint div it makes sense to sub the av from mul as IDiv changed for comapibillity and has an additional mul
-      //  for (int i = 1; i < 256; i++) passes[0].times[i] *= lastav;
-
       update_svg(svg, ex);
 
       var a1 = passes[0].times.Take(255);//.Average();
       var a2 = passes[1].times.Take(255);//.Average();
-      var av = MathF.Round(a1.Average() * 100 / a2.Average()); //this.lastav = av;
+      var av = MathF.Round(a1.Average() * 100 / a2.Average());
       var mi = Math.Min(a1.Max(), a2.Max());
       var ma = Math.Max(a1.Max(), a2.Max());
 

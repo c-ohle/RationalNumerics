@@ -116,36 +116,7 @@ namespace System.Numerics
               if (round == -1) round = 6; digs = 1 + round;
               if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
               emax = -(emin = int.MaxValue); goto def;
-            case 'X': // 
-              digs = hex(destination, this, round, tc);
-              if (digs > destination.Length) { charsWritten = destination.Length == 100 ? digs : 0; return false; }
-              charsWritten = digs; return true;
-              static int hex(Span<char> s, BigRational v, int l, int a)
-              {
-                fixed (uint* u = v.p)
-                {
-                  var p = u; if (p == null) { ulong t = 1; p = (uint*)&t; }
-                  var n = hex(s, p, l, a); uint* w;
-                  if (u == null || *(ulong*)(w = u + ((u[0] & 0x3fffffff) + 1)) == 0x100000001) return n;
-                  if (n + 2 > s.Length) return n + hex(default, w, 0, a);
-                  s[n++] = '/'; n += hex(s.Slice(n), w, 0, a); return n;
-                }
-                static int hex(Span<char> s, uint* p, int l, int a)
-                {
-                  var n = unchecked((int)(p[0] & 0x3fffffff)); var m = (p[0] & 0x80000000) != 0;
-                  var x = (((n << 5) - BitOperations.LeadingZeroCount(p[n])) >> 2) + 1;
-                  if (l < x) l = x; if (s.Length < l) return l;
-                  a = a == 'X' ? 'A' - 10 : 'a' - 10; var c = 1u;
-                  for (int i = l - 1; i >= 0; i--)
-                  {
-                    int t = l - i - 1, k = 1 + (t >> 3);
-                    var d = (k <= n ? p[k] >> ((t & 7) << 2) : 0) & 0xf;
-                    if (m) if ((d = (~d & 0xf) + c) > 0xf) { d = 0; c = 1; } else c = 0;
-                    s[i] = (char)(d < 10 ? '0' + d : a + d);
-                  }
-                  return l;
-                }
-              }
+              //case 'X': throw new FormatException(nameof(format));
           }
         var e = ILog10(this);
         if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
@@ -246,7 +217,6 @@ namespace System.Numerics
     /// Like <see cref="double.Parse(string)"/> but with unlimited number of digits.<br/>
     /// Additional: Converts Fraction notation like "1/3" or "-123/456"<br/> 
     /// Additional: Converts Repetions like "0.'3", see: <see cref="BigRational.ToString(string?, IFormatProvider?)"/>.<br/>
-    /// Additional: Accepts prefix "0x" for hexadecimal- and "0b" for binary number representations. 
     /// Ignores spaces, underscores (_) leading dots (…)
     /// </remarks>
     /// <param name="value">A read-only span of characters that contains the number to convert.</param>
@@ -257,20 +227,6 @@ namespace System.Numerics
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
       var cpu = main_cpu; cpu.tor(value, 10, info != null ? info.NumberDecimalSeparator[0] : default);
       return cpu.popr();
-    }
-    /// <summary>Parses a span of characters into a value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="s">The span of characters to parse.</param>
-    /// <param name="style">A bitwise combination of number styles that can be present in <paramref name="s" />.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
-    /// <returns>The result of parsing <paramref name="s" />.</returns>
-    /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
-    /// <exception cref="FormatException"><paramref name="s" /> is not in the correct format.</exception>
-    /// <exception cref="OverflowException"><paramref name="s" /> is not representable by result.</exception>
-    public static BigRational Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
-    {
-      if ((style & NumberStyles.HexNumber) != 0) { var cpu = main_cpu; cpu.tor(s, 16, default); return cpu.popr(); }
-      return Parse(s, provider); //todo: check, exception or NaN ? // var r = Parse(s, provider); if (IsNaN(r)) throw new ArgumentException(nameof(s)); return r;
     }
     /// <summary>Parses a string into a value.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
@@ -285,6 +241,20 @@ namespace System.Numerics
     public static BigRational Parse(string s, NumberStyles style, IFormatProvider? provider = null)
     {
       return Parse(s.AsSpan(), style, provider);
+    }
+    /// <summary>Parses a span of characters into a value.</summary>
+    /// <remarks>Part of the new NET 7 number type system.</remarks>
+    /// <param name="s">The span of characters to parse.</param>
+    /// <param name="style">A bitwise combination of number styles that can be present in <paramref name="s" />.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
+    /// <returns>The result of parsing <paramref name="s" />.</returns>
+    /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
+    /// <exception cref="FormatException"><paramref name="s" /> is not in the correct format.</exception>
+    /// <exception cref="OverflowException"><paramref name="s" /> is not representable by result.</exception>
+    public static BigRational Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
+    {
+      if ((style & NumberStyles.AllowHexSpecifier) != 0) throw new ArgumentException(nameof(style));
+      return Parse(s, provider);
     }
     /// <summary>Parses a string into a value.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
@@ -379,6 +349,15 @@ namespace System.Numerics
     public readonly bool Equals(BigRational b)
     {
       return main_cpu.equ(this, b);
+    }
+    /// <summary>
+    /// Returns a value that indicates whether the current instance and a specified <see cref="long"/> number have the same value.
+    /// </summary>
+    /// <param name="b">The object to compare.</param>
+    /// <returns>true if this <see cref="long"/> number and other have the same value; otherwise, false.</returns>
+    public readonly bool Equals(long b)
+    {
+      return CompareTo(b) == 0; //todo: impl
     }
     /// <summary>
     /// Compares this object to another object, returning an instance of System.Relation.<br/>
@@ -476,7 +455,7 @@ namespace System.Numerics
     {
       var cpu = main_cpu; cpu.push(value, true); p = cpu.popr().p;
     }
-      
+
     /// <summary>
     /// Defines an implicit conversion of a <see cref="int"/> object to a <see cref="BigRational"/> value.
     /// </summary>
@@ -1060,7 +1039,7 @@ namespace System.Numerics
     /// <returns>true if the left and right parameters have the same value; otherwise, false.</returns>
     public static bool operator ==(BigRational a, long b)
     {
-      return a.CompareTo(b) == 0;
+      return a.Equals(b);
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="BigRational"/> value and
@@ -1075,7 +1054,7 @@ namespace System.Numerics
     /// <returns>true if left and right are not equal; otherwise, false.</returns>
     public static bool operator !=(BigRational a, long b)
     {
-      return a.CompareTo(b) != 0;
+      return !a.Equals(b);
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="BigRational"/> value is
@@ -1360,11 +1339,12 @@ namespace System.Numerics
       public void push(BigInteger v)
       {
         var si = v.Sign; if (si == 0) { push(); return; }
-        if (si < 0) v = -v; var n = v.GetByteCount(true); var c = ((n - 1) >> 2) + 1;
+        if (si < 0) v = -v; int n = v.GetByteCount(true), c = ((n - 1) >> 2) + 1;
         fixed (uint* p = rent(unchecked((uint)(c + 3))))
         {
-          p[c] = 0; v.TryWriteBytes(new Span<byte>(p + 1, n), out _, true); Debug.Assert(p[c] != 0);
-          p[0] = unchecked((uint)c) | (si < 0 ? 0x80000000 : 0);
+          p[c] = 0; var ok = v.TryWriteBytes(new Span<byte>(p + 1, n), out _, true); 
+          if (p[c] == 0) c--; Debug.Assert(ok && p[c] != 0); //todo: report BigInteger bug p[c] == 0
+          p[0] = unchecked((uint)c) | (si < 0 ? 0x80000000 : 0); 
           *(ulong*)(p + c + 1) = 0x100000001;
         }
       }
@@ -2420,7 +2400,7 @@ namespace System.Numerics
         fixed (uint* p = this.p[this.i - 1])
         {
           var n = p[0] & 0x3fffffff;
-          return (n << 5) - (uint)BitOperations.LeadingZeroCount(p[n]);
+          return (n << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[n]));
         }
       }
       /// <summary>

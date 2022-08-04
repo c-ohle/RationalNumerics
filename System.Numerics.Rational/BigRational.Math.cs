@@ -306,6 +306,21 @@ namespace System.Numerics
       cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
+    /// Gets the integer base 2 logarithm of a <see cref="BigRational"/> number.
+    /// </summary>
+    /// <param name="x">A <see cref="BigRational"/> number as value.</param>
+    /// <returns>The integer base 2 logarithm of the <see cref="BigRational"/> number.</returns>
+    public static int ILog2(BigRational x)
+    {
+      if (x.p == null) return 0;
+      if (IsInteger(x)) //todo: opt. 
+      {
+        var n = unchecked((int)(x.p[0] & 0x3fffffff));
+        return (n << 5) - BitOperations.LeadingZeroCount(x.p[n]) - 1;
+      }
+      return (int)Truncate(Log2(x, 0)); //todo: opt. 
+    }
+    /// <summary>
     /// Returns the base 10 logarithm of a specified number.
     /// </summary>
     /// <param name="x">The number whose logarithm is to be found.</param>

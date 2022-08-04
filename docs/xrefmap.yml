@@ -1402,6 +1402,12 @@ references:
   commentId: Overload:System.Numerics.BigRational.DivRem
   fullName: System.Numerics.BigRational.DivRem
   nameWithType: BigRational.DivRem
+- uid: System.Numerics.BigRational.Equals(System.Int64)
+  name: Equals(Int64)
+  href: api/System.Numerics.BigRational.Equals.html#System_Numerics_BigRational_Equals_System_Int64_
+  commentId: M:System.Numerics.BigRational.Equals(System.Int64)
+  fullName: System.Numerics.BigRational.Equals(System.Int64)
+  nameWithType: BigRational.Equals(Int64)
 - uid: System.Numerics.BigRational.Equals(System.Numerics.BigRational)
   name: Equals(BigRational)
   href: api/System.Numerics.BigRational.Equals.html#System_Numerics_BigRational_Equals_System_Numerics_BigRational_
@@ -1588,6 +1594,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.ILog10
   fullName: System.Numerics.BigRational.ILog10
   nameWithType: BigRational.ILog10
+- uid: System.Numerics.BigRational.ILog2(System.Numerics.BigRational)
+  name: ILog2(BigRational)
+  href: api/System.Numerics.BigRational.ILog2.html#System_Numerics_BigRational_ILog2_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.ILog2(System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.ILog2(System.Numerics.BigRational)
+  nameWithType: BigRational.ILog2(BigRational)
+- uid: System.Numerics.BigRational.ILog2*
+  name: ILog2
+  href: api/System.Numerics.BigRational.ILog2.html
+  commentId: Overload:System.Numerics.BigRational.ILog2
+  fullName: System.Numerics.BigRational.ILog2
+  nameWithType: BigRational.ILog2
 - uid: System.Numerics.BigRational.ILogB(System.Numerics.BigRational)
   name: ILogB(BigRational)
   href: api/System.Numerics.BigRational.ILogB.html#System_Numerics_BigRational_ILogB_System_Numerics_BigRational_

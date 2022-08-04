@@ -9,8 +9,10 @@ namespace System.Numerics.Rational
   /// Represents an arbitrarily large floating-point number. (under construction)
   /// </summary>
   /// <remarks>
-  /// This implementation using BigRational.SafeCPU as calculation core is intended for testing and benchmarks to other custom floating-point number types in real scenarios.<br/>
-  /// boost operator public just to test how much performance would be possible.<br/>
+  /// Allows emulation of IEEE 754 types <seealso href="https://en.wikipedia.org/wiki/IEEE_754"/> with bit exact data representation.<br/>
+  /// This implementation using BigRational.SafeCPU as calculation core is intended for<br/>
+  /// testing and benchmarks to other custom floating-point number types in real scenarios.<br/>
+  /// <i>boost operator public just to test how much performance would be possible.</i><br/>
   /// </remarks>
   public readonly partial struct BigFloat : IComparable, IComparable<BigFloat>, IEquatable<BigFloat>, IFormattable
   {

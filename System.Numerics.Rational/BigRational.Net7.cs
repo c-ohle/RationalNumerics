@@ -14,20 +14,16 @@ namespace System.Numerics
 {
   unsafe partial struct BigRational :
     INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, //IConvertible, //todo: check IConvertible, does it makes much sens for non system types?
-    IPowerFunctions<BigRational>,
-    IRootFunctions<BigRational>,
-    IExponentialFunctions<BigRational>,
-    ILogarithmicFunctions<BigRational>,
-    ITrigonometricFunctions<BigRational>, //IFloatingPointConstants<BigRational>,
-    IHyperbolicFunctions<BigRational>
+    IPowerFunctions<BigRational>, IRootFunctions<BigRational>, IExponentialFunctions<BigRational>,
+    ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational> //IFloatingPointConstants<BigRational>
   {
     // INumberBase 
     /// <summary>Gets the radix, or base, for the type.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static int Radix => 1; //todo: check, Radix for rational?
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static int Radix => 1; //todo: Radix for rational?
     /// <summary>Gets the value <c>0</c> for the type.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational Zero => 0;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational Zero => default;
     /// <summary>Gets the value <c>1</c> for the type.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational One => 1u;
@@ -37,7 +33,7 @@ namespace System.Numerics
     // IAdditiveIdentity
     /// <summary>Gets the additive identity of the current type.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational AdditiveIdentity => 0;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational AdditiveIdentity => default;
     // IMultiplicativeIdentity
     /// <summary>Gets the multiplicative identity of the current type.</summary>
     /// <remarks>Part of the new NET 7 number type system.</remarks>
@@ -218,8 +214,8 @@ namespace System.Numerics
     /// <exception cref="ArgumentException"><paramref name="style" /> is not a supported <see cref="NumberStyles" /> value.</exception>
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out BigRational result)
     {
-      if ((style & NumberStyles.HexNumber) != 0) { var cpu = main_cpu; cpu.tor(s, 16, default); result = cpu.popr(); }
-      else result = Parse(s, provider); return !IsNaN(result);
+      if ((style & NumberStyles.AllowHexSpecifier) != 0) throw new ArgumentException(nameof(style));
+      return !IsNaN(result = Parse(s, provider));
     }
 
     //ISpanParsable
@@ -263,7 +259,7 @@ namespace System.Numerics
     }
     static bool TryConvertFrom<T>(T value, out BigRational result) where T : INumberBase<T>
     {
-      //this implementation works without boxing
+      //this impl works without boxing
       switch (Type.GetTypeCode(typeof(T))) //so long it does not realy work with inline ...
       {
         case TypeCode.Byte: { result = value is byte t ? t : default; return true; }
