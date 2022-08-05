@@ -357,7 +357,9 @@ namespace System.Numerics
     /// <returns>true if this <see cref="long"/> number and other have the same value; otherwise, false.</returns>
     public readonly bool Equals(long b)
     {
-      return CompareTo(b) == 0; //todo: impl
+      //return CompareTo(b) == 0;
+      //if (p == null) return b == 0; //todo: check cc?, benchmarks
+      var cpu = main_cpu; cpu.push(b); var s = cpu.equ(cpu.mark() - 1, this); cpu.pop(); return s;
     }
     /// <summary>
     /// Compares this object to another object, returning an instance of System.Relation.<br/>
@@ -418,7 +420,7 @@ namespace System.Numerics
     {
       if (b == 0) return Sign(this);
       if (p == null) return -Math.Sign(b);
-      var cpu = main_cpu; cpu.push(b); var s = -cpu.cmp(this); cpu.pop(); return s;
+      var cpu = main_cpu; cpu.push(b); var s = cpu.cmp(this); cpu.pop(); return -s;
     }
 
     /// <summary>
@@ -1177,11 +1179,7 @@ namespace System.Numerics
       public void push(BigRational v)
       {
         if (v.p == null) { push(); return; }
-        fixed (uint* a = v.p)
-        {
-          var n = len(a);
-          fixed (uint* b = rent(n)) copy(b, a, n);
-        }
+        uint n; fixed (uint* a = v.p, b = rent(n = len(a))) copy(b, a, n);
       }
       /// <summary>
       /// Pushes the supplied <see cref="int"/> value onto the stack.
@@ -1189,11 +1187,13 @@ namespace System.Numerics
       /// <param name="v">The value to push.</param>
       public void push(int v)
       {
-        fixed (uint* p = rent(4))
-        {
-          p[0] = unchecked((uint)v & 0x80000000) | 1;
-          p[1] = unchecked((uint)(v < 0 ? -v : v)); *(ulong*)(p + 2) = 0x100000001;
-        }
+        //todo: benchmarks
+        push(unchecked((uint)(v < 0 ? -v : v))); if (v < 0) this.p[this.i - 1][0] |= 0x80000000; //neg()
+        //fixed (uint* p = rent(4))
+        //{
+        //  p[0] = unchecked((uint)v & 0x80000000) | 1;
+        //  p[1] = unchecked((uint)(v < 0 ? -v : v)); *(ulong*)(p + 2) = 0x100000001;
+        //}
       }
       /// <summary>
       /// Pushes n copies of the supplied <see cref="int"/> value onto the stack.
@@ -1202,8 +1202,8 @@ namespace System.Numerics
       /// <param name="n">The number of copies to push.</param>
       public void push(int v, int n)
       {
-        for (int i = 0; i < n; i++) push(v);  //todo: optimize
-        //if (n <= 0) return; push(v); for (int i = 1; i < n; i++) dup(); //todo: benchmark
+        //for (int i = 0; i < n; i++) push(v);
+        if (n <= 0) return; push(v); for (int i = 1; i < n; i++) dup(unchecked((uint)(this.i - 1))); //todo: benchmark
       }
       /// <summary>
       /// Pushes the supplied <see cref="uint"/> value onto the stack.
@@ -1211,11 +1211,7 @@ namespace System.Numerics
       /// <param name="v">The value to push.</param>
       public void push(uint v)
       {
-        fixed (uint* p = rent(4))
-        {
-          p[0] = 1; p[1] = v;
-          *(ulong*)(p + 2) = 0x100000001;
-        }
+        fixed (uint* p = rent(4)) { p[0] = 1; p[1] = v; *(ulong*)(p + 2) = 0x100000001; }
       }
       /// <summary>
       /// Pushes the supplied <see cref="long"/> value onto the stack.
@@ -1223,13 +1219,15 @@ namespace System.Numerics
       /// <param name="v">The value to push.</param>
       public void push(long v)
       {
-        var t = unchecked((uint)v); if (t == v) { push(t); return; } // mcc
-        var s = v < 0; var u = unchecked((ulong)(s ? -v : v)); var n = unchecked((uint)u) == u ? 1u : 2u;
-        fixed (uint* p = rent(5))
-        {
-          p[0] = (s ? 0x80000000 : 0) | n;
-          *(ulong*)(p + 1) = u; *(ulong*)(p + (n + 1)) = 0x100000001;
-        }
+        //todo: benchmarks recu inline
+        push(unchecked((ulong)(v < 0 ? -v : v))); if (v < 0) this.p[this.i - 1][0] |= 0x80000000; //neg()
+        //var t = unchecked((uint)v); if (t == v) { push(t); return; } // mcc
+        //var s = v < 0; var u = unchecked((ulong)(s ? -v : v)); var n = unchecked((uint)u) == u ? 1u : 2u;
+        //fixed (uint* p = rent(5))
+        //{
+        //  p[0] = (s ? 0x80000000 : 0) | n;
+        //  *(ulong*)(p + 1) = u; *(ulong*)(p + (n + 1)) = 0x100000001;
+        //}
       }
       /// <summary>
       /// Pushes the supplied <see cref="ulong"/> value onto the stack.
@@ -1238,12 +1236,7 @@ namespace System.Numerics
       public void push(ulong v)
       {
         var u = unchecked((uint)v); if (u == v) { push(u); return; }
-        fixed (uint* p = rent(5))
-        {
-          p[0] = 2;
-          *(ulong*)(p + 1) = v;
-          *(ulong*)(p + 3) = 0x100000001;
-        }
+        fixed (uint* p = rent(5)) { p[0] = 2; *(ulong*)(p + 1) = v; *(ulong*)(p + 3) = 0x100000001; }
       }
       /// <summary>
       /// Pushes the supplied <see cref="float"/> value onto the stack.
@@ -1342,9 +1335,9 @@ namespace System.Numerics
         if (si < 0) v = -v; int n = v.GetByteCount(true), c = ((n - 1) >> 2) + 1;
         fixed (uint* p = rent(unchecked((uint)(c + 3))))
         {
-          p[c] = 0; var ok = v.TryWriteBytes(new Span<byte>(p + 1, n), out _, true); 
+          p[c] = 0; var ok = v.TryWriteBytes(new Span<byte>(p + 1, n), out _, true);
           if (p[c] == 0) c--; Debug.Assert(ok && p[c] != 0); //todo: report BigInteger bug p[c] == 0
-          p[0] = unchecked((uint)c) | (si < 0 ? 0x80000000 : 0); 
+          p[0] = unchecked((uint)c) | (si < 0 ? 0x80000000 : 0);
           *(ulong*)(p + c + 1) = 0x100000001;
         }
       }
@@ -1387,13 +1380,12 @@ namespace System.Numerics
         {
           if (isz(p)) { v = default; return; }
           if ((p[0] & 0x40000000) != 0) norm(p);
-          uint n = len(p);
-          //todo: NET7 experimental, extend for INumber const's
-          if (n == 4 && ((ulong*)p)[0] == 0x100000001 && ((ulong*)p)[1] == 0x100000001)
+          var n = len(p);
+          if (n == 4 && p[1] == p[3])
           {
-            v = cachx(p, n, 1); return;
+            Debug.Assert(p[1] <= 1); // 11, 00
+            v = cachx(p[3] + (p[0] >> 31), p, n); return; //NaN, 1, -1            
           }
-          //
           var a = new uint[n]; fixed (uint* s = a) copy(s, p, n);
           v = new BigRational(a);
         }
@@ -1584,11 +1576,8 @@ namespace System.Numerics
       /// <param name="a">Absolute index of a stack entry.</param>
       public void dup(uint a)
       {
-        fixed (uint* u = this.p[a])
-        {
-          var n = len(u);
-          fixed (uint* v = rent(n)) copy(v, u, n);
-        }
+        uint n; fixed (uint* u = this.p[a], v = rent(n = len(u))) copy(v, u, n);
+        //fixed (uint* u = this.p[a]) { var n = len(u); fixed (uint* v = rent(n)) copy(v, u, n); }
       }
       /// <summary>
       /// Negates the value at index <paramref name="a"/> relative to the top of the stack.<br/>
@@ -1879,6 +1868,50 @@ namespace System.Numerics
       {
         if (a.p == null) { push(); return; }
         fixed (uint* u = a.p, v = p[this.i - 1 - b]) mul(u, v, true);
+      }
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to integer result.
+      /// </remarks>
+      public void idiv()
+      {
+        //uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff; if (nu < nv || (nu == nv && BitOperations.LeadingZeroCount(u[nu]) < BitOperations.LeadingZeroCount(v[nv]))) { pop(2); push(); return; }
+        fixed (uint* u = p[this.i - 1])
+        fixed (uint* v = p[this.i - 2])
+        fixed (uint* w = rent(len(u))) // nu - nv + 1
+        {
+          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
+          *(ulong*)(w + w[0] + 1) = 0x100000001;
+          if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
+        }
+        swp(2); pop(2);
+      }
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to integer result.<br/>
+      /// </remarks>
+      public void imod()
+      {
+        fixed (uint* u = p[this.i - 1])
+        fixed (uint* v = p[this.i - 2])
+        {
+          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
+          *(ulong*)(v + v[0] + 1) = 0x100000001;
+          v[0] |= h & 0x80000000;
+        }
+        pop();
       }
       /// <summary>
       /// Squares the value at index <paramref name="a"/> relative to the top of the stack.<br/>
@@ -2859,7 +2892,7 @@ namespace System.Numerics
       }
       bool equ(uint[] a, uint[] b)
       {
-        if (a == b) return true;
+        if (a == b) return true; //sort's
         fixed (uint* u = a, v = b)
         {
           if (u == null) return isz(v);
@@ -3273,16 +3306,7 @@ namespace System.Numerics
         for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
-      #region NET7 INumber experimental
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] static uint[][]? cache; //INumber constants on request 
-      static BigRational cachx(uint* s, uint n, uint x)
-      {
-        var p = cache != null ? cache[x] : null;
-        if (p == null) lock (string.Empty)
-            fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n])
-              copy(d, s, n);
-        return new BigRational(p);
-      }
+      #region experimental
       internal void toi(BigRational v, uint* p, uint f) //NET7 spec int type conversions, Int32, Unt32,..., Int128, UInt128, Int256, ... 
       {
         if (v.p == null) return; uint n = f & 0xff;
@@ -3334,65 +3358,20 @@ namespace System.Numerics
         fixed (uint* p = this.p[this.i - 1])
         {
           var u = p[0] & 0x3fffffff;
-          if (!BitOperations.IsPow2(p[u])) return false; //NET7 currently not intrinsic ?!?
-          for (uint i = 1; i < u; i++) if (p[i] != 0) return false; //todo: cmpz and check
+          if (!BitOperations.IsPow2(p[u])) return false; //NET7 currently not intrinsic ?!? //todo: benchmark msb() == lsb()
+          for (uint i = 1; i < u; i++) if (p[i] != 0) return false;
         }
         return true;
       }
       //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //for debug visualizer and cross thread access protection
-      //todo: check remove?, div(a, b); mod(); swp(); pop(); should have same performance      
-      /// <summary>
-      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      /// and replaces them with the integral result.
-      /// </summary>
-      /// <remarks>
-      /// Divides a / b where b is the value on top of the stack.<br/>
-      /// This is a integer division with always non-farctional integer results.<br/>
-      /// When calculating with integers and integer results are required,<br/>
-      /// this operation is faster than dividing and then rounding to integer result.
-      /// </remarks>
-      public void idiv()
-      {
-        //uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff; if (nu < nv || (nu == nv && BitOperations.LeadingZeroCount(u[nu]) < BitOperations.LeadingZeroCount(v[nv]))) { pop(2); push(); return; }
-        fixed (uint* u = p[this.i - 1])
-        fixed (uint* v = p[this.i - 2])
-        fixed (uint* w = rent(len(u))) // nu - nv + 1
-        {
-          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
-          *(ulong*)(w + w[0] + 1) = 0x100000001;
-          if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
-        }
-        swp(2); pop(2);
-      }
-      /// <summary>
-      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      /// and replaces them with the integral result.
-      /// </summary>
-      /// <remarks>
-      /// Divides a / b where b is the value on top of the stack.<br/>
-      /// This is a integer division with always non-farctional integer results.<br/>
-      /// When calculating with integers and integer results are required,<br/>
-      /// this operation is faster than dividing and then rounding to integer result.<br/>
-      /// </remarks>
-      public void imod()
-      {
-        fixed (uint* u = p[this.i - 1])
-        fixed (uint* v = p[this.i - 2])
-        {
-          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, null);
-          *(ulong*)(v + v[0] + 1) = 0x100000001;
-          v[0] |= h & 0x80000000;
-        }
-        pop();
-      }
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access 
       #endregion
     }
     #region private 
-    private readonly uint[] p;
+    readonly uint[] p;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private BigRational(uint[] p) => this.p = p;
+    BigRational(uint[] p) => this.p = p;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static uint len(uint* p)
     {
@@ -3415,10 +3394,21 @@ namespace System.Numerics
       for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = *(ulong*)&((byte*)s)[i << 2];
       if (i != n) d[i] = s[i]; //if ?
     }
-    [ThreadStatic, DebuggerBrowsable(DebuggerBrowsableState.Never)] //avoid debug visualizer cross thread calls
-    private static CPU? cpu;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] //avoid debug visualizer cross thread calls
-    private static CPU main_cpu => cpu ??= new CPU();
+    [ThreadStatic, DebuggerBrowsable(DebuggerBrowsableState.Never)] //debug visualizer security
+    static CPU? cpu;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] //debug visualizer security
+    static CPU main_cpu => cpu ??= new CPU();
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] //debug visualizer security
+    static uint[][]? cache;
+    static BigRational cachx(uint x, uint* s, uint n)
+    {
+      var a = cache ??= new uint[4][]; //worst case twice in threads doesn't matter
+      var b = a[x]; if (b == null) fixed (uint* d = b = a[x] = new uint[n]) copy(d, s, n);
+      return new BigRational(b);
+      //var p = cache != null ? cache[x] : null;
+      //if (p == null) lock (string.Empty) fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n]) copy(d, s, n);
+      //return new BigRational(p);
+    }
     #endregion
     #region debug support
     sealed class DebugView

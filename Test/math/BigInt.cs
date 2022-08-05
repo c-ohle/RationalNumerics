@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using static System.Numerics.BigRational;
 
 namespace System.Numerics.Rational
@@ -77,13 +78,35 @@ namespace System.Numerics.Rational
     public BigInt(byte[] value) : this(new ReadOnlySpan<byte>(value ?? throw new ArgumentNullException())) { }
     public BigInt(ReadOnlySpan<byte> value, bool isUnsigned = false, bool isBigEndian = false)
     {
-      //todo: public cpu.toi() for SafeCPU as span version what does the job much faster
-      this = new BigInteger(value, isUnsigned, isBigEndian);
+      if (value.Length == 1) { Debug.Assert(value[0] == 0); return; }
+      this = new BigInteger(value, isUnsigned, isBigEndian); //todo: impl.
     }
 
-    public static BigInt Zero => default;
-    public static BigInt One => 1u;
-    public static BigInt MinusOne => -1;
+    public byte[] ToByteArray() => ToByteArray(false, false);
+    public byte[] ToByteArray(bool isUnsigned = false, bool isBigEndian = false)
+    {
+      var a = new byte[GetByteCount(isUnsigned)]; TryWriteBytes(a, out var _, isUnsigned, isBigEndian); return a;
+    }
+    public readonly int GetByteCount(bool isUnsigned = false) { TryWriteBytes(default, out int n, isUnsigned); return n; }
+    public readonly bool TryWriteBytes(Span<byte> destination, out int bytesWritten, bool isUnsigned = false, bool isBigEndian = false)
+    {
+      var u = destination; var w = u != default;
+      var s = (ReadOnlySpan<uint>)p; if (s.Length == 0) { if (w) { if (u.Length == 0) goto m1; u[0] = 0; } bytesWritten = 1; return true; }
+      var n = unchecked((int)(s[0] & 0x3fffffff)); var m = (s[0] & 0x80000000) != 0; s = s.Slice(1, n);
+      if (m && isUnsigned) throw new OverflowException(nameof(isUnsigned));
+      var b = MemoryMarshal.Cast<uint, byte>(s); b = b.TrimEnd((byte)0); var l = b.Length;
+      if (!m) { if (w) { if (u.Length < b.Length) goto m1; b.CopyTo(u); } }
+      else
+      {
+        if ((b[l - 1] & 0x80) != 0) l++;
+        if (!w) { bytesWritten = l; return true; }
+        if (u.Length < l) goto m1; int i = 0;
+        for (; i < l;) { u[i] = (byte)(~b[i] + 1); if (u[i++] != 0) break; }
+        for (; i < l; i++) u[i] = (byte)(i < b.Length ? ~b[i] : 0xff);
+      }
+      if (w && isBigEndian) u.Slice(0, l).Reverse();
+      bytesWritten = l; return true; m1: bytesWritten = 0; return true;
+    }
 
     public readonly int Sign => BigRational.Sign(p);
     //some non-optimal implementations as test for the span access operator:
@@ -100,10 +123,10 @@ namespace System.Numerics.Rational
       }
     }
 
-    public static implicit operator BigInt(int value) => new BigInt(value);
-    public static implicit operator BigInt(uint value) => new BigInt(value);
-    public static implicit operator BigInt(long value) => new BigInt(value);
-    public static implicit operator BigInt(BigInteger value) => new BigInt(value);
+    public static implicit operator BigInt(int value) => new BigInt((BigRational)value);
+    public static implicit operator BigInt(uint value) => new BigInt((BigRational)value);
+    public static implicit operator BigInt(long value) => new BigInt((BigRational)value);
+    public static implicit operator BigInt(BigInteger value) => new BigInt((BigRational)value);
     public static implicit operator BigRational(BigInt value) => value.p;
     public static explicit operator BigInt(BigRational value) => new BigInt(BigRational.Truncate(value)); //todo: cpu
     public static explicit operator BigInteger(BigInt value) => (BigInteger)value.p;
@@ -146,13 +169,16 @@ namespace System.Numerics.Rational
     public static bool operator ==(BigInt a, BigInt b) => a.Equals(b);
     public static bool operator !=(BigInt a, BigInt b) => !a.Equals(b);
 
-    //compat.
     public static bool operator <(BigInt a, long b) => a.CompareTo(b) < 0;
     public static bool operator <=(BigInt a, long b) => a.CompareTo(b) <= 0;
     public static bool operator >(BigInt a, long b) => a.CompareTo(b) > 0;
     public static bool operator >=(BigInt a, long b) => a.CompareTo(b) >= 0;
     public static bool operator ==(BigInt a, long b) => a.Equals(b);
     public static bool operator !=(BigInt a, long b) => !a.Equals(b);
+
+    public static BigInt Zero => default;
+    public static BigInt One => new BigInt((BigRational)1u);
+    public static BigInt MinusOne => new BigInt((BigRational)(-1));
 
     public static BigInt Abs(BigInt value) => new BigInt(BigRational.Abs(value.p));
     public static BigInt Max(BigInt left, BigInt right) => new BigInt(BigRational.Max(left.p, right.p));
@@ -236,7 +262,7 @@ namespace System.Numerics.Rational
     public static implicit operator BigInt(UInt128 value) => new BigInt(value);
 
     public static explicit operator BigInt(Half value) => new BigInt((double)value);
-    public static explicit operator BigInt(float value) => new BigInt((double)value);
+    public static explicit operator BigInt(float value) => new BigInt((float)value);
     public static explicit operator BigInt(double value) => new BigInt(value);
     public static explicit operator BigInt(decimal value) => new BigInt(value);
     public static explicit operator BigInt(Complex value) => value.Imaginary == 0 ? new BigInt(value.Real) : throw new OverflowException();
@@ -255,69 +281,78 @@ namespace System.Numerics.Rational
       var cpu = rat.task_cpu; cpu.push(value.p); cpu.shr(checked((uint)shiftAmount)); return new BigInt(cpu);
     }
 
-    public static int Radix => 2; //NET7 nonsense 
-    public static BigInt AdditiveIdentity => Zero;
-    public static BigInt MultiplicativeIdentity => One;
-    public static BigInt NegativeOne => MinusOne;
-    public static BigInt AllBitsSet => MinusOne;
+    static int INumberBase<BigInt>.Radix => 1; //NET7 BigInteger nonsense Radix = 2
+    static BigInt IAdditiveIdentity<BigInt, BigInt>.AdditiveIdentity => Zero;
+    static BigInt IMultiplicativeIdentity<BigInt, BigInt>.MultiplicativeIdentity => One;
+    static BigInt ISignedNumber<BigInt>.NegativeOne => MinusOne;
+    static BigInt IBinaryNumber<BigInt>.AllBitsSet => MinusOne; //NET7 BigInteger nonsense
 
     public static BigInt PopCount(BigInt value)
     {
-      //BigInteger interpretes this free by its current internal data representation what is nonsense and makes no sense to emulate.
-      return BigInteger.PopCount((BigInteger)value); //for compatibility
-      //this would be correct
-      //var s = (ReadOnlySpan<uint>)value.p; if (s.Length == 0) return default;
-      //var n = unchecked((int)(s[0] & 0x3fffffff)); var c = 0ul;
-      //for (int i = 1; i <= n; i++) c += unchecked((uint)BitOperations.PopCount(s[i]));
-      //return c;
+      var s = (ReadOnlySpan<uint>)value.p; if (s.Length == 0) return default;
+      int i = 1, n = unchecked((int)(s[0] & 0x3fffffff)); var c = 0ul;
+      if ((s[0] & 0x80000000) == 0)
+      {
+        for (; i <= n; i++) c += unchecked((uint)BitOperations.PopCount(s[i]));
+      }
+      else //for < 0 emulate BigInteger 32^n - NET7 nonsense
+      {
+        for (uint t; ;) { c += unchecked((uint)uint.PopCount(t = ~s[i] + 1)); if (++i > n || t != 0) break; }
+        for (; i <= n;) { c += unchecked((uint)uint.PopCount(~s[i++])); }
+      }
+      return c;
     }
     public static BigInt TrailingZeroCount(BigInt value)
     {
-      //BigInteger interpretes this free by its current internal data representation what is nonsense and makes no sense to emulate.
-      return BigInteger.TrailingZeroCount((BigInteger)value);
-      //this would be correct
-      //var s = (ReadOnlySpan<uint>)value.p; if (s.Length == 0) return -1;
-      //var n = unchecked((int)(s[0] & 0x3fffffff)); var c = 0ul;
-      //for (int i = 1; i <= n; i++)
-      //{
-      //  if (s[i] == 0) c += 32;
-      //  else { c += unchecked((uint)BitOperations.TrailingZeroCount(s[i])); break; }
-      //}
-      //return c;
+      var s = (ReadOnlySpan<uint>)value.p; if (s.Length == 0) return MinusOne; //NET7 BigInteger nonsense - returns 32 "undefined" 
+      var n = unchecked((int)(s[0] & 0x3fffffff)); var c = 0ul;
+      for (int i = 1; i <= n; i++)
+      {
+        if (s[i] == 0) c += 32;
+        else { c += unchecked((uint)BitOperations.TrailingZeroCount(s[i])); break; }
+      }
+      return c;
     }
 
-    //slow but compatible 
-    public int GetByteCount() => ((BigInteger)this).GetByteCount();
-    public int GetShortestBitLength() => GetByteCount();
-    public bool TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => ((BigInteger)this).TryWriteBytes(destination, out bytesWritten, false, true);
-    public bool TryWriteLittleEndian(Span<byte> destination, out int bytesWritten) => ((BigInteger)this).TryWriteBytes(destination, out bytesWritten, false, false);
+    int IBinaryInteger<BigInt>.GetByteCount() => GetByteCount();
+    int IBinaryInteger<BigInt>.GetShortestBitLength() => GetByteCount();
+    bool IBinaryInteger<BigInt>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten)
+      => TryWriteBytes(destination, out bytesWritten, false, true);
+    bool IBinaryInteger<BigInt>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten)
+      => TryWriteBytes(destination, out bytesWritten, false, false);
 
     public static bool IsPow2(BigInt value) => value.IsPowerOfTwo;
-    public static BigInt Log2(BigInt value)
+    public static BigInt Log2(BigInt value) //todo: check general Log2(0), ILog2(0) behavior
     {
       if (value.Sign < 0) throw new ArgumentOutOfRangeException(nameof(value));
       return BigRational.ILog2(value.p);
     }
-    public static bool IsCanonical(BigInt value) => true;
-    public static bool IsComplexNumber(BigInt value) => false;
+
     public static bool IsEvenInteger(BigInt value) => value.IsEven;
-    public static bool IsFinite(BigInt value) => false;
-    public static bool IsImaginaryNumber(BigInt value) => false;
-    public static bool IsInfinity(BigInt value) => false;
-    public static bool IsInteger(BigInt value) => true;
-    public static bool IsNaN(BigInt value) => false;
     public static bool IsNegative(BigInt value) => value.Sign < 0;
-    public static bool IsNegativeInfinity(BigInt value) => false;
-    public static bool IsNormal(BigInt value) => true;
     public static bool IsOddInteger(BigInt value) => value.IsEven;
     public static bool IsPositive(BigInt value) => value.Sign > 0;
-    public static bool IsPositiveInfinity(BigInt value) => false;
-    public static bool IsRealNumber(BigInt value) => true;
-    public static bool IsSubnormal(BigInt value) => false;
+    static bool INumberBase<BigInt>.IsCanonical(BigInt value) => true;
+    static bool INumberBase<BigInt>.IsComplexNumber(BigInt value) => false;
+    static bool INumberBase<BigInt>.IsZero(BigInt value) => value.IsZero;
+    static bool INumberBase<BigInt>.IsFinite(BigInt value) => false;
+    static bool INumberBase<BigInt>.IsImaginaryNumber(BigInt value) => false;
+    static bool INumberBase<BigInt>.IsInfinity(BigInt value) => false;
+    static bool INumberBase<BigInt>.IsInteger(BigInt value) => true;
+    static bool INumberBase<BigInt>.IsNaN(BigInt value) => false;
+    static bool INumberBase<BigInt>.IsNegativeInfinity(BigInt value) => false;
+    static bool INumberBase<BigInt>.IsNormal(BigInt value) => value.Sign != 0; //NET7 BigInteger nonsense
+    static bool INumberBase<BigInt>.IsPositiveInfinity(BigInt value) => false;
+    static bool INumberBase<BigInt>.IsRealNumber(BigInt value) => true;
+    static bool INumberBase<BigInt>.IsSubnormal(BigInt value) => false;
+    static BigInt INumberBase<BigInt>.MaxMagnitudeNumber(BigInt x, BigInt y) => new BigInt(BigRational.MaxMagnitudeNumber(x.p, y.p));
+    static BigInt INumberBase<BigInt>.MinMagnitudeNumber(BigInt x, BigInt y) => new BigInt(BigRational.MinMagnitudeNumber(x.p, y.p));
     public static BigInt MaxMagnitude(BigInt x, BigInt y) => new BigInt(BigRational.MaxMagnitude(x.p, y.p));
-    public static BigInt MaxMagnitudeNumber(BigInt x, BigInt y) => new BigInt(BigRational.MaxMagnitudeNumber(x.p, y.p));
     public static BigInt MinMagnitude(BigInt x, BigInt y) => new BigInt(BigRational.MinMagnitude(x.p, y.p));
-    public static BigInt MinMagnitudeNumber(BigInt x, BigInt y) => new BigInt(BigRational.MinMagnitudeNumber(x.p, y.p));
+
+    static int INumber<BigInt>.Sign(BigInt value) => Sign(value);
+    static BigInt INumber<BigInt>.MaxNumber(BigInt x, BigInt y) => Max(x, y);
+    static BigInt INumber<BigInt>.MinNumber(BigInt x, BigInt y) => Min(x, y);
 
     public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out BigInt result) => TryParse(s.AsSpan(), style, provider, out result);
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out BigInt result) => TryParse(s.AsSpan(), NumberStyles.Integer, provider, out result);
@@ -329,7 +364,6 @@ namespace System.Numerics.Rational
       result = new BigInt(r); return true;
     }
 
-    static bool INumberBase<BigInt>.IsZero(BigInt value) => value.IsZero;
     static bool INumberBase<BigInt>.TryConvertFromChecked<T>(T value, out BigInt result)
     {
       static bool f<R>(T v, out R result) where R : INumberBase<R> => R.TryConvertFromChecked(v, out result!);

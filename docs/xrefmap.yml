@@ -193,18 +193,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.AcosPi
   fullName: System.Numerics.BigRational.AcosPi
   nameWithType: BigRational.AcosPi
-- uid: System.Numerics.BigRational.AdditiveIdentity
-  name: AdditiveIdentity
-  href: api/System.Numerics.BigRational.AdditiveIdentity.html#System_Numerics_BigRational_AdditiveIdentity
-  commentId: P:System.Numerics.BigRational.AdditiveIdentity
-  fullName: System.Numerics.BigRational.AdditiveIdentity
-  nameWithType: BigRational.AdditiveIdentity
-- uid: System.Numerics.BigRational.AdditiveIdentity*
-  name: AdditiveIdentity
-  href: api/System.Numerics.BigRational.AdditiveIdentity.html
-  commentId: Overload:System.Numerics.BigRational.AdditiveIdentity
-  fullName: System.Numerics.BigRational.AdditiveIdentity
-  nameWithType: BigRational.AdditiveIdentity
 - uid: System.Numerics.BigRational.Asin(System.Numerics.BigRational)
   name: Asin(BigRational)
   href: api/System.Numerics.BigRational.Asin.html#System_Numerics_BigRational_Asin_System_Numerics_BigRational_
@@ -1630,78 +1618,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.IMod
   fullName: System.Numerics.BigRational.IMod
   nameWithType: BigRational.IMod
-- uid: System.Numerics.BigRational.IsCanonical(System.Numerics.BigRational)
-  name: IsCanonical(BigRational)
-  href: api/System.Numerics.BigRational.IsCanonical.html#System_Numerics_BigRational_IsCanonical_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsCanonical(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsCanonical(System.Numerics.BigRational)
-  nameWithType: BigRational.IsCanonical(BigRational)
-- uid: System.Numerics.BigRational.IsCanonical*
-  name: IsCanonical
-  href: api/System.Numerics.BigRational.IsCanonical.html
-  commentId: Overload:System.Numerics.BigRational.IsCanonical
-  fullName: System.Numerics.BigRational.IsCanonical
-  nameWithType: BigRational.IsCanonical
-- uid: System.Numerics.BigRational.IsComplexNumber(System.Numerics.BigRational)
-  name: IsComplexNumber(BigRational)
-  href: api/System.Numerics.BigRational.IsComplexNumber.html#System_Numerics_BigRational_IsComplexNumber_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsComplexNumber(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsComplexNumber(System.Numerics.BigRational)
-  nameWithType: BigRational.IsComplexNumber(BigRational)
-- uid: System.Numerics.BigRational.IsComplexNumber*
-  name: IsComplexNumber
-  href: api/System.Numerics.BigRational.IsComplexNumber.html
-  commentId: Overload:System.Numerics.BigRational.IsComplexNumber
-  fullName: System.Numerics.BigRational.IsComplexNumber
-  nameWithType: BigRational.IsComplexNumber
-- uid: System.Numerics.BigRational.IsEvenInteger(System.Numerics.BigRational)
-  name: IsEvenInteger(BigRational)
-  href: api/System.Numerics.BigRational.IsEvenInteger.html#System_Numerics_BigRational_IsEvenInteger_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsEvenInteger(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsEvenInteger(System.Numerics.BigRational)
-  nameWithType: BigRational.IsEvenInteger(BigRational)
-- uid: System.Numerics.BigRational.IsEvenInteger*
-  name: IsEvenInteger
-  href: api/System.Numerics.BigRational.IsEvenInteger.html
-  commentId: Overload:System.Numerics.BigRational.IsEvenInteger
-  fullName: System.Numerics.BigRational.IsEvenInteger
-  nameWithType: BigRational.IsEvenInteger
-- uid: System.Numerics.BigRational.IsFinite(System.Numerics.BigRational)
-  name: IsFinite(BigRational)
-  href: api/System.Numerics.BigRational.IsFinite.html#System_Numerics_BigRational_IsFinite_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsFinite(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsFinite(System.Numerics.BigRational)
-  nameWithType: BigRational.IsFinite(BigRational)
-- uid: System.Numerics.BigRational.IsFinite*
-  name: IsFinite
-  href: api/System.Numerics.BigRational.IsFinite.html
-  commentId: Overload:System.Numerics.BigRational.IsFinite
-  fullName: System.Numerics.BigRational.IsFinite
-  nameWithType: BigRational.IsFinite
-- uid: System.Numerics.BigRational.IsImaginaryNumber(System.Numerics.BigRational)
-  name: IsImaginaryNumber(BigRational)
-  href: api/System.Numerics.BigRational.IsImaginaryNumber.html#System_Numerics_BigRational_IsImaginaryNumber_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsImaginaryNumber(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsImaginaryNumber(System.Numerics.BigRational)
-  nameWithType: BigRational.IsImaginaryNumber(BigRational)
-- uid: System.Numerics.BigRational.IsImaginaryNumber*
-  name: IsImaginaryNumber
-  href: api/System.Numerics.BigRational.IsImaginaryNumber.html
-  commentId: Overload:System.Numerics.BigRational.IsImaginaryNumber
-  fullName: System.Numerics.BigRational.IsImaginaryNumber
-  nameWithType: BigRational.IsImaginaryNumber
-- uid: System.Numerics.BigRational.IsInfinity(System.Numerics.BigRational)
-  name: IsInfinity(BigRational)
-  href: api/System.Numerics.BigRational.IsInfinity.html#System_Numerics_BigRational_IsInfinity_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsInfinity(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsInfinity(System.Numerics.BigRational)
-  nameWithType: BigRational.IsInfinity(BigRational)
-- uid: System.Numerics.BigRational.IsInfinity*
-  name: IsInfinity
-  href: api/System.Numerics.BigRational.IsInfinity.html
-  commentId: Overload:System.Numerics.BigRational.IsInfinity
-  fullName: System.Numerics.BigRational.IsInfinity
-  nameWithType: BigRational.IsInfinity
 - uid: System.Numerics.BigRational.IsInteger(System.Numerics.BigRational)
   name: IsInteger(BigRational)
   href: api/System.Numerics.BigRational.IsInteger.html#System_Numerics_BigRational_IsInteger_System_Numerics_BigRational_
@@ -1726,114 +1642,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.IsNaN
   fullName: System.Numerics.BigRational.IsNaN
   nameWithType: BigRational.IsNaN
-- uid: System.Numerics.BigRational.IsNegative(System.Numerics.BigRational)
-  name: IsNegative(BigRational)
-  href: api/System.Numerics.BigRational.IsNegative.html#System_Numerics_BigRational_IsNegative_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsNegative(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsNegative(System.Numerics.BigRational)
-  nameWithType: BigRational.IsNegative(BigRational)
-- uid: System.Numerics.BigRational.IsNegative*
-  name: IsNegative
-  href: api/System.Numerics.BigRational.IsNegative.html
-  commentId: Overload:System.Numerics.BigRational.IsNegative
-  fullName: System.Numerics.BigRational.IsNegative
-  nameWithType: BigRational.IsNegative
-- uid: System.Numerics.BigRational.IsNegativeInfinity(System.Numerics.BigRational)
-  name: IsNegativeInfinity(BigRational)
-  href: api/System.Numerics.BigRational.IsNegativeInfinity.html#System_Numerics_BigRational_IsNegativeInfinity_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsNegativeInfinity(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsNegativeInfinity(System.Numerics.BigRational)
-  nameWithType: BigRational.IsNegativeInfinity(BigRational)
-- uid: System.Numerics.BigRational.IsNegativeInfinity*
-  name: IsNegativeInfinity
-  href: api/System.Numerics.BigRational.IsNegativeInfinity.html
-  commentId: Overload:System.Numerics.BigRational.IsNegativeInfinity
-  fullName: System.Numerics.BigRational.IsNegativeInfinity
-  nameWithType: BigRational.IsNegativeInfinity
-- uid: System.Numerics.BigRational.IsNormal(System.Numerics.BigRational)
-  name: IsNormal(BigRational)
-  href: api/System.Numerics.BigRational.IsNormal.html#System_Numerics_BigRational_IsNormal_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsNormal(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsNormal(System.Numerics.BigRational)
-  nameWithType: BigRational.IsNormal(BigRational)
-- uid: System.Numerics.BigRational.IsNormal*
-  name: IsNormal
-  href: api/System.Numerics.BigRational.IsNormal.html
-  commentId: Overload:System.Numerics.BigRational.IsNormal
-  fullName: System.Numerics.BigRational.IsNormal
-  nameWithType: BigRational.IsNormal
-- uid: System.Numerics.BigRational.IsOddInteger(System.Numerics.BigRational)
-  name: IsOddInteger(BigRational)
-  href: api/System.Numerics.BigRational.IsOddInteger.html#System_Numerics_BigRational_IsOddInteger_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsOddInteger(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsOddInteger(System.Numerics.BigRational)
-  nameWithType: BigRational.IsOddInteger(BigRational)
-- uid: System.Numerics.BigRational.IsOddInteger*
-  name: IsOddInteger
-  href: api/System.Numerics.BigRational.IsOddInteger.html
-  commentId: Overload:System.Numerics.BigRational.IsOddInteger
-  fullName: System.Numerics.BigRational.IsOddInteger
-  nameWithType: BigRational.IsOddInteger
-- uid: System.Numerics.BigRational.IsPositive(System.Numerics.BigRational)
-  name: IsPositive(BigRational)
-  href: api/System.Numerics.BigRational.IsPositive.html#System_Numerics_BigRational_IsPositive_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsPositive(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsPositive(System.Numerics.BigRational)
-  nameWithType: BigRational.IsPositive(BigRational)
-- uid: System.Numerics.BigRational.IsPositive*
-  name: IsPositive
-  href: api/System.Numerics.BigRational.IsPositive.html
-  commentId: Overload:System.Numerics.BigRational.IsPositive
-  fullName: System.Numerics.BigRational.IsPositive
-  nameWithType: BigRational.IsPositive
-- uid: System.Numerics.BigRational.IsPositiveInfinity(System.Numerics.BigRational)
-  name: IsPositiveInfinity(BigRational)
-  href: api/System.Numerics.BigRational.IsPositiveInfinity.html#System_Numerics_BigRational_IsPositiveInfinity_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsPositiveInfinity(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsPositiveInfinity(System.Numerics.BigRational)
-  nameWithType: BigRational.IsPositiveInfinity(BigRational)
-- uid: System.Numerics.BigRational.IsPositiveInfinity*
-  name: IsPositiveInfinity
-  href: api/System.Numerics.BigRational.IsPositiveInfinity.html
-  commentId: Overload:System.Numerics.BigRational.IsPositiveInfinity
-  fullName: System.Numerics.BigRational.IsPositiveInfinity
-  nameWithType: BigRational.IsPositiveInfinity
-- uid: System.Numerics.BigRational.IsRealNumber(System.Numerics.BigRational)
-  name: IsRealNumber(BigRational)
-  href: api/System.Numerics.BigRational.IsRealNumber.html#System_Numerics_BigRational_IsRealNumber_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsRealNumber(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsRealNumber(System.Numerics.BigRational)
-  nameWithType: BigRational.IsRealNumber(BigRational)
-- uid: System.Numerics.BigRational.IsRealNumber*
-  name: IsRealNumber
-  href: api/System.Numerics.BigRational.IsRealNumber.html
-  commentId: Overload:System.Numerics.BigRational.IsRealNumber
-  fullName: System.Numerics.BigRational.IsRealNumber
-  nameWithType: BigRational.IsRealNumber
-- uid: System.Numerics.BigRational.IsSubnormal(System.Numerics.BigRational)
-  name: IsSubnormal(BigRational)
-  href: api/System.Numerics.BigRational.IsSubnormal.html#System_Numerics_BigRational_IsSubnormal_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsSubnormal(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsSubnormal(System.Numerics.BigRational)
-  nameWithType: BigRational.IsSubnormal(BigRational)
-- uid: System.Numerics.BigRational.IsSubnormal*
-  name: IsSubnormal
-  href: api/System.Numerics.BigRational.IsSubnormal.html
-  commentId: Overload:System.Numerics.BigRational.IsSubnormal
-  fullName: System.Numerics.BigRational.IsSubnormal
-  nameWithType: BigRational.IsSubnormal
-- uid: System.Numerics.BigRational.IsZero(System.Numerics.BigRational)
-  name: IsZero(BigRational)
-  href: api/System.Numerics.BigRational.IsZero.html#System_Numerics_BigRational_IsZero_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IsZero(System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IsZero(System.Numerics.BigRational)
-  nameWithType: BigRational.IsZero(BigRational)
-- uid: System.Numerics.BigRational.IsZero*
-  name: IsZero
-  href: api/System.Numerics.BigRational.IsZero.html
-  commentId: Overload:System.Numerics.BigRational.IsZero
-  fullName: System.Numerics.BigRational.IsZero
-  nameWithType: BigRational.IsZero
 - uid: System.Numerics.BigRational.LeastCommonMultiple(System.Numerics.BigRational,System.Numerics.BigRational)
   name: LeastCommonMultiple(BigRational, BigRational)
   href: api/System.Numerics.BigRational.LeastCommonMultiple.html#System_Numerics_BigRational_LeastCommonMultiple_System_Numerics_BigRational_System_Numerics_BigRational_
@@ -2026,30 +1834,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.MinMagnitudeNumber
   fullName: System.Numerics.BigRational.MinMagnitudeNumber
   nameWithType: BigRational.MinMagnitudeNumber
-- uid: System.Numerics.BigRational.MultiplicativeIdentity
-  name: MultiplicativeIdentity
-  href: api/System.Numerics.BigRational.MultiplicativeIdentity.html#System_Numerics_BigRational_MultiplicativeIdentity
-  commentId: P:System.Numerics.BigRational.MultiplicativeIdentity
-  fullName: System.Numerics.BigRational.MultiplicativeIdentity
-  nameWithType: BigRational.MultiplicativeIdentity
-- uid: System.Numerics.BigRational.MultiplicativeIdentity*
-  name: MultiplicativeIdentity
-  href: api/System.Numerics.BigRational.MultiplicativeIdentity.html
-  commentId: Overload:System.Numerics.BigRational.MultiplicativeIdentity
-  fullName: System.Numerics.BigRational.MultiplicativeIdentity
-  nameWithType: BigRational.MultiplicativeIdentity
-- uid: System.Numerics.BigRational.NegativeOne
-  name: NegativeOne
-  href: api/System.Numerics.BigRational.NegativeOne.html#System_Numerics_BigRational_NegativeOne
-  commentId: P:System.Numerics.BigRational.NegativeOne
-  fullName: System.Numerics.BigRational.NegativeOne
-  nameWithType: BigRational.NegativeOne
-- uid: System.Numerics.BigRational.NegativeOne*
-  name: NegativeOne
-  href: api/System.Numerics.BigRational.NegativeOne.html
-  commentId: Overload:System.Numerics.BigRational.NegativeOne
-  fullName: System.Numerics.BigRational.NegativeOne
-  nameWithType: BigRational.NegativeOne
 - uid: System.Numerics.BigRational.NumDen(System.Numerics.BigRational,System.Numerics.BigRational@)
   name: NumDen(BigRational, out BigRational)
   href: api/System.Numerics.BigRational.NumDen.html#System_Numerics_BigRational_NumDen_System_Numerics_BigRational_System_Numerics_BigRational__
@@ -2065,18 +1849,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.NumDen
   fullName: System.Numerics.BigRational.NumDen
   nameWithType: BigRational.NumDen
-- uid: System.Numerics.BigRational.One
-  name: One
-  href: api/System.Numerics.BigRational.One.html#System_Numerics_BigRational_One
-  commentId: P:System.Numerics.BigRational.One
-  fullName: System.Numerics.BigRational.One
-  nameWithType: BigRational.One
-- uid: System.Numerics.BigRational.One*
-  name: One
-  href: api/System.Numerics.BigRational.One.html
-  commentId: Overload:System.Numerics.BigRational.One
-  fullName: System.Numerics.BigRational.One
-  nameWithType: BigRational.One
 - uid: System.Numerics.BigRational.op_Addition(System.Int64,System.Numerics.BigRational)
   name: Addition(Int64, BigRational)
   href: api/System.Numerics.BigRational.op_Addition.html#System_Numerics_BigRational_op_Addition_System_Int64_System_Numerics_BigRational_
@@ -2851,18 +2623,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.Pow2
   fullName: System.Numerics.BigRational.Pow2
   nameWithType: BigRational.Pow2
-- uid: System.Numerics.BigRational.Radix
-  name: Radix
-  href: api/System.Numerics.BigRational.Radix.html#System_Numerics_BigRational_Radix
-  commentId: P:System.Numerics.BigRational.Radix
-  fullName: System.Numerics.BigRational.Radix
-  nameWithType: BigRational.Radix
-- uid: System.Numerics.BigRational.Radix*
-  name: Radix
-  href: api/System.Numerics.BigRational.Radix.html
-  commentId: Overload:System.Numerics.BigRational.Radix
-  fullName: System.Numerics.BigRational.Radix
-  nameWithType: BigRational.Radix
 - uid: System.Numerics.BigRational.ReadFromBytes(System.ReadOnlySpan{System.Byte}@)
   name: ReadFromBytes(ref ReadOnlySpan<Byte>)
   href: api/System.Numerics.BigRational.ReadFromBytes.html#System_Numerics_BigRational_ReadFromBytes_System_ReadOnlySpan_System_Byte___
@@ -4132,15 +3892,3 @@ references:
   commentId: Overload:System.Numerics.BigRational.WriteToBytes
   fullName: System.Numerics.BigRational.WriteToBytes
   nameWithType: BigRational.WriteToBytes
-- uid: System.Numerics.BigRational.Zero
-  name: Zero
-  href: api/System.Numerics.BigRational.Zero.html#System_Numerics_BigRational_Zero
-  commentId: P:System.Numerics.BigRational.Zero
-  fullName: System.Numerics.BigRational.Zero
-  nameWithType: BigRational.Zero
-- uid: System.Numerics.BigRational.Zero*
-  name: Zero
-  href: api/System.Numerics.BigRational.Zero.html
-  commentId: Overload:System.Numerics.BigRational.Zero
-  fullName: System.Numerics.BigRational.Zero
-  nameWithType: BigRational.Zero

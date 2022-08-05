@@ -158,7 +158,7 @@ namespace System.Numerics.Rational
     readonly object[] funcs;
     public BigIntegerBuilder3(string script)
     {
-      var t1 = BigInteger.One; var t2 = BigRational.One; // to speed up compilation, ensure assemblys are loaded 
+      var t1 = BigInteger.One; var t2 = BigRational.MaxDigits; // to speed up compilation, ensure assemblys are loaded 
       var expr = ExpressionsCompiler.Compile(script);
       var ctor = expr.Compile();
       funcs = ctor(null); // simple static, single instance, could be compiled as BigIntegerBuilder3 extension with much more possebilities

@@ -638,11 +638,10 @@ namespace System.Numerics
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static BigRational GreatestCommonDivisor(BigRational a, BigRational b)
+    public static BigRational GreatestCommonDivisor(BigRational a, BigRational b) //todo: -> BigInt
     {
       var cpu = main_cpu; cpu.push(a); cpu.push(b);
-      cpu.gcd(); //cpu.pop(); return default;
-      return cpu.popr();
+      cpu.gcd(); return cpu.popr();
     }
     /// <summary>
     /// Finds the least common multiple (LCM) of two <see cref="BigRational"/> integer values.
@@ -653,7 +652,7 @@ namespace System.Numerics
     /// <param name="a">The first value.</param>
     /// <param name="b">The second value.</param>
     /// <returns>The least common multiple of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static BigRational LeastCommonMultiple(BigRational a, BigRational b)
+    public static BigRational LeastCommonMultiple(BigRational a, BigRational b) //todo: -> BigInt
     {
       //|a * b| / gcd(a, b) == |a / gcd(a, b) * b| 
       var cpu = main_cpu; cpu.push(a); cpu.push(b);
@@ -670,13 +669,10 @@ namespace System.Numerics
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
     /// <returns>A <see cref="BigRational "/> integer value. NaN when divided by zero.</returns>
-    // /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational IDiv(BigRational a, BigRational b)
     {
-      //if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = main_cpu;
-      cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
-      //cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop(); return cpu.popr();
+      //var cpu = main_cpu; cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop(); return cpu.popr();
+      var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
     }
     /// <summary>
     /// Performes an integer modulo operation <paramref name="a"/> % <paramref name="b"/> what is the remainder that results from a division.
@@ -688,13 +684,10 @@ namespace System.Numerics
     /// This in contrast to <paramref name="a"/> % <paramref name="b"/>, where for <see cref="BigInteger"/> a corresponding fraction results.
     /// </remarks>
     /// <returns>A <see cref="BigRational "/> integer value. NaN when divided by zero.</returns>
-    // /// <exception cref="DivideByZeroException"><see cref="DivideByZeroException"/>: <paramref name="b"/> is zero.</exception>
     public static BigRational IMod(BigRational a, BigRational b)
     {
-      if (BigRational.Sign(b) == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = main_cpu; //cpu.push(a); cpu.push(b); cpu.imod(); var c = cpu.popr(); return c;
-      cpu.div(b, b); cpu.mod(); cpu.pop();
-      return cpu.popr();
+      //var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.div(b, b); cpu.mod(); cpu.pop(); return cpu.popr();
+      var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.imod(); return cpu.popr();
     }
     /// <summary>
     /// Calculates the quotient of two <see cref="BigRational"/> signed values and also returns the remainder in an output parameter.

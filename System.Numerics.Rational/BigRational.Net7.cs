@@ -18,111 +18,38 @@ namespace System.Numerics
     ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational> //IFloatingPointConstants<BigRational>
   {
     // INumberBase 
-    /// <summary>Gets the radix, or base, for the type.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static int Radix => 1; //todo: Radix for rational?
-    /// <summary>Gets the value <c>0</c> for the type.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational Zero => default;
-    /// <summary>Gets the value <c>1</c> for the type.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational One => 1u;
-    /// <summary>Represents the number negative one (-1).</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational NegativeOne => -1;
-    // IAdditiveIdentity
-    /// <summary>Gets the additive identity of the current type.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational AdditiveIdentity => default;
-    // IMultiplicativeIdentity
-    /// <summary>Gets the multiplicative identity of the current type.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] public static BigRational MultiplicativeIdentity => 1u;
+    static int INumberBase<BigRational>.Radix => 1; //todo: Radix for rational?
+    static BigRational INumberBase<BigRational>.Zero => default;
+    static BigRational INumberBase<BigRational>.One => 1u;
+    static BigRational ISignedNumber<BigRational>.NegativeOne => -1;
+    static BigRational IAdditiveIdentity<BigRational, BigRational>.AdditiveIdentity => default;
+    static BigRational IMultiplicativeIdentity<BigRational, BigRational>.MultiplicativeIdentity => 1u;
 
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); //use MaxDigits
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); //use MaxDigits 
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); //use MaxDigits
+    static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); //use MaxDigits
+    static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); //use MaxDigits 
+    static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); //use MaxDigits
 
-    /// <summary>Determines if a value is zero.</summary>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is zero; otherwise, <c>false</c>.</returns>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    public static bool IsZero(BigRational value) => value.p == null;
-    /// <summary>Determines whether the specified value is negative.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    public static bool IsNegative(BigRational value) => Sign(value) < 0;
-    /// <summary>Determines if a value is positive.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is positive; otherwise, <c>false</c>.</returns>
-    public static bool IsPositive(BigRational value) => Sign(value) > 0;
-    /// <summary>Determines if a value represents an even integral value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is an even integer; otherwise, <c>false</c>.</returns>
-    public static bool IsEvenInteger(BigRational value)
+    static bool INumberBase<BigRational>.IsZero(BigRational value) => value.p == null;
+    static bool INumberBase<BigRational>.IsNegative(BigRational value) => Sign(value) < 0;
+    static bool INumberBase<BigRational>.IsPositive(BigRational value) => Sign(value) > 0;
+    static bool INumberBase<BigRational>.IsEvenInteger(BigRational value)
     {
       return value.p == null || IsInteger(value) && (value.p[1] & 1) == 0;
     }
-    /// <summary>Determines if a value represents an odd integral value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is an odd integer; otherwise, <c>false</c>.</returns>
-    public static bool IsOddInteger(BigRational value)
+    static bool INumberBase<BigRational>.IsOddInteger(BigRational value)
     {
       return value.p != null && IsInteger(value) && (value.p[1] & 1) == 1;
     }
-    /// <summary>Determines if a value is in its canonical representation.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is in its canonical representation; otherwise, <c>false</c>.</returns>
-    public static bool IsCanonical(BigRational value) => true;
-    /// <summary>Determines if a value represents a complex value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is a complex number; otherwise, <c>false</c>.</returns>
-    /// <remarks>This function returns <c>false</c> for a complex number <c>a + bi</c> where <c>b</c> is zero.</remarks>
-    public static bool IsComplexNumber(BigRational value) => true;
-    /// <summary>Determines if a value is finite.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is finite; otherwise, <c>false</c>.</returns>
-    public static bool IsFinite(BigRational value) => !IsNaN(value);
-    /// <summary>Determines if a value represents an imaginary value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is an imaginary number; otherwise, <c>false</c>.</returns>
-    public static bool IsImaginaryNumber(BigRational value) => false;
-    /// <summary>Determines if a value is infinite.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is infinite; otherwise, <c>false</c>.</returns>
-    public static bool IsInfinity(BigRational value) => false;
-    /// <summary>Determines if a value is negative infinity.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is negative infinity; otherwise, <c>false</c>.</returns>
-    public static bool IsNegativeInfinity(BigRational value) => false;
-    /// <summary>Determines if a value is positive infinity.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is positive infinity; otherwise, <c>false</c>.</returns>
-    public static bool IsPositiveInfinity(BigRational value) => false;
-    /// <summary>Determines if a value represents a real value.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is a real number; otherwise, <c>false</c>.</returns>
-    public static bool IsRealNumber(BigRational value) => true;
-    /// <summary>Determines if a value is normal.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is normal; otherwise, <c>false</c>.</returns>
-    public static bool IsNormal(BigRational value) => true;
-    /// <summary>Determines if a value is subnormal.</summary>
-    /// <remarks>Part of the new NET 7 number type system.</remarks>
-    /// <param name="value">The value to be checked.</param>
-    /// <returns><c>true</c> if <paramref name="value" /> is subnormal; otherwise, <c>false</c>.</returns>
-    public static bool IsSubnormal(BigRational value) => false;
+    static bool INumberBase<BigRational>.IsCanonical(BigRational value) => true;
+    static bool INumberBase<BigRational>.IsComplexNumber(BigRational value) => false;
+    static bool INumberBase<BigRational>.IsFinite(BigRational value) => !IsNaN(value);
+    static bool INumberBase<BigRational>.IsImaginaryNumber(BigRational value) => false;
+    static bool INumberBase<BigRational>.IsInfinity(BigRational value) => false;
+    static bool INumberBase<BigRational>.IsNegativeInfinity(BigRational value) => false;
+    static bool INumberBase<BigRational>.IsPositiveInfinity(BigRational value) => false;
+    static bool INumberBase<BigRational>.IsRealNumber(BigRational value) => true;
+    static bool INumberBase<BigRational>.IsNormal(BigRational value) => true;
+    static bool INumberBase<BigRational>.IsSubnormal(BigRational value) => false;
 
     //INumber
     /// <summary>Clamps a value to an inclusive minimum and maximum value.</summary>

@@ -16,7 +16,7 @@ namespace System.Numerics.Rational
   /// </remarks>
   public readonly partial struct BigFloat : IComparable, IComparable<BigFloat>, IEquatable<BigFloat>, IFormattable
   {
-    public override readonly string ToString() => p.ToString("L1000");
+    public override readonly string ToString() => p.ToString();
     public readonly string ToString(string? format, IFormatProvider? formatProvider) => p.ToString(format, formatProvider);
     public override readonly int GetHashCode() => p.GetHashCode();
     public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);

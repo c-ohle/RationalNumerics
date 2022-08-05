@@ -459,6 +459,28 @@ namespace System.Numerics
       /// <param name="b">A relative index of a stack entry.</param>
       public void div(BigRational a, int b) => p.div(a, b);
       /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to integer result.
+      /// </remarks>
+      public void idiv() => p.idiv();
+      /// <summary>
+      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
+      /// and replaces them with the integral result.
+      /// </summary>
+      /// <remarks>
+      /// Divides a / b where b is the value on top of the stack.<br/>
+      /// This is a integer division with always non-farctional integer results.<br/>
+      /// When calculating with integers and integer results are required,<br/>
+      /// this operation is faster than dividing and then rounding to integer result.<br/>
+      /// </remarks>
+      public void imod() => p.imod();
+      /// <summary>
       /// Squares the value at index <paramref name="a"/> relative to the top of the stack.<br/>
       /// Default index 0 squares the value on top of the stack.
       /// </summary>
@@ -911,30 +933,6 @@ namespace System.Numerics
       /// More precisely, the operation does not destroy anything. The current CPU instance can continue to be used. But the GC can collect them later when there are no more references to them.
       /// </remarks>
       public void free() => p.free();
-      #region NET7 INumber experimental
-      /// <summary>
-      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      /// and replaces them with the integral result.
-      /// </summary>
-      /// <remarks>
-      /// Divides a / b where b is the value on top of the stack.<br/>
-      /// This is a integer division with always non-farctional integer results.<br/>
-      /// When calculating with integers and integer results are required,<br/>
-      /// this operation is faster than dividing and then rounding to integer result.
-      /// </remarks>
-      public void idiv() => p.idiv();
-      /// <summary>
-      /// Performs an integer division of the numerators of the first two values on top of the stack<br/> 
-      /// and replaces them with the integral result.
-      /// </summary>
-      /// <remarks>
-      /// Divides a / b where b is the value on top of the stack.<br/>
-      /// This is a integer division with always non-farctional integer results.<br/>
-      /// When calculating with integers and integer results are required,<br/>
-      /// this operation is faster than dividing and then rounding to integer result.<br/>
-      /// </remarks>
-      public void imod() => p.imod();
-      #endregion
     }
 
     /// <summary>
