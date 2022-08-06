@@ -933,6 +933,25 @@ namespace System.Numerics
       /// More precisely, the operation does not destroy anything. The current CPU instance can continue to be used. But the GC can collect them later when there are no more references to them.
       /// </remarks>
       public void free() => p.free();
+
+      /// <summary>
+      /// Increments the value on top of the stack.
+      /// </summary>
+      public void inc() => p.inc();
+      /// <summary>
+      /// Decrements the value on top of the stack.
+      /// </summary>
+      public void dec() => p.dec();
+      /// <summary>
+      /// Converts an integer value on top of the stack to its two's complement and vice versa.
+      /// </summary>
+      /// <remarks>
+      /// Negative signed integer values are converted to it's unsigned variant.<br/>
+      /// Positive unsigned integers are converted to it' signed variant.<br/>
+      /// Parameter <paramref name="c"/> defines a integer type size in bytes.
+      /// </remarks>
+      /// <param name="c">Integer type size in bytes.</param>
+      public void toc(uint c) => p.toc(c);
     }
 
     /// <summary>

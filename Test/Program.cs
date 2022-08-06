@@ -15,11 +15,141 @@ namespace Test
       Application.Run(new MainFrame());
     }
 
-#if NET7_0
+#if false //NET7_0
 
     static void test()
     {
-      BigInteger a, aa; BigInt b, bb; BigRational u, v; double d;
+      BigInteger a, aa; BigInt b, bb; BigRational u; int j, jj; long l; Int128 I; UInt128 U; double d;
+
+      var rnd = new Random(13); l = 0;
+      for (int i = 0; i < 100000; i++)
+      {
+        int k = rnd.Next(), s = 100 - rnd.Next(200);
+        a = k; aa = a >> s;
+        b = k; bb = b >> s; Debug.Assert(aa == bb);
+        a = -k; aa = a >> s; //j = -k; jj = j >> s;
+        b = -k; bb = b >> s; Debug.Assert(aa == bb);
+        a = k; aa = a >>> s;
+        b = k; bb = b >>> s; Debug.Assert(aa == bb);
+        a = -k; aa = a >>> s; //j = -k; jj = j >>> s;
+        b = -k; bb = b >>> s; Debug.Assert(aa == bb);
+      }
+      rnd = new Random(13); l = 0;
+      for (int i = 0; i < 100000; i++)
+      {
+        long k = (long)rnd.Next() | ((long)rnd.Next() << 32); int s = 100 - rnd.Next(200);
+        a = k; aa = a >> s;
+        b = k; bb = b >> s; Debug.Assert(aa == bb);
+        a = -k; aa = a >> s;  
+        b = -k; bb = b >> s; Debug.Assert(aa == bb);
+        a = k; aa = a >>> s;
+        b = k; bb = b >>> s; Debug.Assert(aa == bb);
+        a = -k; aa = a >>> s; 
+        b = -k; bb = b >>> s; //Debug.Assert(aa == bb);
+      }
+
+      var cpu = rat.task_cpu; string s1, s2;
+
+      I = -123;
+      U = (uint)I; cpu.push(I); cpu.toc(4); cpu.toc(4); b = (BigInt)cpu.popr(); Debug.Assert(b == I);
+      U = (ulong)I; cpu.push(I); cpu.toc(8); cpu.toc(8); b = (BigInt)cpu.popr(); Debug.Assert(b == I);
+      U = (ushort)I; cpu.push(I); cpu.toc(2); cpu.toc(2); b = (BigInt)cpu.popr(); Debug.Assert(b == I);
+
+      U = (byte)I; cpu.push(I); cpu.toc(1); b = (BigInt)cpu.popr();  Debug.Assert(b==U);
+      U = (ushort)I; cpu.push(I); cpu.toc(2); b = (BigInt)cpu.popr(); Debug.Assert(b == U);
+      U = (uint)I; cpu.push(I); cpu.toc(4); b = (BigInt)cpu.popr(); Debug.Assert(b == U);
+      U = (ulong)I; cpu.push(I); cpu.toc(8); b = (BigInt)cpu.popr(); Debug.Assert(b == U);
+      U = (UInt128)I; cpu.push(I); cpu.toc(16); b = (BigInt)cpu.popr(); Debug.Assert(b == U);
+
+      if(false)
+      for (I = -123; I > -260; I--)
+      {
+        U = (byte)I; cpu.push(I); cpu.toc(1); b = (BigInt)cpu.popr();
+        s1 = ((byte)I).ToString("X");
+        s2 = b.ToString("X");
+        s1 = ((BigInteger)(byte)I).ToString("X"); Debug.Assert(s1 == s2);
+
+        U = (ushort)I; cpu.push(I); cpu.toc(2); b = (BigInt)cpu.popr();
+        s1 = ((ushort)I).ToString("X");
+        s2 = b.ToString("X");
+        s1 = ((BigInteger)(ushort)I).ToString("X"); Debug.Assert(s1 == s2);
+
+      }
+
+
+      j = -123; l = j; var ui = (uint)j; j = (int)ui; var ul = (ulong)l; l = (long)ul; I = j; U = (UInt128)I;
+      cpu.push(l); cpu.toc(4); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(8); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(16); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(1); b = (BigInt)cpu.popr(); ui = (byte)j;
+      cpu.push(l); cpu.toc(2); b = (BigInt)cpu.popr(); ui = (ushort)j;
+
+      j = -1; l = j; ui = (uint)j; j = (int)ui; ul = (ulong)l; l = (long)ul; I = l; U = (UInt128)I;
+      cpu.push(l); cpu.toc(4); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(8); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(16); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(1); b = (BigInt)cpu.popr(); ui = (byte)j;
+      cpu.push(l); cpu.toc(2); b = (BigInt)cpu.popr(); ui = (ushort)j;
+
+      j = unchecked((int)0xE0012345); l = j; ui = (uint)j; j = (int)ui; ul = (ulong)l; l = (long)ul; I = l; U = (UInt128)I;
+      cpu.push(l); cpu.toc(4); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(8); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(16); b = (BigInt)cpu.popr();
+
+      j = int.MinValue; l = j; ui = (uint)j; j = (int)ui; ul = (ulong)l; l = (long)ul; I = l; U = (UInt128)I;
+      cpu.push(j); cpu.toc(4); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(8); b = (BigInt)cpu.popr();
+      cpu.push(l); cpu.toc(16); b = (BigInt)cpu.popr();
+
+      j = +12345; jj = j >> 3;
+      a = +12345; aa = a >> 3; Debug.Assert(aa == jj);
+      b = +12345; bb = b >> 3; Debug.Assert(bb == jj);
+      j = -12345; jj = j >> 3;
+      a = -12345; aa = a >> 3; Debug.Assert(aa == jj);
+      b = -12345; bb = b >> 3; Debug.Assert(bb == jj); //todo: cpu.toc();   
+
+      j = +12345; jj = j >> 1;
+      a = +12345; aa = a >> 1; Debug.Assert(aa == jj);
+      b = +12345; bb = b >> 1; Debug.Assert(bb == jj);
+      j = -12345; jj = j >> 1;
+      a = -12345; aa = a >> 1; Debug.Assert(aa == jj);
+      b = -12345; bb = b >> 1; Debug.Assert(bb == jj); 
+
+
+      j = +12345; jj = j >> 16;
+      a = +12345; aa = a >> 16; Debug.Assert(aa == jj);
+      b = +12345; bb = b >> 16; Debug.Assert(bb == jj);
+      j = -12345; jj = j >> 16;
+      a = -12345; aa = a >> 16; Debug.Assert(aa == jj);
+      b = -12345; bb = b >> 16; Debug.Assert(bb == jj);
+
+      bb = b >> 0;
+
+      j = +12345; jj = j >>> 3;
+      a = +12345; aa = a >>> 3; Debug.Assert(aa == jj);
+      b = +12345; bb = b >>> 3; Debug.Assert(bb == jj);
+      j = -12345; jj = j >>> 3;
+      a = -12345; aa = a >>> 3; Debug.Assert(aa == jj);
+      b = -12345; bb = b >>> 3; Debug.Assert(bb == jj); //todo: cpu.toc();
+
+      bb = 88;
+
+      b = (BigInt)100 * 10 + bb * 0x9999999999999;
+      b = 0 | (BigInt)100 * 10 + bb * 0x9999999999999;
+
+      var t = bb * 100 == b - 10 - 237790060325163126 + 8800;       //{8800} b - 10 = {237790060325163126}
+      t = (0 | bb * 100) == (0 | b - 10 - 237790060325163126 + 8800);       //{8800} b - 10 = {237790060325163126}
+
+      t = (0 | bb * 100) == (0 | b - 10 - 237790060325163126 + 8800);       //{8800} b - 10 = {237790060325163126}
+
+      var xx = fastcalc(bb, b);
+      xx = 0 | fastcalc(bb, b);
+
+      static BigInt fastcalc(BigInt a, BigInt b)
+      {
+        var t = a * 100 == b - 10 - 237790060325163126 + 8800;
+        return a * b + b * a;
+      }
 
       testx(0x2342424234324234, true);
       testx(0x234242423432, true);
@@ -53,8 +183,7 @@ namespace Test
         var ss = new byte[ns]; b.TryWriteBytes(ss, out var nwb, isUnsigned, isBigEndian);
         Debug.Assert(tt.SequenceEqual(ss));
 
-        var c = new BigInt(ss, isUnsigned, isBigEndian);
-        if (c != b) { }
+        //var c = new BigInt(ss, isUnsigned, isBigEndian); if (c != b) { }
       }
 
       for (int i = -100; i < +100; i++)
@@ -64,13 +193,13 @@ namespace Test
         b = Int128.PopCount(i);
         b = int.PopCount(i);
         b = BigInteger.PopCount(i); bb = b;
-        b = BigInt.PopCount(i); if (bb != b) { }
+        b = BigInt.PopCount(i); Debug.Assert(bb == b);
 
         var k = (i > 0 ? 2L : -2L) * uint.MaxValue + (long)i;
         b = long.PopCount(k);
         b = Int128.PopCount(k); bb = b;
         b = BigInteger.PopCount(k); bb = b;
-        b = BigInt.PopCount(k); if (bb != b) { }
+        b = BigInt.PopCount(k); Debug.Assert(bb == b);
 
       }
 
@@ -81,13 +210,13 @@ namespace Test
         b = int.TrailingZeroCount(i);
         b = long.TrailingZeroCount(i);
         b = Int128.TrailingZeroCount(i); bb = b;
-        b = BigInt.TrailingZeroCount(i); if (bb != b) { }
+        b = BigInt.TrailingZeroCount(i); Debug.Assert(bb == b);
 
         var k = (i > 0 ? 2L : -2L) * uint.MaxValue + (long)i;
         a = BigInteger.TrailingZeroCount(k);
         d = long.TrailingZeroCount(k);
         b = Int128.TrailingZeroCount(k); bb = b;
-        b = BigInt.TrailingZeroCount(k); if (bb != b) { }
+        b = BigInt.TrailingZeroCount(k); Debug.Assert(bb == b);
       }
 
       u = 27;

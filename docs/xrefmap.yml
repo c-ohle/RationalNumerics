@@ -595,6 +595,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.cmpi
   fullName: System.Numerics.BigRational.CPU.cmpi
   nameWithType: BigRational.CPU.cmpi
+- uid: System.Numerics.BigRational.CPU.dec
+  name: dec()
+  href: api/System.Numerics.BigRational.CPU.dec.html#System_Numerics_BigRational_CPU_dec
+  commentId: M:System.Numerics.BigRational.CPU.dec
+  fullName: System.Numerics.BigRational.CPU.dec()
+  nameWithType: BigRational.CPU.dec()
+- uid: System.Numerics.BigRational.CPU.dec*
+  name: dec
+  href: api/System.Numerics.BigRational.CPU.dec.html
+  commentId: Overload:System.Numerics.BigRational.CPU.dec
+  fullName: System.Numerics.BigRational.CPU.dec
+  nameWithType: BigRational.CPU.dec
 - uid: System.Numerics.BigRational.CPU.div
   name: div()
   href: api/System.Numerics.BigRational.CPU.div.html#System_Numerics_BigRational_CPU_div
@@ -808,6 +820,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.imod
   fullName: System.Numerics.BigRational.CPU.imod
   nameWithType: BigRational.CPU.imod
+- uid: System.Numerics.BigRational.CPU.inc
+  name: inc()
+  href: api/System.Numerics.BigRational.CPU.inc.html#System_Numerics_BigRational_CPU_inc
+  commentId: M:System.Numerics.BigRational.CPU.inc
+  fullName: System.Numerics.BigRational.CPU.inc()
+  nameWithType: BigRational.CPU.inc()
+- uid: System.Numerics.BigRational.CPU.inc*
+  name: inc
+  href: api/System.Numerics.BigRational.CPU.inc.html
+  commentId: Overload:System.Numerics.BigRational.CPU.inc
+  fullName: System.Numerics.BigRational.CPU.inc
+  nameWithType: BigRational.CPU.inc
 - uid: System.Numerics.BigRational.CPU.inv(System.Int32)
   name: inv(Int32)
   href: api/System.Numerics.BigRational.CPU.inv.html#System_Numerics_BigRational_CPU_inv_System_Int32_
@@ -1327,6 +1351,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.swp
   fullName: System.Numerics.BigRational.CPU.swp
   nameWithType: BigRational.CPU.swp
+- uid: System.Numerics.BigRational.CPU.toc(System.UInt32)
+  name: toc(UInt32)
+  href: api/System.Numerics.BigRational.CPU.toc.html#System_Numerics_BigRational_CPU_toc_System_UInt32_
+  commentId: M:System.Numerics.BigRational.CPU.toc(System.UInt32)
+  fullName: System.Numerics.BigRational.CPU.toc(System.UInt32)
+  nameWithType: BigRational.CPU.toc(UInt32)
+- uid: System.Numerics.BigRational.CPU.toc*
+  name: toc
+  href: api/System.Numerics.BigRational.CPU.toc.html
+  commentId: Overload:System.Numerics.BigRational.CPU.toc
+  fullName: System.Numerics.BigRational.CPU.toc
+  nameWithType: BigRational.CPU.toc
 - uid: System.Numerics.BigRational.CPU.tor(System.ReadOnlySpan{System.Char},System.Int32,System.Char)
   name: tor(ReadOnlySpan<Char>, Int32, Char)
   href: api/System.Numerics.BigRational.CPU.tor.html#System_Numerics_BigRational_CPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char_
@@ -2836,6 +2872,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.SafeCPU.cmpi
   fullName: System.Numerics.BigRational.SafeCPU.cmpi
   nameWithType: BigRational.SafeCPU.cmpi
+- uid: System.Numerics.BigRational.SafeCPU.dec
+  name: dec()
+  href: api/System.Numerics.BigRational.SafeCPU.dec.html#System_Numerics_BigRational_SafeCPU_dec
+  commentId: M:System.Numerics.BigRational.SafeCPU.dec
+  fullName: System.Numerics.BigRational.SafeCPU.dec()
+  nameWithType: BigRational.SafeCPU.dec()
+- uid: System.Numerics.BigRational.SafeCPU.dec*
+  name: dec
+  href: api/System.Numerics.BigRational.SafeCPU.dec.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.dec
+  fullName: System.Numerics.BigRational.SafeCPU.dec
+  nameWithType: BigRational.SafeCPU.dec
 - uid: System.Numerics.BigRational.SafeCPU.div
   name: div()
   href: api/System.Numerics.BigRational.SafeCPU.div.html#System_Numerics_BigRational_SafeCPU_div
@@ -3049,6 +3097,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.SafeCPU.imod
   fullName: System.Numerics.BigRational.SafeCPU.imod
   nameWithType: BigRational.SafeCPU.imod
+- uid: System.Numerics.BigRational.SafeCPU.inc
+  name: inc()
+  href: api/System.Numerics.BigRational.SafeCPU.inc.html#System_Numerics_BigRational_SafeCPU_inc
+  commentId: M:System.Numerics.BigRational.SafeCPU.inc
+  fullName: System.Numerics.BigRational.SafeCPU.inc()
+  nameWithType: BigRational.SafeCPU.inc()
+- uid: System.Numerics.BigRational.SafeCPU.inc*
+  name: inc
+  href: api/System.Numerics.BigRational.SafeCPU.inc.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.inc
+  fullName: System.Numerics.BigRational.SafeCPU.inc
+  nameWithType: BigRational.SafeCPU.inc
 - uid: System.Numerics.BigRational.SafeCPU.inv(System.Int32)
   name: inv(Int32)
   href: api/System.Numerics.BigRational.SafeCPU.inv.html#System_Numerics_BigRational_SafeCPU_inv_System_Int32_
@@ -3568,6 +3628,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.SafeCPU.swp
   fullName: System.Numerics.BigRational.SafeCPU.swp
   nameWithType: BigRational.SafeCPU.swp
+- uid: System.Numerics.BigRational.SafeCPU.toc(System.UInt32)
+  name: toc(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.toc.html#System_Numerics_BigRational_SafeCPU_toc_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.toc(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.toc(System.UInt32)
+  nameWithType: BigRational.SafeCPU.toc(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.toc*
+  name: toc
+  href: api/System.Numerics.BigRational.SafeCPU.toc.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.toc
+  fullName: System.Numerics.BigRational.SafeCPU.toc
+  nameWithType: BigRational.SafeCPU.toc
 - uid: System.Numerics.BigRational.SafeCPU.tor(System.ReadOnlySpan{System.Char},System.Int32,System.Char)
   name: tor(ReadOnlySpan<Char>, Int32, Char)
   href: api/System.Numerics.BigRational.SafeCPU.tor.html#System_Numerics_BigRational_SafeCPU_tor_System_ReadOnlySpan_System_Char__System_Int32_System_Char_

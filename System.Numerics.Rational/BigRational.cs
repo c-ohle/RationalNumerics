@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
@@ -2846,6 +2847,65 @@ namespace System.Numerics
         cpu = null;
       }
 
+      /// <summary>
+      /// Increments the value on top of the stack.
+      /// </summary>
+      public void inc() { push(1u); add(); } //todo: opt.
+      /// <summary>
+      /// Decrements the value on top of the stack.
+      /// </summary>
+      public void dec() { push(1u); sub(); } //todo: opt.
+      /// <summary>
+      /// Converts an integer value on top of the stack to its two's complement and vice versa.
+      /// </summary>
+      /// <remarks>
+      /// Negative signed integer values are converted to it's unsigned variant.<br/>
+      /// Positive unsigned integers are converted to it' signed variant.<br/>
+      /// Parameter <paramref name="c"/> defines a integer type size in bytes.
+      /// </remarks>
+      /// <param name="c">Integer type size in bytes.</param>
+      public void toc(uint c)
+      {
+        fixed (uint* u = this.p[this.i - 1])
+        {
+          var nu = u[0] & 0x3fffffff; if (nu == 0) return;
+          var si = (u[0] & 0x80000000) != 0; var cc = si ? c >> 2 : 0;
+          fixed (uint* v = rent(nu + (cc + 3)))
+          {
+            if (si)
+            {
+              uint nv = nu, i = 1; if (nv < cc) nv = cc;
+              for (; i <= nu;) { v[i] = ~u[i] + 1; if (v[i++] != 0) break; }
+              for (; i <= nu; i++) v[i] = ~u[i];
+              for (; i <= nv; i++) v[i] = 0xffffffff;
+              v[0] = i - 1; *(ulong*)(v + i) = 0x100000001;
+              if ((c & 3) != 0)
+              {
+                if (c == 1)
+                {
+                  var p = (byte*)(v + (i - 1));
+                  for (uint k = 3; k >= 1 && p[k] == 0xff; k--) p[k] = 0;
+                }
+                else
+                {
+                  var p = (byte*)(v + 1);
+                  for (uint k = c, nk = nv << 2; k < nk; k++) p[k] = 0;
+                }
+              }
+            }
+            else
+            {
+              uint nv = nu, i = 1, l = 1, e = 1;
+              var xx = BitOperations.LeadingZeroCount(u[nu]);
+              if (xx != 0) u[nu] |= 0xffffffff << (32 - xx);
+              for (; i <= nu; i++) { if ((v[i] = ~u[i] + e) == 0) e = 1; else { e = 0; l = i; } }
+              v[0] = 0x80000000 | l; *(ulong*)(v + (l + 1)) = 0x100000001;
+            }
+          }
+        }
+        swp(); pop();
+      }
+
       uint[] rent(uint n)
       {
         var a = p[i++];
@@ -3020,16 +3080,22 @@ namespace System.Numerics
           *(ulong*)v = (ulong)a[0] * a[0];
           r[0] = r[2] != 0 ? 2u : 1u; return;
         }
-        if (n == 2 && Bmi2.X64.IsSupported)
+        if (n == 2)
         {
-          ((ulong*)v)[1] = Bmi2.X64.MultiplyNoFlags(*(ulong*)a, *(ulong*)a, ((ulong*)v));
-          //var t1 = (ulong)a[0] * a[0];
-          //var t2 = (ulong)a[0] * a[1];
-          //var t3 = (ulong)a[1] * a[1];
-          //var t4 = t2 + (t1 >> 32);
-          //var t5 = t2 + (uint)t4;
-          //((ulong*)v)[0] = t5 << 32 | (uint)t1;
-          //((ulong*)v)[1] = t3 + (t4 >> 32) + (t5 >> 32);
+          if (Bmi2.X64.IsSupported)
+          {
+            ((ulong*)v)[1] = Bmi2.X64.MultiplyNoFlags(*(ulong*)a, *(ulong*)a, ((ulong*)v));
+          }
+          else
+          {
+            var t1 = (ulong)a[0] * a[0];
+            var t2 = (ulong)a[0] * a[1];
+            var t3 = (ulong)a[1] * a[1];
+            var t4 = t2 + (t1 >> 32);
+            var t5 = t2 + (uint)t4;
+            ((ulong*)v)[0] = t5 << 32 | (uint)t1;
+            ((ulong*)v)[1] = t3 + (t4 >> 32) + (t5 >> 32);
+          }
         }
         else if (n >= 0_040) { copy(v, n + n); kmu(a, n, v, n + n); }
         else
@@ -3307,7 +3373,7 @@ namespace System.Numerics
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
       #region experimental
-      internal void toi(BigRational v, uint* p, uint f) //NET7 spec int type conversions, Int32, Unt32,..., Int128, UInt128, Int256, ... 
+      internal void toi(BigRational v, uint* p, uint f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
       {
         if (v.p == null) return; uint n = f & 0xff;
         push(v); var s = sign();
