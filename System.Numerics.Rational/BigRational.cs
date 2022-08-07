@@ -358,8 +358,7 @@ namespace System.Numerics
     /// <returns>true if this <see cref="long"/> number and other have the same value; otherwise, false.</returns>
     public readonly bool Equals(long b)
     {
-      //return CompareTo(b) == 0;
-      //if (p == null) return b == 0; //todo: check cc?, benchmarks
+      //return CompareTo(b) == 0; //if (p == null) return b == 0; //todo: check cc?, benchmarks
       var cpu = main_cpu; cpu.push(b); var s = cpu.equ(cpu.mark() - 1, this); cpu.pop(); return s;
     }
     /// <summary>
@@ -747,6 +746,17 @@ namespace System.Numerics
     {
       return value.p;
     }
+    /// <summary>
+    /// Defines an implicit conversion of a <see cref="int"/> object to a <see cref="BigRational"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="BigRational"/>.</param>
+    /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
+    public static implicit operator BigRational?(int value)
+    {
+      var cpu = main_cpu; if (value != 0) { cpu.push(value); return cpu.popr(); }
+      if (cpu.sp == null) cpu.sp = &value; // debug visualizer security
+      return cpu.i != 0 ? new BigRational(cpu.p[cpu.i - 1]) : default;
+    }
 
     /// <summary>
     /// Returns the value of the <see cref="BigRational"/> operand. (The sign of the operand is unchanged.)
@@ -822,7 +832,6 @@ namespace System.Numerics
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
     /// <returns>The result of the division. NaN when divided by zero.</returns>
-    // /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(BigRational a, BigRational b)
     {
       if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
@@ -837,7 +846,6 @@ namespace System.Numerics
     /// </remarks>
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (divisor)</param>
-    // /// <returns>The remainder that results from the division. NaN when divided by zero.</returns>
     public static BigRational operator %(BigRational a, BigRational b)
     {
       //return a - Truncate(a / b) * b;
@@ -845,6 +853,28 @@ namespace System.Numerics
       var cpu = main_cpu; //todo: % optimization for integers
       cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop();
       cpu.mul(b); cpu.neg(); cpu.add(a); return cpu.popr();
+    }
+    /// <summary>
+    /// Performs a bitwise Or operation on two <see cref="BigRational"/> values.
+    /// </summary>
+    /// <remarks>
+    /// The special case Zero Or before a target assignment activates an internal optimization.<br/>
+    /// Significant better performance without normalization and allocs for intermediate results.<br/>
+    /// Example:<br/><br/>
+    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
+    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
+    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
+    /// </remarks>
+    /// <returns>The result of the bitwise Or operation.</returns>
+    public static BigRational operator |(BigRational? a, BigRational b)
+    {
+      var cpu = main_cpu; var p = a.GetValueOrDefault();
+      if (p.p != null) { cpu.push(p); cpu.push(b); cpu.or(); return cpu.popr(); }
+      var i = cpu.i; if (i == 0) return b;
+      //todo: a == 0 && k out of index is the perfect RT check, but also safe to distinguish - boost or op
+      var k = 0; if (p.p != null) { for (; k < i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
+      var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(i - 1)), out BigRational r); //fetch
+      if (k != 0) cpu.sp = t; cpu.pop(i - k); return r;
     }
 
     /// <summary>
@@ -965,7 +995,6 @@ namespace System.Numerics
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
     /// <returns>The result of the division. NaN when divided by zero.</returns>
-    // /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(BigRational a, long b)
     {
       if (b == 0) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
@@ -1023,7 +1052,6 @@ namespace System.Numerics
     /// <param name="a">The value to be divided. (dividend)</param>
     /// <param name="b">The value to divide by. (devisor)</param>
     /// <returns>The result of the division. NaN when divided by zero.</returns>
-    // /// <exception cref="DivideByZeroException">divisor is 0 (zero).</exception>
     public static BigRational operator /(long a, BigRational b)
     {
       if (b.p == null) return double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b));
@@ -2878,20 +2906,7 @@ namespace System.Numerics
               for (; i <= nu;) { v[i] = ~u[i] + 1; if (v[i++] != 0) break; }
               for (; i <= nu; i++) v[i] = ~u[i];
               for (; i <= nv; i++) v[i] = 0xffffffff;
-              v[0] = i - 1; *(ulong*)(v + i) = 0x100000001;
-              if ((c & 3) != 0)
-              {
-                if (c == 1)
-                {
-                  var p = (byte*)(v + (i - 1));
-                  for (uint k = 3; k >= 1 && p[k] == 0xff; k--) p[k] = 0;
-                }
-                else
-                {
-                  var p = (byte*)(v + 1);
-                  for (uint k = c, nk = nv << 2; k < nk; k++) p[k] = 0;
-                }
-              }
+              v[0] = i - 1; *(ulong*)(v + i) = 0x100000001; //if ((c & 3) != 0) { }
             }
             else
             {
@@ -2904,6 +2919,19 @@ namespace System.Numerics
           }
         }
         swp(); pop();
+      }
+      /// <summary>
+      /// Evaluates whether the numerator of the value on top of the stack is a power of two.
+      /// </summary>
+      /// <returns>true if the specified value is a power of two; false otherwise.</returns>
+      public bool ipt()
+      {
+        fixed (uint* p = this.p[this.i - 1])
+        {
+          uint n = p[0] & 0x3fffffff, v = p[n]; if ((v & (v - 1)) != 0 || v == 0) return false;
+          for (uint i = 1; i < n; i++) if (p[i] != 0) return false;
+        }
+        return true;
       }
 
       uint[] rent(uint n)
@@ -3419,16 +3447,6 @@ namespace System.Numerics
           p[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
         }
       }
-      internal bool ipt() //todo: public?
-      {
-        fixed (uint* p = this.p[this.i - 1])
-        {
-          var u = p[0] & 0x3fffffff;
-          if (!BitOperations.IsPow2(p[u])) return false; //NET7 currently not intrinsic ?!? //todo: benchmark msb() == lsb()
-          for (uint i = 1; i < u; i++) if (p[i] != 0) return false;
-        }
-        return true;
-      }
       //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access 
@@ -3493,43 +3511,6 @@ namespace System.Numerics
           return a;
         }
       }
-    }
-    #endregion
-    #region boost operator 
-    /// <summary>
-    /// <b>Note</b>: This operator does not represent a conventional conversion.
-    /// </summary>
-    /// <remarks>
-    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
-    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
-    /// Example:<br/><br/>
-    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
-    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
-    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
-    /// </remarks>
-    public static implicit operator BigRational?(int value)
-    {
-      var cpu = main_cpu; if (cpu.sp == null) cpu.sp = &value; //debug visualizer security
-      return cpu.i != 0 ? new BigRational(cpu.p[cpu.i - 1]) : default;
-    }
-    /// <summary>
-    /// <b>Note</b>: This function does not represent a conventional <c>OR</c> operation.
-    /// </summary>
-    /// <remarks>
-    /// Intended to allows a notation that allows the calculation core to apply internal optimizations.<br/>
-    /// Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br/>
-    /// Example:<br/><br/>
-    /// <c>var x = a * b + c * d + e * f; // standard notation.</c><br/>
-    /// <c>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</c><br/><br/>
-    /// <i>For C# there is currently no better way to achieve such performance with standard notation<br/>since the compiler does not support assign-operators.</i>
-    /// </remarks>
-    public static BigRational operator |(BigRational? a, BigRational b)
-    {
-      var cpu = main_cpu; var i = cpu.i; if (i == 0) return b;
-      var p = a.GetValueOrDefault(); //todo: a == 0 && k out of index is the perfect RT check, but also safe to distinguish - boost or op
-      var k = 0; if (p.p != null) { for (; k < i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
-      var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(i - 1)), out BigRational r); //fetch
-      if (k != 0) cpu.sp = t; cpu.pop(i - k); return r;
     }
     #endregion
   }

@@ -18,7 +18,7 @@ namespace System.Numerics
     ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational> //IFloatingPointConstants<BigRational>
   {
     // INumberBase 
-    static int INumberBase<BigRational>.Radix => 1; //todo: Radix for rational?
+    static int INumberBase<BigRational>.Radix => 1; //todo: radix for rational?
     static BigRational INumberBase<BigRational>.Zero => default;
     static BigRational INumberBase<BigRational>.One => 1u;
     static BigRational ISignedNumber<BigRational>.NegativeOne => -1;

@@ -6,7 +6,7 @@ using static System.Numerics.BigRational;
 namespace System.Numerics.Rational
 {
   /// <summary>
-  /// Represents an arbitrarily large signed integer. (under construction)
+  /// Represents an arbitrarily large signed integer.
   /// </summary>
   /// <remarks>
   /// This implementation using BigRational.SafeCPU as calculation core is intended for testing and benchmarks to BigInteger in real scenarios.<br/>
@@ -16,28 +16,37 @@ namespace System.Numerics.Rational
   [Serializable]
   public readonly partial struct BigInt : IComparable, IComparable<BigInt>, IEquatable<BigInt>, IFormattable, ISpanFormattable
   {
-    public override readonly string ToString() => p.ToString("L0"); //public override readonly string ToString() => ((BigInteger)p).ToString();
+    public override readonly string ToString() => p.ToString("L0");
     public readonly unsafe string ToString(string? format, IFormatProvider? provider = default)
     {
       var f = format != null ? format.AsSpan().Trim() : default;
       if (f.Length != 0 && (f[0] | 0x20) == 'x') //int hex style
       {
-        var l = f.Length > 1 ? unchecked((int)uint.Parse(f.Slice(1))) : 0;
-        var n = hex(default, this.p, l, f[0]); var s = new string('0', n);
-        fixed (char* w = s) hex(new Span<char>(w, n), this.p, l, f[0]); return s;
+        TryFormat(default, out var n, f, provider); var s = new string('0', n);
+        fixed (char* w = s) TryFormat(new Span<char>(w, n), out n, f, provider); return s;
       }
       return p.ToString(format, provider);
     }
-    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
       var f = format.Trim();
       if (f.Length != 0 && (f[0] | 0x20) == 'x') //int hex style
       {
         var l = f.Length > 1 ? unchecked((int)uint.Parse(f.Slice(1))) : 0;
-        var n = hex(destination, this.p, l, f[0]);
-        return (charsWritten = n <= destination.Length ? n : 0) != 0;
+        var cpu = rat.task_cpu; cpu.push(this.p);
+        var z = cpu.msb(); int s = cpu.sign(), x = unchecked((int)((z >> 2) + 1));
+        if (s < 0 && (z & 3) == 0 && cpu.ipt()) x--; //80
+        var n = l > x ? l : x; if (dest.Length < n) { cpu.pop(); charsWritten = dest == default ? n : 0; return false; }
+        if (s < 0) cpu.toc(4); cpu.get(cpu.mark() - 1, out ReadOnlySpan<uint> sp);
+        sp = sp.Slice(1, unchecked((int)(sp[0] & 0x7fffffff)));
+        for (int i = 0, k, o = f[0] == 'X' ? 'A' - 10 : 'a' - 10; i < n; i++)
+        {
+          var d = (k = i >> 3) < sp.Length ? (sp[k] >> ((i & 7) << 2)) & 0xf : s < 0 ? 0xf : 0u;
+          dest[n - i - 1] = (char)(d < 10 ? '0' + d : o + d);
+        }
+        cpu.pop(); charsWritten = n; return true;
       }
-      return p.TryFormat(destination, out charsWritten, format, provider);
+      return p.TryFormat(dest, out charsWritten, format, provider);
     }
     public static BigInt Parse(string value) => Parse(value, NumberStyles.Integer);
     public static BigInt Parse(string value, NumberStyles style) => Parse(value.AsSpan(), style, NumberFormatInfo.CurrentInfo);
@@ -51,8 +60,8 @@ namespace System.Numerics.Rational
         var cpu = rat.task_cpu; cpu.tor(value = value.Trim(), 16);
         if (value[0] > '7') //int hex style
         {
-          var t = cpu.msb(); cpu.push(1u); cpu.shl(t); //todo: opt. inc, dec, cpu.pow(2,f(t)); 
-          cpu.push(1u); cpu.sub(); cpu.xor(); cpu.push(1u); cpu.add(); cpu.neg();
+          var t = cpu.msb(); cpu.push(1u); cpu.shl(t); //todo: opt. check cpu.pow(2, t); ??? 
+          cpu.dec(); cpu.xor(); cpu.inc(); cpu.neg();
         }
         return new BigInt(cpu);
       }
@@ -78,8 +87,10 @@ namespace System.Numerics.Rational
     public BigInt(byte[] value) : this(new ReadOnlySpan<byte>(value ?? throw new ArgumentNullException())) { }
     public BigInt(ReadOnlySpan<byte> value, bool isUnsigned = false, bool isBigEndian = false)
     {
-      if (value.Length == 1) { Debug.Assert(value[0] == 0); return; }
-      this = new BigInteger(value, isUnsigned, isBigEndian); //todo: impl.
+      int n = value.Length, k = isBigEndian ? n - 1 : 0, d = isBigEndian ? -1 : +1;
+      var cpu = rat.task_cpu; cpu.push(value[k]); //todo: opt.
+      for (int i = 1; i < n; i++) { k += d; cpu.push(value[k]); cpu.shl(unchecked((uint)(i << 3))); cpu.or(); }
+      if (!isUnsigned && (value[k] & 0x80) != 0) cpu.toc(4); this.p = cpu.popr();
     }
 
     public byte[] ToByteArray() => ToByteArray(false, false);
@@ -88,48 +99,32 @@ namespace System.Numerics.Rational
       var a = new byte[GetByteCount(isUnsigned)]; TryWriteBytes(a, out var _, isUnsigned, isBigEndian); return a;
     }
     public readonly int GetByteCount(bool isUnsigned = false) { TryWriteBytes(default, out int n, isUnsigned); return n; }
-    public readonly bool TryWriteBytes(Span<byte> destination, out int bytesWritten, bool isUnsigned = false, bool isBigEndian = false)
+    public readonly bool TryWriteBytes(Span<byte> dest, out int bytesWritten, bool isUnsigned = false, bool isBigEndian = false)
     {
-      var cpu = rat.task_cpu; cpu.push(this.p);
-      var si = cpu.sign(); var sb = cpu.msb(); var ll = si != 0 ? unchecked((int)(((sb - 1) >> 3) + 1)) : 1; var xl = ll;
-      if (si == -1) { cpu.toc(1); if ((sb & 7) == 0) ll++; if (isUnsigned) { cpu.pop(); throw new OverflowException(nameof(isUnsigned)); } }
-      var u = destination; var w = u != default; if (!w) { cpu.pop(); bytesWritten = ll; return true; }
-      if (u.Length < ll) { cpu.pop(); bytesWritten = 0; return false; }
-      cpu.get(cpu.mark() - 1, out ReadOnlySpan<uint> sp);
-      var bb = MemoryMarshal.Cast<uint, byte>(sp.Slice(1)).Slice(0, xl);
-      bb.CopyTo(u); if (xl != ll) u[xl] = 0xff; cpu.pop(); 
-      bytesWritten = ll; if (isBigEndian) u.Slice(0, ll).Reverse(); return true;
-        
-      //var s = (ReadOnlySpan<uint>)p; if (s.Length == 0) { if (w) { if (u.Length == 0) goto m1; u[0] = 0; } bytesWritten = 1; return true; }
-      //var n = unchecked((int)(s[0] & 0x3fffffff)); var m = (s[0] & 0x80000000) != 0; s = s.Slice(1, n);
-      //if (m && isUnsigned) throw new OverflowException(nameof(isUnsigned));
-      //var b = MemoryMarshal.Cast<uint, byte>(s); b = b.TrimEnd((byte)0); var l = b.Length;
-      //if (!m) { if (w) { if (u.Length < b.Length) goto m1; b.CopyTo(u); } }
-      //else
-      //{
-      //  if ((b[l - 1] & 0x80) != 0) l++;
-      //  if (!w) { bytesWritten = l; return true; }
-      //  if (u.Length < l) goto m1; int i = 0;
-      //  for (; i < l;) { u[i] = (byte)(~b[i] + 1); if (u[i++] != 0) break; }
-      //  for (; i < l; i++) u[i] = (byte)(i < b.Length ? ~b[i] : 0xff);
-      //}
-      //if (w && isBigEndian) u.Slice(0, l).Reverse();
-      //bytesWritten = l; if (ll != l) { }
-      //return true; m1: bytesWritten = 0; return true;
+      if (isUnsigned && BigRational.Sign(this.p) < 0) throw new OverflowException(nameof(isUnsigned));
+      var cpu = rat.task_cpu; cpu.push(this.p); var s = cpu.sign(); var z = cpu.msb();
+      var n = s != 0 ? unchecked((int)(((z - 1) >> 3) + 1)) : isUnsigned ? 1 : 0; //todo: opt.
+      var l = n; if (!isUnsigned && (z & 7) == 0 && !(s < 0 && cpu.ipt())) n++;
+      if (dest.Length < n) { cpu.pop(); bytesWritten = dest != default ? 0 : n; return false; }
+      if (s == -1) cpu.toc(4); cpu.get(cpu.mark() - 1, out ReadOnlySpan<uint> sp);
+      var bb = MemoryMarshal.Cast<uint, byte>(sp.Slice(1)).Slice(0, l);
+      bb.CopyTo(dest); if (l != n) dest[l] = (byte)(s < 0 ? 0xff : 0); cpu.pop();
+      bytesWritten = n; if (isBigEndian) dest.Slice(0, n).Reverse(); return true;
     }
 
     public readonly int Sign => BigRational.Sign(p);
     //some non-optimal implementations as test for the span access operator:
     public readonly bool IsZero { get { var s = (ReadOnlySpan<uint>)p; return s.Length < 2 || s[1] == 0; } }
-    public readonly bool IsOne { get { var s = (ReadOnlySpan<uint>)p; return s.Length > 1 && s[1] == 1; } }
+    public readonly bool IsOne { get { var s = (ReadOnlySpan<uint>)p; return s.Length > 1 && s[0] == 1 && s[1] == 1; } }
     public readonly bool IsEven { get { var s = (ReadOnlySpan<uint>)p; return s.Length < 2 || (s[1] & 1) == 0; } }
     public readonly bool IsPowerOfTwo
     {
       get
       {
-        if (BigRational.Sign(p) <= 0) return false;
-        var s = (ReadOnlySpan<uint>)p; var n = unchecked((int)(s[0] & 0x3fffffff));
-        return BitOperations.IsPow2(s[n]) && s.Slice(1, n - 1).TrimStart(0u).Length == 0;
+        var cpu = rat.task_cpu; cpu.push(p); var b = cpu.sign() > 0 && cpu.ipt(); cpu.pop(); return b;
+        //if (BigRational.Sign(p) <= 0) return false;
+        //var s = (ReadOnlySpan<uint>)p; var n = unchecked((int)(s[0] & 0x3fffffff));
+        //return BitOperations.IsPow2(s[n]) && s.Slice(1, n - 1).TrimStart(0u).Length == 0;
       }
     }
 
@@ -223,25 +218,6 @@ namespace System.Numerics.Rational
     private readonly BigRational p;
     private BigInt(BigRational p) => this.p = p;
     private BigInt(BigRational.SafeCPU cpu) => p = cpu.popr();
-    private static unsafe int hex(Span<char> s, BigRational v, int l, int a)
-    {
-      var p = (ReadOnlySpan<uint>)v;
-      if (p.Length == 0) { ulong t = 1; p = new ReadOnlySpan<uint>(&t, 2); } // zero
-      var n = unchecked((int)(p[0] & 0x3fffffff)); var m = (p[0] & 0x80000000) != 0;
-      var z = (n << 5) - BitOperations.LeadingZeroCount(p[n]);
-      var x = (z >> 2) + 1;
-      if (m && (z & 3) == 0 && BitOperations.IsPow2(p[n]) && p.Slice(2, n - 1).TrimStart(0u).Length == 0) x--; //80
-      if (l < x) l = x; if (s.Length < l) return l;
-      var c = 1u; a = a == 'X' ? 'A' - 10 : 'a' - 10;
-      for (int i = l - 1; i >= 0; i--)
-      {
-        int t = l - i - 1, k = 1 + (t >> 3);
-        var d = (k <= n ? p[k] >> ((t & 7) << 2) : 0) & 0xf;
-        if (m) if ((d = (~d & 0xf) + c) > 0xf) { d = 0; c = 1; } else c = 0;
-        s[i] = (char)(d < 10 ? '0' + d : a + d);
-      }
-      return l;
-    }
     #endregion
 
     #region boost operator 
@@ -251,16 +227,8 @@ namespace System.Numerics.Rational
     /// <param name="a">Left value.</param>
     /// <param name="b">Right value.</param>
     /// <returns>The result of the bitwise Or operation.</returns>
-    public static BigInt operator |(BigInt? a, BigInt b)
-    {
-      var p = a.GetValueOrDefault().p; if (p == 0) return new BigInt((BigRational?)p | b.p); //BigRational.IsZero(p)
-      var cpu = rat.task_cpu; cpu.push(p); cpu.push(b.p); cpu.or(); return new BigInt(cpu);
-    }
-    public static implicit operator BigInt?(int value)
-    {
-      if (value == 0) return new BigInt(((BigRational?)value).GetValueOrDefault());
-      return new BigInt(value);
-    }
+    public static BigInt operator |(BigInt? a, BigInt b) => new BigInt((BigRational?)a.GetValueOrDefault().p | b.p);
+    public static implicit operator BigInt?(int value) => new BigInt(((BigRational?)value).GetValueOrDefault());
     #endregion
   }
 
@@ -289,10 +257,7 @@ namespace System.Numerics.Rational
     {
       var s = (ReadOnlySpan<uint>)value.p; if (s.Length == 0) return default;
       int i = 1, n = unchecked((int)(s[0] & 0x3fffffff)); var c = 0ul;
-      if ((s[0] & 0x80000000) == 0)
-      {
-        for (; i <= n; i++) c += unchecked((uint)BitOperations.PopCount(s[i]));
-      }
+      if ((s[0] & 0x80000000) == 0) { for (; i <= n; i++) c += unchecked((uint)BitOperations.PopCount(s[i])); }
       else //for < 0 emulate BigInteger 32^n - NET7 nonsense
       {
         for (uint t; ;) { c += unchecked((uint)uint.PopCount(t = ~s[i] + 1)); if (++i > n || t != 0) break; }
@@ -302,7 +267,7 @@ namespace System.Numerics.Rational
     }
     public static BigInt TrailingZeroCount(BigInt value)
     {
-      var s = (ReadOnlySpan<uint>)value.p; if (s.Length == 0) return MinusOne; //NET7 BigInteger nonsense - returns 32 "undefined" 
+      var s = (ReadOnlySpan<uint>)value.p; if (s.Length == 0) return 32; //NET7 BigInteger nonsense 
       var n = unchecked((int)(s[0] & 0x3fffffff)); var c = 0ul;
       for (int i = 1; i <= n; i++)
       {
@@ -421,6 +386,38 @@ namespace System.Numerics.Rational
       static bool f<R>(R v, out T result) where R : INumberBase<R> => R.TryConvertToTruncating(v, out result!);
       return f<BigRational>(value.p, out result); //ok
     }
+
+#if DEBUG
+    internal static void test()
+    {
+      BigInteger a, aa; BigInt b, bb; string sa, sb;
+      var rnd = new Random(13);
+      for (int i = 0; i < 100000; i++)
+      {
+        long k = i <= 10 ? i - 5 : (i & 1) == 0 ? rnd.Next(-1000, +1000) : (long)rnd.Next() * rnd.Next(-1000000, +1000000);
+        a = k; b = k;
+        Debug.Assert(a.IsZero == b.IsZero && a.IsOne == b.IsOne && a.IsEven == b.IsEven && a.IsPowerOfTwo == b.IsPowerOfTwo);
+        sa = a.ToString(); sb = a.ToString(); Debug.Assert(sa == sb);
+        sa = a.ToString("X"); sb = a.ToString("X"); Debug.Assert(sa == sb);
+        sa = a.ToString("X1"); sb = a.ToString("X1"); Debug.Assert(sa == sb);
+        sa = a.ToString("X4"); sb = a.ToString("X4"); Debug.Assert(sa == sb);
+        aa = BigInteger.Parse(sb, NumberStyles.HexNumber); bb = BigInt.Parse(sb, NumberStyles.HexNumber); Debug.Assert(aa == bb);
+        sa = a.ToString("X12"); sb = a.ToString("X12"); Debug.Assert(sa == sb);
+        sa = a.ToString("X42"); sb = a.ToString("X42"); Debug.Assert(sa == sb);
+        var big = (i & 1) != 0; var uns = k >= 0 && (i & 2) != 0;
+        var aaa = a.ToByteArray(uns, big); var bbb = b.ToByteArray(uns, big);
+        Debug.Assert(aaa.SequenceEqual(bbb));
+        a = new BigInteger(aaa, uns, big); b = new BigInt(bbb, uns, big); Debug.Assert(a == b);
+        int s = rnd.Next(100, 100);
+        aa = a >> s; bb = b >> s; Debug.Assert(aa == bb);
+        aa = a << s; bb = b << s; Debug.Assert(aa == bb);
+        aa = a >>> s; bb = b >>> s; Debug.Assert(aa == bb);
+        aa = BigInteger.PopCount(a); bb = BigInt.PopCount(b); Debug.Assert(aa == bb);
+        aa = BigInteger.TrailingZeroCount(a); bb = BigInt.TrailingZeroCount(b); Debug.Assert(aa == bb);
+        if (k >= 0) { aa = BigInteger.Log2(a); bb = BigInt.Log2(b); Debug.Assert(aa == bb); }
+      }
+    }
+#endif
   }
 #endif
 }

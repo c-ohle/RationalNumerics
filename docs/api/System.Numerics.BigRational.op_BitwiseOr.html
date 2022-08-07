@@ -458,6 +458,9 @@
                                   <a href="System.Numerics.BigRational.CPU.inv.html" title="inv" class="">inv</a>
                                 </li>
                                 <li class="">
+                                  <a href="System.Numerics.BigRational.CPU.ipt.html" title="ipt" class="">ipt</a>
+                                </li>
+                                <li class="">
                                   <a href="System.Numerics.BigRational.CPU.isi.html" title="isi" class="">isi</a>
                                 </li>
                                 <li class="">
@@ -626,6 +629,9 @@
                                   <a href="System.Numerics.BigRational.SafeCPU.inv.html" title="inv" class="">inv</a>
                                 </li>
                                 <li class="">
+                                  <a href="System.Numerics.BigRational.SafeCPU.ipt.html" title="ipt" class="">ipt</a>
+                                </li>
+                                <li class="">
                                   <a href="System.Numerics.BigRational.SafeCPU.isi.html" title="isi" class="">isi</a>
                                 </li>
                                 <li class="">
@@ -741,7 +747,7 @@
 
 <a id="System_Numerics_BigRational_op_BitwiseOr_" data-uid="System.Numerics.BigRational.op_BitwiseOr*"></a>
 <h4 id="System_Numerics_BigRational_op_BitwiseOr_System_Nullable_System_Numerics_BigRational__System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.op_BitwiseOr(System.Nullable{System.Numerics.BigRational},System.Numerics.BigRational)">BitwiseOr(Nullable&lt;BigRational&gt;, BigRational)</h4>
-<div class="markdown level1 summary"><p><strong>Note</strong>: This function does not represent a conventional <code>OR</code> operation.</p>
+<div class="markdown level1 summary"><p>Performs a bitwise Or operation on two <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> values.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
@@ -781,13 +787,14 @@
   <tbody>
     <tr>
       <td><a class="xref" href="System.Numerics.BigRational.html">BigRational</a></td>
-      <td></td>
+      <td><p>The result of the bitwise Or operation.</p>
+</td>
     </tr>
   </tbody>
 </table>
 <h5 id="System_Numerics_BigRational_op_BitwiseOr_System_Nullable_System_Numerics_BigRational__System_Numerics_BigRational__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>Intended to allows a notation that allows the calculation core to apply internal optimizations.<br>
-Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br>
+<div class="markdown level1 remarks"><p>The special case Zero Or before a target assignment activates an internal optimization.<br>
+Significant better performance without normalization and allocs for intermediate results.<br>
 Example:<br><br>
 <code>var x = a * b + c * d + e * f; // standard notation.</code><br>
 <code>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</code><br><br>

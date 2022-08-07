@@ -952,6 +952,11 @@ namespace System.Numerics
       /// </remarks>
       /// <param name="c">Integer type size in bytes.</param>
       public void toc(uint c) => p.toc(c);
+      /// <summary>
+      /// Evaluates whether the numerator of the value on top of the stack is a power of two.
+      /// </summary>
+      /// <returns>true if the specified value is a power of two; false otherwise.</returns>
+      public bool ipt() => p.ipt();
     }
 
     /// <summary>

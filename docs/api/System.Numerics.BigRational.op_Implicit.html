@@ -458,6 +458,9 @@
                                   <a href="System.Numerics.BigRational.CPU.inv.html" title="inv" class="">inv</a>
                                 </li>
                                 <li class="">
+                                  <a href="System.Numerics.BigRational.CPU.ipt.html" title="ipt" class="">ipt</a>
+                                </li>
+                                <li class="">
                                   <a href="System.Numerics.BigRational.CPU.isi.html" title="isi" class="">isi</a>
                                 </li>
                                 <li class="">
@@ -624,6 +627,9 @@
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.SafeCPU.inv.html" title="inv" class="">inv</a>
+                                </li>
+                                <li class="">
+                                  <a href="System.Numerics.BigRational.SafeCPU.ipt.html" title="ipt" class="">ipt</a>
                                 </li>
                                 <li class="">
                                   <a href="System.Numerics.BigRational.SafeCPU.isi.html" title="isi" class="">isi</a>
@@ -1111,7 +1117,7 @@ For a bit-exact conversion see: <a class="xref" href="System.Numerics.BigRationa
 
 <a id="System_Numerics_BigRational_op_Implicit_" data-uid="System.Numerics.BigRational.op_Implicit*"></a>
 <h4 id="System_Numerics_BigRational_op_Implicit_System_Int32__System_Nullable_System_Numerics_BigRational_" data-uid="System.Numerics.BigRational.op_Implicit(System.Int32)~System.Nullable{System.Numerics.BigRational}">Implicit(Int32 to Nullable&lt;BigRational&gt;)</h4>
-<div class="markdown level1 summary"><p><strong>Note</strong>: This operator does not represent a conventional conversion.</p>
+<div class="markdown level1 summary"><p>Defines an implicit conversion of a <span class="xref">System.Int32</span> object to a <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> value.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 <h5 class="decalaration">Declaration</h5>
@@ -1131,7 +1137,8 @@ For a bit-exact conversion see: <a class="xref" href="System.Numerics.BigRationa
     <tr>
       <td><span class="xref">System.Int32</span></td>
       <td><span class="parametername">value</span></td>
-      <td></td>
+      <td><p>The value to convert to a <a class="xref" href="System.Numerics.BigRational.html">BigRational</a>.</p>
+</td>
     </tr>
   </tbody>
 </table>
@@ -1146,18 +1153,11 @@ For a bit-exact conversion see: <a class="xref" href="System.Numerics.BigRationa
   <tbody>
     <tr>
       <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="System.Numerics.BigRational.html">BigRational</a>&gt;</td>
-      <td></td>
+      <td><p>A <a class="xref" href="System.Numerics.BigRational.html">BigRational</a> number that is equivalent to the number specified in the value parameter.</p>
+</td>
     </tr>
   </tbody>
 </table>
-<h5 id="System_Numerics_BigRational_op_Implicit_System_Int32__System_Nullable_System_Numerics_BigRational__remarks">Remarks</h5>
-<div class="markdown level1 remarks"><p>Intended to allows a notation that allows the calculation core to apply internal optimizations.<br>
-Leads to a significant increase in performance without otherwise necessary internal memory allocations.<br>
-Example:<br><br>
-<code>var x = a * b + c * d + e * f; // standard notation.</code><br>
-<code>var y = 0 | a * b + c * d + e * f; // 5x faster for this example!</code><br><br>
-<em>For C# there is currently no better way to achieve such performance with standard notation<br>since the compiler does not support assign-operators.</em></p>
-</div>
 
 
 <a id="System_Numerics_BigRational_op_Implicit_" data-uid="System.Numerics.BigRational.op_Implicit*"></a>

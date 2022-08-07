@@ -844,6 +844,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.inv
   fullName: System.Numerics.BigRational.CPU.inv
   nameWithType: BigRational.CPU.inv
+- uid: System.Numerics.BigRational.CPU.ipt
+  name: ipt()
+  href: api/System.Numerics.BigRational.CPU.ipt.html#System_Numerics_BigRational_CPU_ipt
+  commentId: M:System.Numerics.BigRational.CPU.ipt
+  fullName: System.Numerics.BigRational.CPU.ipt()
+  nameWithType: BigRational.CPU.ipt()
+- uid: System.Numerics.BigRational.CPU.ipt*
+  name: ipt
+  href: api/System.Numerics.BigRational.CPU.ipt.html
+  commentId: Overload:System.Numerics.BigRational.CPU.ipt
+  fullName: System.Numerics.BigRational.CPU.ipt
+  nameWithType: BigRational.CPU.ipt
 - uid: System.Numerics.BigRational.CPU.isi
   name: isi()
   href: api/System.Numerics.BigRational.CPU.isi.html#System_Numerics_BigRational_CPU_isi
@@ -3121,6 +3133,18 @@ references:
   commentId: Overload:System.Numerics.BigRational.SafeCPU.inv
   fullName: System.Numerics.BigRational.SafeCPU.inv
   nameWithType: BigRational.SafeCPU.inv
+- uid: System.Numerics.BigRational.SafeCPU.ipt
+  name: ipt()
+  href: api/System.Numerics.BigRational.SafeCPU.ipt.html#System_Numerics_BigRational_SafeCPU_ipt
+  commentId: M:System.Numerics.BigRational.SafeCPU.ipt
+  fullName: System.Numerics.BigRational.SafeCPU.ipt()
+  nameWithType: BigRational.SafeCPU.ipt()
+- uid: System.Numerics.BigRational.SafeCPU.ipt*
+  name: ipt
+  href: api/System.Numerics.BigRational.SafeCPU.ipt.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.ipt
+  fullName: System.Numerics.BigRational.SafeCPU.ipt
+  nameWithType: BigRational.SafeCPU.ipt
 - uid: System.Numerics.BigRational.SafeCPU.isi
   name: isi()
   href: api/System.Numerics.BigRational.SafeCPU.isi.html#System_Numerics_BigRational_SafeCPU_isi
