@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Test;
 using static System.Numerics.BigRational;
-using static Test.DX11ModelCtrl.Models.Scene;
 
-#if NET7_0
+#if false //NET7_0
 
 namespace System.Numerics.Rational
 {

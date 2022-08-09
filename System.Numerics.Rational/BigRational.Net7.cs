@@ -13,9 +13,9 @@ using System.Runtime.InteropServices;
 namespace System.Numerics
 {
   unsafe partial struct BigRational :
-    INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, //IConvertible, //todo: check IConvertible, does it makes much sens for non system types?
+    INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, //todo: check IConvertible, does it makes much sens for non system types?
     IPowerFunctions<BigRational>, IRootFunctions<BigRational>, IExponentialFunctions<BigRational>,
-    ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational> //IFloatingPointConstants<BigRational>
+    ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational>
   {
     // INumberBase 
     static int INumberBase<BigRational>.Radix => 1; //todo: radix for rational?
@@ -25,9 +25,9 @@ namespace System.Numerics
     static BigRational IAdditiveIdentity<BigRational, BigRational>.AdditiveIdentity => default;
     static BigRational IMultiplicativeIdentity<BigRational, BigRational>.MultiplicativeIdentity => 1u;
 
-    static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); //use MaxDigits
-    static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); //use MaxDigits 
-    static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); //use MaxDigits
+    static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); // MaxDigits
+    static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); // MaxDigits 
+    static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); // MaxDigits
 
     static bool INumberBase<BigRational>.IsZero(BigRational value) => value.p == null;
     static bool INumberBase<BigRational>.IsNegative(BigRational value) => Sign(value) < 0;

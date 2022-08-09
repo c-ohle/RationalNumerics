@@ -2158,9 +2158,13 @@ namespace System.Numerics
       /// <param name="y">A <see cref="int"/> value that specifies a power.</param>
       public void pow(int x, int y)
       {
-        uint e = unchecked((uint)(y < 0 ? -y : y)), z;
-        if (x == 10) { push(unchecked((ulong)Math.Pow(x, z = e < 19 ? e : 19))); e -= z; }
-        //else if (x == 2) { push(1u); shl(e); e = 0; } //opt. possible but cases?
+        uint e = unchecked((uint)(y < 0 ? -y : y)), z; //todo: pow cache
+        if (x == 10) { push(unchecked((ulong)Math.Pow(x, z = e < 19 ? e : 19))); e -= z; } //todo: opt. 1, 0, -1, -2, -4,...
+        else if ((x & (x - 1)) == 0 && x >= 0)
+        {
+          if (x > 1) { push(unchecked((uint)BitOperations.TrailingZeroCount(x))); shl(e); }
+          else push(unchecked((uint)x)); e = 0;
+        }
         else push(1u);
         if (e != 0)
         {
@@ -2180,7 +2184,7 @@ namespace System.Numerics
       /// </summary>
       /// <param name="y">A <see cref="int"/> value that specifies a power.</param>
       public void pow(int y)
-      {
+      { //todo: opt. ipt()
         push(1u); swp();
         for (var e = unchecked((uint)(y < 0 ? -y : y)); ; e >>= 1)
         {

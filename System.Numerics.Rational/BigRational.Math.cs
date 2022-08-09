@@ -187,6 +187,7 @@ namespace System.Numerics
     /// <returns>The <see cref="BigRational"/> number a raised to the power b.</returns>
     public static BigRational Pow(BigRational a, int b)
     {
+      //todo: opt. if(IsInteger(a) && IsPowerOfTwo(a))...
       var cpu = main_cpu; cpu.push(a); cpu.pow(b); return cpu.popr();
     }
     /// <summary>
@@ -698,9 +699,9 @@ namespace System.Numerics
     /// <returns>The quotient of the specified numbers. NaN when divided by zero.</returns>
     public static BigRational DivRem(BigRational a, BigRational b, out BigRational r)
     {
-      if (BigRational.Sign(b) == 0) return r = double.NaN; //NET 7 req. //throw new DivideByZeroException(nameof(b)); // b.p == null
-      var cpu = main_cpu; cpu.div(b, b); cpu.mod();
-      r = cpu.popr(); return cpu.popr();
+      if (BigRational.Sign(b) == 0) return r = double.NaN; 
+      var cpu = main_cpu; cpu.div(a, b); cpu.mod(0);
+      cpu.swp(); r = cpu.popr(); return cpu.popr();
     }
     /// <summary>
     /// Produces the quotient and the remainder of two signed <see cref="BigRational"/> numbers.

@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Test": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "jsWebView2Debugging": false,
+      "sqlDebugging": false,
+      "hotReloadEnabled": false
+    }
+  }
+}

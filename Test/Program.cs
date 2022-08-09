@@ -3,6 +3,7 @@ global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Test
 {
@@ -10,13 +11,59 @@ namespace Test
   {
     [STAThread]
     static void Main()
-    {
-      ApplicationConfiguration.Initialize(); //test();
+    {      
+      ApplicationConfiguration.Initialize(); // test();
       Application.Run(new MainFrame());
     }
 
 #if NET7_0
 
+    static void test3()
+    {
+      var a = (BigFloat)Math.PI; var ss = a.ToString();
+      var b = (BigFloat)2;
+      var c = a * b;
+      a = -(BigFloat)Math.PI;
+      a = (BigFloat)(-Math.PI);
+      b = -2;
+
+      var r = BigRational.Pi(100); ss = r.ToString("L60");
+      a = (BigFloat)r;
+      r = (BigRational)1 / 3;
+      a = (BigFloat)r;
+
+      c = c * 0.5;
+
+      b = a + 1;
+      c = b - 1;
+
+      b = 1;
+      c = b + 2;
+      c = c * 100;
+
+      a = 1; a = a / 3;
+      b = 100; b = b / 3;
+      c = 0.001; c = c / 3;
+      c = 1; c /= 100; c = c / 3;
+      c = 1; c /= 10000; c = c / 3;
+      c = 1; c /= 2; c = c / 3;
+
+      c = Math.PI;
+      c = c / 2;
+      c = c * 2;
+
+      a = Math.PI;
+      b = a + Math.PI;
+      c = b - Math.PI;
+
+      a = Math.PI;
+      b = a + 100000;
+      c = b - 100000;
+
+      a = Math.PI;
+      b = a + 0.00001;
+      c = b - 0.00001;
+    }
     static void test2()
     {
       BigRational a, b, c, d;
@@ -35,14 +82,15 @@ namespace Test
       w = x * x + x * y - z / x;
       w = 0 | x * x + x * y - z / x;
       w = 0xff | x * x + x * y - z / x;
-         
-    }
 
+    }
     static void test()
     {
+      test3();
       test2();
 
-      BigInt.test();
+      //BigInt.test();
+
 
       BigInt b, bb = 88;
 
@@ -64,5 +112,5 @@ namespace Test
 
 #endif
   }
-}
 
+}

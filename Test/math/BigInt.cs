@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static System.Numerics.BigRational;
 
-namespace System.Numerics.Rational
+namespace System.Numerics
 {
   /// <summary>
   /// Represents an arbitrarily large signed integer.
@@ -13,24 +14,25 @@ namespace System.Numerics.Rational
   /// Therefore implemented with identical function and interface set inclusive wrong behavior and illogics of the current INumber implementation.<br/>
   /// <i>boost operator public just to test how much performance would be possible.</i><br/>
   /// </remarks>
-  [Serializable]
+  [Serializable] //, SkipLocalsInit, DebuggerDisplay("{ToString(),nq}")
   public readonly partial struct BigInt : IComparable, IComparable<BigInt>, IEquatable<BigInt>, IFormattable, ISpanFormattable
   {
     public override readonly string ToString() => p.ToString("L0");
+    //public override readonly string ToString() => ((BigInteger)p).ToString();
     public readonly unsafe string ToString(string? format, IFormatProvider? provider = default)
     {
-      var f = format != null ? format.AsSpan().Trim() : default;
-      if (f.Length != 0 && (f[0] | 0x20) == 'x') //int hex style
+      var f = format != null ? format.AsSpan().Trim() : default; var c = f.Length != 0 ? f[0] | 0x20 : 0;
+      if (c == 'x') //int hex style
       {
         TryFormat(default, out var n, f, provider); var s = new string('0', n);
         fixed (char* w = s) TryFormat(new Span<char>(w, n), out n, f, provider); return s;
       }
-      return p.ToString(format, provider);
+      return p.ToString(c == 'r' ? "L0" : format, provider);
     }
     public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-      var f = format.Trim();
-      if (f.Length != 0 && (f[0] | 0x20) == 'x') //int hex style
+      var f = format.Trim(); var c = f.Length != 0 ? f[0] | 0x20 : 0;
+      if (c == 'x') //int hex style
       {
         var l = f.Length > 1 ? unchecked((int)uint.Parse(f.Slice(1))) : 0;
         var cpu = rat.task_cpu; cpu.push(this.p);
@@ -46,7 +48,7 @@ namespace System.Numerics.Rational
         }
         cpu.pop(); charsWritten = n; return true;
       }
-      return p.TryFormat(dest, out charsWritten, format, provider);
+      return p.TryFormat(dest, out charsWritten, c == 'r' ? "L0" : format, provider);
     }
     public static BigInt Parse(string value) => Parse(value, NumberStyles.Integer);
     public static BigInt Parse(string value, NumberStyles style) => Parse(value.AsSpan(), style, NumberFormatInfo.CurrentInfo);
@@ -133,7 +135,7 @@ namespace System.Numerics.Rational
     public static implicit operator BigInt(long value) => new BigInt((BigRational)value);
     public static implicit operator BigInt(BigInteger value) => new BigInt((BigRational)value);
     public static implicit operator BigRational(BigInt value) => value.p;
-    public static explicit operator BigInt(BigRational value) => new BigInt(BigRational.Truncate(value)); //todo: cpu
+    public static explicit operator BigInt(BigRational value) => new BigInt(BigRational.IsInteger(value) ? value : BigRational.Truncate(value));
     public static explicit operator BigInteger(BigInt value) => (BigInteger)value.p;
 
     public static explicit operator byte(BigInt value) => (byte)value.p;
@@ -204,7 +206,11 @@ namespace System.Numerics.Rational
     public static BigInt Multiply(BigInt left, BigInt right) => left * right;
     public static BigInt Divide(BigInt dividend, BigInt divisor) => dividend / divisor;
     public static BigInt Remainder(BigInt dividend, BigInt divisor) => dividend % divisor;
-    public static BigInt DivRem(BigInt dividend, BigInt divisor, out BigInt remainder) { remainder = dividend % divisor; return dividend / divisor; }
+    public static BigInt DivRem(BigInt dividend, BigInt divisor, out BigInt remainder)
+    {
+      remainder = dividend % divisor;
+      return dividend / divisor;
+    }
     public static (BigInt Quotient, BigInt Remainder) DivRem(BigInt left, BigInt right) { var q = DivRem(left, right, out var r); return (q, r); }
     public static BigInt Negate(BigInt value) => -value;
     public static double Log(BigInt value) => Log(value, Math.E);
@@ -213,6 +219,22 @@ namespace System.Numerics.Rational
     public static BigInt GreatestCommonDivisor(BigInt left, BigInt right) => new BigInt(BigRational.GreatestCommonDivisor(left.p, right.p));
     public static BigInt Pow(BigInt value, int exponent) => new BigInt(BigRational.Pow(value.p, exponent));
     public static BigInt ModPow(BigInt value, BigInt exponent, BigInt modulus) => new BigInt(BigRational.Pow(value.p, exponent, 0) % modulus);
+
+    //non-std's
+    public static int Msb(BigInt value) { var cpu = rat.task_cpu; cpu.push(value.p); var x = cpu.msb(); cpu.pop(); return unchecked((int)x); }
+    public static int Lsb(BigInt value) { var cpu = rat.task_cpu; cpu.push(value.p); var x = cpu.lsb(); cpu.pop(); return unchecked((int)x); }
+    public static BigInt Shl(BigInt value, int shift)
+    {
+      if (shift <= 0) return shift == 0 ? value : Shr(value, -shift);
+      var cpu = rat.task_cpu; cpu.push(value.p);
+      cpu.shl(unchecked((uint)shift)); return new BigInt(cpu);
+    }
+    public static BigInt Shr(BigInt value, int shift)
+    {
+      if (shift <= 0) return shift == 0 ? value : Shl(value, -shift);
+      var cpu = rat.task_cpu; cpu.push(value.p);
+      cpu.shr(unchecked((uint)shift)); return new BigInt(cpu);
+    }
 
     #region private
     private readonly BigRational p;
