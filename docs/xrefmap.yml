@@ -1417,27 +1417,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.xor
   fullName: System.Numerics.BigRational.CPU.xor
   nameWithType: BigRational.CPU.xor
-- uid: System.Numerics.BigRational.DivRem(System.Numerics.BigRational,System.Numerics.BigRational)
-  name: DivRem(BigRational, BigRational)
-  href: api/System.Numerics.BigRational.DivRem.html#System_Numerics_BigRational_DivRem_System_Numerics_BigRational_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.DivRem(System.Numerics.BigRational,System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.DivRem(System.Numerics.BigRational, System.Numerics.BigRational)
-  nameWithType: BigRational.DivRem(BigRational, BigRational)
-- uid: System.Numerics.BigRational.DivRem(System.Numerics.BigRational,System.Numerics.BigRational,System.Numerics.BigRational@)
-  name: DivRem(BigRational, BigRational, out BigRational)
-  href: api/System.Numerics.BigRational.DivRem.html#System_Numerics_BigRational_DivRem_System_Numerics_BigRational_System_Numerics_BigRational_System_Numerics_BigRational__
-  commentId: M:System.Numerics.BigRational.DivRem(System.Numerics.BigRational,System.Numerics.BigRational,System.Numerics.BigRational@)
-  name.vb: DivRem(BigRational, BigRational, ByRef BigRational)
-  fullName: System.Numerics.BigRational.DivRem(System.Numerics.BigRational, System.Numerics.BigRational, out System.Numerics.BigRational)
-  fullName.vb: System.Numerics.BigRational.DivRem(System.Numerics.BigRational, System.Numerics.BigRational, ByRef System.Numerics.BigRational)
-  nameWithType: BigRational.DivRem(BigRational, BigRational, out BigRational)
-  nameWithType.vb: BigRational.DivRem(BigRational, BigRational, ByRef BigRational)
-- uid: System.Numerics.BigRational.DivRem*
-  name: DivRem
-  href: api/System.Numerics.BigRational.DivRem.html
-  commentId: Overload:System.Numerics.BigRational.DivRem
-  fullName: System.Numerics.BigRational.DivRem
-  nameWithType: BigRational.DivRem
 - uid: System.Numerics.BigRational.Equals(System.Int64)
   name: Equals(Int64)
   href: api/System.Numerics.BigRational.Equals.html#System_Numerics_BigRational_Equals_System_Int64_
@@ -1576,18 +1555,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.GetHashCode
   fullName: System.Numerics.BigRational.GetHashCode
   nameWithType: BigRational.GetHashCode
-- uid: System.Numerics.BigRational.GreatestCommonDivisor(System.Numerics.BigRational,System.Numerics.BigRational)
-  name: GreatestCommonDivisor(BigRational, BigRational)
-  href: api/System.Numerics.BigRational.GreatestCommonDivisor.html#System_Numerics_BigRational_GreatestCommonDivisor_System_Numerics_BigRational_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.GreatestCommonDivisor(System.Numerics.BigRational,System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.GreatestCommonDivisor(System.Numerics.BigRational, System.Numerics.BigRational)
-  nameWithType: BigRational.GreatestCommonDivisor(BigRational, BigRational)
-- uid: System.Numerics.BigRational.GreatestCommonDivisor*
-  name: GreatestCommonDivisor
-  href: api/System.Numerics.BigRational.GreatestCommonDivisor.html
-  commentId: Overload:System.Numerics.BigRational.GreatestCommonDivisor
-  fullName: System.Numerics.BigRational.GreatestCommonDivisor
-  nameWithType: BigRational.GreatestCommonDivisor
 - uid: System.Numerics.BigRational.Hypot(System.Numerics.BigRational,System.Numerics.BigRational)
   name: Hypot(BigRational, BigRational)
   href: api/System.Numerics.BigRational.Hypot.html#System_Numerics_BigRational_Hypot_System_Numerics_BigRational_System_Numerics_BigRational_
@@ -1606,18 +1573,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.Hypot
   fullName: System.Numerics.BigRational.Hypot
   nameWithType: BigRational.Hypot
-- uid: System.Numerics.BigRational.IDiv(System.Numerics.BigRational,System.Numerics.BigRational)
-  name: IDiv(BigRational, BigRational)
-  href: api/System.Numerics.BigRational.IDiv.html#System_Numerics_BigRational_IDiv_System_Numerics_BigRational_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IDiv(System.Numerics.BigRational,System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IDiv(System.Numerics.BigRational, System.Numerics.BigRational)
-  nameWithType: BigRational.IDiv(BigRational, BigRational)
-- uid: System.Numerics.BigRational.IDiv*
-  name: IDiv
-  href: api/System.Numerics.BigRational.IDiv.html
-  commentId: Overload:System.Numerics.BigRational.IDiv
-  fullName: System.Numerics.BigRational.IDiv
-  nameWithType: BigRational.IDiv
 - uid: System.Numerics.BigRational.ILog10(System.Numerics.BigRational)
   name: ILog10(BigRational)
   href: api/System.Numerics.BigRational.ILog10.html#System_Numerics_BigRational_ILog10_System_Numerics_BigRational_
@@ -1654,18 +1609,1503 @@ references:
   commentId: Overload:System.Numerics.BigRational.ILogB
   fullName: System.Numerics.BigRational.ILogB
   nameWithType: BigRational.ILogB
-- uid: System.Numerics.BigRational.IMod(System.Numerics.BigRational,System.Numerics.BigRational)
-  name: IMod(BigRational, BigRational)
-  href: api/System.Numerics.BigRational.IMod.html#System_Numerics_BigRational_IMod_System_Numerics_BigRational_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.IMod(System.Numerics.BigRational,System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.IMod(System.Numerics.BigRational, System.Numerics.BigRational)
-  nameWithType: BigRational.IMod(BigRational, BigRational)
-- uid: System.Numerics.BigRational.IMod*
-  name: IMod
-  href: api/System.Numerics.BigRational.IMod.html
-  commentId: Overload:System.Numerics.BigRational.IMod
-  fullName: System.Numerics.BigRational.IMod
-  nameWithType: BigRational.IMod
+- uid: System.Numerics.BigRational.Integer
+  name: BigRational.Integer
+  href: api/System.Numerics.BigRational.Integer.html
+  commentId: T:System.Numerics.BigRational.Integer
+  fullName: System.Numerics.BigRational.Integer
+  nameWithType: BigRational.Integer
+- uid: System.Numerics.BigRational.Integer.#ctor(System.Byte[])
+  name: Integer(Byte[])
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_Byte___
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.Byte[])
+  name.vb: Integer(Byte())
+  fullName: System.Numerics.BigRational.Integer.Integer(System.Byte[])
+  fullName.vb: System.Numerics.BigRational.Integer.Integer(System.Byte())
+  nameWithType: BigRational.Integer.Integer(Byte[])
+  nameWithType.vb: BigRational.Integer.Integer(Byte())
+- uid: System.Numerics.BigRational.Integer.#ctor(System.Decimal)
+  name: Integer(Decimal)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_Decimal_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.Decimal)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.Decimal)
+  nameWithType: BigRational.Integer.Integer(Decimal)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.Double)
+  name: Integer(Double)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_Double_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.Double)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.Double)
+  nameWithType: BigRational.Integer.Integer(Double)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.Int128)
+  name: Integer(Int128)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_Int128_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.Int128)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.Int128)
+  nameWithType: BigRational.Integer.Integer(Int128)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.Int32)
+  name: Integer(Int32)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.Int32)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.Int32)
+  nameWithType: BigRational.Integer.Integer(Int32)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.Int64)
+  name: Integer(Int64)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.Int64)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.Int64)
+  nameWithType: BigRational.Integer.Integer(Int64)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.ReadOnlySpan{System.Byte},System.Boolean,System.Boolean)
+  name: Integer(ReadOnlySpan<Byte>, Boolean, Boolean)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_ReadOnlySpan_System_Byte__System_Boolean_System_Boolean_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.ReadOnlySpan{System.Byte},System.Boolean,System.Boolean)
+  name.vb: Integer(ReadOnlySpan(Of Byte), Boolean, Boolean)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.ReadOnlySpan<System.Byte>, System.Boolean, System.Boolean)
+  fullName.vb: System.Numerics.BigRational.Integer.Integer(System.ReadOnlySpan(Of System.Byte), System.Boolean, System.Boolean)
+  nameWithType: BigRational.Integer.Integer(ReadOnlySpan<Byte>, Boolean, Boolean)
+  nameWithType.vb: BigRational.Integer.Integer(ReadOnlySpan(Of Byte), Boolean, Boolean)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.Single)
+  name: Integer(Single)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_Single_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.Single)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.Single)
+  nameWithType: BigRational.Integer.Integer(Single)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.UInt128)
+  name: Integer(UInt128)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_UInt128_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.UInt128)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.UInt128)
+  nameWithType: BigRational.Integer.Integer(UInt128)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.UInt32)
+  name: Integer(UInt32)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_UInt32_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.UInt32)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.UInt32)
+  nameWithType: BigRational.Integer.Integer(UInt32)
+- uid: System.Numerics.BigRational.Integer.#ctor(System.UInt64)
+  name: Integer(UInt64)
+  href: api/System.Numerics.BigRational.Integer.-ctor.html#System_Numerics_BigRational_Integer__ctor_System_UInt64_
+  commentId: M:System.Numerics.BigRational.Integer.#ctor(System.UInt64)
+  fullName: System.Numerics.BigRational.Integer.Integer(System.UInt64)
+  nameWithType: BigRational.Integer.Integer(UInt64)
+- uid: System.Numerics.BigRational.Integer.#ctor*
+  name: Integer
+  href: api/System.Numerics.BigRational.Integer.-ctor.html
+  commentId: Overload:System.Numerics.BigRational.Integer.#ctor
+  fullName: System.Numerics.BigRational.Integer.Integer
+  nameWithType: BigRational.Integer.Integer
+- uid: System.Numerics.BigRational.Integer.Abs(System.Numerics.BigRational.Integer)
+  name: Abs(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Abs.html#System_Numerics_BigRational_Integer_Abs_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Abs(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Abs(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Abs(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Abs*
+  name: Abs
+  href: api/System.Numerics.BigRational.Integer.Abs.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Abs
+  fullName: System.Numerics.BigRational.Integer.Abs
+  nameWithType: BigRational.Integer.Abs
+- uid: System.Numerics.BigRational.Integer.Add(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Add(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Add.html#System_Numerics_BigRational_Integer_Add_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Add(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Add(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Add(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Add*
+  name: Add
+  href: api/System.Numerics.BigRational.Integer.Add.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Add
+  fullName: System.Numerics.BigRational.Integer.Add
+  nameWithType: BigRational.Integer.Add
+- uid: System.Numerics.BigRational.Integer.CompareTo(System.Int64)
+  name: CompareTo(Int64)
+  href: api/System.Numerics.BigRational.Integer.CompareTo.html#System_Numerics_BigRational_Integer_CompareTo_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.CompareTo(System.Int64)
+  fullName: System.Numerics.BigRational.Integer.CompareTo(System.Int64)
+  nameWithType: BigRational.Integer.CompareTo(Int64)
+- uid: System.Numerics.BigRational.Integer.CompareTo(System.Numerics.BigRational.Integer)
+  name: CompareTo(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.CompareTo.html#System_Numerics_BigRational_Integer_CompareTo_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.CompareTo(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.CompareTo(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.CompareTo(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.CompareTo(System.Object)
+  name: CompareTo(Object)
+  href: api/System.Numerics.BigRational.Integer.CompareTo.html#System_Numerics_BigRational_Integer_CompareTo_System_Object_
+  commentId: M:System.Numerics.BigRational.Integer.CompareTo(System.Object)
+  fullName: System.Numerics.BigRational.Integer.CompareTo(System.Object)
+  nameWithType: BigRational.Integer.CompareTo(Object)
+- uid: System.Numerics.BigRational.Integer.CompareTo*
+  name: CompareTo
+  href: api/System.Numerics.BigRational.Integer.CompareTo.html
+  commentId: Overload:System.Numerics.BigRational.Integer.CompareTo
+  fullName: System.Numerics.BigRational.Integer.CompareTo
+  nameWithType: BigRational.Integer.CompareTo
+- uid: System.Numerics.BigRational.Integer.Divide(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Divide(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Divide.html#System_Numerics_BigRational_Integer_Divide_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Divide(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Divide(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Divide(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Divide*
+  name: Divide
+  href: api/System.Numerics.BigRational.Integer.Divide.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Divide
+  fullName: System.Numerics.BigRational.Integer.Divide
+  nameWithType: BigRational.Integer.Divide
+- uid: System.Numerics.BigRational.Integer.DivRem(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: DivRem(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.DivRem.html#System_Numerics_BigRational_Integer_DivRem_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.DivRem(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.DivRem(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.DivRem(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.DivRem(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer@)
+  name: DivRem(BigRational.Integer, BigRational.Integer, out BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.DivRem.html#System_Numerics_BigRational_Integer_DivRem_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer__
+  commentId: M:System.Numerics.BigRational.Integer.DivRem(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer@)
+  name.vb: DivRem(BigRational.Integer, BigRational.Integer, ByRef BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.DivRem(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer, out System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.DivRem(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer, ByRef System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.DivRem(BigRational.Integer, BigRational.Integer, out BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.DivRem(BigRational.Integer, BigRational.Integer, ByRef BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.DivRem*
+  name: DivRem
+  href: api/System.Numerics.BigRational.Integer.DivRem.html
+  commentId: Overload:System.Numerics.BigRational.Integer.DivRem
+  fullName: System.Numerics.BigRational.Integer.DivRem
+  nameWithType: BigRational.Integer.DivRem
+- uid: System.Numerics.BigRational.Integer.Equals(System.Int64)
+  name: Equals(Int64)
+  href: api/System.Numerics.BigRational.Integer.Equals.html#System_Numerics_BigRational_Integer_Equals_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.Equals(System.Int64)
+  fullName: System.Numerics.BigRational.Integer.Equals(System.Int64)
+  nameWithType: BigRational.Integer.Equals(Int64)
+- uid: System.Numerics.BigRational.Integer.Equals(System.Numerics.BigRational.Integer)
+  name: Equals(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Equals.html#System_Numerics_BigRational_Integer_Equals_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Equals(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Equals(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Equals(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Equals(System.Object)
+  name: Equals(Object)
+  href: api/System.Numerics.BigRational.Integer.Equals.html#System_Numerics_BigRational_Integer_Equals_System_Object_
+  commentId: M:System.Numerics.BigRational.Integer.Equals(System.Object)
+  fullName: System.Numerics.BigRational.Integer.Equals(System.Object)
+  nameWithType: BigRational.Integer.Equals(Object)
+- uid: System.Numerics.BigRational.Integer.Equals*
+  name: Equals
+  href: api/System.Numerics.BigRational.Integer.Equals.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Equals
+  fullName: System.Numerics.BigRational.Integer.Equals
+  nameWithType: BigRational.Integer.Equals
+- uid: System.Numerics.BigRational.Integer.GetByteCount(System.Boolean)
+  name: GetByteCount(Boolean)
+  href: api/System.Numerics.BigRational.Integer.GetByteCount.html#System_Numerics_BigRational_Integer_GetByteCount_System_Boolean_
+  commentId: M:System.Numerics.BigRational.Integer.GetByteCount(System.Boolean)
+  fullName: System.Numerics.BigRational.Integer.GetByteCount(System.Boolean)
+  nameWithType: BigRational.Integer.GetByteCount(Boolean)
+- uid: System.Numerics.BigRational.Integer.GetByteCount*
+  name: GetByteCount
+  href: api/System.Numerics.BigRational.Integer.GetByteCount.html
+  commentId: Overload:System.Numerics.BigRational.Integer.GetByteCount
+  fullName: System.Numerics.BigRational.Integer.GetByteCount
+  nameWithType: BigRational.Integer.GetByteCount
+- uid: System.Numerics.BigRational.Integer.GetHashCode
+  name: GetHashCode()
+  href: api/System.Numerics.BigRational.Integer.GetHashCode.html#System_Numerics_BigRational_Integer_GetHashCode
+  commentId: M:System.Numerics.BigRational.Integer.GetHashCode
+  fullName: System.Numerics.BigRational.Integer.GetHashCode()
+  nameWithType: BigRational.Integer.GetHashCode()
+- uid: System.Numerics.BigRational.Integer.GetHashCode*
+  name: GetHashCode
+  href: api/System.Numerics.BigRational.Integer.GetHashCode.html
+  commentId: Overload:System.Numerics.BigRational.Integer.GetHashCode
+  fullName: System.Numerics.BigRational.Integer.GetHashCode
+  nameWithType: BigRational.Integer.GetHashCode
+- uid: System.Numerics.BigRational.Integer.GreatestCommonDivisor(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: GreatestCommonDivisor(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.GreatestCommonDivisor.html#System_Numerics_BigRational_Integer_GreatestCommonDivisor_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.GreatestCommonDivisor(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.GreatestCommonDivisor(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.GreatestCommonDivisor(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.GreatestCommonDivisor*
+  name: GreatestCommonDivisor
+  href: api/System.Numerics.BigRational.Integer.GreatestCommonDivisor.html
+  commentId: Overload:System.Numerics.BigRational.Integer.GreatestCommonDivisor
+  fullName: System.Numerics.BigRational.Integer.GreatestCommonDivisor
+  nameWithType: BigRational.Integer.GreatestCommonDivisor
+- uid: System.Numerics.BigRational.Integer.IsEven
+  name: IsEven
+  href: api/System.Numerics.BigRational.Integer.IsEven.html#System_Numerics_BigRational_Integer_IsEven
+  commentId: P:System.Numerics.BigRational.Integer.IsEven
+  fullName: System.Numerics.BigRational.Integer.IsEven
+  nameWithType: BigRational.Integer.IsEven
+- uid: System.Numerics.BigRational.Integer.IsEven*
+  name: IsEven
+  href: api/System.Numerics.BigRational.Integer.IsEven.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsEven
+  fullName: System.Numerics.BigRational.Integer.IsEven
+  nameWithType: BigRational.Integer.IsEven
+- uid: System.Numerics.BigRational.Integer.IsEvenInteger(System.Numerics.BigRational.Integer)
+  name: IsEvenInteger(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.IsEvenInteger.html#System_Numerics_BigRational_Integer_IsEvenInteger_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.IsEvenInteger(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.IsEvenInteger(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.IsEvenInteger(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.IsEvenInteger*
+  name: IsEvenInteger
+  href: api/System.Numerics.BigRational.Integer.IsEvenInteger.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsEvenInteger
+  fullName: System.Numerics.BigRational.Integer.IsEvenInteger
+  nameWithType: BigRational.Integer.IsEvenInteger
+- uid: System.Numerics.BigRational.Integer.IsNegative(System.Numerics.BigRational.Integer)
+  name: IsNegative(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.IsNegative.html#System_Numerics_BigRational_Integer_IsNegative_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.IsNegative(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.IsNegative(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.IsNegative(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.IsNegative*
+  name: IsNegative
+  href: api/System.Numerics.BigRational.Integer.IsNegative.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsNegative
+  fullName: System.Numerics.BigRational.Integer.IsNegative
+  nameWithType: BigRational.Integer.IsNegative
+- uid: System.Numerics.BigRational.Integer.IsOddInteger(System.Numerics.BigRational.Integer)
+  name: IsOddInteger(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.IsOddInteger.html#System_Numerics_BigRational_Integer_IsOddInteger_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.IsOddInteger(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.IsOddInteger(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.IsOddInteger(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.IsOddInteger*
+  name: IsOddInteger
+  href: api/System.Numerics.BigRational.Integer.IsOddInteger.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsOddInteger
+  fullName: System.Numerics.BigRational.Integer.IsOddInteger
+  nameWithType: BigRational.Integer.IsOddInteger
+- uid: System.Numerics.BigRational.Integer.IsOne
+  name: IsOne
+  href: api/System.Numerics.BigRational.Integer.IsOne.html#System_Numerics_BigRational_Integer_IsOne
+  commentId: P:System.Numerics.BigRational.Integer.IsOne
+  fullName: System.Numerics.BigRational.Integer.IsOne
+  nameWithType: BigRational.Integer.IsOne
+- uid: System.Numerics.BigRational.Integer.IsOne*
+  name: IsOne
+  href: api/System.Numerics.BigRational.Integer.IsOne.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsOne
+  fullName: System.Numerics.BigRational.Integer.IsOne
+  nameWithType: BigRational.Integer.IsOne
+- uid: System.Numerics.BigRational.Integer.IsPositive(System.Numerics.BigRational.Integer)
+  name: IsPositive(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.IsPositive.html#System_Numerics_BigRational_Integer_IsPositive_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.IsPositive(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.IsPositive(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.IsPositive(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.IsPositive*
+  name: IsPositive
+  href: api/System.Numerics.BigRational.Integer.IsPositive.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsPositive
+  fullName: System.Numerics.BigRational.Integer.IsPositive
+  nameWithType: BigRational.Integer.IsPositive
+- uid: System.Numerics.BigRational.Integer.IsPow2(System.Numerics.BigRational.Integer)
+  name: IsPow2(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.IsPow2.html#System_Numerics_BigRational_Integer_IsPow2_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.IsPow2(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.IsPow2(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.IsPow2(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.IsPow2*
+  name: IsPow2
+  href: api/System.Numerics.BigRational.Integer.IsPow2.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsPow2
+  fullName: System.Numerics.BigRational.Integer.IsPow2
+  nameWithType: BigRational.Integer.IsPow2
+- uid: System.Numerics.BigRational.Integer.IsPowerOfTwo
+  name: IsPowerOfTwo
+  href: api/System.Numerics.BigRational.Integer.IsPowerOfTwo.html#System_Numerics_BigRational_Integer_IsPowerOfTwo
+  commentId: P:System.Numerics.BigRational.Integer.IsPowerOfTwo
+  fullName: System.Numerics.BigRational.Integer.IsPowerOfTwo
+  nameWithType: BigRational.Integer.IsPowerOfTwo
+- uid: System.Numerics.BigRational.Integer.IsPowerOfTwo*
+  name: IsPowerOfTwo
+  href: api/System.Numerics.BigRational.Integer.IsPowerOfTwo.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsPowerOfTwo
+  fullName: System.Numerics.BigRational.Integer.IsPowerOfTwo
+  nameWithType: BigRational.Integer.IsPowerOfTwo
+- uid: System.Numerics.BigRational.Integer.IsZero
+  name: IsZero
+  href: api/System.Numerics.BigRational.Integer.IsZero.html#System_Numerics_BigRational_Integer_IsZero
+  commentId: P:System.Numerics.BigRational.Integer.IsZero
+  fullName: System.Numerics.BigRational.Integer.IsZero
+  nameWithType: BigRational.Integer.IsZero
+- uid: System.Numerics.BigRational.Integer.IsZero*
+  name: IsZero
+  href: api/System.Numerics.BigRational.Integer.IsZero.html
+  commentId: Overload:System.Numerics.BigRational.Integer.IsZero
+  fullName: System.Numerics.BigRational.Integer.IsZero
+  nameWithType: BigRational.Integer.IsZero
+- uid: System.Numerics.BigRational.Integer.LeastCommonMultiple(System.Numerics.BigRational,System.Numerics.BigRational)
+  name: LeastCommonMultiple(BigRational, BigRational)
+  href: api/System.Numerics.BigRational.Integer.LeastCommonMultiple.html#System_Numerics_BigRational_Integer_LeastCommonMultiple_System_Numerics_BigRational_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.Integer.LeastCommonMultiple(System.Numerics.BigRational,System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.Integer.LeastCommonMultiple(System.Numerics.BigRational, System.Numerics.BigRational)
+  nameWithType: BigRational.Integer.LeastCommonMultiple(BigRational, BigRational)
+- uid: System.Numerics.BigRational.Integer.LeastCommonMultiple*
+  name: LeastCommonMultiple
+  href: api/System.Numerics.BigRational.Integer.LeastCommonMultiple.html
+  commentId: Overload:System.Numerics.BigRational.Integer.LeastCommonMultiple
+  fullName: System.Numerics.BigRational.Integer.LeastCommonMultiple
+  nameWithType: BigRational.Integer.LeastCommonMultiple
+- uid: System.Numerics.BigRational.Integer.Log(System.Numerics.BigRational.Integer)
+  name: Log(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Log.html#System_Numerics_BigRational_Integer_Log_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Log(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Log(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Log(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Log(System.Numerics.BigRational.Integer,System.Double)
+  name: Log(BigRational.Integer, Double)
+  href: api/System.Numerics.BigRational.Integer.Log.html#System_Numerics_BigRational_Integer_Log_System_Numerics_BigRational_Integer_System_Double_
+  commentId: M:System.Numerics.BigRational.Integer.Log(System.Numerics.BigRational.Integer,System.Double)
+  fullName: System.Numerics.BigRational.Integer.Log(System.Numerics.BigRational.Integer, System.Double)
+  nameWithType: BigRational.Integer.Log(BigRational.Integer, Double)
+- uid: System.Numerics.BigRational.Integer.Log*
+  name: Log
+  href: api/System.Numerics.BigRational.Integer.Log.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Log
+  fullName: System.Numerics.BigRational.Integer.Log
+  nameWithType: BigRational.Integer.Log
+- uid: System.Numerics.BigRational.Integer.Log10(System.Numerics.BigRational.Integer)
+  name: Log10(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Log10.html#System_Numerics_BigRational_Integer_Log10_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Log10(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Log10(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Log10(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Log10*
+  name: Log10
+  href: api/System.Numerics.BigRational.Integer.Log10.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Log10
+  fullName: System.Numerics.BigRational.Integer.Log10
+  nameWithType: BigRational.Integer.Log10
+- uid: System.Numerics.BigRational.Integer.Log2(System.Numerics.BigRational.Integer)
+  name: Log2(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Log2.html#System_Numerics_BigRational_Integer_Log2_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Log2(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Log2(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Log2(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Log2*
+  name: Log2
+  href: api/System.Numerics.BigRational.Integer.Log2.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Log2
+  fullName: System.Numerics.BigRational.Integer.Log2
+  nameWithType: BigRational.Integer.Log2
+- uid: System.Numerics.BigRational.Integer.Lsb(System.Numerics.BigRational.Integer)
+  name: Lsb(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Lsb.html#System_Numerics_BigRational_Integer_Lsb_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Lsb(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Lsb(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Lsb(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Lsb*
+  name: Lsb
+  href: api/System.Numerics.BigRational.Integer.Lsb.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Lsb
+  fullName: System.Numerics.BigRational.Integer.Lsb
+  nameWithType: BigRational.Integer.Lsb
+- uid: System.Numerics.BigRational.Integer.Max(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Max(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Max.html#System_Numerics_BigRational_Integer_Max_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Max(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Max(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Max(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Max*
+  name: Max
+  href: api/System.Numerics.BigRational.Integer.Max.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Max
+  fullName: System.Numerics.BigRational.Integer.Max
+  nameWithType: BigRational.Integer.Max
+- uid: System.Numerics.BigRational.Integer.MaxMagnitude(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: MaxMagnitude(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.MaxMagnitude.html#System_Numerics_BigRational_Integer_MaxMagnitude_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.MaxMagnitude(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.MaxMagnitude(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.MaxMagnitude(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.MaxMagnitude*
+  name: MaxMagnitude
+  href: api/System.Numerics.BigRational.Integer.MaxMagnitude.html
+  commentId: Overload:System.Numerics.BigRational.Integer.MaxMagnitude
+  fullName: System.Numerics.BigRational.Integer.MaxMagnitude
+  nameWithType: BigRational.Integer.MaxMagnitude
+- uid: System.Numerics.BigRational.Integer.Min(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Min(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Min.html#System_Numerics_BigRational_Integer_Min_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Min(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Min(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Min(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Min*
+  name: Min
+  href: api/System.Numerics.BigRational.Integer.Min.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Min
+  fullName: System.Numerics.BigRational.Integer.Min
+  nameWithType: BigRational.Integer.Min
+- uid: System.Numerics.BigRational.Integer.MinMagnitude(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: MinMagnitude(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.MinMagnitude.html#System_Numerics_BigRational_Integer_MinMagnitude_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.MinMagnitude(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.MinMagnitude(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.MinMagnitude(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.MinMagnitude*
+  name: MinMagnitude
+  href: api/System.Numerics.BigRational.Integer.MinMagnitude.html
+  commentId: Overload:System.Numerics.BigRational.Integer.MinMagnitude
+  fullName: System.Numerics.BigRational.Integer.MinMagnitude
+  nameWithType: BigRational.Integer.MinMagnitude
+- uid: System.Numerics.BigRational.Integer.MinusOne
+  name: MinusOne
+  href: api/System.Numerics.BigRational.Integer.MinusOne.html#System_Numerics_BigRational_Integer_MinusOne
+  commentId: P:System.Numerics.BigRational.Integer.MinusOne
+  fullName: System.Numerics.BigRational.Integer.MinusOne
+  nameWithType: BigRational.Integer.MinusOne
+- uid: System.Numerics.BigRational.Integer.MinusOne*
+  name: MinusOne
+  href: api/System.Numerics.BigRational.Integer.MinusOne.html
+  commentId: Overload:System.Numerics.BigRational.Integer.MinusOne
+  fullName: System.Numerics.BigRational.Integer.MinusOne
+  nameWithType: BigRational.Integer.MinusOne
+- uid: System.Numerics.BigRational.Integer.ModPow(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: ModPow(BigRational.Integer, BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.ModPow.html#System_Numerics_BigRational_Integer_ModPow_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.ModPow(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.ModPow(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.ModPow(BigRational.Integer, BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.ModPow*
+  name: ModPow
+  href: api/System.Numerics.BigRational.Integer.ModPow.html
+  commentId: Overload:System.Numerics.BigRational.Integer.ModPow
+  fullName: System.Numerics.BigRational.Integer.ModPow
+  nameWithType: BigRational.Integer.ModPow
+- uid: System.Numerics.BigRational.Integer.Msb(System.Numerics.BigRational.Integer)
+  name: Msb(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Msb.html#System_Numerics_BigRational_Integer_Msb_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Msb(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Msb(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Msb(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Msb*
+  name: Msb
+  href: api/System.Numerics.BigRational.Integer.Msb.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Msb
+  fullName: System.Numerics.BigRational.Integer.Msb
+  nameWithType: BigRational.Integer.Msb
+- uid: System.Numerics.BigRational.Integer.Multiply(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Multiply(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Multiply.html#System_Numerics_BigRational_Integer_Multiply_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Multiply(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Multiply(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Multiply(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Multiply*
+  name: Multiply
+  href: api/System.Numerics.BigRational.Integer.Multiply.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Multiply
+  fullName: System.Numerics.BigRational.Integer.Multiply
+  nameWithType: BigRational.Integer.Multiply
+- uid: System.Numerics.BigRational.Integer.Negate(System.Numerics.BigRational.Integer)
+  name: Negate(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Negate.html#System_Numerics_BigRational_Integer_Negate_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Negate(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Negate(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Negate(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Negate*
+  name: Negate
+  href: api/System.Numerics.BigRational.Integer.Negate.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Negate
+  fullName: System.Numerics.BigRational.Integer.Negate
+  nameWithType: BigRational.Integer.Negate
+- uid: System.Numerics.BigRational.Integer.One
+  name: One
+  href: api/System.Numerics.BigRational.Integer.One.html#System_Numerics_BigRational_Integer_One
+  commentId: P:System.Numerics.BigRational.Integer.One
+  fullName: System.Numerics.BigRational.Integer.One
+  nameWithType: BigRational.Integer.One
+- uid: System.Numerics.BigRational.Integer.One*
+  name: One
+  href: api/System.Numerics.BigRational.Integer.One.html
+  commentId: Overload:System.Numerics.BigRational.Integer.One
+  fullName: System.Numerics.BigRational.Integer.One
+  nameWithType: BigRational.Integer.One
+- uid: System.Numerics.BigRational.Integer.op_Addition(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Addition(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Addition.html#System_Numerics_BigRational_Integer_op_Addition_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Addition(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Addition(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Addition(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Addition*
+  name: Addition
+  href: api/System.Numerics.BigRational.Integer.op_Addition.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Addition
+  fullName: System.Numerics.BigRational.Integer.Addition
+  nameWithType: BigRational.Integer.Addition
+- uid: System.Numerics.BigRational.Integer.op_BitwiseAnd(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: BitwiseAnd(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_BitwiseAnd.html#System_Numerics_BigRational_Integer_op_BitwiseAnd_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_BitwiseAnd(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.BitwiseAnd(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.BitwiseAnd(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_BitwiseAnd*
+  name: BitwiseAnd
+  href: api/System.Numerics.BigRational.Integer.op_BitwiseAnd.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_BitwiseAnd
+  fullName: System.Numerics.BigRational.Integer.BitwiseAnd
+  nameWithType: BigRational.Integer.BitwiseAnd
+- uid: System.Numerics.BigRational.Integer.op_BitwiseOr(System.Nullable{System.Numerics.BigRational.Integer},System.Numerics.BigRational.Integer)
+  name: BitwiseOr(Nullable<BigRational.Integer>, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_BitwiseOr.html#System_Numerics_BigRational_Integer_op_BitwiseOr_System_Nullable_System_Numerics_BigRational_Integer__System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_BitwiseOr(System.Nullable{System.Numerics.BigRational.Integer},System.Numerics.BigRational.Integer)
+  name.vb: BitwiseOr(Nullable(Of BigRational.Integer), BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.BitwiseOr(System.Nullable<System.Numerics.BigRational.Integer>, System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.BitwiseOr(System.Nullable(Of System.Numerics.BigRational.Integer), System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.BitwiseOr(Nullable<BigRational.Integer>, BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.BitwiseOr(Nullable(Of BigRational.Integer), BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_BitwiseOr*
+  name: BitwiseOr
+  href: api/System.Numerics.BigRational.Integer.op_BitwiseOr.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_BitwiseOr
+  fullName: System.Numerics.BigRational.Integer.BitwiseOr
+  nameWithType: BigRational.Integer.BitwiseOr
+- uid: System.Numerics.BigRational.Integer.op_Decrement(System.Numerics.BigRational.Integer)
+  name: Decrement(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Decrement.html#System_Numerics_BigRational_Integer_op_Decrement_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Decrement(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Decrement(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Decrement(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Decrement*
+  name: Decrement
+  href: api/System.Numerics.BigRational.Integer.op_Decrement.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Decrement
+  fullName: System.Numerics.BigRational.Integer.Decrement
+  nameWithType: BigRational.Integer.Decrement
+- uid: System.Numerics.BigRational.Integer.op_Division(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Division(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Division.html#System_Numerics_BigRational_Integer_op_Division_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Division(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Division(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Division(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Division*
+  name: Division
+  href: api/System.Numerics.BigRational.Integer.op_Division.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Division
+  fullName: System.Numerics.BigRational.Integer.Division
+  nameWithType: BigRational.Integer.Division
+- uid: System.Numerics.BigRational.Integer.op_Equality(System.Numerics.BigRational.Integer,System.Int64)
+  name: Equality(BigRational.Integer, Int64)
+  href: api/System.Numerics.BigRational.Integer.op_Equality.html#System_Numerics_BigRational_Integer_op_Equality_System_Numerics_BigRational_Integer_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.op_Equality(System.Numerics.BigRational.Integer,System.Int64)
+  fullName: System.Numerics.BigRational.Integer.Equality(System.Numerics.BigRational.Integer, System.Int64)
+  nameWithType: BigRational.Integer.Equality(BigRational.Integer, Int64)
+- uid: System.Numerics.BigRational.Integer.op_Equality(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Equality(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Equality.html#System_Numerics_BigRational_Integer_op_Equality_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Equality(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Equality(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Equality(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Equality*
+  name: Equality
+  href: api/System.Numerics.BigRational.Integer.op_Equality.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Equality
+  fullName: System.Numerics.BigRational.Integer.Equality
+  nameWithType: BigRational.Integer.Equality
+- uid: System.Numerics.BigRational.Integer.op_ExclusiveOr(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: ExclusiveOr(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_ExclusiveOr.html#System_Numerics_BigRational_Integer_op_ExclusiveOr_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_ExclusiveOr(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.ExclusiveOr(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.ExclusiveOr(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_ExclusiveOr*
+  name: ExclusiveOr
+  href: api/System.Numerics.BigRational.Integer.op_ExclusiveOr.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_ExclusiveOr
+  fullName: System.Numerics.BigRational.Integer.ExclusiveOr
+  nameWithType: BigRational.Integer.ExclusiveOr
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Decimal)~System.Numerics.BigRational.Integer
+  name: Explicit(Decimal to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Decimal__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Decimal)~System.Numerics.BigRational.Integer
+  name.vb: Narrowing(Decimal to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Decimal to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Decimal to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Explicit(Decimal to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Narrowing(Decimal to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Double)~System.Numerics.BigRational.Integer
+  name: Explicit(Double to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Double__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Double)~System.Numerics.BigRational.Integer
+  name.vb: Narrowing(Double to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Double to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Double to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Explicit(Double to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Narrowing(Double to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Half)~System.Numerics.BigRational.Integer
+  name: Explicit(Half to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Half__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Half)~System.Numerics.BigRational.Integer
+  name.vb: Narrowing(Half to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Half to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Half to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Explicit(Half to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Narrowing(Half to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational)~System.Numerics.BigRational.Integer
+  name: Explicit(BigRational to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational)~System.Numerics.BigRational.Integer
+  name.vb: Narrowing(BigRational to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Explicit(BigRational to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Byte
+  name: Explicit(BigRational.Integer to Byte)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Byte
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Byte
+  name.vb: Narrowing(BigRational.Integer to Byte)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Byte)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Byte)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Byte)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Byte)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Char
+  name: Explicit(BigRational.Integer to Char)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Char
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Char
+  name.vb: Narrowing(BigRational.Integer to Char)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Char)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Char)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Char)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Char)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Decimal
+  name: Explicit(BigRational.Integer to Decimal)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Decimal
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Decimal
+  name.vb: Narrowing(BigRational.Integer to Decimal)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Decimal)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Decimal)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Decimal)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Decimal)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Double
+  name: Explicit(BigRational.Integer to Double)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Double
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Double
+  name.vb: Narrowing(BigRational.Integer to Double)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Double)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Double)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Double)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Double)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Half
+  name: Explicit(BigRational.Integer to Half)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Half
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Half
+  name.vb: Narrowing(BigRational.Integer to Half)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Half)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Half)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Half)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Half)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Int128
+  name: Explicit(BigRational.Integer to Int128)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Int128
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Int128
+  name.vb: Narrowing(BigRational.Integer to Int128)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Int128)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Int128)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Int128)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Int128)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Int16
+  name: Explicit(BigRational.Integer to Int16)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Int16
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Int16
+  name.vb: Narrowing(BigRational.Integer to Int16)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Int16)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Int16)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Int16)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Int16)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Int32
+  name: Explicit(BigRational.Integer to Int32)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Int32
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Int32
+  name.vb: Narrowing(BigRational.Integer to Int32)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Int32)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Int32)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Int32)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Int32)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Int64
+  name: Explicit(BigRational.Integer to Int64)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Int64
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Int64
+  name.vb: Narrowing(BigRational.Integer to Int64)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Int64)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Int64)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Int64)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Int64)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.IntPtr
+  name: Explicit(BigRational.Integer to IntPtr)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_IntPtr
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.IntPtr
+  name.vb: Narrowing(BigRational.Integer to IntPtr)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.IntPtr)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.IntPtr)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to IntPtr)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to IntPtr)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Numerics.BigInteger
+  name: Explicit(BigRational.Integer to BigInteger)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Numerics_BigInteger
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Numerics.BigInteger
+  name.vb: Narrowing(BigRational.Integer to BigInteger)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Numerics.BigInteger)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Numerics.BigInteger)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to BigInteger)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to BigInteger)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Numerics.Complex
+  name: Explicit(BigRational.Integer to Complex)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Numerics_Complex
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Numerics.Complex
+  name.vb: Narrowing(BigRational.Integer to Complex)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Numerics.Complex)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Numerics.Complex)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Complex)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Complex)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.SByte
+  name: Explicit(BigRational.Integer to SByte)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_SByte
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.SByte
+  name.vb: Narrowing(BigRational.Integer to SByte)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.SByte)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.SByte)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to SByte)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to SByte)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Single
+  name: Explicit(BigRational.Integer to Single)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_Single
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.Single
+  name.vb: Narrowing(BigRational.Integer to Single)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.Single)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.Single)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to Single)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to Single)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UInt128
+  name: Explicit(BigRational.Integer to UInt128)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_UInt128
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UInt128
+  name.vb: Narrowing(BigRational.Integer to UInt128)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.UInt128)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.UInt128)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to UInt128)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to UInt128)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UInt16
+  name: Explicit(BigRational.Integer to UInt16)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_UInt16
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UInt16
+  name.vb: Narrowing(BigRational.Integer to UInt16)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.UInt16)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.UInt16)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to UInt16)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to UInt16)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UInt32
+  name: Explicit(BigRational.Integer to UInt32)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_UInt32
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UInt32
+  name.vb: Narrowing(BigRational.Integer to UInt32)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.UInt32)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.UInt32)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to UInt32)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to UInt32)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UInt64
+  name: Explicit(BigRational.Integer to UInt64)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_UInt64
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UInt64
+  name.vb: Narrowing(BigRational.Integer to UInt64)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.UInt64)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.UInt64)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to UInt64)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to UInt64)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UIntPtr
+  name: Explicit(BigRational.Integer to UIntPtr)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_BigRational_Integer__System_UIntPtr
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.BigRational.Integer)~System.UIntPtr
+  name.vb: Narrowing(BigRational.Integer to UIntPtr)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.BigRational.Integer to System.UIntPtr)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.BigRational.Integer to System.UIntPtr)
+  nameWithType: BigRational.Integer.Explicit(BigRational.Integer to UIntPtr)
+  nameWithType.vb: BigRational.Integer.Narrowing(BigRational.Integer to UIntPtr)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.Complex)~System.Numerics.BigRational.Integer
+  name: Explicit(Complex to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Numerics_Complex__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Numerics.Complex)~System.Numerics.BigRational.Integer
+  name.vb: Narrowing(Complex to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Numerics.Complex to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Numerics.Complex to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Explicit(Complex to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Narrowing(Complex to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Explicit(System.Single)~System.Numerics.BigRational.Integer
+  name: Explicit(Single to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html#System_Numerics_BigRational_Integer_op_Explicit_System_Single__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Explicit(System.Single)~System.Numerics.BigRational.Integer
+  name.vb: Narrowing(Single to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Explicit(System.Single to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing(System.Single to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Explicit(Single to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Narrowing(Single to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Explicit*
+  name: Explicit
+  href: api/System.Numerics.BigRational.Integer.op_Explicit.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Explicit
+  name.vb: Narrowing
+  fullName: System.Numerics.BigRational.Integer.Explicit
+  fullName.vb: System.Numerics.BigRational.Integer.Narrowing
+  nameWithType: BigRational.Integer.Explicit
+  nameWithType.vb: BigRational.Integer.Narrowing
+- uid: System.Numerics.BigRational.Integer.op_GreaterThan(System.Numerics.BigRational.Integer,System.Int64)
+  name: GreaterThan(BigRational.Integer, Int64)
+  href: api/System.Numerics.BigRational.Integer.op_GreaterThan.html#System_Numerics_BigRational_Integer_op_GreaterThan_System_Numerics_BigRational_Integer_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.op_GreaterThan(System.Numerics.BigRational.Integer,System.Int64)
+  fullName: System.Numerics.BigRational.Integer.GreaterThan(System.Numerics.BigRational.Integer, System.Int64)
+  nameWithType: BigRational.Integer.GreaterThan(BigRational.Integer, Int64)
+- uid: System.Numerics.BigRational.Integer.op_GreaterThan(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: GreaterThan(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_GreaterThan.html#System_Numerics_BigRational_Integer_op_GreaterThan_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_GreaterThan(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.GreaterThan(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.GreaterThan(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_GreaterThan*
+  name: GreaterThan
+  href: api/System.Numerics.BigRational.Integer.op_GreaterThan.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_GreaterThan
+  fullName: System.Numerics.BigRational.Integer.GreaterThan
+  nameWithType: BigRational.Integer.GreaterThan
+- uid: System.Numerics.BigRational.Integer.op_GreaterThanOrEqual(System.Numerics.BigRational.Integer,System.Int64)
+  name: GreaterThanOrEqual(BigRational.Integer, Int64)
+  href: api/System.Numerics.BigRational.Integer.op_GreaterThanOrEqual.html#System_Numerics_BigRational_Integer_op_GreaterThanOrEqual_System_Numerics_BigRational_Integer_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.op_GreaterThanOrEqual(System.Numerics.BigRational.Integer,System.Int64)
+  fullName: System.Numerics.BigRational.Integer.GreaterThanOrEqual(System.Numerics.BigRational.Integer, System.Int64)
+  nameWithType: BigRational.Integer.GreaterThanOrEqual(BigRational.Integer, Int64)
+- uid: System.Numerics.BigRational.Integer.op_GreaterThanOrEqual(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: GreaterThanOrEqual(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_GreaterThanOrEqual.html#System_Numerics_BigRational_Integer_op_GreaterThanOrEqual_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_GreaterThanOrEqual(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.GreaterThanOrEqual(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.GreaterThanOrEqual(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_GreaterThanOrEqual*
+  name: GreaterThanOrEqual
+  href: api/System.Numerics.BigRational.Integer.op_GreaterThanOrEqual.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_GreaterThanOrEqual
+  fullName: System.Numerics.BigRational.Integer.GreaterThanOrEqual
+  nameWithType: BigRational.Integer.GreaterThanOrEqual
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Byte)~System.Numerics.BigRational.Integer
+  name: Implicit(Byte to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Byte__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Byte)~System.Numerics.BigRational.Integer
+  name.vb: Widening(Byte to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Byte to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Byte to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(Byte to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(Byte to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Char)~System.Numerics.BigRational.Integer
+  name: Implicit(Char to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Char__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Char)~System.Numerics.BigRational.Integer
+  name.vb: Widening(Char to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Char to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Char to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(Char to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(Char to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Int128)~System.Numerics.BigRational.Integer
+  name: Implicit(Int128 to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Int128__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Int128)~System.Numerics.BigRational.Integer
+  name.vb: Widening(Int128 to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Int128 to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Int128 to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(Int128 to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(Int128 to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Int16)~System.Numerics.BigRational.Integer
+  name: Implicit(Int16 to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Int16__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Int16)~System.Numerics.BigRational.Integer
+  name.vb: Widening(Int16 to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Int16 to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Int16 to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(Int16 to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(Int16 to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Int32)~System.Nullable{System.Numerics.BigRational.Integer}
+  name: Implicit(Int32 to Nullable<BigRational.Integer>)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Int32__System_Nullable_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Int32)~System.Nullable{System.Numerics.BigRational.Integer}
+  name.vb: Widening(Int32 to Nullable(Of BigRational.Integer))
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Int32 to System.Nullable<System.Numerics.BigRational.Integer>)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Int32 to System.Nullable(Of System.Numerics.BigRational.Integer))
+  nameWithType: BigRational.Integer.Implicit(Int32 to Nullable<BigRational.Integer>)
+  nameWithType.vb: BigRational.Integer.Widening(Int32 to Nullable(Of BigRational.Integer))
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Int32)~System.Numerics.BigRational.Integer
+  name: Implicit(Int32 to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Int32__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Int32)~System.Numerics.BigRational.Integer
+  name.vb: Widening(Int32 to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Int32 to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Int32 to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(Int32 to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(Int32 to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Int64)~System.Numerics.BigRational.Integer
+  name: Implicit(Int64 to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Int64__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Int64)~System.Numerics.BigRational.Integer
+  name.vb: Widening(Int64 to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Int64 to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Int64 to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(Int64 to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(Int64 to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.IntPtr)~System.Numerics.BigRational.Integer
+  name: Implicit(IntPtr to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_IntPtr__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.IntPtr)~System.Numerics.BigRational.Integer
+  name.vb: Widening(IntPtr to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.IntPtr to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.IntPtr to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(IntPtr to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(IntPtr to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Numerics.BigInteger)~System.Numerics.BigRational.Integer
+  name: Implicit(BigInteger to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Numerics_BigInteger__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Numerics.BigInteger)~System.Numerics.BigRational.Integer
+  name.vb: Widening(BigInteger to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Numerics.BigInteger to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Numerics.BigInteger to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(BigInteger to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(BigInteger to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.Numerics.BigRational.Integer)~System.Numerics.BigRational
+  name: Implicit(BigRational.Integer to BigRational)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_Numerics_BigRational_Integer__System_Numerics_BigRational
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.Numerics.BigRational.Integer)~System.Numerics.BigRational
+  name.vb: Widening(BigRational.Integer to BigRational)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.Numerics.BigRational.Integer to System.Numerics.BigRational)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.Numerics.BigRational.Integer to System.Numerics.BigRational)
+  nameWithType: BigRational.Integer.Implicit(BigRational.Integer to BigRational)
+  nameWithType.vb: BigRational.Integer.Widening(BigRational.Integer to BigRational)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.SByte)~System.Numerics.BigRational.Integer
+  name: Implicit(SByte to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_SByte__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.SByte)~System.Numerics.BigRational.Integer
+  name.vb: Widening(SByte to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.SByte to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.SByte to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(SByte to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(SByte to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.UInt128)~System.Numerics.BigRational.Integer
+  name: Implicit(UInt128 to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_UInt128__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.UInt128)~System.Numerics.BigRational.Integer
+  name.vb: Widening(UInt128 to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.UInt128 to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.UInt128 to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(UInt128 to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(UInt128 to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.UInt16)~System.Numerics.BigRational.Integer
+  name: Implicit(UInt16 to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_UInt16__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.UInt16)~System.Numerics.BigRational.Integer
+  name.vb: Widening(UInt16 to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.UInt16 to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.UInt16 to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(UInt16 to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(UInt16 to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.UInt32)~System.Numerics.BigRational.Integer
+  name: Implicit(UInt32 to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_UInt32__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.UInt32)~System.Numerics.BigRational.Integer
+  name.vb: Widening(UInt32 to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.UInt32 to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.UInt32 to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(UInt32 to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(UInt32 to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.UInt64)~System.Numerics.BigRational.Integer
+  name: Implicit(UInt64 to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_UInt64__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.UInt64)~System.Numerics.BigRational.Integer
+  name.vb: Widening(UInt64 to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.UInt64 to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.UInt64 to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(UInt64 to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(UInt64 to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit(System.UIntPtr)~System.Numerics.BigRational.Integer
+  name: Implicit(UIntPtr to BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html#System_Numerics_BigRational_Integer_op_Implicit_System_UIntPtr__System_Numerics_BigRational_Integer
+  commentId: M:System.Numerics.BigRational.Integer.op_Implicit(System.UIntPtr)~System.Numerics.BigRational.Integer
+  name.vb: Widening(UIntPtr to BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Implicit(System.UIntPtr to System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.Widening(System.UIntPtr to System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Implicit(UIntPtr to BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.Widening(UIntPtr to BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Implicit*
+  name: Implicit
+  href: api/System.Numerics.BigRational.Integer.op_Implicit.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Implicit
+  name.vb: Widening
+  fullName: System.Numerics.BigRational.Integer.Implicit
+  fullName.vb: System.Numerics.BigRational.Integer.Widening
+  nameWithType: BigRational.Integer.Implicit
+  nameWithType.vb: BigRational.Integer.Widening
+- uid: System.Numerics.BigRational.Integer.op_Increment(System.Numerics.BigRational.Integer)
+  name: Increment(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Increment.html#System_Numerics_BigRational_Integer_op_Increment_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Increment(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Increment(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Increment(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Increment*
+  name: Increment
+  href: api/System.Numerics.BigRational.Integer.op_Increment.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Increment
+  fullName: System.Numerics.BigRational.Integer.Increment
+  nameWithType: BigRational.Integer.Increment
+- uid: System.Numerics.BigRational.Integer.op_Inequality(System.Numerics.BigRational.Integer,System.Int64)
+  name: Inequality(BigRational.Integer, Int64)
+  href: api/System.Numerics.BigRational.Integer.op_Inequality.html#System_Numerics_BigRational_Integer_op_Inequality_System_Numerics_BigRational_Integer_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.op_Inequality(System.Numerics.BigRational.Integer,System.Int64)
+  fullName: System.Numerics.BigRational.Integer.Inequality(System.Numerics.BigRational.Integer, System.Int64)
+  nameWithType: BigRational.Integer.Inequality(BigRational.Integer, Int64)
+- uid: System.Numerics.BigRational.Integer.op_Inequality(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Inequality(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Inequality.html#System_Numerics_BigRational_Integer_op_Inequality_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Inequality(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Inequality(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Inequality(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Inequality*
+  name: Inequality
+  href: api/System.Numerics.BigRational.Integer.op_Inequality.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Inequality
+  fullName: System.Numerics.BigRational.Integer.Inequality
+  nameWithType: BigRational.Integer.Inequality
+- uid: System.Numerics.BigRational.Integer.op_LeftShift(System.Numerics.BigRational.Integer,System.Int32)
+  name: LeftShift(BigRational.Integer, Int32)
+  href: api/System.Numerics.BigRational.Integer.op_LeftShift.html#System_Numerics_BigRational_Integer_op_LeftShift_System_Numerics_BigRational_Integer_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.op_LeftShift(System.Numerics.BigRational.Integer,System.Int32)
+  fullName: System.Numerics.BigRational.Integer.LeftShift(System.Numerics.BigRational.Integer, System.Int32)
+  nameWithType: BigRational.Integer.LeftShift(BigRational.Integer, Int32)
+- uid: System.Numerics.BigRational.Integer.op_LeftShift*
+  name: LeftShift
+  href: api/System.Numerics.BigRational.Integer.op_LeftShift.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_LeftShift
+  fullName: System.Numerics.BigRational.Integer.LeftShift
+  nameWithType: BigRational.Integer.LeftShift
+- uid: System.Numerics.BigRational.Integer.op_LessThan(System.Numerics.BigRational.Integer,System.Int64)
+  name: LessThan(BigRational.Integer, Int64)
+  href: api/System.Numerics.BigRational.Integer.op_LessThan.html#System_Numerics_BigRational_Integer_op_LessThan_System_Numerics_BigRational_Integer_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.op_LessThan(System.Numerics.BigRational.Integer,System.Int64)
+  fullName: System.Numerics.BigRational.Integer.LessThan(System.Numerics.BigRational.Integer, System.Int64)
+  nameWithType: BigRational.Integer.LessThan(BigRational.Integer, Int64)
+- uid: System.Numerics.BigRational.Integer.op_LessThan(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: LessThan(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_LessThan.html#System_Numerics_BigRational_Integer_op_LessThan_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_LessThan(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.LessThan(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.LessThan(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_LessThan*
+  name: LessThan
+  href: api/System.Numerics.BigRational.Integer.op_LessThan.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_LessThan
+  fullName: System.Numerics.BigRational.Integer.LessThan
+  nameWithType: BigRational.Integer.LessThan
+- uid: System.Numerics.BigRational.Integer.op_LessThanOrEqual(System.Numerics.BigRational.Integer,System.Int64)
+  name: LessThanOrEqual(BigRational.Integer, Int64)
+  href: api/System.Numerics.BigRational.Integer.op_LessThanOrEqual.html#System_Numerics_BigRational_Integer_op_LessThanOrEqual_System_Numerics_BigRational_Integer_System_Int64_
+  commentId: M:System.Numerics.BigRational.Integer.op_LessThanOrEqual(System.Numerics.BigRational.Integer,System.Int64)
+  fullName: System.Numerics.BigRational.Integer.LessThanOrEqual(System.Numerics.BigRational.Integer, System.Int64)
+  nameWithType: BigRational.Integer.LessThanOrEqual(BigRational.Integer, Int64)
+- uid: System.Numerics.BigRational.Integer.op_LessThanOrEqual(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: LessThanOrEqual(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_LessThanOrEqual.html#System_Numerics_BigRational_Integer_op_LessThanOrEqual_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_LessThanOrEqual(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.LessThanOrEqual(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.LessThanOrEqual(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_LessThanOrEqual*
+  name: LessThanOrEqual
+  href: api/System.Numerics.BigRational.Integer.op_LessThanOrEqual.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_LessThanOrEqual
+  fullName: System.Numerics.BigRational.Integer.LessThanOrEqual
+  nameWithType: BigRational.Integer.LessThanOrEqual
+- uid: System.Numerics.BigRational.Integer.op_Modulus(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Modulus(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Modulus.html#System_Numerics_BigRational_Integer_op_Modulus_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Modulus(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Modulus(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Modulus(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Modulus*
+  name: Modulus
+  href: api/System.Numerics.BigRational.Integer.op_Modulus.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Modulus
+  fullName: System.Numerics.BigRational.Integer.Modulus
+  nameWithType: BigRational.Integer.Modulus
+- uid: System.Numerics.BigRational.Integer.op_Multiply(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Multiply(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Multiply.html#System_Numerics_BigRational_Integer_op_Multiply_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Multiply(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Multiply(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Multiply(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Multiply*
+  name: Multiply
+  href: api/System.Numerics.BigRational.Integer.op_Multiply.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Multiply
+  fullName: System.Numerics.BigRational.Integer.Multiply
+  nameWithType: BigRational.Integer.Multiply
+- uid: System.Numerics.BigRational.Integer.op_OnesComplement(System.Numerics.BigRational.Integer)
+  name: OnesComplement(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_OnesComplement.html#System_Numerics_BigRational_Integer_op_OnesComplement_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_OnesComplement(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.OnesComplement(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.OnesComplement(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_OnesComplement*
+  name: OnesComplement
+  href: api/System.Numerics.BigRational.Integer.op_OnesComplement.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_OnesComplement
+  fullName: System.Numerics.BigRational.Integer.OnesComplement
+  nameWithType: BigRational.Integer.OnesComplement
+- uid: System.Numerics.BigRational.Integer.op_RightShift(System.Numerics.BigRational.Integer,System.Int32)
+  name: RightShift(BigRational.Integer, Int32)
+  href: api/System.Numerics.BigRational.Integer.op_RightShift.html#System_Numerics_BigRational_Integer_op_RightShift_System_Numerics_BigRational_Integer_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.op_RightShift(System.Numerics.BigRational.Integer,System.Int32)
+  fullName: System.Numerics.BigRational.Integer.RightShift(System.Numerics.BigRational.Integer, System.Int32)
+  nameWithType: BigRational.Integer.RightShift(BigRational.Integer, Int32)
+- uid: System.Numerics.BigRational.Integer.op_RightShift*
+  name: RightShift
+  href: api/System.Numerics.BigRational.Integer.op_RightShift.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_RightShift
+  fullName: System.Numerics.BigRational.Integer.RightShift
+  nameWithType: BigRational.Integer.RightShift
+- uid: System.Numerics.BigRational.Integer.op_Subtraction(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Subtraction(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_Subtraction.html#System_Numerics_BigRational_Integer_op_Subtraction_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_Subtraction(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Subtraction(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Subtraction(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_Subtraction*
+  name: Subtraction
+  href: api/System.Numerics.BigRational.Integer.op_Subtraction.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_Subtraction
+  fullName: System.Numerics.BigRational.Integer.Subtraction
+  nameWithType: BigRational.Integer.Subtraction
+- uid: System.Numerics.BigRational.Integer.op_UnaryNegation(System.Numerics.BigRational.Integer)
+  name: UnaryNegation(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_UnaryNegation.html#System_Numerics_BigRational_Integer_op_UnaryNegation_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_UnaryNegation(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.UnaryNegation(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.UnaryNegation(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_UnaryNegation*
+  name: UnaryNegation
+  href: api/System.Numerics.BigRational.Integer.op_UnaryNegation.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_UnaryNegation
+  fullName: System.Numerics.BigRational.Integer.UnaryNegation
+  nameWithType: BigRational.Integer.UnaryNegation
+- uid: System.Numerics.BigRational.Integer.op_UnaryPlus(System.Numerics.BigRational.Integer)
+  name: UnaryPlus(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.op_UnaryPlus.html#System_Numerics_BigRational_Integer_op_UnaryPlus_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.op_UnaryPlus(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.UnaryPlus(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.UnaryPlus(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.op_UnaryPlus*
+  name: UnaryPlus
+  href: api/System.Numerics.BigRational.Integer.op_UnaryPlus.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_UnaryPlus
+  fullName: System.Numerics.BigRational.Integer.UnaryPlus
+  nameWithType: BigRational.Integer.UnaryPlus
+- uid: System.Numerics.BigRational.Integer.op_UnsignedRightShift(System.Numerics.BigRational.Integer,System.Int32)
+  name: op_UnsignedRightShift(BigRational.Integer, Int32)
+  href: api/System.Numerics.BigRational.Integer.op_UnsignedRightShift.html#System_Numerics_BigRational_Integer_op_UnsignedRightShift_System_Numerics_BigRational_Integer_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.op_UnsignedRightShift(System.Numerics.BigRational.Integer,System.Int32)
+  fullName: System.Numerics.BigRational.Integer.op_UnsignedRightShift(System.Numerics.BigRational.Integer, System.Int32)
+  nameWithType: BigRational.Integer.op_UnsignedRightShift(BigRational.Integer, Int32)
+- uid: System.Numerics.BigRational.Integer.op_UnsignedRightShift*
+  name: op_UnsignedRightShift
+  href: api/System.Numerics.BigRational.Integer.op_UnsignedRightShift.html
+  commentId: Overload:System.Numerics.BigRational.Integer.op_UnsignedRightShift
+  fullName: System.Numerics.BigRational.Integer.op_UnsignedRightShift
+  nameWithType: BigRational.Integer.op_UnsignedRightShift
+- uid: System.Numerics.BigRational.Integer.Parse(System.ReadOnlySpan{System.Char},System.Globalization.NumberStyles,System.IFormatProvider)
+  name: Parse(ReadOnlySpan<Char>, NumberStyles, IFormatProvider)
+  href: api/System.Numerics.BigRational.Integer.Parse.html#System_Numerics_BigRational_Integer_Parse_System_ReadOnlySpan_System_Char__System_Globalization_NumberStyles_System_IFormatProvider_
+  commentId: M:System.Numerics.BigRational.Integer.Parse(System.ReadOnlySpan{System.Char},System.Globalization.NumberStyles,System.IFormatProvider)
+  name.vb: Parse(ReadOnlySpan(Of Char), NumberStyles, IFormatProvider)
+  fullName: System.Numerics.BigRational.Integer.Parse(System.ReadOnlySpan<System.Char>, System.Globalization.NumberStyles, System.IFormatProvider)
+  fullName.vb: System.Numerics.BigRational.Integer.Parse(System.ReadOnlySpan(Of System.Char), System.Globalization.NumberStyles, System.IFormatProvider)
+  nameWithType: BigRational.Integer.Parse(ReadOnlySpan<Char>, NumberStyles, IFormatProvider)
+  nameWithType.vb: BigRational.Integer.Parse(ReadOnlySpan(Of Char), NumberStyles, IFormatProvider)
+- uid: System.Numerics.BigRational.Integer.Parse(System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name: Parse(ReadOnlySpan<Char>, IFormatProvider)
+  href: api/System.Numerics.BigRational.Integer.Parse.html#System_Numerics_BigRational_Integer_Parse_System_ReadOnlySpan_System_Char__System_IFormatProvider_
+  commentId: M:System.Numerics.BigRational.Integer.Parse(System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name.vb: Parse(ReadOnlySpan(Of Char), IFormatProvider)
+  fullName: System.Numerics.BigRational.Integer.Parse(System.ReadOnlySpan<System.Char>, System.IFormatProvider)
+  fullName.vb: System.Numerics.BigRational.Integer.Parse(System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
+  nameWithType: BigRational.Integer.Parse(ReadOnlySpan<Char>, IFormatProvider)
+  nameWithType.vb: BigRational.Integer.Parse(ReadOnlySpan(Of Char), IFormatProvider)
+- uid: System.Numerics.BigRational.Integer.Parse(System.String)
+  name: Parse(String)
+  href: api/System.Numerics.BigRational.Integer.Parse.html#System_Numerics_BigRational_Integer_Parse_System_String_
+  commentId: M:System.Numerics.BigRational.Integer.Parse(System.String)
+  fullName: System.Numerics.BigRational.Integer.Parse(System.String)
+  nameWithType: BigRational.Integer.Parse(String)
+- uid: System.Numerics.BigRational.Integer.Parse(System.String,System.Globalization.NumberStyles)
+  name: Parse(String, NumberStyles)
+  href: api/System.Numerics.BigRational.Integer.Parse.html#System_Numerics_BigRational_Integer_Parse_System_String_System_Globalization_NumberStyles_
+  commentId: M:System.Numerics.BigRational.Integer.Parse(System.String,System.Globalization.NumberStyles)
+  fullName: System.Numerics.BigRational.Integer.Parse(System.String, System.Globalization.NumberStyles)
+  nameWithType: BigRational.Integer.Parse(String, NumberStyles)
+- uid: System.Numerics.BigRational.Integer.Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider)
+  name: Parse(String, NumberStyles, IFormatProvider)
+  href: api/System.Numerics.BigRational.Integer.Parse.html#System_Numerics_BigRational_Integer_Parse_System_String_System_Globalization_NumberStyles_System_IFormatProvider_
+  commentId: M:System.Numerics.BigRational.Integer.Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider)
+  fullName: System.Numerics.BigRational.Integer.Parse(System.String, System.Globalization.NumberStyles, System.IFormatProvider)
+  nameWithType: BigRational.Integer.Parse(String, NumberStyles, IFormatProvider)
+- uid: System.Numerics.BigRational.Integer.Parse(System.String,System.IFormatProvider)
+  name: Parse(String, IFormatProvider)
+  href: api/System.Numerics.BigRational.Integer.Parse.html#System_Numerics_BigRational_Integer_Parse_System_String_System_IFormatProvider_
+  commentId: M:System.Numerics.BigRational.Integer.Parse(System.String,System.IFormatProvider)
+  fullName: System.Numerics.BigRational.Integer.Parse(System.String, System.IFormatProvider)
+  nameWithType: BigRational.Integer.Parse(String, IFormatProvider)
+- uid: System.Numerics.BigRational.Integer.Parse*
+  name: Parse
+  href: api/System.Numerics.BigRational.Integer.Parse.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Parse
+  fullName: System.Numerics.BigRational.Integer.Parse
+  nameWithType: BigRational.Integer.Parse
+- uid: System.Numerics.BigRational.Integer.PopCount(System.Numerics.BigRational.Integer)
+  name: PopCount(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.PopCount.html#System_Numerics_BigRational_Integer_PopCount_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.PopCount(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.PopCount(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.PopCount(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.PopCount*
+  name: PopCount
+  href: api/System.Numerics.BigRational.Integer.PopCount.html
+  commentId: Overload:System.Numerics.BigRational.Integer.PopCount
+  fullName: System.Numerics.BigRational.Integer.PopCount
+  nameWithType: BigRational.Integer.PopCount
+- uid: System.Numerics.BigRational.Integer.Pow(System.Numerics.BigRational.Integer,System.Int32)
+  name: Pow(BigRational.Integer, Int32)
+  href: api/System.Numerics.BigRational.Integer.Pow.html#System_Numerics_BigRational_Integer_Pow_System_Numerics_BigRational_Integer_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.Pow(System.Numerics.BigRational.Integer,System.Int32)
+  fullName: System.Numerics.BigRational.Integer.Pow(System.Numerics.BigRational.Integer, System.Int32)
+  nameWithType: BigRational.Integer.Pow(BigRational.Integer, Int32)
+- uid: System.Numerics.BigRational.Integer.Pow*
+  name: Pow
+  href: api/System.Numerics.BigRational.Integer.Pow.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Pow
+  fullName: System.Numerics.BigRational.Integer.Pow
+  nameWithType: BigRational.Integer.Pow
+- uid: System.Numerics.BigRational.Integer.Remainder(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Remainder(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Remainder.html#System_Numerics_BigRational_Integer_Remainder_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Remainder(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Remainder(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Remainder(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Remainder*
+  name: Remainder
+  href: api/System.Numerics.BigRational.Integer.Remainder.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Remainder
+  fullName: System.Numerics.BigRational.Integer.Remainder
+  nameWithType: BigRational.Integer.Remainder
+- uid: System.Numerics.BigRational.Integer.RotateLeft(System.Numerics.BigRational.Integer,System.Int32)
+  name: RotateLeft(BigRational.Integer, Int32)
+  href: api/System.Numerics.BigRational.Integer.RotateLeft.html#System_Numerics_BigRational_Integer_RotateLeft_System_Numerics_BigRational_Integer_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.RotateLeft(System.Numerics.BigRational.Integer,System.Int32)
+  fullName: System.Numerics.BigRational.Integer.RotateLeft(System.Numerics.BigRational.Integer, System.Int32)
+  nameWithType: BigRational.Integer.RotateLeft(BigRational.Integer, Int32)
+- uid: System.Numerics.BigRational.Integer.RotateLeft*
+  name: RotateLeft
+  href: api/System.Numerics.BigRational.Integer.RotateLeft.html
+  commentId: Overload:System.Numerics.BigRational.Integer.RotateLeft
+  fullName: System.Numerics.BigRational.Integer.RotateLeft
+  nameWithType: BigRational.Integer.RotateLeft
+- uid: System.Numerics.BigRational.Integer.RotateRight(System.Numerics.BigRational.Integer,System.Int32)
+  name: RotateRight(BigRational.Integer, Int32)
+  href: api/System.Numerics.BigRational.Integer.RotateRight.html#System_Numerics_BigRational_Integer_RotateRight_System_Numerics_BigRational_Integer_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.RotateRight(System.Numerics.BigRational.Integer,System.Int32)
+  fullName: System.Numerics.BigRational.Integer.RotateRight(System.Numerics.BigRational.Integer, System.Int32)
+  nameWithType: BigRational.Integer.RotateRight(BigRational.Integer, Int32)
+- uid: System.Numerics.BigRational.Integer.RotateRight*
+  name: RotateRight
+  href: api/System.Numerics.BigRational.Integer.RotateRight.html
+  commentId: Overload:System.Numerics.BigRational.Integer.RotateRight
+  fullName: System.Numerics.BigRational.Integer.RotateRight
+  nameWithType: BigRational.Integer.RotateRight
+- uid: System.Numerics.BigRational.Integer.Shl(System.Numerics.BigRational.Integer,System.Int32)
+  name: Shl(BigRational.Integer, Int32)
+  href: api/System.Numerics.BigRational.Integer.Shl.html#System_Numerics_BigRational_Integer_Shl_System_Numerics_BigRational_Integer_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.Shl(System.Numerics.BigRational.Integer,System.Int32)
+  fullName: System.Numerics.BigRational.Integer.Shl(System.Numerics.BigRational.Integer, System.Int32)
+  nameWithType: BigRational.Integer.Shl(BigRational.Integer, Int32)
+- uid: System.Numerics.BigRational.Integer.Shl*
+  name: Shl
+  href: api/System.Numerics.BigRational.Integer.Shl.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Shl
+  fullName: System.Numerics.BigRational.Integer.Shl
+  nameWithType: BigRational.Integer.Shl
+- uid: System.Numerics.BigRational.Integer.Shr(System.Numerics.BigRational.Integer,System.Int32)
+  name: Shr(BigRational.Integer, Int32)
+  href: api/System.Numerics.BigRational.Integer.Shr.html#System_Numerics_BigRational_Integer_Shr_System_Numerics_BigRational_Integer_System_Int32_
+  commentId: M:System.Numerics.BigRational.Integer.Shr(System.Numerics.BigRational.Integer,System.Int32)
+  fullName: System.Numerics.BigRational.Integer.Shr(System.Numerics.BigRational.Integer, System.Int32)
+  nameWithType: BigRational.Integer.Shr(BigRational.Integer, Int32)
+- uid: System.Numerics.BigRational.Integer.Shr*
+  name: Shr
+  href: api/System.Numerics.BigRational.Integer.Shr.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Shr
+  fullName: System.Numerics.BigRational.Integer.Shr
+  nameWithType: BigRational.Integer.Shr
+- uid: System.Numerics.BigRational.Integer.Sign
+  name: Sign
+  href: api/System.Numerics.BigRational.Integer.Sign.html#System_Numerics_BigRational_Integer_Sign
+  commentId: P:System.Numerics.BigRational.Integer.Sign
+  fullName: System.Numerics.BigRational.Integer.Sign
+  nameWithType: BigRational.Integer.Sign
+- uid: System.Numerics.BigRational.Integer.Sign*
+  name: Sign
+  href: api/System.Numerics.BigRational.Integer.Sign.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Sign
+  fullName: System.Numerics.BigRational.Integer.Sign
+  nameWithType: BigRational.Integer.Sign
+- uid: System.Numerics.BigRational.Integer.Subtract(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  name: Subtract(BigRational.Integer, BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.Subtract.html#System_Numerics_BigRational_Integer_Subtract_System_Numerics_BigRational_Integer_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.Subtract(System.Numerics.BigRational.Integer,System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.Subtract(System.Numerics.BigRational.Integer, System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.Subtract(BigRational.Integer, BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.Subtract*
+  name: Subtract
+  href: api/System.Numerics.BigRational.Integer.Subtract.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Subtract
+  fullName: System.Numerics.BigRational.Integer.Subtract
+  nameWithType: BigRational.Integer.Subtract
+- uid: System.Numerics.BigRational.Integer.ToByteArray
+  name: ToByteArray()
+  href: api/System.Numerics.BigRational.Integer.ToByteArray.html#System_Numerics_BigRational_Integer_ToByteArray
+  commentId: M:System.Numerics.BigRational.Integer.ToByteArray
+  fullName: System.Numerics.BigRational.Integer.ToByteArray()
+  nameWithType: BigRational.Integer.ToByteArray()
+- uid: System.Numerics.BigRational.Integer.ToByteArray(System.Boolean,System.Boolean)
+  name: ToByteArray(Boolean, Boolean)
+  href: api/System.Numerics.BigRational.Integer.ToByteArray.html#System_Numerics_BigRational_Integer_ToByteArray_System_Boolean_System_Boolean_
+  commentId: M:System.Numerics.BigRational.Integer.ToByteArray(System.Boolean,System.Boolean)
+  fullName: System.Numerics.BigRational.Integer.ToByteArray(System.Boolean, System.Boolean)
+  nameWithType: BigRational.Integer.ToByteArray(Boolean, Boolean)
+- uid: System.Numerics.BigRational.Integer.ToByteArray*
+  name: ToByteArray
+  href: api/System.Numerics.BigRational.Integer.ToByteArray.html
+  commentId: Overload:System.Numerics.BigRational.Integer.ToByteArray
+  fullName: System.Numerics.BigRational.Integer.ToByteArray
+  nameWithType: BigRational.Integer.ToByteArray
+- uid: System.Numerics.BigRational.Integer.ToString
+  name: ToString()
+  href: api/System.Numerics.BigRational.Integer.ToString.html#System_Numerics_BigRational_Integer_ToString
+  commentId: M:System.Numerics.BigRational.Integer.ToString
+  fullName: System.Numerics.BigRational.Integer.ToString()
+  nameWithType: BigRational.Integer.ToString()
+- uid: System.Numerics.BigRational.Integer.ToString(System.String,System.IFormatProvider)
+  name: ToString(String, IFormatProvider)
+  href: api/System.Numerics.BigRational.Integer.ToString.html#System_Numerics_BigRational_Integer_ToString_System_String_System_IFormatProvider_
+  commentId: M:System.Numerics.BigRational.Integer.ToString(System.String,System.IFormatProvider)
+  fullName: System.Numerics.BigRational.Integer.ToString(System.String, System.IFormatProvider)
+  nameWithType: BigRational.Integer.ToString(String, IFormatProvider)
+- uid: System.Numerics.BigRational.Integer.ToString*
+  name: ToString
+  href: api/System.Numerics.BigRational.Integer.ToString.html
+  commentId: Overload:System.Numerics.BigRational.Integer.ToString
+  fullName: System.Numerics.BigRational.Integer.ToString
+  nameWithType: BigRational.Integer.ToString
+- uid: System.Numerics.BigRational.Integer.TrailingZeroCount(System.Numerics.BigRational.Integer)
+  name: TrailingZeroCount(BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.TrailingZeroCount.html#System_Numerics_BigRational_Integer_TrailingZeroCount_System_Numerics_BigRational_Integer_
+  commentId: M:System.Numerics.BigRational.Integer.TrailingZeroCount(System.Numerics.BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.TrailingZeroCount(System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.TrailingZeroCount(BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.TrailingZeroCount*
+  name: TrailingZeroCount
+  href: api/System.Numerics.BigRational.Integer.TrailingZeroCount.html
+  commentId: Overload:System.Numerics.BigRational.Integer.TrailingZeroCount
+  fullName: System.Numerics.BigRational.Integer.TrailingZeroCount
+  nameWithType: BigRational.Integer.TrailingZeroCount
+- uid: System.Numerics.BigRational.Integer.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name: TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  href: api/System.Numerics.BigRational.Integer.TryFormat.html#System_Numerics_BigRational_Integer_TryFormat_System_Span_System_Char__System_Int32__System_ReadOnlySpan_System_Char__System_IFormatProvider_
+  commentId: M:System.Numerics.BigRational.Integer.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name.vb: TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+  fullName: System.Numerics.BigRational.Integer.TryFormat(System.Span<System.Char>, out System.Int32, System.ReadOnlySpan<System.Char>, System.IFormatProvider)
+  fullName.vb: System.Numerics.BigRational.Integer.TryFormat(System.Span(Of System.Char), ByRef System.Int32, System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
+  nameWithType: BigRational.Integer.TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  nameWithType.vb: BigRational.Integer.TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+- uid: System.Numerics.BigRational.Integer.TryFormat*
+  name: TryFormat
+  href: api/System.Numerics.BigRational.Integer.TryFormat.html
+  commentId: Overload:System.Numerics.BigRational.Integer.TryFormat
+  fullName: System.Numerics.BigRational.Integer.TryFormat
+  nameWithType: BigRational.Integer.TryFormat
+- uid: System.Numerics.BigRational.Integer.TryParse(System.ReadOnlySpan{System.Char},System.Globalization.NumberStyles,System.IFormatProvider,System.Numerics.BigRational.Integer@)
+  name: TryParse(ReadOnlySpan<Char>, NumberStyles, IFormatProvider, out BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.TryParse.html#System_Numerics_BigRational_Integer_TryParse_System_ReadOnlySpan_System_Char__System_Globalization_NumberStyles_System_IFormatProvider_System_Numerics_BigRational_Integer__
+  commentId: M:System.Numerics.BigRational.Integer.TryParse(System.ReadOnlySpan{System.Char},System.Globalization.NumberStyles,System.IFormatProvider,System.Numerics.BigRational.Integer@)
+  name.vb: TryParse(ReadOnlySpan(Of Char), NumberStyles, IFormatProvider, ByRef BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.TryParse(System.ReadOnlySpan<System.Char>, System.Globalization.NumberStyles, System.IFormatProvider, out System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.TryParse(System.ReadOnlySpan(Of System.Char), System.Globalization.NumberStyles, System.IFormatProvider, ByRef System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.TryParse(ReadOnlySpan<Char>, NumberStyles, IFormatProvider, out BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.TryParse(ReadOnlySpan(Of Char), NumberStyles, IFormatProvider, ByRef BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.TryParse(System.ReadOnlySpan{System.Char},System.IFormatProvider,System.Numerics.BigRational.Integer@)
+  name: TryParse(ReadOnlySpan<Char>, IFormatProvider, out BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.TryParse.html#System_Numerics_BigRational_Integer_TryParse_System_ReadOnlySpan_System_Char__System_IFormatProvider_System_Numerics_BigRational_Integer__
+  commentId: M:System.Numerics.BigRational.Integer.TryParse(System.ReadOnlySpan{System.Char},System.IFormatProvider,System.Numerics.BigRational.Integer@)
+  name.vb: TryParse(ReadOnlySpan(Of Char), IFormatProvider, ByRef BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.TryParse(System.ReadOnlySpan<System.Char>, System.IFormatProvider, out System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.TryParse(System.ReadOnlySpan(Of System.Char), System.IFormatProvider, ByRef System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.TryParse(ReadOnlySpan<Char>, IFormatProvider, out BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.TryParse(ReadOnlySpan(Of Char), IFormatProvider, ByRef BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.TryParse(System.String,System.Globalization.NumberStyles,System.IFormatProvider,System.Numerics.BigRational.Integer@)
+  name: TryParse(String, NumberStyles, IFormatProvider, out BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.TryParse.html#System_Numerics_BigRational_Integer_TryParse_System_String_System_Globalization_NumberStyles_System_IFormatProvider_System_Numerics_BigRational_Integer__
+  commentId: M:System.Numerics.BigRational.Integer.TryParse(System.String,System.Globalization.NumberStyles,System.IFormatProvider,System.Numerics.BigRational.Integer@)
+  name.vb: TryParse(String, NumberStyles, IFormatProvider, ByRef BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.TryParse(System.String, System.Globalization.NumberStyles, System.IFormatProvider, out System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.TryParse(System.String, System.Globalization.NumberStyles, System.IFormatProvider, ByRef System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.TryParse(String, NumberStyles, IFormatProvider, out BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.TryParse(String, NumberStyles, IFormatProvider, ByRef BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.TryParse(System.String,System.IFormatProvider,System.Numerics.BigRational.Integer@)
+  name: TryParse(String, IFormatProvider, out BigRational.Integer)
+  href: api/System.Numerics.BigRational.Integer.TryParse.html#System_Numerics_BigRational_Integer_TryParse_System_String_System_IFormatProvider_System_Numerics_BigRational_Integer__
+  commentId: M:System.Numerics.BigRational.Integer.TryParse(System.String,System.IFormatProvider,System.Numerics.BigRational.Integer@)
+  name.vb: TryParse(String, IFormatProvider, ByRef BigRational.Integer)
+  fullName: System.Numerics.BigRational.Integer.TryParse(System.String, System.IFormatProvider, out System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.Integer.TryParse(System.String, System.IFormatProvider, ByRef System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.Integer.TryParse(String, IFormatProvider, out BigRational.Integer)
+  nameWithType.vb: BigRational.Integer.TryParse(String, IFormatProvider, ByRef BigRational.Integer)
+- uid: System.Numerics.BigRational.Integer.TryParse*
+  name: TryParse
+  href: api/System.Numerics.BigRational.Integer.TryParse.html
+  commentId: Overload:System.Numerics.BigRational.Integer.TryParse
+  fullName: System.Numerics.BigRational.Integer.TryParse
+  nameWithType: BigRational.Integer.TryParse
+- uid: System.Numerics.BigRational.Integer.TryWriteBytes(System.Span{System.Byte},System.Int32@,System.Boolean,System.Boolean)
+  name: TryWriteBytes(Span<Byte>, out Int32, Boolean, Boolean)
+  href: api/System.Numerics.BigRational.Integer.TryWriteBytes.html#System_Numerics_BigRational_Integer_TryWriteBytes_System_Span_System_Byte__System_Int32__System_Boolean_System_Boolean_
+  commentId: M:System.Numerics.BigRational.Integer.TryWriteBytes(System.Span{System.Byte},System.Int32@,System.Boolean,System.Boolean)
+  name.vb: TryWriteBytes(Span(Of Byte), ByRef Int32, Boolean, Boolean)
+  fullName: System.Numerics.BigRational.Integer.TryWriteBytes(System.Span<System.Byte>, out System.Int32, System.Boolean, System.Boolean)
+  fullName.vb: System.Numerics.BigRational.Integer.TryWriteBytes(System.Span(Of System.Byte), ByRef System.Int32, System.Boolean, System.Boolean)
+  nameWithType: BigRational.Integer.TryWriteBytes(Span<Byte>, out Int32, Boolean, Boolean)
+  nameWithType.vb: BigRational.Integer.TryWriteBytes(Span(Of Byte), ByRef Int32, Boolean, Boolean)
+- uid: System.Numerics.BigRational.Integer.TryWriteBytes*
+  name: TryWriteBytes
+  href: api/System.Numerics.BigRational.Integer.TryWriteBytes.html
+  commentId: Overload:System.Numerics.BigRational.Integer.TryWriteBytes
+  fullName: System.Numerics.BigRational.Integer.TryWriteBytes
+  nameWithType: BigRational.Integer.TryWriteBytes
+- uid: System.Numerics.BigRational.Integer.Zero
+  name: Zero
+  href: api/System.Numerics.BigRational.Integer.Zero.html#System_Numerics_BigRational_Integer_Zero
+  commentId: P:System.Numerics.BigRational.Integer.Zero
+  fullName: System.Numerics.BigRational.Integer.Zero
+  nameWithType: BigRational.Integer.Zero
+- uid: System.Numerics.BigRational.Integer.Zero*
+  name: Zero
+  href: api/System.Numerics.BigRational.Integer.Zero.html
+  commentId: Overload:System.Numerics.BigRational.Integer.Zero
+  fullName: System.Numerics.BigRational.Integer.Zero
+  nameWithType: BigRational.Integer.Zero
 - uid: System.Numerics.BigRational.IsInteger(System.Numerics.BigRational)
   name: IsInteger(BigRational)
   href: api/System.Numerics.BigRational.IsInteger.html#System_Numerics_BigRational_IsInteger_System_Numerics_BigRational_
@@ -1690,18 +3130,6 @@ references:
   commentId: Overload:System.Numerics.BigRational.IsNaN
   fullName: System.Numerics.BigRational.IsNaN
   nameWithType: BigRational.IsNaN
-- uid: System.Numerics.BigRational.LeastCommonMultiple(System.Numerics.BigRational,System.Numerics.BigRational)
-  name: LeastCommonMultiple(BigRational, BigRational)
-  href: api/System.Numerics.BigRational.LeastCommonMultiple.html#System_Numerics_BigRational_LeastCommonMultiple_System_Numerics_BigRational_System_Numerics_BigRational_
-  commentId: M:System.Numerics.BigRational.LeastCommonMultiple(System.Numerics.BigRational,System.Numerics.BigRational)
-  fullName: System.Numerics.BigRational.LeastCommonMultiple(System.Numerics.BigRational, System.Numerics.BigRational)
-  nameWithType: BigRational.LeastCommonMultiple(BigRational, BigRational)
-- uid: System.Numerics.BigRational.LeastCommonMultiple*
-  name: LeastCommonMultiple
-  href: api/System.Numerics.BigRational.LeastCommonMultiple.html
-  commentId: Overload:System.Numerics.BigRational.LeastCommonMultiple
-  fullName: System.Numerics.BigRational.LeastCommonMultiple
-  nameWithType: BigRational.LeastCommonMultiple
 - uid: System.Numerics.BigRational.Log(System.Numerics.BigRational)
   name: Log(BigRational)
   href: api/System.Numerics.BigRational.Log.html#System_Numerics_BigRational_Log_System_Numerics_BigRational_
@@ -1882,15 +3310,21 @@ references:
   commentId: Overload:System.Numerics.BigRational.MinMagnitudeNumber
   fullName: System.Numerics.BigRational.MinMagnitudeNumber
   nameWithType: BigRational.MinMagnitudeNumber
-- uid: System.Numerics.BigRational.NumDen(System.Numerics.BigRational,System.Numerics.BigRational@)
-  name: NumDen(BigRational, out BigRational)
-  href: api/System.Numerics.BigRational.NumDen.html#System_Numerics_BigRational_NumDen_System_Numerics_BigRational_System_Numerics_BigRational__
-  commentId: M:System.Numerics.BigRational.NumDen(System.Numerics.BigRational,System.Numerics.BigRational@)
-  name.vb: NumDen(BigRational, ByRef BigRational)
-  fullName: System.Numerics.BigRational.NumDen(System.Numerics.BigRational, out System.Numerics.BigRational)
-  fullName.vb: System.Numerics.BigRational.NumDen(System.Numerics.BigRational, ByRef System.Numerics.BigRational)
-  nameWithType: BigRational.NumDen(BigRational, out BigRational)
-  nameWithType.vb: BigRational.NumDen(BigRational, ByRef BigRational)
+- uid: System.Numerics.BigRational.NumDen(System.Numerics.BigRational)
+  name: NumDen(BigRational)
+  href: api/System.Numerics.BigRational.NumDen.html#System_Numerics_BigRational_NumDen_System_Numerics_BigRational_
+  commentId: M:System.Numerics.BigRational.NumDen(System.Numerics.BigRational)
+  fullName: System.Numerics.BigRational.NumDen(System.Numerics.BigRational)
+  nameWithType: BigRational.NumDen(BigRational)
+- uid: System.Numerics.BigRational.NumDen(System.Numerics.BigRational,System.Numerics.BigRational.Integer@)
+  name: NumDen(BigRational, out BigRational.Integer)
+  href: api/System.Numerics.BigRational.NumDen.html#System_Numerics_BigRational_NumDen_System_Numerics_BigRational_System_Numerics_BigRational_Integer__
+  commentId: M:System.Numerics.BigRational.NumDen(System.Numerics.BigRational,System.Numerics.BigRational.Integer@)
+  name.vb: NumDen(BigRational, ByRef BigRational.Integer)
+  fullName: System.Numerics.BigRational.NumDen(System.Numerics.BigRational, out System.Numerics.BigRational.Integer)
+  fullName.vb: System.Numerics.BigRational.NumDen(System.Numerics.BigRational, ByRef System.Numerics.BigRational.Integer)
+  nameWithType: BigRational.NumDen(BigRational, out BigRational.Integer)
+  nameWithType.vb: BigRational.NumDen(BigRational, ByRef BigRational.Integer)
 - uid: System.Numerics.BigRational.NumDen*
   name: NumDen
   href: api/System.Numerics.BigRational.NumDen.html

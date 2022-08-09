@@ -4,8 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static System.Numerics.BigRational;
 
-namespace System.Numerics
+namespace System.Numerics.Test
 {
+#if true
   /// <summary>
   /// Represents an arbitrarily large signed integer.
   /// </summary>
@@ -83,14 +84,14 @@ namespace System.Numerics
     public BigInt(uint value) => p = value;
     public BigInt(long value) => p = value;
     public BigInt(ulong value) => p = value;
-    public BigInt(float value) { var cpu = rat.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
-    public BigInt(double value) { var cpu = rat.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
-    public BigInt(decimal value) { var cpu = rat.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
+    public BigInt(float value) { var cpu = BigRational.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
+    public BigInt(double value) { var cpu = BigRational.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
+    public BigInt(decimal value) { var cpu = BigRational.task_cpu; cpu.push(value); cpu.rnd(0, 0); p = cpu.popr(); }
     public BigInt(byte[] value) : this(new ReadOnlySpan<byte>(value ?? throw new ArgumentNullException())) { }
     public BigInt(ReadOnlySpan<byte> value, bool isUnsigned = false, bool isBigEndian = false)
     {
       int n = value.Length, k = isBigEndian ? n - 1 : 0, d = isBigEndian ? -1 : +1;
-      var cpu = rat.task_cpu; cpu.push(value[k]); //todo: opt.
+      var cpu = BigRational.task_cpu; cpu.push(value[k]); //todo: opt.
       for (int i = 1; i < n; i++) { k += d; cpu.push(value[k]); cpu.shl(unchecked((uint)(i << 3))); cpu.or(); }
       if (!isUnsigned && (value[k] & 0x80) != 0) cpu.toc(4); this.p = cpu.popr();
     }
@@ -104,7 +105,7 @@ namespace System.Numerics
     public readonly bool TryWriteBytes(Span<byte> dest, out int bytesWritten, bool isUnsigned = false, bool isBigEndian = false)
     {
       if (isUnsigned && BigRational.Sign(this.p) < 0) throw new OverflowException(nameof(isUnsigned));
-      var cpu = rat.task_cpu; cpu.push(this.p); var s = cpu.sign(); var z = cpu.msb();
+      var cpu = BigRational.task_cpu; cpu.push(this.p); var s = cpu.sign(); var z = cpu.msb();
       var n = s != 0 ? unchecked((int)(((z - 1) >> 3) + 1)) : isUnsigned ? 1 : 0; //todo: opt.
       var l = n; if (!isUnsigned && (z & 7) == 0 && !(s < 0 && cpu.ipt())) n++;
       if (dest.Length < n) { cpu.pop(); bytesWritten = dest != default ? 0 : n; return false; }
@@ -123,7 +124,7 @@ namespace System.Numerics
     {
       get
       {
-        var cpu = rat.task_cpu; cpu.push(p); var b = cpu.sign() > 0 && cpu.ipt(); cpu.pop(); return b;
+        var cpu = BigRational.task_cpu; cpu.push(p); var b = cpu.sign() > 0 && cpu.ipt(); cpu.pop(); return b;
         //if (BigRational.Sign(p) <= 0) return false;
         //var s = (ReadOnlySpan<uint>)p; var n = unchecked((int)(s[0] & 0x3fffffff));
         //return BitOperations.IsPow2(s[n]) && s.Slice(1, n - 1).TrimStart(0u).Length == 0;
@@ -156,26 +157,26 @@ namespace System.Numerics
 
     public static BigInt operator +(BigInt a) => a;
     public static BigInt operator -(BigInt a) => new BigInt(-a.p);
-    public static BigInt operator +(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.add(a.p, b.p); return new BigInt(cpu); }
-    public static BigInt operator -(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.sub(a.p, b.p); return new BigInt(cpu); }
-    public static BigInt operator *(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.mul(a.p, b.p); return new BigInt(cpu); }
-    public static BigInt operator /(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.idiv(); return new BigInt(cpu); }
-    public static BigInt operator %(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.imod(); return new BigInt(cpu); }
+    public static BigInt operator +(BigInt a, BigInt b) { var cpu = BigRational.task_cpu; cpu.add(a.p, b.p); return new BigInt(cpu); }
+    public static BigInt operator -(BigInt a, BigInt b) { var cpu = BigRational.task_cpu; cpu.sub(a.p, b.p); return new BigInt(cpu); }
+    public static BigInt operator *(BigInt a, BigInt b) { var cpu = BigRational.task_cpu; cpu.mul(a.p, b.p); return new BigInt(cpu); }
+    public static BigInt operator /(BigInt a, BigInt b) { var cpu = BigRational.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.idiv(); return new BigInt(cpu); }
+    public static BigInt operator %(BigInt a, BigInt b) { var cpu = BigRational.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.imod(); return new BigInt(cpu); }
     public static BigInt operator <<(BigInt a, int b)
     {
       if (b <= 0) return b != 0 ? a >> -b : b;
-      var cpu = rat.task_cpu; var c = checked((uint)b); cpu.push(a.p); cpu.shl(c);
+      var cpu = BigRational.task_cpu; var c = checked((uint)b); cpu.push(a.p); cpu.shl(c);
       return new BigInt(cpu);
     }
     public static BigInt operator >>(BigInt a, int b)
     {
       if (b <= 0) return b != 0 ? a << -b : a;
-      var cpu = rat.task_cpu; cpu.push(a.p); var s = cpu.sign() == -1;
+      var cpu = BigRational.task_cpu; cpu.push(a.p); var s = cpu.sign() == -1;
       if (s) cpu.toc(4); cpu.shr(checked((uint)b)); if (s) cpu.toc(4);
       return new BigInt(cpu);
     }
-    public static BigInt operator &(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.and(); return new BigInt(cpu); }
-    public static BigInt operator ^(BigInt a, BigInt b) { var cpu = rat.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.xor(); return new BigInt(cpu); }
+    public static BigInt operator &(BigInt a, BigInt b) { var cpu = BigRational.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.and(); return new BigInt(cpu); }
+    public static BigInt operator ^(BigInt a, BigInt b) { var cpu = BigRational.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.xor(); return new BigInt(cpu); }
     public static BigInt operator ~(BigInt value) => -(value + One);
     public static BigInt operator --(BigInt value) => value - 1u;
     public static BigInt operator ++(BigInt value) => value + 1u;
@@ -216,33 +217,38 @@ namespace System.Numerics
     public static double Log(BigInt value) => Log(value, Math.E);
     public static double Log(BigInt value, double baseValue) => (double)BigRational.Log(value.p, baseValue, 0);
     public static double Log10(BigInt value) => (double)BigRational.Log10(value.p, 0);
-    public static BigInt GreatestCommonDivisor(BigInt left, BigInt right) => new BigInt(BigRational.GreatestCommonDivisor(left.p, right.p));
+    public static BigInt GreatestCommonDivisor(BigInt a, BigInt b)
+    {
+      var cpu = BigRational.task_cpu; cpu.push(a); cpu.push(b);
+      cpu.gcd(); return new BigInt(cpu);
+    }
+    //=> new BigInt(BigRational.GreatestCommonDivisor(left.p, right.p));
     public static BigInt Pow(BigInt value, int exponent) => new BigInt(BigRational.Pow(value.p, exponent));
     public static BigInt ModPow(BigInt value, BigInt exponent, BigInt modulus) => new BigInt(BigRational.Pow(value.p, exponent, 0) % modulus);
 
     //non-std's
-    public static int Msb(BigInt value) { var cpu = rat.task_cpu; cpu.push(value.p); var x = cpu.msb(); cpu.pop(); return unchecked((int)x); }
-    public static int Lsb(BigInt value) { var cpu = rat.task_cpu; cpu.push(value.p); var x = cpu.lsb(); cpu.pop(); return unchecked((int)x); }
+    public static int Msb(BigInt value) { var cpu = BigRational.task_cpu; cpu.push(value.p); var x = cpu.msb(); cpu.pop(); return unchecked((int)x); }
+    public static int Lsb(BigInt value) { var cpu = BigRational.task_cpu; cpu.push(value.p); var x = cpu.lsb(); cpu.pop(); return unchecked((int)x); }
     public static BigInt Shl(BigInt value, int shift)
     {
       if (shift <= 0) return shift == 0 ? value : Shr(value, -shift);
-      var cpu = rat.task_cpu; cpu.push(value.p);
+      var cpu = BigRational.task_cpu; cpu.push(value.p);
       cpu.shl(unchecked((uint)shift)); return new BigInt(cpu);
     }
     public static BigInt Shr(BigInt value, int shift)
     {
       if (shift <= 0) return shift == 0 ? value : Shl(value, -shift);
-      var cpu = rat.task_cpu; cpu.push(value.p);
+      var cpu = BigRational.task_cpu; cpu.push(value.p);
       cpu.shr(unchecked((uint)shift)); return new BigInt(cpu);
     }
 
-    #region private
+  #region private
     private readonly BigRational p;
     private BigInt(BigRational p) => this.p = p;
     private BigInt(BigRational.SafeCPU cpu) => p = cpu.popr();
-    #endregion
+  #endregion
 
-    #region boost operator 
+  #region boost operator 
     /// <summary>
     /// Performs a bitwise Or operation on two <see cref="BigInt"/> values.
     /// </summary>
@@ -251,11 +257,10 @@ namespace System.Numerics
     /// <returns>The result of the bitwise Or operation.</returns>
     public static BigInt operator |(BigInt? a, BigInt b) => new BigInt((BigRational?)a.GetValueOrDefault().p | b.p);
     public static implicit operator BigInt?(int value) => new BigInt(((BigRational?)value).GetValueOrDefault());
-    #endregion
+  #endregion
   }
 
 #if NET7_0
-
   public readonly partial struct BigInt : ISpanFormattable, IBinaryInteger<BigInt>, ISignedNumber<BigInt>
   {
     public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out BigInt result) => TryParse(s.AsSpan(), style, provider, out result);
@@ -311,7 +316,7 @@ namespace System.Numerics
     public static BigInt operator >>>(BigInt value, int shift)
     {
       if (shift <= 0) return shift != 0 ? value << -shift : value;
-      var cpu = rat.task_cpu; cpu.push(value.p);
+      var cpu = BigRational.task_cpu; cpu.push(value.p);
       if (cpu.sign() == -1) { cpu.toc(4); if (shift >= cpu.msb()) { cpu.pop(); return MinusOne; } }
       cpu.shr(checked((uint)shift)); return new BigInt(cpu);
     }
@@ -339,7 +344,7 @@ namespace System.Numerics
     // INumber, IBinaryInteger<BigInt>, ISignedNumber<BigInt>
     static BigInt IBitwiseOperators<BigInt, BigInt, BigInt>.operator |(BigInt left, BigInt right)
     {
-      var cpu = rat.task_cpu; cpu.push(left.p); cpu.push(right.p); cpu.or(); return new BigInt(cpu);
+      var cpu = BigRational.task_cpu; cpu.push(left.p); cpu.push(right.p); cpu.or(); return new BigInt(cpu);
     }
 
     static int INumberBase<BigInt>.Radix => 1; //NET7 BigInteger nonsense Radix = 2
@@ -441,5 +446,7 @@ namespace System.Numerics
     }
 #endif
   }
+#endif
+
 #endif
 }

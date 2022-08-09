@@ -626,107 +626,88 @@ namespace System.Numerics
     {
       return 1 - 2 / (Exp(x * 2, digits) + 1); //todo: opt. cpu
     }
+    #region shiftet to Integer
+    //   /// <summary>
+    //   /// Performes an integer division <paramref name="a"/> / <paramref name="b"/> 
+    //   /// </summary>
+    //   /// <remarks>
+    //   /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.Divide(BigInteger, BigInteger)"/> division.<br/>
+    //   /// This in contrast to <paramref name="a"/> / <paramref name="b"/>, where a corresponding fraction results.
+    //   /// </remarks>
+    //   /// <param name="a">The value to be divided. (dividend)</param>
+    //   /// <param name="b">The value to divide by. (devisor)</param>
+    //   /// <returns>A <see cref="BigRational "/> integer value. NaN when divided by zero.</returns>
+    //   public static BigRational IDiv(BigRational a, BigRational b)
+    //   {
+    //     //var cpu = main_cpu; cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop(); return cpu.popr();
+    //     var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
+    //   }
+    //   /// <summary>
+    //   /// Performes an integer modulo operation <paramref name="a"/> % <paramref name="b"/> what is the remainder that results from a division.
+    //   /// </summary>
+    //   /// <param name="a">The value to be divided. (dividend)</param>
+    //   /// <param name="b">The value to divide by. (divisor)</param>
+    //   /// <remarks>
+    //   /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger"/> modulo (%) operation.<br/>
+    //   /// This in contrast to <paramref name="a"/> % <paramref name="b"/>, where for <see cref="BigInteger"/> a corresponding fraction results.
+    //   /// </remarks>
+    //   /// <returns>A <see cref="BigRational "/> integer value. NaN when divided by zero.</returns>
+    //   public static BigRational IMod(BigRational a, BigRational b)
+    //   {
+    //     //var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.div(b, b); cpu.mod(); cpu.pop(); return cpu.popr();
+    //     var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.imod(); return cpu.popr();
+    //   }
+    //  /// <summary>
+    //  /// Calculates the quotient of two <see cref="BigRational"/> signed values and also returns the remainder in an output parameter.
+    //  /// </summary>
+    //  /// <remarks>
+    //  /// This function is for compatibility to <see cref="Math.DivRem(int, int, out int)"/> like functions.<br/>
+    //  /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.DivRem(BigInteger, BigInteger, out BigInteger)"/> operation..<br/>
+    //  /// </remarks>
+    //  /// <param name="a">The dividend.</param>
+    //  /// <param name="b">The divisor.</param>
+    //  /// <param name="r">The remainder.</param>
+    //  /// <returns>The quotient of the specified numbers. NaN when divided by zero.</returns>
+    //    public static BigRational DivRem(BigRational a, BigRational b, out BigRational r)
+    //    {
+    //      if (BigRational.Sign(b) == 0) return r = double.NaN;
+    //      var cpu = main_cpu; cpu.div(a, b); cpu.mod(0);
+    //      cpu.swp(); r = cpu.popr(); return cpu.popr();
+    //    }
+    //  /// <summary>
+    //  /// Produces the quotient and the remainder of two signed <see cref="BigRational"/> numbers.
+    //  /// </summary>
+    //  /// This function is for compatibility to <see cref="Math.DivRem(int, int)"/> like functions.<br/>
+    //  /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.DivRem(BigInteger, BigInteger, out BigInteger)"/> operation..<br/>
+    //  /// <param name="a">The dividend.</param>
+    //  /// <param name="b">The divisor.</param>
+    //  /// <returns>The quotient and the remainder of the specified numbers as integer values.</returns>
+    //  public static (BigRational Quotient, BigRational Remainder) DivRem(BigRational a, BigRational b)
+    //  {
+    //    var d = DivRem(a, b, out var r); return (d, r);
+    //  }
+    #endregion
     /// <summary>
-    /// Finds the greatest common divisor (GCD) of two <see cref="BigRational"/> integer values.
+    /// Returns the Numerator and the Denominator of the specified number.
     /// </summary>
-    /// <remarks>
-    /// This operation makes only sense for integer values.
-    /// </remarks>
-    /// <param name="a">The first value.</param>
-    /// <param name="b">The second value.</param>
-    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static BigRational GreatestCommonDivisor(BigRational a, BigRational b) //todo: -> BigInt
+    /// <param name="a">A <see cref="BigRational"/> integer number</param>
+    /// <param name="den">returns the denominator of <paramref name="a"/> always positive integer.</param>
+    /// <returns>Returns the numerator of <paramref name="a"/>.</returns>
+    public static Integer NumDen(BigRational a, out Integer den)
     {
-      var cpu = main_cpu; cpu.push(a); cpu.push(b);
-      cpu.gcd(); return cpu.popr();
-    }
-    /// <summary>
-    /// Finds the least common multiple (LCM) of two <see cref="BigRational"/> integer values.
-    /// </summary>
-    /// <remarks>
-    /// This operation makes only sense for integer values.
-    /// </remarks>
-    /// <param name="a">The first value.</param>
-    /// <param name="b">The second value.</param>
-    /// <returns>The least common multiple of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    public static BigRational LeastCommonMultiple(BigRational a, BigRational b) //todo: -> BigInt
-    {
-      //|a * b| / gcd(a, b) == |a / gcd(a, b) * b| 
-      var cpu = main_cpu; cpu.push(a); cpu.push(b);
-      cpu.dup(); cpu.dup(2); cpu.gcd(); cpu.div(); cpu.mul(); cpu.abs();
-      return cpu.popr();
-    }
-    /// <summary>
-    /// Performes an integer division <paramref name="a"/> / <paramref name="b"/> 
-    /// </summary>
-    /// <remarks>
-    /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.Divide(BigInteger, BigInteger)"/> division.<br/>
-    /// This in contrast to <paramref name="a"/> / <paramref name="b"/>, where a corresponding fraction results.
-    /// </remarks>
-    /// <param name="a">The value to be divided. (dividend)</param>
-    /// <param name="b">The value to divide by. (devisor)</param>
-    /// <returns>A <see cref="BigRational "/> integer value. NaN when divided by zero.</returns>
-    public static BigRational IDiv(BigRational a, BigRational b)
-    {
-      //var cpu = main_cpu; cpu.div(a, b); cpu.mod(); cpu.swp(); cpu.pop(); return cpu.popr();
-      var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.idiv(); return cpu.popr();
-    }
-    /// <summary>
-    /// Performes an integer modulo operation <paramref name="a"/> % <paramref name="b"/> what is the remainder that results from a division.
-    /// </summary>
-    /// <param name="a">The value to be divided. (dividend)</param>
-    /// <param name="b">The value to divide by. (divisor)</param>
-    /// <remarks>
-    /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger"/> modulo (%) operation.<br/>
-    /// This in contrast to <paramref name="a"/> % <paramref name="b"/>, where for <see cref="BigInteger"/> a corresponding fraction results.
-    /// </remarks>
-    /// <returns>A <see cref="BigRational "/> integer value. NaN when divided by zero.</returns>
-    public static BigRational IMod(BigRational a, BigRational b)
-    {
-      //var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.div(b, b); cpu.mod(); cpu.pop(); return cpu.popr();
-      var cpu = main_cpu; cpu.push(a); cpu.push(b); cpu.imod(); return cpu.popr();
-    }
-    /// <summary>
-    /// Calculates the quotient of two <see cref="BigRational"/> signed values and also returns the remainder in an output parameter.
-    /// </summary>
-    /// <remarks>
-    /// This function is for compatibility to <see cref="Math.DivRem(int, int, out int)"/> like functions.<br/>
-    /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.DivRem(BigInteger, BigInteger, out BigInteger)"/> operation..<br/>
-    /// </remarks>
-    /// <param name="a">The dividend.</param>
-    /// <param name="b">The divisor.</param>
-    /// <param name="r">The remainder.</param>
-    /// <returns>The quotient of the specified numbers. NaN when divided by zero.</returns>
-    public static BigRational DivRem(BigRational a, BigRational b, out BigRational r)
-    {
-      if (BigRational.Sign(b) == 0) return r = double.NaN; 
-      var cpu = main_cpu; cpu.div(a, b); cpu.mod(0);
-      cpu.swp(); r = cpu.popr(); return cpu.popr();
-    }
-    /// <summary>
-    /// Produces the quotient and the remainder of two signed <see cref="BigRational"/> numbers.
-    /// </summary>
-    /// This function is for compatibility to <see cref="Math.DivRem(int, int)"/> like functions.<br/>
-    /// For integer values <paramref name="a"/> and <paramref name="b"/>, the result equals a <see cref="BigInteger.DivRem(BigInteger, BigInteger, out BigInteger)"/> operation..<br/>
-    /// <param name="a">The dividend.</param>
-    /// <param name="b">The divisor.</param>
-    /// <returns>The quotient and the remainder of the specified numbers as integer values.</returns>
-    public static (BigRational Quotient, BigRational Remainder) DivRem(BigRational a, BigRational b)
-    {
-      var d = DivRem(a, b, out var r); return (d, r);
+      var cpu = main_cpu; cpu.push(a);
+      cpu.mod(8); var s = cpu.sign();
+      if (s < 0) cpu.neg(); den = (Integer)cpu.popr();
+      if (s < 0) cpu.neg(); return (Integer)cpu.popr();
     }
     /// <summary>
     /// Returns the numerator and the denominator of the specified number.
     /// </summary>
     /// <param name="a">A <see cref="BigRational"/> integer number</param>
-    /// <param name="den">returns the denominator of <paramref name="a"/> always positive integer.</param>
-    /// <returns>Returns the numerator of <paramref name="a"/>.</returns>
-    public static BigRational NumDen(BigRational a, out BigRational den)
+    /// <returns>Returns the numerator and denominator of <paramref name="a"/>.</returns>
+    public static (Integer Numerator, Integer Denumerator) NumDen(BigRational a)
     {
-      var cpu = main_cpu; cpu.push(a);
-      cpu.mod(8); var s = cpu.sign();
-      if (s < 0) cpu.neg(); den = cpu.popr();
-      if (s < 0) cpu.neg(); return cpu.popr();
+      var n = NumDen(a, out var d); return (n, d);
     }
 
     /// <summary>

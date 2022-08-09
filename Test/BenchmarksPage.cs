@@ -205,28 +205,28 @@ namespace Test
     }
     static Action<int, Func<bool>> _test_div(out int e)
     {
-      var rr = new BigRational[256]; var ii = new BigInteger[256];
-      var cr = new BigRational[256]; var ci = new BigInteger[256];
+      var rr = new BigInt[256]; var ii = new BigInteger[256];
+      var cr = new BigInt[256]; var ci = new BigInteger[256];
       var ra = new Random(13);
       for (int i = 0; i < 256; i++) ii[i] = (BigInteger)(rr[i] = random_rat(ra, i << 6));
       e = rat.ILog10(rr[255]);
       return (pass, f) =>
       {
-        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = BigRational.IDiv(rr[i], rr[i - 1]);
-        if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = ii[i] / (ii[i - 1]);
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = rr[i] / rr[i - 1];
+        if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = ii[i] / ii[i - 1];
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second));
       };
     }
     static Action<int, Func<bool>> _test_gcd(out int e)
     {
-      var rr = new BigRational[256]; var ii = new BigInteger[256];
-      var cr = new BigRational[256]; var ci = new BigInteger[256];
+      var rr = new BigInt[256]; var ii = new BigInteger[256];
+      var cr = new BigInt[256]; var ci = new BigInteger[256];
       var ra = new Random(13); //E+2040
       for (int i = 0; i < 256; i++) ii[i] = (BigInteger)(rr[i] = random_rat(ra, i << 3));
       e = rat.ILog10(rr[255]);
       return (pass, f) =>
       {
-        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = BigRational.GreatestCommonDivisor(rr[i - 1], rr[i]);
+        if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = BigInt.GreatestCommonDivisor(rr[i - 1], rr[i]);
         if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = BigInteger.GreatestCommonDivisor(ii[i - 1], ii[i]);
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second));
       };
@@ -243,13 +243,13 @@ namespace Test
       {
         // (a * b + a * b - a + a * a) / a; // a * a -> sqr() 
         if (pass == 0) for (int i = 1; f() && i < 256; i++) cr[i] = 0 | (rr[i] * rr[i - 1] + rr[i] * rr[i - 1] - rr[i] + rr[i] * rr[i]) / rr[i];
-        if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = (ii[i] * ii[i - 1] + ii[i] * ii[i - 1] - ii[i] + ii[i] * ii[i]) / ii[i];
+        if (pass == 1) for (int i = 1; f() && i < 256; i++) ci[i] = 0 | (ii[i] * ii[i - 1] + ii[i] * ii[i - 1] - ii[i] + ii[i] * ii[i]) / ii[i];
         if (pass == 8) Debug.Assert(cr.Zip(ci).All(p => p.First == p.Second)); // ii[1+(i>>2)]
       };
     }
 
 
-    static BigRational random_rat(Random rnd, int digits) //todo: make more precise
+    static BigInt random_rat(Random rnd, int digits) //todo: make more precise
     {
       var cpu = rat.task_cpu;
       cpu.pow(10, digits);
@@ -259,7 +259,7 @@ namespace Test
         var v = rnd.Next(); if (i + 32 >= x) v = (int)((long)v >> ((int)(i + 32) - (int)x + 1));
         cpu.push(v); cpu.shl(i); cpu.xor();
       }
-      var r = cpu.popr(); return r;
+      var r = cpu.popr(); return (BigInt)r;
     }
 
     void button_save_Click(object sender, EventArgs e)

@@ -18,16 +18,16 @@ namespace System.Numerics
     ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational>
   {
     // INumberBase 
-    static int INumberBase<BigRational>.Radix => 1; //todo: radix for rational?
-    static BigRational INumberBase<BigRational>.Zero => default;
-    static BigRational INumberBase<BigRational>.One => 1u;
-    static BigRational ISignedNumber<BigRational>.NegativeOne => -1;
-    static BigRational IAdditiveIdentity<BigRational, BigRational>.AdditiveIdentity => default;
-    static BigRational IMultiplicativeIdentity<BigRational, BigRational>.MultiplicativeIdentity => 1u;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static int INumberBase<BigRational>.Radix => 1; //todo: radix for rational?
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational INumberBase<BigRational>.Zero => default;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational INumberBase<BigRational>.One => 1u;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational ISignedNumber<BigRational>.NegativeOne => -1;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IAdditiveIdentity<BigRational, BigRational>.AdditiveIdentity => default;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IMultiplicativeIdentity<BigRational, BigRational>.MultiplicativeIdentity => 1u;
 
-    static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); // MaxDigits
-    static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); // MaxDigits 
-    static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); // MaxDigits
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.E => Exp(1); // MaxDigits
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.Pi => Pi(); // MaxDigits 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational IFloatingPointConstants<BigRational>.Tau => Tau(); // MaxDigits
 
     static bool INumberBase<BigRational>.IsZero(BigRational value) => value.p == null;
     static bool INumberBase<BigRational>.IsNegative(BigRational value) => Sign(value) < 0;

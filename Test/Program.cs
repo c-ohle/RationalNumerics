@@ -2,8 +2,8 @@
 global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
-using System.Globalization;
-using System.Runtime.CompilerServices;
+global using BigInt = System.Numerics.BigRational.Integer;
+
 
 namespace Test
 {
@@ -11,8 +11,8 @@ namespace Test
   {
     [STAThread]
     static void Main()
-    {      
-      ApplicationConfiguration.Initialize(); // test();
+    {
+      ApplicationConfiguration.Initialize(); //test();
       Application.Run(new MainFrame());
     }
 
@@ -27,7 +27,12 @@ namespace Test
       a = (BigFloat)(-Math.PI);
       b = -2;
 
-      var r = BigRational.Pi(100); ss = r.ToString("L60");
+      a = BigFloat.Sin(Math.PI / 4);
+
+      var aa = 0 | (BigInt)7 * 8 + 1000;
+      a = 0 | (BigFloat)7 * 8 + 1000;
+
+      var r = BigRational.Pi(100); ss = r.ToString("L60"); var nd = BigRational.NumDen(r);
       a = (BigFloat)r;
       r = (BigRational)1 / 3;
       a = (BigFloat)r;
@@ -41,13 +46,30 @@ namespace Test
       c = b + 2;
       c = c * 100;
 
-      a = 1; a = a / 3;
-      b = 100; b = b / 3;
+      var bi = BigRational.Integer.GreatestCommonDivisor(8, 12);
+      bi = BigRational.Integer.GreatestCommonDivisor(56, 7);
+      BigRational br = BigRational.Integer.GreatestCommonDivisor(56, 7);
+      BigInteger bbi = (BigInteger)bi;
+
+      //BigRational.Integer.Lsb
+      a = 1; a = a / 3; b = a; if (b == a) { }
+      b = 100; b = b / 3; if (b != a) { }
       c = 0.001; c = c / 3;
+
+      c = b;
+      if (c < b) { } if (c <= b) { } if (c > b) { } if (c >= b) { }
+      b += 0.000001;
+      if (c < b) { }
+      if (c <= b) { }
+      if (c > b) { }
+      if (c >= b) { }
+
       c = 1; c /= 100; c = c / 3;
       c = 1; c /= 10000; c = c / 3;
       c = 1; c /= 2; c = c / 3;
 
+      ss = BigRational.Pi(100).ToString("L100");
+      a = BigFloat.Pi();
       c = Math.PI;
       c = c / 2;
       c = c * 2;

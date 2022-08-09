@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+
 
 namespace System.Numerics
 {
@@ -12,10 +14,22 @@ namespace System.Numerics
   /// <i>boost operator public just to test how much performance would be possible.</i><br/>
   /// </remarks>
   [Serializable, SkipLocalsInit] //, DebuggerDisplay("{ToString(),nq})"
-  public readonly unsafe partial struct BigFloat // : IComparable, IComparable<BigFloat>, IEquatable<BigFloat>, IFormattable
+  public readonly unsafe partial struct BigFloat : IComparable, IComparable<BigFloat>, IEquatable<BigFloat> // , IFormattable
   {
     public override readonly string ToString() => ((BigRational)this).ToString("L42");
-    
+    public override readonly int GetHashCode() => p.GetHashCode() ^ e;
+    public override readonly bool Equals([NotNullWhen(true)] object? obj)
+    {
+      return obj is BigFloat r && Equals(r);
+    }
+    public readonly bool Equals(BigFloat other) => e == other.e && p.Equals(other.p);
+    public readonly int CompareTo(object? obj) => obj == null ? 1 : obj is BigFloat v ? CompareTo(v) : throw new ArgumentException();
+    public readonly int CompareTo(BigFloat other)
+    {
+      if (e != other.e) return e > other.e ? +1 : -1;
+      return p.CompareTo(other.p);
+    }
+
     public BigFloat(int v)
     {
       if (v == 0) { this = default; return; }
@@ -67,18 +81,40 @@ namespace System.Numerics
       return new BigFloat(BigInt.Shl(a.p, mant) / b.p, a.e - b.e - mant);
     }
 
+    public static bool operator <(BigFloat a, BigFloat b) => a.CompareTo(b) < 0;
+    public static bool operator <=(BigFloat a, BigFloat b) => a.CompareTo(b) <= 0;
+    public static bool operator >(BigFloat a, BigFloat b) => a.CompareTo(b) > 0;
+    public static bool operator >=(BigFloat a, BigFloat b) => a.CompareTo(b) >= 0;
+    public static bool operator ==(BigFloat a, BigFloat b) => a.Equals(b);
+    public static bool operator !=(BigFloat a, BigFloat b) => !a.Equals(b);
+
+    public static bool operator <(BigFloat a, long b) => a.CompareTo(b) < 0;
+    public static bool operator <=(BigFloat a, long b) => a.CompareTo(b) <= 0;
+    public static bool operator >(BigFloat a, long b) => a.CompareTo(b) > 0;
+    public static bool operator >=(BigFloat a, long b) => a.CompareTo(b) >= 0;
+    public static bool operator ==(BigFloat a, long b) => a.Equals(b);
+    public static bool operator !=(BigFloat a, long b) => !a.Equals(b);
+
+    public static BigFloat operator |(BigFloat? a, BigFloat b) => new BigFloat(a.GetValueOrDefault().p | b.p, b.e);
+    public static implicit operator BigFloat?(int value) => new BigFloat(((BigInt?)value).GetValueOrDefault(), 0);
+
+    public static BigFloat Sin(BigFloat angle) => (BigFloat)BigRational.Sin(angle, 42);
+    public static BigFloat Cos(BigFloat angle) => (BigFloat)BigRational.Cos(angle, 42);
+    public static BigFloat Tan(BigFloat angle) => (BigFloat)BigRational.Tan(angle, 42);
+    public static BigFloat Pi() => (BigFloat)BigRational.Pi(42);
+
     const int mant = 128; // 53;
     private readonly BigInt p; readonly int e;
     private BigFloat(BigInt p, int e)
     {
-      var s = BigInt.Msb(p); 
+      var s = BigInt.Msb(p);
       if (s == 0) { this = default; return; }
       if (s == mant) { this.p = p; this.e = e; return; }
       var d = s - mant;
       this.p = d >= 0 ? BigInt.Shr(p, d) : BigInt.Shl(p, -d);
       this.e = e + d; Debug.Assert(BigInt.Msb(this.p) == mant);
     }
-        
+
   }
 
 #if NET7_0
