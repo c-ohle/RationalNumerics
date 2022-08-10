@@ -63,7 +63,7 @@ namespace System.Numerics.Test
         var cpu = rat.task_cpu; cpu.tor(value = value.Trim(), 16);
         if (value[0] > '7') //int hex style
         {
-          var t = cpu.msb(); cpu.push(1u); cpu.shl(t); //todo: opt. check cpu.pow(2, t); ??? 
+          var t = cpu.msb(); cpu.push(1u); cpu.shl(unchecked((int)t)); //todo: opt. check cpu.pow(2, t); ??? 
           cpu.dec(); cpu.xor(); cpu.inc(); cpu.neg();
         }
         return new BigInt(cpu);
@@ -92,7 +92,7 @@ namespace System.Numerics.Test
     {
       int n = value.Length, k = isBigEndian ? n - 1 : 0, d = isBigEndian ? -1 : +1;
       var cpu = BigRational.task_cpu; cpu.push(value[k]); //todo: opt.
-      for (int i = 1; i < n; i++) { k += d; cpu.push(value[k]); cpu.shl(unchecked((uint)(i << 3))); cpu.or(); }
+      for (int i = 1; i < n; i++) { k += d; cpu.push(value[k]); cpu.shl(i << 3); cpu.or(); }
       if (!isUnsigned && (value[k] & 0x80) != 0) cpu.toc(4); this.p = cpu.popr();
     }
 
@@ -165,14 +165,14 @@ namespace System.Numerics.Test
     public static BigInt operator <<(BigInt a, int b)
     {
       if (b <= 0) return b != 0 ? a >> -b : b;
-      var cpu = BigRational.task_cpu; var c = checked((uint)b); cpu.push(a.p); cpu.shl(c);
+      var cpu = BigRational.task_cpu; cpu.push(a.p); cpu.shl(b);
       return new BigInt(cpu);
     }
     public static BigInt operator >>(BigInt a, int b)
     {
       if (b <= 0) return b != 0 ? a << -b : a;
       var cpu = BigRational.task_cpu; cpu.push(a.p); var s = cpu.sign() == -1;
-      if (s) cpu.toc(4); cpu.shr(checked((uint)b)); if (s) cpu.toc(4);
+      if (s) cpu.toc(4); cpu.shr(b); if (s) cpu.toc(4);
       return new BigInt(cpu);
     }
     public static BigInt operator &(BigInt a, BigInt b) { var cpu = BigRational.task_cpu; cpu.push(a.p); cpu.push(b.p); cpu.and(); return new BigInt(cpu); }
@@ -233,13 +233,13 @@ namespace System.Numerics.Test
     {
       if (shift <= 0) return shift == 0 ? value : Shr(value, -shift);
       var cpu = BigRational.task_cpu; cpu.push(value.p);
-      cpu.shl(unchecked((uint)shift)); return new BigInt(cpu);
+      cpu.shl(shift); return new BigInt(cpu);
     }
     public static BigInt Shr(BigInt value, int shift)
     {
       if (shift <= 0) return shift == 0 ? value : Shl(value, -shift);
       var cpu = BigRational.task_cpu; cpu.push(value.p);
-      cpu.shr(unchecked((uint)shift)); return new BigInt(cpu);
+      cpu.shr(shift); return new BigInt(cpu);
     }
 
   #region private
@@ -318,7 +318,7 @@ namespace System.Numerics.Test
       if (shift <= 0) return shift != 0 ? value << -shift : value;
       var cpu = BigRational.task_cpu; cpu.push(value.p);
       if (cpu.sign() == -1) { cpu.toc(4); if (shift >= cpu.msb()) { cpu.pop(); return MinusOne; } }
-      cpu.shr(checked((uint)shift)); return new BigInt(cpu);
+      cpu.shr(shift); return new BigInt(cpu);
     }
 
     public static implicit operator BigInt(byte value) => new BigInt((uint)value);

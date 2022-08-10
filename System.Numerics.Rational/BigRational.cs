@@ -2007,16 +2007,16 @@ namespace System.Numerics
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
-      public void shl(uint c, int i = 0)
+      public void shl(int c, int i = 0)
       {
-        if (c == 0) return;
+        if (c <= 0) { if (c != 0) shr(-c, i); return; }
         fixed (uint* u = p[this.i - 1 - i])
         {
           if (*(ulong*)u == 1) return;
-          fixed (uint* v = rent(len(u) + (c >> 5) + 1))
+          fixed (uint* v = rent(len(u) + (unchecked((uint)c) >> 5) + 1))
           {
             var n = (u[0] & 0x3fffffff) + 1;
-            copy(v, u, n); shl(v, unchecked((int)c));
+            copy(v, u, n); shl(v, c);
             copy(v + v[0] + 1, u + n, u[n] + 1);
             v[0] |= (u[0] & 0x80000000) | 0x40000000; swp(i + 1); pop();
           }
@@ -2033,9 +2033,9 @@ namespace System.Numerics
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
-      public void shr(uint c, int i = 0)
+      public void shr(int c, int i = 0)
       {
-        if (c == 0) return;
+        if (c <= 0) { if (c != 0) shl(-c, i); return; }
         fixed (uint* p = this.p[this.i - 1 - i])
         {
           var h = p[0]; var a = h & 0x3fffffff;
@@ -2162,7 +2162,7 @@ namespace System.Numerics
         if (x == 10) { push(unchecked((ulong)Math.Pow(x, z = e < 19 ? e : 19))); e -= z; } //todo: opt. 1, 0, -1, -2, -4,...
         else if ((x & (x - 1)) == 0 && x >= 0)
         {
-          if (x > 1) { push(unchecked((uint)BitOperations.TrailingZeroCount(x))); shl(e); }
+          if (x > 1) { push(unchecked((uint)BitOperations.TrailingZeroCount(x))); shl(unchecked((int)e)); }
           else push(unchecked((uint)x)); e = 0;
         }
         else push(1u);
@@ -2652,8 +2652,8 @@ namespace System.Numerics
         //if (double.IsNormal(d)) push(Math.Sqrt(d));   // todo: enable afte checks, best possible start value
         //else
         {
-          dup(); if ((s = msb()) > 1) shr(s >> 1); // est
-          inv(); if ((s = msb()) > 1) shr(s >> 1); inv();
+          dup(); if ((s = msb()) > 1) shr(unchecked((int)s) >> 1); // est
+          inv(); if ((s = msb()) > 1) shr(unchecked((int)s) >> 1); inv();
         }
         //uint i = 0;
         for (; ; )
@@ -2682,7 +2682,7 @@ namespace System.Numerics
         if (sign() <= 0) { pop(); pnan(); return; } // NaN
         lim(c + 32); // todo: check, lim x?
         var a = bdi(); // var c = _shl(1, a); x = x / c;
-        if (a != 0) { push(1u); shl(unchecked((uint)(a > 0 ? a : -a))); if (a > 0) div(); else mul(); }
+        if (a != 0) { push(1u); shl(a > 0 ? a : -a); if (a > 0) div(); else mul(); }
         var e = cmpi(0, 1); // push(1u); var e = cmp(1, 0); pop();
         if (e == 0) { pop(); push(a); return; } //if (x == 1) return a;
         if (e < 0) { shl(1); a--; } // adjust bdi //todo: lim x ?
@@ -2694,7 +2694,7 @@ namespace System.Numerics
           if (cmpi(1, 2) <= 0) continue; // if (x < 2) continue;        
           //push(2u); div(2, 0); pop(); // x = x / 2; //todo: shl den       
           swp(); inv(); shl(1); inv(); swp(); // x = x / 2; //todo: shl den
-          push(1u); shl(i); inv(); // var p = Pow(2, -i); //var b = bdi(); if (i == c) { }
+          push(1u); shl(unchecked((int)i)); inv(); // var p = Pow(2, -i); //var b = bdi(); if (i == c) { }
           add(); lim(c); // b += p;
         }
         swp(); pop(); if (a != 0) { push(a); add(); } // return a + b;
@@ -2774,7 +2774,7 @@ namespace System.Numerics
         for (uint n = 0; ; n++)
         {
           uint a = n << 2, b = n * 10;
-          push(1u); shl(b); inv(); if ((n & 1) != 0) neg(); //pow(-1, unchecked((int)n)); pow(2, unchecked((int)b)); div();
+          push(1u); shl(unchecked((int)b)); inv(); if ((n & 1) != 0) neg(); //pow(-1, unchecked((int)n)); pow(2, unchecked((int)b)); div();
           push(-32);  /**/ push(a + 1); div();
           push(-1);   /**/ push(a + 3); div(); add();
           push(256u); /**/ push(b + 1); div(); add();
@@ -2862,7 +2862,7 @@ namespace System.Numerics
         }
         mul(1, 4); div(1, 2); //z *= z / zsqr1;
         swp(1, 4); pop(4);
-        if (sh != 0) shl(unchecked((uint)sh)); // z *= pow(2, sh); 
+        if (sh != 0) shl(sh); // z *= pow(2, sh); 
         if (td) { neg(); pi(c); shr(1); add(); } // z = pi / 2 - z;
         if (s < 0) neg();
       }

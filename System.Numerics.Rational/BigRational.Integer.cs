@@ -17,7 +17,7 @@ namespace System.Numerics
     /// </summary>
     /// <remarks>
     /// This Number Type is compatible to <see cref="BigInteger"/>.<br/>
-    /// The implementation is currently not yet optimized for CPU.
+    /// The implementation is currently not yet CPU optimized.
     /// </remarks>
     [Serializable, SkipLocalsInit] //, DebuggerDisplay("{ToString(),nq}")
     public readonly partial struct Integer : IComparable, IComparable<Integer>, IEquatable<Integer>, IFormattable, ISpanFormattable
@@ -66,7 +66,7 @@ namespace System.Numerics
           var cpu = main_cpu; cpu.tor(value = value.Trim(), 16);
           if (value[0] > '7') //int hex style
           {
-            var t = cpu.msb(); cpu.push(1u); cpu.shl(t); //todo: opt. check cpu.pow(2, t); ??? 
+            var t = cpu.msb(); cpu.push(1u); cpu.shl(unchecked((int)t)); //todo: opt. check cpu.pow(2, t); ??? 
             cpu.dec(); cpu.xor(); cpu.inc(); cpu.neg();
           }
           return new Integer(cpu);
@@ -95,7 +95,7 @@ namespace System.Numerics
       {
         int n = value.Length, k = isBigEndian ? n - 1 : 0, d = isBigEndian ? -1 : +1;
         var cpu = main_cpu; cpu.push(value[k]); //todo: opt.
-        for (int i = 1; i < n; i++) { k += d; cpu.push(value[k]); cpu.shl(unchecked((uint)(i << 3))); cpu.or(); }
+        for (int i = 1; i < n; i++) { k += d; cpu.push(value[k]); cpu.shl(i << 3); cpu.or(); }
         if (!isUnsigned && (value[k] & 0x80) != 0) cpu.toc(4); this.p = cpu.popr();
       }
 
@@ -169,14 +169,14 @@ namespace System.Numerics
       public static Integer operator <<(Integer a, int b)
       {
         if (b <= 0) return b != 0 ? a >> -b : b;
-        var cpu = main_cpu; var c = checked((uint)b); cpu.push(a.p); cpu.shl(c);
+        var cpu = main_cpu; cpu.push(a.p); cpu.shl(b);
         return new Integer(cpu);
       }
       public static Integer operator >>(Integer a, int b)
       {
         if (b <= 0) return b != 0 ? a << -b : a;
         var cpu = main_cpu; cpu.push(a.p); var s = cpu.sign() == -1;
-        if (s) cpu.toc(4); cpu.shr(checked((uint)b)); if (s) cpu.toc(4);
+        if (s) cpu.toc(4); cpu.shr(b); if (s) cpu.toc(4);
         return new Integer(cpu);
       }
       public static Integer operator &(Integer a, Integer b) { var cpu = main_cpu; cpu.push(a.p); cpu.push(b.p); cpu.and(); return new Integer(cpu); }
@@ -262,13 +262,13 @@ namespace System.Numerics
       {
         if (shift <= 0) return shift == 0 ? value : Shr(value, -shift);
         var cpu = main_cpu; cpu.push(value.p);
-        cpu.shl(unchecked((uint)shift)); return new Integer(cpu);
+        cpu.shl(shift); return new Integer(cpu);
       }
       public static Integer Shr(Integer value, int shift)
       {
         if (shift <= 0) return shift == 0 ? value : Shl(value, -shift);
         var cpu = main_cpu; cpu.push(value.p);
-        cpu.shr(unchecked((uint)shift)); return new Integer(cpu);
+        cpu.shr(shift); return new Integer(cpu);
       }
 
       #region private
@@ -344,7 +344,7 @@ namespace System.Numerics
         if (shift <= 0) return shift != 0 ? value << -shift : value;
         var cpu = main_cpu; cpu.push(value.p);
         if (cpu.sign() == -1) { cpu.toc(4); if (shift >= cpu.msb()) { cpu.pop(); return MinusOne; } }
-        cpu.shr(checked((uint)shift)); return new Integer(cpu);
+        cpu.shr(shift); return new Integer(cpu);
       }
 
       public static implicit operator Integer(byte value) => new Integer((uint)value);

@@ -26,7 +26,8 @@ namespace System.Numerics
     public readonly int CompareTo(object? obj) => obj == null ? 1 : obj is BigFloat v ? CompareTo(v) : throw new ArgumentException();
     public readonly int CompareTo(BigFloat other)
     {
-      if (e != other.e) return e > other.e ? +1 : -1;
+      var s = this.p.Sign; var t = s - other.p.Sign; if (t != 0) return t > 0 ? 1 : -1;
+      if (this.e != other.e) return e > other.e ? s : -s;
       return p.CompareTo(other.p);
     }
 
@@ -45,18 +46,20 @@ namespace System.Numerics
     }
 
     public static implicit operator BigFloat(int value) => new BigFloat(value);
+    public static implicit operator BigFloat(long value) => (BigInt)value;
     public static implicit operator BigFloat(double value) => new BigFloat(value);
-    public static implicit operator BigRational(BigFloat v) => v.p * BigRational.Pow(2, v.e);
-
-    public static explicit operator BigFloat(BigInt value)
+    public static implicit operator BigFloat(decimal value) => (BigRational)value;
+    public static implicit operator BigFloat(BigInt value)
     {
       return new BigFloat(value, 0);
     }
-    public static explicit operator BigFloat(BigRational value)
+    public static implicit operator BigFloat(BigRational value)
     {
       var num = BigRational.NumDen(value, out var den);
       return (BigFloat)(BigInt)num / (BigFloat)(BigInt)den;
     }
+
+    public static implicit operator BigRational(BigFloat v) => v.p * BigRational.Pow(2, v.e);
 
     public static BigFloat operator +(BigFloat a) => a;
     public static BigFloat operator -(BigFloat a) => new BigFloat(-a.p, a.e);

@@ -1225,24 +1225,24 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.rnd
   fullName: System.Numerics.BigRational.CPU.rnd
   nameWithType: BigRational.CPU.rnd
-- uid: System.Numerics.BigRational.CPU.shl(System.UInt32,System.Int32)
-  name: shl(UInt32, Int32)
-  href: api/System.Numerics.BigRational.CPU.shl.html#System_Numerics_BigRational_CPU_shl_System_UInt32_System_Int32_
-  commentId: M:System.Numerics.BigRational.CPU.shl(System.UInt32,System.Int32)
-  fullName: System.Numerics.BigRational.CPU.shl(System.UInt32, System.Int32)
-  nameWithType: BigRational.CPU.shl(UInt32, Int32)
+- uid: System.Numerics.BigRational.CPU.shl(System.Int32,System.Int32)
+  name: shl(Int32, Int32)
+  href: api/System.Numerics.BigRational.CPU.shl.html#System_Numerics_BigRational_CPU_shl_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.CPU.shl(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.CPU.shl(System.Int32, System.Int32)
+  nameWithType: BigRational.CPU.shl(Int32, Int32)
 - uid: System.Numerics.BigRational.CPU.shl*
   name: shl
   href: api/System.Numerics.BigRational.CPU.shl.html
   commentId: Overload:System.Numerics.BigRational.CPU.shl
   fullName: System.Numerics.BigRational.CPU.shl
   nameWithType: BigRational.CPU.shl
-- uid: System.Numerics.BigRational.CPU.shr(System.UInt32,System.Int32)
-  name: shr(UInt32, Int32)
-  href: api/System.Numerics.BigRational.CPU.shr.html#System_Numerics_BigRational_CPU_shr_System_UInt32_System_Int32_
-  commentId: M:System.Numerics.BigRational.CPU.shr(System.UInt32,System.Int32)
-  fullName: System.Numerics.BigRational.CPU.shr(System.UInt32, System.Int32)
-  nameWithType: BigRational.CPU.shr(UInt32, Int32)
+- uid: System.Numerics.BigRational.CPU.shr(System.Int32,System.Int32)
+  name: shr(Int32, Int32)
+  href: api/System.Numerics.BigRational.CPU.shr.html#System_Numerics_BigRational_CPU_shr_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.CPU.shr(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.CPU.shr(System.Int32, System.Int32)
+  nameWithType: BigRational.CPU.shr(Int32, Int32)
 - uid: System.Numerics.BigRational.CPU.shr*
   name: shr
   href: api/System.Numerics.BigRational.CPU.shr.html
@@ -1531,6 +1531,221 @@ references:
   commentId: Overload:System.Numerics.BigRational.Factorial
   fullName: System.Numerics.BigRational.Factorial
   nameWithType: BigRational.Factorial
+- uid: System.Numerics.BigRational.Float`1
+  name: BigRational.Float<T>
+  href: api/System.Numerics.BigRational.Float-1.html
+  commentId: T:System.Numerics.BigRational.Float`1
+  name.vb: BigRational.Float(Of T)
+  fullName: System.Numerics.BigRational.Float<T>
+  fullName.vb: System.Numerics.BigRational.Float(Of T)
+  nameWithType: BigRational.Float<T>
+  nameWithType.vb: BigRational.Float(Of T)
+- uid: System.Numerics.BigRational.Float`1.op_Addition(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Addition(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Addition.html#System_Numerics_BigRational_Float_1_op_Addition_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Addition(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Addition(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Addition(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Addition(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Addition(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Addition(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Addition*
+  name: Addition
+  href: api/System.Numerics.BigRational.Float-1.op_Addition.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Addition
+  fullName: System.Numerics.BigRational.Float<T>.Addition
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Addition
+  nameWithType: BigRational.Float<T>.Addition
+  nameWithType.vb: BigRational.Float(Of T).Addition
+- uid: System.Numerics.BigRational.Float`1.op_Division(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Division(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Division.html#System_Numerics_BigRational_Float_1_op_Division_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Division(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Division(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Division(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Division(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Division(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Division(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Division*
+  name: Division
+  href: api/System.Numerics.BigRational.Float-1.op_Division.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Division
+  fullName: System.Numerics.BigRational.Float<T>.Division
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Division
+  nameWithType: BigRational.Float<T>.Division
+  nameWithType.vb: BigRational.Float(Of T).Division
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational)~System.Numerics.BigRational.Float{`0}
+  name: Explicit(BigRational to BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Numerics_BigRational__System_Numerics_BigRational_Float__0_
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational)~System.Numerics.BigRational.Float{`0}
+  name.vb: Narrowing(BigRational to BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Numerics.BigRational to System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Numerics.BigRational to System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Explicit(BigRational to BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(BigRational to BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Explicit*
+  name: Explicit
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Explicit
+  name.vb: Narrowing
+  fullName: System.Numerics.BigRational.Float<T>.Explicit
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing
+  nameWithType: BigRational.Float<T>.Explicit
+  nameWithType.vb: BigRational.Float(Of T).Narrowing
+- uid: System.Numerics.BigRational.Float`1.op_Implicit(System.Double)~System.Numerics.BigRational.Float{`0}
+  name: Implicit(Double to BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Implicit.html#System_Numerics_BigRational_Float_1_op_Implicit_System_Double__System_Numerics_BigRational_Float__0_
+  commentId: M:System.Numerics.BigRational.Float`1.op_Implicit(System.Double)~System.Numerics.BigRational.Float{`0}
+  name.vb: Widening(Double to BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Implicit(System.Double to System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Widening(System.Double to System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Implicit(Double to BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Widening(Double to BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Implicit(System.Int32)~System.Numerics.BigRational.Float{`0}
+  name: Implicit(Int32 to BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Implicit.html#System_Numerics_BigRational_Float_1_op_Implicit_System_Int32__System_Numerics_BigRational_Float__0_
+  commentId: M:System.Numerics.BigRational.Float`1.op_Implicit(System.Int32)~System.Numerics.BigRational.Float{`0}
+  name.vb: Widening(Int32 to BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Implicit(System.Int32 to System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Widening(System.Int32 to System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Implicit(Int32 to BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Widening(Int32 to BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Implicit(System.Numerics.BigRational.Float{`0})~System.Numerics.BigRational
+  name: Implicit(BigRational.Float<T> to BigRational)
+  href: api/System.Numerics.BigRational.Float-1.op_Implicit.html#System_Numerics_BigRational_Float_1_op_Implicit_System_Numerics_BigRational_Float__0___System_Numerics_BigRational
+  commentId: M:System.Numerics.BigRational.Float`1.op_Implicit(System.Numerics.BigRational.Float{`0})~System.Numerics.BigRational
+  name.vb: Widening(BigRational.Float(Of T) to BigRational)
+  fullName: System.Numerics.BigRational.Float<T>.Implicit(System.Numerics.BigRational.Float<T> to System.Numerics.BigRational)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Widening(System.Numerics.BigRational.Float(Of T) to System.Numerics.BigRational)
+  nameWithType: BigRational.Float<T>.Implicit(BigRational.Float<T> to BigRational)
+  nameWithType.vb: BigRational.Float(Of T).Widening(BigRational.Float(Of T) to BigRational)
+- uid: System.Numerics.BigRational.Float`1.op_Implicit*
+  name: Implicit
+  href: api/System.Numerics.BigRational.Float-1.op_Implicit.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Implicit
+  name.vb: Widening
+  fullName: System.Numerics.BigRational.Float<T>.Implicit
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Widening
+  nameWithType: BigRational.Float<T>.Implicit
+  nameWithType.vb: BigRational.Float(Of T).Widening
+- uid: System.Numerics.BigRational.Float`1.op_Modulus(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Modulus(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Modulus.html#System_Numerics_BigRational_Float_1_op_Modulus_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Modulus(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Modulus(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Modulus(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Modulus(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Modulus(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Modulus(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Modulus*
+  name: Modulus
+  href: api/System.Numerics.BigRational.Float-1.op_Modulus.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Modulus
+  fullName: System.Numerics.BigRational.Float<T>.Modulus
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Modulus
+  nameWithType: BigRational.Float<T>.Modulus
+  nameWithType.vb: BigRational.Float(Of T).Modulus
+- uid: System.Numerics.BigRational.Float`1.op_Multiply(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Multiply(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Multiply.html#System_Numerics_BigRational_Float_1_op_Multiply_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Multiply(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Multiply(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Multiply(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Multiply(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Multiply(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Multiply(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Multiply*
+  name: Multiply
+  href: api/System.Numerics.BigRational.Float-1.op_Multiply.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Multiply
+  fullName: System.Numerics.BigRational.Float<T>.Multiply
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Multiply
+  nameWithType: BigRational.Float<T>.Multiply
+  nameWithType.vb: BigRational.Float(Of T).Multiply
+- uid: System.Numerics.BigRational.Float`1.op_Subtraction(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Subtraction(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Subtraction.html#System_Numerics_BigRational_Float_1_op_Subtraction_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Subtraction(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Subtraction(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Subtraction(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Subtraction(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Subtraction(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Subtraction(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Subtraction*
+  name: Subtraction
+  href: api/System.Numerics.BigRational.Float-1.op_Subtraction.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Subtraction
+  fullName: System.Numerics.BigRational.Float<T>.Subtraction
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Subtraction
+  nameWithType: BigRational.Float<T>.Subtraction
+  nameWithType.vb: BigRational.Float(Of T).Subtraction
+- uid: System.Numerics.BigRational.Float`1.op_UnaryNegation(System.Numerics.BigRational.Float{`0})
+  name: UnaryNegation(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_UnaryNegation.html#System_Numerics_BigRational_Float_1_op_UnaryNegation_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_UnaryNegation(System.Numerics.BigRational.Float{`0})
+  name.vb: UnaryNegation(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.UnaryNegation(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).UnaryNegation(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.UnaryNegation(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).UnaryNegation(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_UnaryNegation*
+  name: UnaryNegation
+  href: api/System.Numerics.BigRational.Float-1.op_UnaryNegation.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_UnaryNegation
+  fullName: System.Numerics.BigRational.Float<T>.UnaryNegation
+  fullName.vb: System.Numerics.BigRational.Float(Of T).UnaryNegation
+  nameWithType: BigRational.Float<T>.UnaryNegation
+  nameWithType.vb: BigRational.Float(Of T).UnaryNegation
+- uid: System.Numerics.BigRational.Float`1.op_UnaryPlus(System.Numerics.BigRational.Float{`0})
+  name: UnaryPlus(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_UnaryPlus.html#System_Numerics_BigRational_Float_1_op_UnaryPlus_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_UnaryPlus(System.Numerics.BigRational.Float{`0})
+  name.vb: UnaryPlus(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.UnaryPlus(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).UnaryPlus(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.UnaryPlus(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).UnaryPlus(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_UnaryPlus*
+  name: UnaryPlus
+  href: api/System.Numerics.BigRational.Float-1.op_UnaryPlus.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_UnaryPlus
+  fullName: System.Numerics.BigRational.Float<T>.UnaryPlus
+  fullName.vb: System.Numerics.BigRational.Float(Of T).UnaryPlus
+  nameWithType: BigRational.Float<T>.UnaryPlus
+  nameWithType.vb: BigRational.Float(Of T).UnaryPlus
+- uid: System.Numerics.BigRational.Float`1.ToString
+  name: ToString()
+  href: api/System.Numerics.BigRational.Float-1.ToString.html#System_Numerics_BigRational_Float_1_ToString
+  commentId: M:System.Numerics.BigRational.Float`1.ToString
+  fullName: System.Numerics.BigRational.Float<T>.ToString()
+  fullName.vb: System.Numerics.BigRational.Float(Of T).ToString()
+  nameWithType: BigRational.Float<T>.ToString()
+  nameWithType.vb: BigRational.Float(Of T).ToString()
+- uid: System.Numerics.BigRational.Float`1.ToString*
+  name: ToString
+  href: api/System.Numerics.BigRational.Float-1.ToString.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.ToString
+  fullName: System.Numerics.BigRational.Float<T>.ToString
+  fullName.vb: System.Numerics.BigRational.Float(Of T).ToString
+  nameWithType: BigRational.Float<T>.ToString
+  nameWithType.vb: BigRational.Float(Of T).ToString
+- uid: System.Numerics.BigRational.Float`1.Truncate(System.Numerics.BigRational.Float{`0})
+  name: Truncate(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Truncate.html#System_Numerics_BigRational_Float_1_Truncate_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Truncate(System.Numerics.BigRational.Float{`0})
+  name.vb: Truncate(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Truncate(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Truncate(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Truncate(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Truncate(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Truncate*
+  name: Truncate
+  href: api/System.Numerics.BigRational.Float-1.Truncate.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Truncate
+  fullName: System.Numerics.BigRational.Float<T>.Truncate
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Truncate
+  nameWithType: BigRational.Float<T>.Truncate
+  nameWithType.vb: BigRational.Float(Of T).Truncate
 - uid: System.Numerics.BigRational.Floor(System.Numerics.BigRational)
   name: Floor(BigRational)
   href: api/System.Numerics.BigRational.Floor.html#System_Numerics_BigRational_Floor_System_Numerics_BigRational_
@@ -4948,24 +5163,24 @@ references:
   commentId: Overload:System.Numerics.BigRational.SafeCPU.rnd
   fullName: System.Numerics.BigRational.SafeCPU.rnd
   nameWithType: BigRational.SafeCPU.rnd
-- uid: System.Numerics.BigRational.SafeCPU.shl(System.UInt32,System.Int32)
-  name: shl(UInt32, Int32)
-  href: api/System.Numerics.BigRational.SafeCPU.shl.html#System_Numerics_BigRational_SafeCPU_shl_System_UInt32_System_Int32_
-  commentId: M:System.Numerics.BigRational.SafeCPU.shl(System.UInt32,System.Int32)
-  fullName: System.Numerics.BigRational.SafeCPU.shl(System.UInt32, System.Int32)
-  nameWithType: BigRational.SafeCPU.shl(UInt32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.shl(System.Int32,System.Int32)
+  name: shl(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.shl.html#System_Numerics_BigRational_SafeCPU_shl_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.shl(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.shl(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.shl(Int32, Int32)
 - uid: System.Numerics.BigRational.SafeCPU.shl*
   name: shl
   href: api/System.Numerics.BigRational.SafeCPU.shl.html
   commentId: Overload:System.Numerics.BigRational.SafeCPU.shl
   fullName: System.Numerics.BigRational.SafeCPU.shl
   nameWithType: BigRational.SafeCPU.shl
-- uid: System.Numerics.BigRational.SafeCPU.shr(System.UInt32,System.Int32)
-  name: shr(UInt32, Int32)
-  href: api/System.Numerics.BigRational.SafeCPU.shr.html#System_Numerics_BigRational_SafeCPU_shr_System_UInt32_System_Int32_
-  commentId: M:System.Numerics.BigRational.SafeCPU.shr(System.UInt32,System.Int32)
-  fullName: System.Numerics.BigRational.SafeCPU.shr(System.UInt32, System.Int32)
-  nameWithType: BigRational.SafeCPU.shr(UInt32, Int32)
+- uid: System.Numerics.BigRational.SafeCPU.shr(System.Int32,System.Int32)
+  name: shr(Int32, Int32)
+  href: api/System.Numerics.BigRational.SafeCPU.shr.html#System_Numerics_BigRational_SafeCPU_shr_System_Int32_System_Int32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.shr(System.Int32,System.Int32)
+  fullName: System.Numerics.BigRational.SafeCPU.shr(System.Int32, System.Int32)
+  nameWithType: BigRational.SafeCPU.shr(Int32, Int32)
 - uid: System.Numerics.BigRational.SafeCPU.shr*
   name: shr
   href: api/System.Numerics.BigRational.SafeCPU.shr.html

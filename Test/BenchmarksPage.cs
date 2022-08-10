@@ -257,7 +257,7 @@ namespace Test
       for (uint i = 0; i < x; i += 32)
       {
         var v = rnd.Next(); if (i + 32 >= x) v = (int)((long)v >> ((int)(i + 32) - (int)x + 1));
-        cpu.push(v); cpu.shl(i); cpu.xor();
+        cpu.push(v); cpu.shl(unchecked((int)i)); cpu.xor();
       }
       var r = cpu.popr(); return (BigInt)r;
     }

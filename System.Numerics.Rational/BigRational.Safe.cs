@@ -515,7 +515,7 @@ namespace System.Numerics
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
-      public void shl(uint c, int i = 0) => p.shl(c, i);
+      public void shl(int c, int i = 0) => p.shl(c, i);
       /// <summary>
       /// Selects the value at index i relative to the top of the stack.<br/> 
       /// Shifts the numerator value to the right (in zeros) by the specified number of bits.
@@ -527,7 +527,7 @@ namespace System.Numerics
       /// </remarks>
       /// <param name="c">The number of bits to shift.</param>
       /// <param name="i">A relative index of a stack entry.</param>
-      public void shr(uint c, int i = 0) => p.shr(c, i);
+      public void shr(int c, int i = 0) => p.shr(c, i);
       /// <summary>
       /// Bitwise logical AND of the numerators<br/>
       /// of the first two values on top of the stack and replaces them with the result.
