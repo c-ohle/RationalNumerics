@@ -439,6 +439,16 @@ namespace System.Numerics
         static bool f<R>(R v, out T result) where R : INumberBase<R> => R.TryConvertToTruncating(v, out result!);
         return f<BigRational>(value.p, out result); //ok
       }
+
+      static bool IBinaryInteger<Integer>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Integer value)
+      {
+        throw new NotImplementedException(); //todo: impl
+      }
+
+      static bool IBinaryInteger<Integer>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Integer value)
+      {
+        throw new NotImplementedException(); //todo: impl
+      }
     }
 #endif
   }

@@ -1221,6 +1221,157 @@ namespace System.Numerics
     }
 
   }
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+  [Flags]
+  public enum NumericSupport
+  {
+  }
+  public enum NumericConstant
+  {
+    Zero = 0, One = 1, NegativeOne = 2,
+    AdditiveIdentity = 3, MultiplicativeIdentity = 4,
+    E = 5, Pi = 6, Tau = 7,
+  }
+  
+  public interface ISimpleNumber<T> where T : ISimpleNumber<T>
+  {
+    static abstract T GetConstant(NumericConstant c);
+    static abstract T operator +(T x, T y);
+    static virtual T operator -(T x, T y) => throw new NotImplementedException();
+    static virtual T operator *(T x, T y) => throw new NotImplementedException();
+    static virtual T operator /(T x, T y) => throw new NotImplementedException();
+    static virtual T operator %(T x, T y) => throw new NotImplementedException();
+    static virtual T operator ++(T x) => x + T.GetConstant(NumericConstant.One);
+    static virtual T operator --(T x) => x + T.GetConstant(NumericConstant.NegativeOne);
+    bool Equals(T b); // IEquatable<T>
+    static virtual bool operator ==(T x, T y) => x.Equals(y);
+    static virtual bool operator !=(T x, T y) => !x.Equals(y);
+    int CompareTo(T b); // IComparable<T>
+    static virtual bool operator >=(T x, T y) => x.CompareTo(y) >= 0;
+    static virtual bool operator <=(T x, T y) => x.CompareTo(y) <= 0;
+    static virtual bool operator >(T x, T y) => x.CompareTo(y) > 0;
+    static virtual bool operator <(T x, T y) => x.CompareTo(y) < 0;
+  }
+
+#pragma warning disable CS0169 // field never used
+  [StructLayout(LayoutKind.Sequential, Pack = 2, Size = 10)]
+  internal readonly struct Int80 { readonly Int16 high; readonly UInt64 low; }
+  [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
+  internal readonly struct Int96 { readonly Int32 high; readonly UInt64 low; }
+  [StructLayout(LayoutKind.Sequential)]
+  internal readonly struct Int256 { readonly Int128 high; readonly UInt64 low; }
+#pragma warning restore CS0169 
+
+  public readonly unsafe struct Float80 : ISimpleNumber<Float80>
+  {
+    public readonly override string ToString() => p.ToString();
+    public readonly bool Equals(Float80 b) => BigRational.Float<Int128>.Equals(this.p, b.p);
+    public readonly int CompareTo(Float80 b) => BigRational.Float<Int80>.Compare(this.p, b.p);
+    public static implicit operator Float80(int value) => new Float80(value);
+    public static implicit operator Float80(Half value) => new Float80(value);
+    public static implicit operator Float80(float value) => new Float80(value);
+    public static implicit operator Float80(double value) => new Float80(value);
+    public static explicit operator Float80(Float128 value) => new Float80(BigRational.Float<Int128>.Cast<Int80>(*(Int128*)&value));
+    public static explicit operator Float80(BigRational value) => new Float80((BigRational.Float<Int80>)value);
+
+    public static implicit operator int(Float80 value) => (int)value.p;
+    public static implicit operator Half(Float80 value) => (Half)value.p;
+    public static implicit operator float(Float80 value) => (float)value.p;
+    public static implicit operator double(Float80 value) => (double)value.p;
+    public static implicit operator Float128(Float80 value) => new Float128(BigRational.Float<Int80>.Cast<Int128>(*(Int80*)&value));
+    public static implicit operator BigRational(Float80 value) => (BigRational)value.p;
+
+    public static Float80 operator +(Float80 a, Float80 b) => new Float80(a.p + b.p);
+    public static Float80 operator -(Float80 a, Float80 b) => new Float80(a.p - b.p);
+    public static Float80 operator *(Float80 a, Float80 b) => new Float80(a.p * b.p);
+    public static Float80 operator /(Float80 a, Float80 b) => new Float80(a.p / b.p);
+    public static Float80 operator %(Float80 a, Float80 b) => new Float80(a.p % b.p);
+
+    public static Float80 Truncate(Float80 a) => new Float80(BigRational.Float<Int80>.Truncate(a.p));
+
+    private Float80(BigRational.Float<Int80> p) => this.p = p;
+    private readonly BigRational.Float<Int80> p;
+
+    static Float80 ISimpleNumber<Float80>.GetConstant(NumericConstant c)
+    {
+      switch (c)
+      {
+        case NumericConstant.One: return 1;
+        case NumericConstant.NegativeOne: return -1;
+        default: return default;
+      }
+    }
+  }
+
+  //working minimal impl.
+  public readonly unsafe struct Float96 : ISimpleNumber<Float96>
+  {
+    int ISimpleNumber<Float96>.CompareTo(Float96 b) => BigRational.Float<Int96>.Compare(this.p, b.p);
+    bool ISimpleNumber<Float96>.Equals(Float96 b) => BigRational.Float<Int96>.Equals(this.p, b.p);
+    static Float96 ISimpleNumber<Float96>.operator +(Float96 x, Float96 y) => new Float96(x.p + y.p);
+    private Float96(BigRational.Float<Int96> p) => this.p = p;
+    private readonly BigRational.Float<Int96> p;
+    static Float96 ISimpleNumber<Float96>.GetConstant(NumericConstant c)
+    {
+      switch (c)
+      {
+        case NumericConstant.One: return new Float96((BigRational.Float<Int96>)1);
+        case NumericConstant.NegativeOne: return new Float96((BigRational.Float<Int96>)(-1));
+        default: return default;
+      }
+    }
+  }
+
+  public readonly unsafe struct Float128 : ISimpleNumber<Float128>, IComparable<Float128>, IEquatable<Float128>
+  {
+    public readonly override string ToString() => p.ToString();
+    public override readonly int GetHashCode() => p.GetHashCode();
+    public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
+    public readonly bool Equals(Float128 b) => BigRational.Float<Int128>.Equals(this.p, b.p);
+    public readonly int CompareTo(Float128 b) => BigRational.Float<Int128>.Compare(this.p, b.p);
+
+    public static implicit operator Float128(int value) => new Float128(value);
+    public static implicit operator Float128(Half value) => new Float128(value);
+    public static implicit operator Float128(float value) => new Float128(value);
+    public static implicit operator Float128(double value) => new Float128(value);
+    public static explicit operator Float128(BigRational value) => new Float128((BigRational.Float<Int128>)value);
+
+    public static explicit operator int(Float128 value) => (int)value.p;
+    public static explicit operator Half(Float128 value) => (Half)value.p;
+    public static explicit operator float(Float128 value) => (float)value.p;
+    public static explicit operator double(Float128 value) => (double)value.p;
+    public static implicit operator BigRational(Float128 value) => (BigRational)value.p;
+
+    public static Float128 operator ++(Float128 a) => new Float128(a.p + 1);
+    public static Float128 operator --(Float128 a) => new Float128(a.p - 1);
+    public static Float128 operator +(Float128 a, Float128 b) => new Float128(a.p + b.p);
+    public static Float128 operator -(Float128 a, Float128 b) => new Float128(a.p - b.p);
+    public static Float128 operator *(Float128 a, Float128 b) => new Float128(a.p * b.p);
+    public static Float128 operator /(Float128 a, Float128 b) => new Float128(a.p / b.p);
+    public static Float128 operator %(Float128 a, Float128 b) => new Float128(a.p % b.p);
+    public static bool operator ==(Float128 a, Float128 b) => a.p == b.p;
+    public static bool operator !=(Float128 a, Float128 b) => a.p != b.p;
+    public static bool operator <=(Float128 a, Float128 b) => a.p <= b.p;
+    public static bool operator >=(Float128 a, Float128 b) => a.p >= b.p;
+    public static bool operator <(Float128 a, Float128 b) => a.p < b.p;
+    public static bool operator >(Float128 a, Float128 b) => a.p > b.p;
+
+    public static Float128 Truncate(Float128 a) => new Float128(BigRational.Float<Int128>.Truncate(a.p));
+
+    internal Float128(BigRational.Float<Int128> p) => this.p = p;
+    private readonly BigRational.Float<Int128> p;
+    static Float128 ISimpleNumber<Float128>.GetConstant(NumericConstant c)
+    {
+      switch (c)
+      {
+        case NumericConstant.One: return 1;
+        case NumericConstant.NegativeOne: return -1;
+        default: return default;
+      }
+    }
+  }
 }
 
 #endif //NET7_0

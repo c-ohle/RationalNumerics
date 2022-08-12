@@ -359,7 +359,14 @@ namespace System.Numerics.Test
       => TryWriteBytes(destination, out bytesWritten, false, true);
     bool IBinaryInteger<BigInt>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten)
       => TryWriteBytes(destination, out bytesWritten, false, false);
-
+    static bool IBinaryInteger<BigInt>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out BigInt value)
+    {
+      throw new NotImplementedException();
+    }
+    static bool IBinaryInteger<BigInt>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out BigInt value)
+    {
+      throw new NotImplementedException();
+    }
     static bool INumberBase<BigInt>.IsCanonical(BigInt value) => true;
     static bool INumberBase<BigInt>.IsComplexNumber(BigInt value) => false;
     static bool INumberBase<BigInt>.IsZero(BigInt value) => value.IsZero;
@@ -413,7 +420,7 @@ namespace System.Numerics.Test
       static bool f<R>(R v, out T result) where R : INumberBase<R> => R.TryConvertToTruncating(v, out result!);
       return f<BigRational>(value.p, out result); //ok
     }
-
+    
 #if DEBUG
     internal static void test()
     {
@@ -444,6 +451,7 @@ namespace System.Numerics.Test
         if (k >= 0) { aa = BigInteger.Log2(a); bb = BigInt.Log2(b); Debug.Assert(aa == bb); }
       }
     }
+
 #endif
   }
 #endif

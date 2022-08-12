@@ -1583,6 +1583,24 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Numerics.BigRational to System.Numerics.BigRational.Float(Of T))
   nameWithType: BigRational.Float<T>.Explicit(BigRational to BigRational.Float<T>)
   nameWithType.vb: BigRational.Float(Of T).Narrowing(BigRational to BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Double
+  name: Explicit(BigRational.Float<T> to Double)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Numerics_BigRational_Float__0___System_Double
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Double
+  name.vb: Narrowing(BigRational.Float(Of T) to Double)
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Numerics.BigRational.Float<T> to System.Double)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Numerics.BigRational.Float(Of T) to System.Double)
+  nameWithType: BigRational.Float<T>.Explicit(BigRational.Float<T> to Double)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(BigRational.Float(Of T) to Double)
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Int32
+  name: Explicit(BigRational.Float<T> to Int32)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Numerics_BigRational_Float__0___System_Int32
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Int32
+  name.vb: Narrowing(BigRational.Float(Of T) to Int32)
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Numerics.BigRational.Float<T> to System.Int32)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Numerics.BigRational.Float(Of T) to System.Int32)
+  nameWithType: BigRational.Float<T>.Explicit(BigRational.Float<T> to Int32)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(BigRational.Float(Of T) to Int32)
 - uid: System.Numerics.BigRational.Float`1.op_Explicit*
   name: Explicit
   href: api/System.Numerics.BigRational.Float-1.op_Explicit.html
