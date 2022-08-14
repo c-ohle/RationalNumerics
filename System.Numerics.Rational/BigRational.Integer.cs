@@ -5,8 +5,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-//todo: comments
-#pragma warning disable CS1591  //xml comments
+#pragma warning disable CS1591  //todo: xml comments
 
 namespace System.Numerics
 {
@@ -16,7 +15,9 @@ namespace System.Numerics
     /// Represents an arbitrarily large signed integer.
     /// </summary>
     /// <remarks>
-    /// This Number Type is compatible to <see cref="BigInteger"/>.<br/>
+    /// This type of number is compatible with .NET7 <see cref="BigInteger"/>, hence all the overhead.<br/>
+    /// There are additional functions for fast and numerically exact bit-level operations e.g:<br/>
+    /// <see cref="Shl"/>, <see cref="Shr"/>, <see cref="Msb(Integer)"/>, <see cref="Lsb(Integer)"/> ...<br/>
     /// The implementation is currently not yet CPU optimized.
     /// </remarks>
     [Serializable, SkipLocalsInit] //, DebuggerDisplay("{ToString(),nq}")
@@ -254,7 +255,7 @@ namespace System.Numerics
       }
       public static Integer Pow(Integer value, int exponent) => new Integer(BigRational.Pow(value.p, exponent));
       public static Integer ModPow(Integer value, Integer exponent, Integer modulus) => new Integer(BigRational.Pow(value.p, exponent, 0) % modulus);
-      
+
       //non-std's
       public static int Msb(Integer value) { var cpu = main_cpu; cpu.push(value.p); var x = cpu.msb(); cpu.pop(); return unchecked((int)x); }
       public static int Lsb(Integer value) { var cpu = main_cpu; cpu.push(value.p); var x = cpu.lsb(); cpu.pop(); return unchecked((int)x); }
@@ -385,6 +386,14 @@ namespace System.Numerics
         => TryWriteBytes(destination, out bytesWritten, false, true);
       bool IBinaryInteger<Integer>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten)
         => TryWriteBytes(destination, out bytesWritten, false, false);
+      static bool IBinaryInteger<Integer>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Integer value)
+      {
+        throw new NotImplementedException(); //todo: impl
+      }
+      static bool IBinaryInteger<Integer>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Integer value)
+      {
+        throw new NotImplementedException(); //todo: impl
+      }
 
       static bool INumberBase<Integer>.IsCanonical(Integer value) => true;
       static bool INumberBase<Integer>.IsComplexNumber(Integer value) => false;
@@ -438,16 +447,6 @@ namespace System.Numerics
       {
         static bool f<R>(R v, out T result) where R : INumberBase<R> => R.TryConvertToTruncating(v, out result!);
         return f<BigRational>(value.p, out result); //ok
-      }
-
-      static bool IBinaryInteger<Integer>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Integer value)
-      {
-        throw new NotImplementedException(); //todo: impl
-      }
-
-      static bool IBinaryInteger<Integer>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Integer value)
-      {
-        throw new NotImplementedException(); //todo: impl
       }
     }
 #endif

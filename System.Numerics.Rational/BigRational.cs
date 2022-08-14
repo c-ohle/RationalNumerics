@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
@@ -12,6 +11,7 @@ namespace System.Numerics
   /// <summary>
   /// Represents an arbitrarily large rational number.
   /// </summary>                                                    
+
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly partial struct BigRational : IComparable<BigRational>, IComparable, IEquatable<BigRational>, IFormattable, ISpanFormattable
   {
@@ -117,7 +117,8 @@ namespace System.Numerics
               if (round == -1) round = 6; digs = 1 + round;
               if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
               emax = -(emin = int.MaxValue); goto def;
-              //case 'X': throw new FormatException(nameof(format));
+            //case 'X': throw new FormatException(nameof(format));
+            case 'Ö': digs = round; round = Math.Max(0, digs - ILog10(this)); goto def; //todo: rem
           }
         var e = ILog10(this);
         if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
@@ -718,9 +719,9 @@ namespace System.Numerics
       {
         var n = p[0] & 0x3fffffff; var c = n < 4 ? n : 4;
         var t = stackalloc uint[5] { c, 0, 0, 0, 0 }; copy(t + 1, p + 1 + (n - c), c);
-        e = (int)(n << 5) - BitOperations.LeadingZeroCount(p[n]) - 96;
-        if (e <= 0) e = 0; else CPU.shr(t, e - ((int)(n - c) << 5));
-        return new decimal((int)t[1], (int)t[2], (int)t[3], (p[0] & 0x80000000) != 0, 0);
+        e = unchecked((int)(n << 5) - BitOperations.LeadingZeroCount(p[n]) - 96);
+        if (e <= 0) e = 0; else CPU.shr(t, e - unchecked(((int)(n - c) << 5)));
+        return new decimal(unchecked((int)t[1]), unchecked((int)t[2]), unchecked((int)t[3]), (p[0] & 0x80000000) != 0, 0);
       }
     }
     /// <summary>

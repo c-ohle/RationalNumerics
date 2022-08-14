@@ -1540,6 +1540,455 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T)
   nameWithType: BigRational.Float<T>
   nameWithType.vb: BigRational.Float(Of T)
+- uid: System.Numerics.BigRational.Float`1.Abs(System.Numerics.BigRational.Float{`0})
+  name: Abs(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Abs.html#System_Numerics_BigRational_Float_1_Abs_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Abs(System.Numerics.BigRational.Float{`0})
+  name.vb: Abs(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Abs(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Abs(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Abs(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Abs(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Abs*
+  name: Abs
+  href: api/System.Numerics.BigRational.Float-1.Abs.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Abs
+  fullName: System.Numerics.BigRational.Float<T>.Abs
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Abs
+  nameWithType: BigRational.Float<T>.Abs
+  nameWithType.vb: BigRational.Float(Of T).Abs
+- uid: System.Numerics.BigRational.Float`1.Acos(System.Numerics.BigRational.Float{`0})
+  name: Acos(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Acos.html#System_Numerics_BigRational_Float_1_Acos_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Acos(System.Numerics.BigRational.Float{`0})
+  name.vb: Acos(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Acos(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Acos(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Acos(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Acos(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Acos*
+  name: Acos
+  href: api/System.Numerics.BigRational.Float-1.Acos.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Acos
+  fullName: System.Numerics.BigRational.Float<T>.Acos
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Acos
+  nameWithType: BigRational.Float<T>.Acos
+  nameWithType.vb: BigRational.Float(Of T).Acos
+- uid: System.Numerics.BigRational.Float`1.Acosh(System.Numerics.BigRational.Float{`0})
+  name: Acosh(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Acosh.html#System_Numerics_BigRational_Float_1_Acosh_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Acosh(System.Numerics.BigRational.Float{`0})
+  name.vb: Acosh(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Acosh(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Acosh(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Acosh(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Acosh(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Acosh*
+  name: Acosh
+  href: api/System.Numerics.BigRational.Float-1.Acosh.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Acosh
+  fullName: System.Numerics.BigRational.Float<T>.Acosh
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Acosh
+  nameWithType: BigRational.Float<T>.Acosh
+  nameWithType.vb: BigRational.Float(Of T).Acosh
+- uid: System.Numerics.BigRational.Float`1.Asin(System.Numerics.BigRational.Float{`0})
+  name: Asin(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Asin.html#System_Numerics_BigRational_Float_1_Asin_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Asin(System.Numerics.BigRational.Float{`0})
+  name.vb: Asin(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Asin(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Asin(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Asin(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Asin(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Asin*
+  name: Asin
+  href: api/System.Numerics.BigRational.Float-1.Asin.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Asin
+  fullName: System.Numerics.BigRational.Float<T>.Asin
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Asin
+  nameWithType: BigRational.Float<T>.Asin
+  nameWithType.vb: BigRational.Float(Of T).Asin
+- uid: System.Numerics.BigRational.Float`1.Asinh(System.Numerics.BigRational.Float{`0})
+  name: Asinh(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Asinh.html#System_Numerics_BigRational_Float_1_Asinh_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Asinh(System.Numerics.BigRational.Float{`0})
+  name.vb: Asinh(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Asinh(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Asinh(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Asinh(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Asinh(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Asinh*
+  name: Asinh
+  href: api/System.Numerics.BigRational.Float-1.Asinh.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Asinh
+  fullName: System.Numerics.BigRational.Float<T>.Asinh
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Asinh
+  nameWithType: BigRational.Float<T>.Asinh
+  nameWithType.vb: BigRational.Float(Of T).Asinh
+- uid: System.Numerics.BigRational.Float`1.Atan(System.Numerics.BigRational.Float{`0})
+  name: Atan(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Atan.html#System_Numerics_BigRational_Float_1_Atan_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Atan(System.Numerics.BigRational.Float{`0})
+  name.vb: Atan(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Atan(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Atan(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Atan(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Atan(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Atan*
+  name: Atan
+  href: api/System.Numerics.BigRational.Float-1.Atan.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Atan
+  fullName: System.Numerics.BigRational.Float<T>.Atan
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Atan
+  nameWithType: BigRational.Float<T>.Atan
+  nameWithType.vb: BigRational.Float(Of T).Atan
+- uid: System.Numerics.BigRational.Float`1.Atan2(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Atan2(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Atan2.html#System_Numerics_BigRational_Float_1_Atan2_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Atan2(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Atan2(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Atan2(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Atan2(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Atan2(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Atan2(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Atan2*
+  name: Atan2
+  href: api/System.Numerics.BigRational.Float-1.Atan2.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Atan2
+  fullName: System.Numerics.BigRational.Float<T>.Atan2
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Atan2
+  nameWithType: BigRational.Float<T>.Atan2
+  nameWithType.vb: BigRational.Float(Of T).Atan2
+- uid: System.Numerics.BigRational.Float`1.Atanh(System.Numerics.BigRational.Float{`0})
+  name: Atanh(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Atanh.html#System_Numerics_BigRational_Float_1_Atanh_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Atanh(System.Numerics.BigRational.Float{`0})
+  name.vb: Atanh(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Atanh(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Atanh(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Atanh(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Atanh(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Atanh*
+  name: Atanh
+  href: api/System.Numerics.BigRational.Float-1.Atanh.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Atanh
+  fullName: System.Numerics.BigRational.Float<T>.Atanh
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Atanh
+  nameWithType: BigRational.Float<T>.Atanh
+  nameWithType.vb: BigRational.Float(Of T).Atanh
+- uid: System.Numerics.BigRational.Float`1.Cast*
+  name: Cast
+  href: api/System.Numerics.BigRational.Float-1.Cast.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Cast
+  fullName: System.Numerics.BigRational.Float<T>.Cast
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Cast
+  nameWithType: BigRational.Float<T>.Cast
+  nameWithType.vb: BigRational.Float(Of T).Cast
+- uid: System.Numerics.BigRational.Float`1.Cast``1(System.Numerics.BigRational.Float{`0})
+  name: Cast<B>(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Cast.html#System_Numerics_BigRational_Float_1_Cast__1_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Cast``1(System.Numerics.BigRational.Float{`0})
+  name.vb: Cast(Of B)(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Cast<B>(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Cast(Of B)(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Cast<B>(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Cast(Of B)(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Cbrt(System.Numerics.BigRational.Float{`0},System.Int32)
+  name: Cbrt(BigRational.Float<T>, Int32)
+  href: api/System.Numerics.BigRational.Float-1.Cbrt.html#System_Numerics_BigRational_Float_1_Cbrt_System_Numerics_BigRational_Float__0__System_Int32_
+  commentId: M:System.Numerics.BigRational.Float`1.Cbrt(System.Numerics.BigRational.Float{`0},System.Int32)
+  name.vb: Cbrt(BigRational.Float(Of T), Int32)
+  fullName: System.Numerics.BigRational.Float<T>.Cbrt(System.Numerics.BigRational.Float<T>, System.Int32)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Cbrt(System.Numerics.BigRational.Float(Of T), System.Int32)
+  nameWithType: BigRational.Float<T>.Cbrt(BigRational.Float<T>, Int32)
+  nameWithType.vb: BigRational.Float(Of T).Cbrt(BigRational.Float(Of T), Int32)
+- uid: System.Numerics.BigRational.Float`1.Cbrt*
+  name: Cbrt
+  href: api/System.Numerics.BigRational.Float-1.Cbrt.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Cbrt
+  fullName: System.Numerics.BigRational.Float<T>.Cbrt
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Cbrt
+  nameWithType: BigRational.Float<T>.Cbrt
+  nameWithType.vb: BigRational.Float(Of T).Cbrt
+- uid: System.Numerics.BigRational.Float`1.Ceiling(System.Numerics.BigRational.Float{`0})
+  name: Ceiling(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Ceiling.html#System_Numerics_BigRational_Float_1_Ceiling_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Ceiling(System.Numerics.BigRational.Float{`0})
+  name.vb: Ceiling(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Ceiling(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Ceiling(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Ceiling(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Ceiling(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Ceiling*
+  name: Ceiling
+  href: api/System.Numerics.BigRational.Float-1.Ceiling.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Ceiling
+  fullName: System.Numerics.BigRational.Float<T>.Ceiling
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Ceiling
+  nameWithType: BigRational.Float<T>.Ceiling
+  nameWithType.vb: BigRational.Float(Of T).Ceiling
+- uid: System.Numerics.BigRational.Float`1.Compare(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Compare(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Compare.html#System_Numerics_BigRational_Float_1_Compare_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Compare(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Compare(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Compare(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Compare(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Compare(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Compare(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Compare*
+  name: Compare
+  href: api/System.Numerics.BigRational.Float-1.Compare.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Compare
+  fullName: System.Numerics.BigRational.Float<T>.Compare
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Compare
+  nameWithType: BigRational.Float<T>.Compare
+  nameWithType.vb: BigRational.Float(Of T).Compare
+- uid: System.Numerics.BigRational.Float`1.Cos(System.Numerics.BigRational.Float{`0})
+  name: Cos(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Cos.html#System_Numerics_BigRational_Float_1_Cos_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Cos(System.Numerics.BigRational.Float{`0})
+  name.vb: Cos(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Cos(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Cos(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Cos(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Cos(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Cos*
+  name: Cos
+  href: api/System.Numerics.BigRational.Float-1.Cos.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Cos
+  fullName: System.Numerics.BigRational.Float<T>.Cos
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Cos
+  nameWithType: BigRational.Float<T>.Cos
+  nameWithType.vb: BigRational.Float(Of T).Cos
+- uid: System.Numerics.BigRational.Float`1.Cosh(System.Numerics.BigRational.Float{`0})
+  name: Cosh(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Cosh.html#System_Numerics_BigRational_Float_1_Cosh_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Cosh(System.Numerics.BigRational.Float{`0})
+  name.vb: Cosh(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Cosh(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Cosh(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Cosh(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Cosh(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Cosh*
+  name: Cosh
+  href: api/System.Numerics.BigRational.Float-1.Cosh.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Cosh
+  fullName: System.Numerics.BigRational.Float<T>.Cosh
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Cosh
+  nameWithType: BigRational.Float<T>.Cosh
+  nameWithType.vb: BigRational.Float(Of T).Cosh
+- uid: System.Numerics.BigRational.Float`1.Equals(System.Object)
+  name: Equals(Object)
+  href: api/System.Numerics.BigRational.Float-1.Equals.html#System_Numerics_BigRational_Float_1_Equals_System_Object_
+  commentId: M:System.Numerics.BigRational.Float`1.Equals(System.Object)
+  fullName: System.Numerics.BigRational.Float<T>.Equals(System.Object)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Equals(System.Object)
+  nameWithType: BigRational.Float<T>.Equals(Object)
+  nameWithType.vb: BigRational.Float(Of T).Equals(Object)
+- uid: System.Numerics.BigRational.Float`1.Equals*
+  name: Equals
+  href: api/System.Numerics.BigRational.Float-1.Equals.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Equals
+  fullName: System.Numerics.BigRational.Float<T>.Equals
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Equals
+  nameWithType: BigRational.Float<T>.Equals
+  nameWithType.vb: BigRational.Float(Of T).Equals
+- uid: System.Numerics.BigRational.Float`1.Exp(System.Numerics.BigRational.Float{`0})
+  name: Exp(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Exp.html#System_Numerics_BigRational_Float_1_Exp_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Exp(System.Numerics.BigRational.Float{`0})
+  name.vb: Exp(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Exp(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Exp(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Exp(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Exp(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Exp*
+  name: Exp
+  href: api/System.Numerics.BigRational.Float-1.Exp.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Exp
+  fullName: System.Numerics.BigRational.Float<T>.Exp
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Exp
+  nameWithType: BigRational.Float<T>.Exp
+  nameWithType.vb: BigRational.Float(Of T).Exp
+- uid: System.Numerics.BigRational.Float`1.Floor(System.Numerics.BigRational.Float{`0})
+  name: Floor(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Floor.html#System_Numerics_BigRational_Float_1_Floor_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Floor(System.Numerics.BigRational.Float{`0})
+  name.vb: Floor(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Floor(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Floor(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Floor(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Floor(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Floor*
+  name: Floor
+  href: api/System.Numerics.BigRational.Float-1.Floor.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Floor
+  fullName: System.Numerics.BigRational.Float<T>.Floor
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Floor
+  nameWithType: BigRational.Float<T>.Floor
+  nameWithType.vb: BigRational.Float(Of T).Floor
+- uid: System.Numerics.BigRational.Float`1.GetHashCode
+  name: GetHashCode()
+  href: api/System.Numerics.BigRational.Float-1.GetHashCode.html#System_Numerics_BigRational_Float_1_GetHashCode
+  commentId: M:System.Numerics.BigRational.Float`1.GetHashCode
+  fullName: System.Numerics.BigRational.Float<T>.GetHashCode()
+  fullName.vb: System.Numerics.BigRational.Float(Of T).GetHashCode()
+  nameWithType: BigRational.Float<T>.GetHashCode()
+  nameWithType.vb: BigRational.Float(Of T).GetHashCode()
+- uid: System.Numerics.BigRational.Float`1.GetHashCode*
+  name: GetHashCode
+  href: api/System.Numerics.BigRational.Float-1.GetHashCode.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.GetHashCode
+  fullName: System.Numerics.BigRational.Float<T>.GetHashCode
+  fullName.vb: System.Numerics.BigRational.Float(Of T).GetHashCode
+  nameWithType: BigRational.Float<T>.GetHashCode
+  nameWithType.vb: BigRational.Float(Of T).GetHashCode
+- uid: System.Numerics.BigRational.Float`1.Hypot(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Hypot(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Hypot.html#System_Numerics_BigRational_Float_1_Hypot_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Hypot(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Hypot(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Hypot(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Hypot(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Hypot(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Hypot(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Hypot*
+  name: Hypot
+  href: api/System.Numerics.BigRational.Float-1.Hypot.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Hypot
+  fullName: System.Numerics.BigRational.Float<T>.Hypot
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Hypot
+  nameWithType: BigRational.Float<T>.Hypot
+  nameWithType.vb: BigRational.Float(Of T).Hypot
+- uid: System.Numerics.BigRational.Float`1.IsInteger(System.Numerics.BigRational.Float{`0})
+  name: IsInteger(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.IsInteger.html#System_Numerics_BigRational_Float_1_IsInteger_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.IsInteger(System.Numerics.BigRational.Float{`0})
+  name.vb: IsInteger(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.IsInteger(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).IsInteger(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.IsInteger(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).IsInteger(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.IsInteger*
+  name: IsInteger
+  href: api/System.Numerics.BigRational.Float-1.IsInteger.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.IsInteger
+  fullName: System.Numerics.BigRational.Float<T>.IsInteger
+  fullName.vb: System.Numerics.BigRational.Float(Of T).IsInteger
+  nameWithType: BigRational.Float<T>.IsInteger
+  nameWithType.vb: BigRational.Float(Of T).IsInteger
+- uid: System.Numerics.BigRational.Float`1.IsNaN(System.Numerics.BigRational.Float{`0})
+  name: IsNaN(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.IsNaN.html#System_Numerics_BigRational_Float_1_IsNaN_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.IsNaN(System.Numerics.BigRational.Float{`0})
+  name.vb: IsNaN(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.IsNaN(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).IsNaN(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.IsNaN(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).IsNaN(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.IsNaN*
+  name: IsNaN
+  href: api/System.Numerics.BigRational.Float-1.IsNaN.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.IsNaN
+  fullName: System.Numerics.BigRational.Float<T>.IsNaN
+  fullName.vb: System.Numerics.BigRational.Float(Of T).IsNaN
+  nameWithType: BigRational.Float<T>.IsNaN
+  nameWithType.vb: BigRational.Float(Of T).IsNaN
+- uid: System.Numerics.BigRational.Float`1.Log(System.Numerics.BigRational.Float{`0})
+  name: Log(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Log.html#System_Numerics_BigRational_Float_1_Log_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Log(System.Numerics.BigRational.Float{`0})
+  name.vb: Log(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Log(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Log(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Log(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Log(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Log(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Log(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Log.html#System_Numerics_BigRational_Float_1_Log_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Log(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Log(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Log(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Log(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Log(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Log(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Log*
+  name: Log
+  href: api/System.Numerics.BigRational.Float-1.Log.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Log
+  fullName: System.Numerics.BigRational.Float<T>.Log
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Log
+  nameWithType: BigRational.Float<T>.Log
+  nameWithType.vb: BigRational.Float(Of T).Log
+- uid: System.Numerics.BigRational.Float`1.Log10(System.Numerics.BigRational.Float{`0})
+  name: Log10(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Log10.html#System_Numerics_BigRational_Float_1_Log10_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Log10(System.Numerics.BigRational.Float{`0})
+  name.vb: Log10(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Log10(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Log10(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Log10(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Log10(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Log10*
+  name: Log10
+  href: api/System.Numerics.BigRational.Float-1.Log10.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Log10
+  fullName: System.Numerics.BigRational.Float<T>.Log10
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Log10
+  nameWithType: BigRational.Float<T>.Log10
+  nameWithType.vb: BigRational.Float(Of T).Log10
+- uid: System.Numerics.BigRational.Float`1.Log2(System.Numerics.BigRational.Float{`0})
+  name: Log2(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Log2.html#System_Numerics_BigRational_Float_1_Log2_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Log2(System.Numerics.BigRational.Float{`0})
+  name.vb: Log2(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Log2(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Log2(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Log2(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Log2(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Log2*
+  name: Log2
+  href: api/System.Numerics.BigRational.Float-1.Log2.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Log2
+  fullName: System.Numerics.BigRational.Float<T>.Log2
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Log2
+  nameWithType: BigRational.Float<T>.Log2
+  nameWithType.vb: BigRational.Float(Of T).Log2
+- uid: System.Numerics.BigRational.Float`1.Max(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Max(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Max.html#System_Numerics_BigRational_Float_1_Max_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Max(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Max(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Max(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Max(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Max(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Max(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Max*
+  name: Max
+  href: api/System.Numerics.BigRational.Float-1.Max.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Max
+  fullName: System.Numerics.BigRational.Float<T>.Max
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Max
+  nameWithType: BigRational.Float<T>.Max
+  nameWithType.vb: BigRational.Float(Of T).Max
+- uid: System.Numerics.BigRational.Float`1.Min(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Min(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Min.html#System_Numerics_BigRational_Float_1_Min_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Min(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Min(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Min(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Min(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Min(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Min(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Min*
+  name: Min
+  href: api/System.Numerics.BigRational.Float-1.Min.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Min
+  fullName: System.Numerics.BigRational.Float<T>.Min
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Min
+  nameWithType: BigRational.Float<T>.Min
+  nameWithType.vb: BigRational.Float(Of T).Min
 - uid: System.Numerics.BigRational.Float`1.op_Addition(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
   name: Addition(BigRational.Float<T>, BigRational.Float<T>)
   href: api/System.Numerics.BigRational.Float-1.op_Addition.html#System_Numerics_BigRational_Float_1_op_Addition_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
@@ -1549,6 +1998,15 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Addition(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
   nameWithType: BigRational.Float<T>.Addition(BigRational.Float<T>, BigRational.Float<T>)
   nameWithType.vb: BigRational.Float(Of T).Addition(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Addition(System.Numerics.BigRational.Float{`0},System.SByte)
+  name: Addition(BigRational.Float<T>, SByte)
+  href: api/System.Numerics.BigRational.Float-1.op_Addition.html#System_Numerics_BigRational_Float_1_op_Addition_System_Numerics_BigRational_Float__0__System_SByte_
+  commentId: M:System.Numerics.BigRational.Float`1.op_Addition(System.Numerics.BigRational.Float{`0},System.SByte)
+  name.vb: Addition(BigRational.Float(Of T), SByte)
+  fullName: System.Numerics.BigRational.Float<T>.Addition(System.Numerics.BigRational.Float<T>, System.SByte)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Addition(System.Numerics.BigRational.Float(Of T), System.SByte)
+  nameWithType: BigRational.Float<T>.Addition(BigRational.Float<T>, SByte)
+  nameWithType.vb: BigRational.Float(Of T).Addition(BigRational.Float(Of T), SByte)
 - uid: System.Numerics.BigRational.Float`1.op_Addition*
   name: Addition
   href: api/System.Numerics.BigRational.Float-1.op_Addition.html
@@ -1557,6 +2015,23 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Addition
   nameWithType: BigRational.Float<T>.Addition
   nameWithType.vb: BigRational.Float(Of T).Addition
+- uid: System.Numerics.BigRational.Float`1.op_Decrement(System.Numerics.BigRational.Float{`0})
+  name: Decrement(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Decrement.html#System_Numerics_BigRational_Float_1_op_Decrement_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Decrement(System.Numerics.BigRational.Float{`0})
+  name.vb: Decrement(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Decrement(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Decrement(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Decrement(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Decrement(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Decrement*
+  name: Decrement
+  href: api/System.Numerics.BigRational.Float-1.op_Decrement.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Decrement
+  fullName: System.Numerics.BigRational.Float<T>.Decrement
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Decrement
+  nameWithType: BigRational.Float<T>.Decrement
+  nameWithType.vb: BigRational.Float(Of T).Decrement
 - uid: System.Numerics.BigRational.Float`1.op_Division(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
   name: Division(BigRational.Float<T>, BigRational.Float<T>)
   href: api/System.Numerics.BigRational.Float-1.op_Division.html#System_Numerics_BigRational_Float_1_op_Division_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
@@ -1574,6 +2049,50 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Division
   nameWithType: BigRational.Float<T>.Division
   nameWithType.vb: BigRational.Float(Of T).Division
+- uid: System.Numerics.BigRational.Float`1.op_Equality(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Equality(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Equality.html#System_Numerics_BigRational_Float_1_op_Equality_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Equality(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Equality(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Equality(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Equality(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Equality(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Equality(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Equality*
+  name: Equality
+  href: api/System.Numerics.BigRational.Float-1.op_Equality.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Equality
+  fullName: System.Numerics.BigRational.Float<T>.Equality
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Equality
+  nameWithType: BigRational.Float<T>.Equality
+  nameWithType.vb: BigRational.Float(Of T).Equality
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Double)~System.Numerics.BigRational.Float{`0}
+  name: Explicit(Double to BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Double__System_Numerics_BigRational_Float__0_
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Double)~System.Numerics.BigRational.Float{`0}
+  name.vb: Narrowing(Double to BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Double to System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Double to System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Explicit(Double to BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(Double to BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Half)~System.Numerics.BigRational.Float{`0}
+  name: Explicit(Half to BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Half__System_Numerics_BigRational_Float__0_
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Half)~System.Numerics.BigRational.Float{`0}
+  name.vb: Narrowing(Half to BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Half to System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Half to System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Explicit(Half to BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(Half to BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Int32)~System.Numerics.BigRational.Float{`0}
+  name: Explicit(Int32 to BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Int32__System_Numerics_BigRational_Float__0_
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Int32)~System.Numerics.BigRational.Float{`0}
+  name.vb: Narrowing(Int32 to BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Int32 to System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Int32 to System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Explicit(Int32 to BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(Int32 to BigRational.Float(Of T))
 - uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational)~System.Numerics.BigRational.Float{`0}
   name: Explicit(BigRational to BigRational.Float<T>)
   href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Numerics_BigRational__System_Numerics_BigRational_Float__0_
@@ -1592,6 +2111,15 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Numerics.BigRational.Float(Of T) to System.Double)
   nameWithType: BigRational.Float<T>.Explicit(BigRational.Float<T> to Double)
   nameWithType.vb: BigRational.Float(Of T).Narrowing(BigRational.Float(Of T) to Double)
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Half
+  name: Explicit(BigRational.Float<T> to Half)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Numerics_BigRational_Float__0___System_Half
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Half
+  name.vb: Narrowing(BigRational.Float(Of T) to Half)
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Numerics.BigRational.Float<T> to System.Half)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Numerics.BigRational.Float(Of T) to System.Half)
+  nameWithType: BigRational.Float<T>.Explicit(BigRational.Float<T> to Half)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(BigRational.Float(Of T) to Half)
 - uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Int32
   name: Explicit(BigRational.Float<T> to Int32)
   href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Numerics_BigRational_Float__0___System_Int32
@@ -1601,6 +2129,24 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Numerics.BigRational.Float(Of T) to System.Int32)
   nameWithType: BigRational.Float<T>.Explicit(BigRational.Float<T> to Int32)
   nameWithType.vb: BigRational.Float(Of T).Narrowing(BigRational.Float(Of T) to Int32)
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Single
+  name: Explicit(BigRational.Float<T> to Single)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Numerics_BigRational_Float__0___System_Single
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Numerics.BigRational.Float{`0})~System.Single
+  name.vb: Narrowing(BigRational.Float(Of T) to Single)
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Numerics.BigRational.Float<T> to System.Single)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Numerics.BigRational.Float(Of T) to System.Single)
+  nameWithType: BigRational.Float<T>.Explicit(BigRational.Float<T> to Single)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(BigRational.Float(Of T) to Single)
+- uid: System.Numerics.BigRational.Float`1.op_Explicit(System.Single)~System.Numerics.BigRational.Float{`0}
+  name: Explicit(Single to BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Explicit.html#System_Numerics_BigRational_Float_1_op_Explicit_System_Single__System_Numerics_BigRational_Float__0_
+  commentId: M:System.Numerics.BigRational.Float`1.op_Explicit(System.Single)~System.Numerics.BigRational.Float{`0}
+  name.vb: Narrowing(Single to BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Explicit(System.Single to System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing(System.Single to System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Explicit(Single to BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Narrowing(Single to BigRational.Float(Of T))
 - uid: System.Numerics.BigRational.Float`1.op_Explicit*
   name: Explicit
   href: api/System.Numerics.BigRational.Float-1.op_Explicit.html
@@ -1610,24 +2156,40 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Narrowing
   nameWithType: BigRational.Float<T>.Explicit
   nameWithType.vb: BigRational.Float(Of T).Narrowing
-- uid: System.Numerics.BigRational.Float`1.op_Implicit(System.Double)~System.Numerics.BigRational.Float{`0}
-  name: Implicit(Double to BigRational.Float<T>)
-  href: api/System.Numerics.BigRational.Float-1.op_Implicit.html#System_Numerics_BigRational_Float_1_op_Implicit_System_Double__System_Numerics_BigRational_Float__0_
-  commentId: M:System.Numerics.BigRational.Float`1.op_Implicit(System.Double)~System.Numerics.BigRational.Float{`0}
-  name.vb: Widening(Double to BigRational.Float(Of T))
-  fullName: System.Numerics.BigRational.Float<T>.Implicit(System.Double to System.Numerics.BigRational.Float<T>)
-  fullName.vb: System.Numerics.BigRational.Float(Of T).Widening(System.Double to System.Numerics.BigRational.Float(Of T))
-  nameWithType: BigRational.Float<T>.Implicit(Double to BigRational.Float<T>)
-  nameWithType.vb: BigRational.Float(Of T).Widening(Double to BigRational.Float(Of T))
-- uid: System.Numerics.BigRational.Float`1.op_Implicit(System.Int32)~System.Numerics.BigRational.Float{`0}
-  name: Implicit(Int32 to BigRational.Float<T>)
-  href: api/System.Numerics.BigRational.Float-1.op_Implicit.html#System_Numerics_BigRational_Float_1_op_Implicit_System_Int32__System_Numerics_BigRational_Float__0_
-  commentId: M:System.Numerics.BigRational.Float`1.op_Implicit(System.Int32)~System.Numerics.BigRational.Float{`0}
-  name.vb: Widening(Int32 to BigRational.Float(Of T))
-  fullName: System.Numerics.BigRational.Float<T>.Implicit(System.Int32 to System.Numerics.BigRational.Float<T>)
-  fullName.vb: System.Numerics.BigRational.Float(Of T).Widening(System.Int32 to System.Numerics.BigRational.Float(Of T))
-  nameWithType: BigRational.Float<T>.Implicit(Int32 to BigRational.Float<T>)
-  nameWithType.vb: BigRational.Float(Of T).Widening(Int32 to BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_GreaterThan(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: GreaterThan(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_GreaterThan.html#System_Numerics_BigRational_Float_1_op_GreaterThan_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_GreaterThan(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: GreaterThan(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.GreaterThan(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).GreaterThan(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.GreaterThan(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).GreaterThan(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_GreaterThan*
+  name: GreaterThan
+  href: api/System.Numerics.BigRational.Float-1.op_GreaterThan.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_GreaterThan
+  fullName: System.Numerics.BigRational.Float<T>.GreaterThan
+  fullName.vb: System.Numerics.BigRational.Float(Of T).GreaterThan
+  nameWithType: BigRational.Float<T>.GreaterThan
+  nameWithType.vb: BigRational.Float(Of T).GreaterThan
+- uid: System.Numerics.BigRational.Float`1.op_GreaterThanOrEqual(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: GreaterThanOrEqual(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_GreaterThanOrEqual.html#System_Numerics_BigRational_Float_1_op_GreaterThanOrEqual_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_GreaterThanOrEqual(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: GreaterThanOrEqual(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.GreaterThanOrEqual(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).GreaterThanOrEqual(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.GreaterThanOrEqual(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).GreaterThanOrEqual(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_GreaterThanOrEqual*
+  name: GreaterThanOrEqual
+  href: api/System.Numerics.BigRational.Float-1.op_GreaterThanOrEqual.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_GreaterThanOrEqual
+  fullName: System.Numerics.BigRational.Float<T>.GreaterThanOrEqual
+  fullName.vb: System.Numerics.BigRational.Float(Of T).GreaterThanOrEqual
+  nameWithType: BigRational.Float<T>.GreaterThanOrEqual
+  nameWithType.vb: BigRational.Float(Of T).GreaterThanOrEqual
 - uid: System.Numerics.BigRational.Float`1.op_Implicit(System.Numerics.BigRational.Float{`0})~System.Numerics.BigRational
   name: Implicit(BigRational.Float<T> to BigRational)
   href: api/System.Numerics.BigRational.Float-1.op_Implicit.html#System_Numerics_BigRational_Float_1_op_Implicit_System_Numerics_BigRational_Float__0___System_Numerics_BigRational
@@ -1646,6 +2208,74 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Widening
   nameWithType: BigRational.Float<T>.Implicit
   nameWithType.vb: BigRational.Float(Of T).Widening
+- uid: System.Numerics.BigRational.Float`1.op_Increment(System.Numerics.BigRational.Float{`0})
+  name: Increment(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Increment.html#System_Numerics_BigRational_Float_1_op_Increment_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Increment(System.Numerics.BigRational.Float{`0})
+  name.vb: Increment(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Increment(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Increment(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Increment(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Increment(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Increment*
+  name: Increment
+  href: api/System.Numerics.BigRational.Float-1.op_Increment.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Increment
+  fullName: System.Numerics.BigRational.Float<T>.Increment
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Increment
+  nameWithType: BigRational.Float<T>.Increment
+  nameWithType.vb: BigRational.Float(Of T).Increment
+- uid: System.Numerics.BigRational.Float`1.op_Inequality(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Inequality(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_Inequality.html#System_Numerics_BigRational_Float_1_op_Inequality_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_Inequality(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Inequality(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Inequality(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Inequality(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Inequality(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Inequality(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_Inequality*
+  name: Inequality
+  href: api/System.Numerics.BigRational.Float-1.op_Inequality.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_Inequality
+  fullName: System.Numerics.BigRational.Float<T>.Inequality
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Inequality
+  nameWithType: BigRational.Float<T>.Inequality
+  nameWithType.vb: BigRational.Float(Of T).Inequality
+- uid: System.Numerics.BigRational.Float`1.op_LessThan(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: LessThan(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_LessThan.html#System_Numerics_BigRational_Float_1_op_LessThan_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_LessThan(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: LessThan(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.LessThan(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).LessThan(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.LessThan(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).LessThan(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_LessThan*
+  name: LessThan
+  href: api/System.Numerics.BigRational.Float-1.op_LessThan.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_LessThan
+  fullName: System.Numerics.BigRational.Float<T>.LessThan
+  fullName.vb: System.Numerics.BigRational.Float(Of T).LessThan
+  nameWithType: BigRational.Float<T>.LessThan
+  nameWithType.vb: BigRational.Float(Of T).LessThan
+- uid: System.Numerics.BigRational.Float`1.op_LessThanOrEqual(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: LessThanOrEqual(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.op_LessThanOrEqual.html#System_Numerics_BigRational_Float_1_op_LessThanOrEqual_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.op_LessThanOrEqual(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: LessThanOrEqual(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.LessThanOrEqual(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).LessThanOrEqual(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.LessThanOrEqual(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).LessThanOrEqual(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.op_LessThanOrEqual*
+  name: LessThanOrEqual
+  href: api/System.Numerics.BigRational.Float-1.op_LessThanOrEqual.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.op_LessThanOrEqual
+  fullName: System.Numerics.BigRational.Float<T>.LessThanOrEqual
+  fullName.vb: System.Numerics.BigRational.Float(Of T).LessThanOrEqual
+  nameWithType: BigRational.Float<T>.LessThanOrEqual
+  nameWithType.vb: BigRational.Float(Of T).LessThanOrEqual
 - uid: System.Numerics.BigRational.Float`1.op_Modulus(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
   name: Modulus(BigRational.Float<T>, BigRational.Float<T>)
   href: api/System.Numerics.BigRational.Float-1.op_Modulus.html#System_Numerics_BigRational_Float_1_op_Modulus_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
@@ -1731,6 +2361,185 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).UnaryPlus
   nameWithType: BigRational.Float<T>.UnaryPlus
   nameWithType.vb: BigRational.Float(Of T).UnaryPlus
+- uid: System.Numerics.BigRational.Float`1.Pow(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name: Pow(BigRational.Float<T>, BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Pow.html#System_Numerics_BigRational_Float_1_Pow_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Pow(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
+  name.vb: Pow(BigRational.Float(Of T), BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Pow(System.Numerics.BigRational.Float<T>, System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Pow(System.Numerics.BigRational.Float(Of T), System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Pow(BigRational.Float<T>, BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Pow(BigRational.Float(Of T), BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Pow*
+  name: Pow
+  href: api/System.Numerics.BigRational.Float-1.Pow.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Pow
+  fullName: System.Numerics.BigRational.Float<T>.Pow
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Pow
+  nameWithType: BigRational.Float<T>.Pow
+  nameWithType.vb: BigRational.Float(Of T).Pow
+- uid: System.Numerics.BigRational.Float`1.Pow2(System.Numerics.BigRational.Float{`0})
+  name: Pow2(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Pow2.html#System_Numerics_BigRational_Float_1_Pow2_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Pow2(System.Numerics.BigRational.Float{`0})
+  name.vb: Pow2(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Pow2(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Pow2(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Pow2(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Pow2(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Pow2*
+  name: Pow2
+  href: api/System.Numerics.BigRational.Float-1.Pow2.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Pow2
+  fullName: System.Numerics.BigRational.Float<T>.Pow2
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Pow2
+  nameWithType: BigRational.Float<T>.Pow2
+  nameWithType.vb: BigRational.Float(Of T).Pow2
+- uid: System.Numerics.BigRational.Float`1.RootN(System.Numerics.BigRational.Float{`0},System.Int32)
+  name: RootN(BigRational.Float<T>, Int32)
+  href: api/System.Numerics.BigRational.Float-1.RootN.html#System_Numerics_BigRational_Float_1_RootN_System_Numerics_BigRational_Float__0__System_Int32_
+  commentId: M:System.Numerics.BigRational.Float`1.RootN(System.Numerics.BigRational.Float{`0},System.Int32)
+  name.vb: RootN(BigRational.Float(Of T), Int32)
+  fullName: System.Numerics.BigRational.Float<T>.RootN(System.Numerics.BigRational.Float<T>, System.Int32)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).RootN(System.Numerics.BigRational.Float(Of T), System.Int32)
+  nameWithType: BigRational.Float<T>.RootN(BigRational.Float<T>, Int32)
+  nameWithType.vb: BigRational.Float(Of T).RootN(BigRational.Float(Of T), Int32)
+- uid: System.Numerics.BigRational.Float`1.RootN*
+  name: RootN
+  href: api/System.Numerics.BigRational.Float-1.RootN.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.RootN
+  fullName: System.Numerics.BigRational.Float<T>.RootN
+  fullName.vb: System.Numerics.BigRational.Float(Of T).RootN
+  nameWithType: BigRational.Float<T>.RootN
+  nameWithType.vb: BigRational.Float(Of T).RootN
+- uid: System.Numerics.BigRational.Float`1.Round(System.Numerics.BigRational.Float{`0})
+  name: Round(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Round.html#System_Numerics_BigRational_Float_1_Round_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Round(System.Numerics.BigRational.Float{`0})
+  name.vb: Round(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Round(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Round(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Round(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Round(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Round(System.Numerics.BigRational.Float{`0},System.Int32,System.MidpointRounding)
+  name: Round(BigRational.Float<T>, Int32, MidpointRounding)
+  href: api/System.Numerics.BigRational.Float-1.Round.html#System_Numerics_BigRational_Float_1_Round_System_Numerics_BigRational_Float__0__System_Int32_System_MidpointRounding_
+  commentId: M:System.Numerics.BigRational.Float`1.Round(System.Numerics.BigRational.Float{`0},System.Int32,System.MidpointRounding)
+  name.vb: Round(BigRational.Float(Of T), Int32, MidpointRounding)
+  fullName: System.Numerics.BigRational.Float<T>.Round(System.Numerics.BigRational.Float<T>, System.Int32, System.MidpointRounding)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Round(System.Numerics.BigRational.Float(Of T), System.Int32, System.MidpointRounding)
+  nameWithType: BigRational.Float<T>.Round(BigRational.Float<T>, Int32, MidpointRounding)
+  nameWithType.vb: BigRational.Float(Of T).Round(BigRational.Float(Of T), Int32, MidpointRounding)
+- uid: System.Numerics.BigRational.Float`1.Round*
+  name: Round
+  href: api/System.Numerics.BigRational.Float-1.Round.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Round
+  fullName: System.Numerics.BigRational.Float<T>.Round
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Round
+  nameWithType: BigRational.Float<T>.Round
+  nameWithType.vb: BigRational.Float(Of T).Round
+- uid: System.Numerics.BigRational.Float`1.Sign(System.Numerics.BigRational.Float{`0})
+  name: Sign(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Sign.html#System_Numerics_BigRational_Float_1_Sign_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Sign(System.Numerics.BigRational.Float{`0})
+  name.vb: Sign(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Sign(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Sign(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Sign(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Sign(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Sign*
+  name: Sign
+  href: api/System.Numerics.BigRational.Float-1.Sign.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Sign
+  fullName: System.Numerics.BigRational.Float<T>.Sign
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Sign
+  nameWithType: BigRational.Float<T>.Sign
+  nameWithType.vb: BigRational.Float(Of T).Sign
+- uid: System.Numerics.BigRational.Float`1.Sin(System.Numerics.BigRational.Float{`0})
+  name: Sin(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Sin.html#System_Numerics_BigRational_Float_1_Sin_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Sin(System.Numerics.BigRational.Float{`0})
+  name.vb: Sin(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Sin(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Sin(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Sin(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Sin(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Sin*
+  name: Sin
+  href: api/System.Numerics.BigRational.Float-1.Sin.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Sin
+  fullName: System.Numerics.BigRational.Float<T>.Sin
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Sin
+  nameWithType: BigRational.Float<T>.Sin
+  nameWithType.vb: BigRational.Float(Of T).Sin
+- uid: System.Numerics.BigRational.Float`1.Sinh(System.Numerics.BigRational.Float{`0})
+  name: Sinh(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Sinh.html#System_Numerics_BigRational_Float_1_Sinh_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Sinh(System.Numerics.BigRational.Float{`0})
+  name.vb: Sinh(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Sinh(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Sinh(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Sinh(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Sinh(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Sinh*
+  name: Sinh
+  href: api/System.Numerics.BigRational.Float-1.Sinh.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Sinh
+  fullName: System.Numerics.BigRational.Float<T>.Sinh
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Sinh
+  nameWithType: BigRational.Float<T>.Sinh
+  nameWithType.vb: BigRational.Float(Of T).Sinh
+- uid: System.Numerics.BigRational.Float`1.Sqrt(System.Numerics.BigRational.Float{`0})
+  name: Sqrt(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Sqrt.html#System_Numerics_BigRational_Float_1_Sqrt_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Sqrt(System.Numerics.BigRational.Float{`0})
+  name.vb: Sqrt(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Sqrt(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Sqrt(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Sqrt(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Sqrt(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Sqrt*
+  name: Sqrt
+  href: api/System.Numerics.BigRational.Float-1.Sqrt.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Sqrt
+  fullName: System.Numerics.BigRational.Float<T>.Sqrt
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Sqrt
+  nameWithType: BigRational.Float<T>.Sqrt
+  nameWithType.vb: BigRational.Float(Of T).Sqrt
+- uid: System.Numerics.BigRational.Float`1.Tan(System.Numerics.BigRational.Float{`0})
+  name: Tan(BigRational.Float<T>)
+  href: api/System.Numerics.BigRational.Float-1.Tan.html#System_Numerics_BigRational_Float_1_Tan_System_Numerics_BigRational_Float__0__
+  commentId: M:System.Numerics.BigRational.Float`1.Tan(System.Numerics.BigRational.Float{`0})
+  name.vb: Tan(BigRational.Float(Of T))
+  fullName: System.Numerics.BigRational.Float<T>.Tan(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Tan(System.Numerics.BigRational.Float(Of T))
+  nameWithType: BigRational.Float<T>.Tan(BigRational.Float<T>)
+  nameWithType.vb: BigRational.Float(Of T).Tan(BigRational.Float(Of T))
+- uid: System.Numerics.BigRational.Float`1.Tan*
+  name: Tan
+  href: api/System.Numerics.BigRational.Float-1.Tan.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Tan
+  fullName: System.Numerics.BigRational.Float<T>.Tan
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Tan
+  nameWithType: BigRational.Float<T>.Tan
+  nameWithType.vb: BigRational.Float(Of T).Tan
+- uid: System.Numerics.BigRational.Float`1.Tanh(System.Numerics.BigRational.Float{`0},System.Int32)
+  name: Tanh(BigRational.Float<T>, Int32)
+  href: api/System.Numerics.BigRational.Float-1.Tanh.html#System_Numerics_BigRational_Float_1_Tanh_System_Numerics_BigRational_Float__0__System_Int32_
+  commentId: M:System.Numerics.BigRational.Float`1.Tanh(System.Numerics.BigRational.Float{`0},System.Int32)
+  name.vb: Tanh(BigRational.Float(Of T), Int32)
+  fullName: System.Numerics.BigRational.Float<T>.Tanh(System.Numerics.BigRational.Float<T>, System.Int32)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Tanh(System.Numerics.BigRational.Float(Of T), System.Int32)
+  nameWithType: BigRational.Float<T>.Tanh(BigRational.Float<T>, Int32)
+  nameWithType.vb: BigRational.Float(Of T).Tanh(BigRational.Float(Of T), Int32)
+- uid: System.Numerics.BigRational.Float`1.Tanh*
+  name: Tanh
+  href: api/System.Numerics.BigRational.Float-1.Tanh.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.Tanh
+  fullName: System.Numerics.BigRational.Float<T>.Tanh
+  fullName.vb: System.Numerics.BigRational.Float(Of T).Tanh
+  nameWithType: BigRational.Float<T>.Tanh
+  nameWithType.vb: BigRational.Float(Of T).Tanh
 - uid: System.Numerics.BigRational.Float`1.ToString
   name: ToString()
   href: api/System.Numerics.BigRational.Float-1.ToString.html#System_Numerics_BigRational_Float_1_ToString
@@ -1739,6 +2548,14 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).ToString()
   nameWithType: BigRational.Float<T>.ToString()
   nameWithType.vb: BigRational.Float(Of T).ToString()
+- uid: System.Numerics.BigRational.Float`1.ToString(System.String,System.IFormatProvider)
+  name: ToString(String, IFormatProvider)
+  href: api/System.Numerics.BigRational.Float-1.ToString.html#System_Numerics_BigRational_Float_1_ToString_System_String_System_IFormatProvider_
+  commentId: M:System.Numerics.BigRational.Float`1.ToString(System.String,System.IFormatProvider)
+  fullName: System.Numerics.BigRational.Float<T>.ToString(System.String, System.IFormatProvider)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).ToString(System.String, System.IFormatProvider)
+  nameWithType: BigRational.Float<T>.ToString(String, IFormatProvider)
+  nameWithType.vb: BigRational.Float(Of T).ToString(String, IFormatProvider)
 - uid: System.Numerics.BigRational.Float`1.ToString*
   name: ToString
   href: api/System.Numerics.BigRational.Float-1.ToString.html
@@ -5655,3 +6472,1065 @@ references:
   commentId: Overload:System.Numerics.BigRational.WriteToBytes
   fullName: System.Numerics.BigRational.WriteToBytes
   nameWithType: BigRational.WriteToBytes
+- uid: System.Numerics.Float128
+  name: Float128
+  href: api/System.Numerics.Float128.html
+  commentId: T:System.Numerics.Float128
+  fullName: System.Numerics.Float128
+  nameWithType: Float128
+- uid: System.Numerics.Float128.Cast*
+  name: Cast
+  href: api/System.Numerics.Float128.Cast.html
+  commentId: Overload:System.Numerics.Float128.Cast
+  fullName: System.Numerics.Float128.Cast
+  nameWithType: Float128.Cast
+- uid: System.Numerics.Float128.Cast``1(System.Numerics.BigRational.Float{``0})
+  name: Cast<T>(BigRational.Float<T>)
+  href: api/System.Numerics.Float128.Cast.html#System_Numerics_Float128_Cast__1_System_Numerics_BigRational_Float___0__
+  commentId: M:System.Numerics.Float128.Cast``1(System.Numerics.BigRational.Float{``0})
+  name.vb: Cast(Of T)(BigRational.Float(Of T))
+  fullName: System.Numerics.Float128.Cast<T>(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.Float128.Cast(Of T)(System.Numerics.BigRational.Float(Of T))
+  nameWithType: Float128.Cast<T>(BigRational.Float<T>)
+  nameWithType.vb: Float128.Cast(Of T)(BigRational.Float(Of T))
+- uid: System.Numerics.Float128.Cast``1(System.Numerics.Float128)
+  name: Cast<T>(Float128)
+  href: api/System.Numerics.Float128.Cast.html#System_Numerics_Float128_Cast__1_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.Cast``1(System.Numerics.Float128)
+  name.vb: Cast(Of T)(Float128)
+  fullName: System.Numerics.Float128.Cast<T>(System.Numerics.Float128)
+  fullName.vb: System.Numerics.Float128.Cast(Of T)(System.Numerics.Float128)
+  nameWithType: Float128.Cast<T>(Float128)
+  nameWithType.vb: Float128.Cast(Of T)(Float128)
+- uid: System.Numerics.Float128.CompareTo(System.Numerics.Float128)
+  name: CompareTo(Float128)
+  href: api/System.Numerics.Float128.CompareTo.html#System_Numerics_Float128_CompareTo_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.CompareTo(System.Numerics.Float128)
+  fullName: System.Numerics.Float128.CompareTo(System.Numerics.Float128)
+  nameWithType: Float128.CompareTo(Float128)
+- uid: System.Numerics.Float128.CompareTo*
+  name: CompareTo
+  href: api/System.Numerics.Float128.CompareTo.html
+  commentId: Overload:System.Numerics.Float128.CompareTo
+  fullName: System.Numerics.Float128.CompareTo
+  nameWithType: Float128.CompareTo
+- uid: System.Numerics.Float128.Equals(System.Numerics.Float128)
+  name: Equals(Float128)
+  href: api/System.Numerics.Float128.Equals.html#System_Numerics_Float128_Equals_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.Equals(System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Equals(System.Numerics.Float128)
+  nameWithType: Float128.Equals(Float128)
+- uid: System.Numerics.Float128.Equals(System.Object)
+  name: Equals(Object)
+  href: api/System.Numerics.Float128.Equals.html#System_Numerics_Float128_Equals_System_Object_
+  commentId: M:System.Numerics.Float128.Equals(System.Object)
+  fullName: System.Numerics.Float128.Equals(System.Object)
+  nameWithType: Float128.Equals(Object)
+- uid: System.Numerics.Float128.Equals*
+  name: Equals
+  href: api/System.Numerics.Float128.Equals.html
+  commentId: Overload:System.Numerics.Float128.Equals
+  fullName: System.Numerics.Float128.Equals
+  nameWithType: Float128.Equals
+- uid: System.Numerics.Float128.GetHashCode
+  name: GetHashCode()
+  href: api/System.Numerics.Float128.GetHashCode.html#System_Numerics_Float128_GetHashCode
+  commentId: M:System.Numerics.Float128.GetHashCode
+  fullName: System.Numerics.Float128.GetHashCode()
+  nameWithType: Float128.GetHashCode()
+- uid: System.Numerics.Float128.GetHashCode*
+  name: GetHashCode
+  href: api/System.Numerics.Float128.GetHashCode.html
+  commentId: Overload:System.Numerics.Float128.GetHashCode
+  fullName: System.Numerics.Float128.GetHashCode
+  nameWithType: Float128.GetHashCode
+- uid: System.Numerics.Float128.op_Addition(System.Numerics.Float128,System.Numerics.Float128)
+  name: Addition(Float128, Float128)
+  href: api/System.Numerics.Float128.op_Addition.html#System_Numerics_Float128_op_Addition_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Addition(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Addition(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.Addition(Float128, Float128)
+- uid: System.Numerics.Float128.op_Addition*
+  name: Addition
+  href: api/System.Numerics.Float128.op_Addition.html
+  commentId: Overload:System.Numerics.Float128.op_Addition
+  fullName: System.Numerics.Float128.Addition
+  nameWithType: Float128.Addition
+- uid: System.Numerics.Float128.op_Decrement(System.Numerics.Float128)
+  name: Decrement(Float128)
+  href: api/System.Numerics.Float128.op_Decrement.html#System_Numerics_Float128_op_Decrement_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Decrement(System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Decrement(System.Numerics.Float128)
+  nameWithType: Float128.Decrement(Float128)
+- uid: System.Numerics.Float128.op_Decrement*
+  name: Decrement
+  href: api/System.Numerics.Float128.op_Decrement.html
+  commentId: Overload:System.Numerics.Float128.op_Decrement
+  fullName: System.Numerics.Float128.Decrement
+  nameWithType: Float128.Decrement
+- uid: System.Numerics.Float128.op_Division(System.Numerics.Float128,System.Numerics.Float128)
+  name: Division(Float128, Float128)
+  href: api/System.Numerics.Float128.op_Division.html#System_Numerics_Float128_op_Division_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Division(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Division(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.Division(Float128, Float128)
+- uid: System.Numerics.Float128.op_Division*
+  name: Division
+  href: api/System.Numerics.Float128.op_Division.html
+  commentId: Overload:System.Numerics.Float128.op_Division
+  fullName: System.Numerics.Float128.Division
+  nameWithType: Float128.Division
+- uid: System.Numerics.Float128.op_Equality(System.Numerics.Float128,System.Numerics.Float128)
+  name: Equality(Float128, Float128)
+  href: api/System.Numerics.Float128.op_Equality.html#System_Numerics_Float128_op_Equality_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Equality(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Equality(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.Equality(Float128, Float128)
+- uid: System.Numerics.Float128.op_Equality*
+  name: Equality
+  href: api/System.Numerics.Float128.op_Equality.html
+  commentId: Overload:System.Numerics.Float128.op_Equality
+  fullName: System.Numerics.Float128.Equality
+  nameWithType: Float128.Equality
+- uid: System.Numerics.Float128.op_Explicit(System.Numerics.BigRational)~System.Numerics.Float128
+  name: Explicit(BigRational to Float128)
+  href: api/System.Numerics.Float128.op_Explicit.html#System_Numerics_Float128_op_Explicit_System_Numerics_BigRational__System_Numerics_Float128
+  commentId: M:System.Numerics.Float128.op_Explicit(System.Numerics.BigRational)~System.Numerics.Float128
+  name.vb: Narrowing(BigRational to Float128)
+  fullName: System.Numerics.Float128.Explicit(System.Numerics.BigRational to System.Numerics.Float128)
+  fullName.vb: System.Numerics.Float128.Narrowing(System.Numerics.BigRational to System.Numerics.Float128)
+  nameWithType: Float128.Explicit(BigRational to Float128)
+  nameWithType.vb: Float128.Narrowing(BigRational to Float128)
+- uid: System.Numerics.Float128.op_Explicit(System.Numerics.Float128)~System.Double
+  name: Explicit(Float128 to Double)
+  href: api/System.Numerics.Float128.op_Explicit.html#System_Numerics_Float128_op_Explicit_System_Numerics_Float128__System_Double
+  commentId: M:System.Numerics.Float128.op_Explicit(System.Numerics.Float128)~System.Double
+  name.vb: Narrowing(Float128 to Double)
+  fullName: System.Numerics.Float128.Explicit(System.Numerics.Float128 to System.Double)
+  fullName.vb: System.Numerics.Float128.Narrowing(System.Numerics.Float128 to System.Double)
+  nameWithType: Float128.Explicit(Float128 to Double)
+  nameWithType.vb: Float128.Narrowing(Float128 to Double)
+- uid: System.Numerics.Float128.op_Explicit(System.Numerics.Float128)~System.Half
+  name: Explicit(Float128 to Half)
+  href: api/System.Numerics.Float128.op_Explicit.html#System_Numerics_Float128_op_Explicit_System_Numerics_Float128__System_Half
+  commentId: M:System.Numerics.Float128.op_Explicit(System.Numerics.Float128)~System.Half
+  name.vb: Narrowing(Float128 to Half)
+  fullName: System.Numerics.Float128.Explicit(System.Numerics.Float128 to System.Half)
+  fullName.vb: System.Numerics.Float128.Narrowing(System.Numerics.Float128 to System.Half)
+  nameWithType: Float128.Explicit(Float128 to Half)
+  nameWithType.vb: Float128.Narrowing(Float128 to Half)
+- uid: System.Numerics.Float128.op_Explicit(System.Numerics.Float128)~System.Int32
+  name: Explicit(Float128 to Int32)
+  href: api/System.Numerics.Float128.op_Explicit.html#System_Numerics_Float128_op_Explicit_System_Numerics_Float128__System_Int32
+  commentId: M:System.Numerics.Float128.op_Explicit(System.Numerics.Float128)~System.Int32
+  name.vb: Narrowing(Float128 to Int32)
+  fullName: System.Numerics.Float128.Explicit(System.Numerics.Float128 to System.Int32)
+  fullName.vb: System.Numerics.Float128.Narrowing(System.Numerics.Float128 to System.Int32)
+  nameWithType: Float128.Explicit(Float128 to Int32)
+  nameWithType.vb: Float128.Narrowing(Float128 to Int32)
+- uid: System.Numerics.Float128.op_Explicit(System.Numerics.Float128)~System.Single
+  name: Explicit(Float128 to Single)
+  href: api/System.Numerics.Float128.op_Explicit.html#System_Numerics_Float128_op_Explicit_System_Numerics_Float128__System_Single
+  commentId: M:System.Numerics.Float128.op_Explicit(System.Numerics.Float128)~System.Single
+  name.vb: Narrowing(Float128 to Single)
+  fullName: System.Numerics.Float128.Explicit(System.Numerics.Float128 to System.Single)
+  fullName.vb: System.Numerics.Float128.Narrowing(System.Numerics.Float128 to System.Single)
+  nameWithType: Float128.Explicit(Float128 to Single)
+  nameWithType.vb: Float128.Narrowing(Float128 to Single)
+- uid: System.Numerics.Float128.op_Explicit*
+  name: Explicit
+  href: api/System.Numerics.Float128.op_Explicit.html
+  commentId: Overload:System.Numerics.Float128.op_Explicit
+  name.vb: Narrowing
+  fullName: System.Numerics.Float128.Explicit
+  fullName.vb: System.Numerics.Float128.Narrowing
+  nameWithType: Float128.Explicit
+  nameWithType.vb: Float128.Narrowing
+- uid: System.Numerics.Float128.op_GreaterThan(System.Numerics.Float128,System.Numerics.Float128)
+  name: GreaterThan(Float128, Float128)
+  href: api/System.Numerics.Float128.op_GreaterThan.html#System_Numerics_Float128_op_GreaterThan_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_GreaterThan(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.GreaterThan(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.GreaterThan(Float128, Float128)
+- uid: System.Numerics.Float128.op_GreaterThan*
+  name: GreaterThan
+  href: api/System.Numerics.Float128.op_GreaterThan.html
+  commentId: Overload:System.Numerics.Float128.op_GreaterThan
+  fullName: System.Numerics.Float128.GreaterThan
+  nameWithType: Float128.GreaterThan
+- uid: System.Numerics.Float128.op_GreaterThanOrEqual(System.Numerics.Float128,System.Numerics.Float128)
+  name: GreaterThanOrEqual(Float128, Float128)
+  href: api/System.Numerics.Float128.op_GreaterThanOrEqual.html#System_Numerics_Float128_op_GreaterThanOrEqual_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_GreaterThanOrEqual(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.GreaterThanOrEqual(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.GreaterThanOrEqual(Float128, Float128)
+- uid: System.Numerics.Float128.op_GreaterThanOrEqual*
+  name: GreaterThanOrEqual
+  href: api/System.Numerics.Float128.op_GreaterThanOrEqual.html
+  commentId: Overload:System.Numerics.Float128.op_GreaterThanOrEqual
+  fullName: System.Numerics.Float128.GreaterThanOrEqual
+  nameWithType: Float128.GreaterThanOrEqual
+- uid: System.Numerics.Float128.op_Implicit(System.Double)~System.Numerics.Float128
+  name: Implicit(Double to Float128)
+  href: api/System.Numerics.Float128.op_Implicit.html#System_Numerics_Float128_op_Implicit_System_Double__System_Numerics_Float128
+  commentId: M:System.Numerics.Float128.op_Implicit(System.Double)~System.Numerics.Float128
+  name.vb: Widening(Double to Float128)
+  fullName: System.Numerics.Float128.Implicit(System.Double to System.Numerics.Float128)
+  fullName.vb: System.Numerics.Float128.Widening(System.Double to System.Numerics.Float128)
+  nameWithType: Float128.Implicit(Double to Float128)
+  nameWithType.vb: Float128.Widening(Double to Float128)
+- uid: System.Numerics.Float128.op_Implicit(System.Half)~System.Numerics.Float128
+  name: Implicit(Half to Float128)
+  href: api/System.Numerics.Float128.op_Implicit.html#System_Numerics_Float128_op_Implicit_System_Half__System_Numerics_Float128
+  commentId: M:System.Numerics.Float128.op_Implicit(System.Half)~System.Numerics.Float128
+  name.vb: Widening(Half to Float128)
+  fullName: System.Numerics.Float128.Implicit(System.Half to System.Numerics.Float128)
+  fullName.vb: System.Numerics.Float128.Widening(System.Half to System.Numerics.Float128)
+  nameWithType: Float128.Implicit(Half to Float128)
+  nameWithType.vb: Float128.Widening(Half to Float128)
+- uid: System.Numerics.Float128.op_Implicit(System.Int32)~System.Numerics.Float128
+  name: Implicit(Int32 to Float128)
+  href: api/System.Numerics.Float128.op_Implicit.html#System_Numerics_Float128_op_Implicit_System_Int32__System_Numerics_Float128
+  commentId: M:System.Numerics.Float128.op_Implicit(System.Int32)~System.Numerics.Float128
+  name.vb: Widening(Int32 to Float128)
+  fullName: System.Numerics.Float128.Implicit(System.Int32 to System.Numerics.Float128)
+  fullName.vb: System.Numerics.Float128.Widening(System.Int32 to System.Numerics.Float128)
+  nameWithType: Float128.Implicit(Int32 to Float128)
+  nameWithType.vb: Float128.Widening(Int32 to Float128)
+- uid: System.Numerics.Float128.op_Implicit(System.Numerics.Float128)~System.Numerics.BigRational
+  name: Implicit(Float128 to BigRational)
+  href: api/System.Numerics.Float128.op_Implicit.html#System_Numerics_Float128_op_Implicit_System_Numerics_Float128__System_Numerics_BigRational
+  commentId: M:System.Numerics.Float128.op_Implicit(System.Numerics.Float128)~System.Numerics.BigRational
+  name.vb: Widening(Float128 to BigRational)
+  fullName: System.Numerics.Float128.Implicit(System.Numerics.Float128 to System.Numerics.BigRational)
+  fullName.vb: System.Numerics.Float128.Widening(System.Numerics.Float128 to System.Numerics.BigRational)
+  nameWithType: Float128.Implicit(Float128 to BigRational)
+  nameWithType.vb: Float128.Widening(Float128 to BigRational)
+- uid: System.Numerics.Float128.op_Implicit(System.Single)~System.Numerics.Float128
+  name: Implicit(Single to Float128)
+  href: api/System.Numerics.Float128.op_Implicit.html#System_Numerics_Float128_op_Implicit_System_Single__System_Numerics_Float128
+  commentId: M:System.Numerics.Float128.op_Implicit(System.Single)~System.Numerics.Float128
+  name.vb: Widening(Single to Float128)
+  fullName: System.Numerics.Float128.Implicit(System.Single to System.Numerics.Float128)
+  fullName.vb: System.Numerics.Float128.Widening(System.Single to System.Numerics.Float128)
+  nameWithType: Float128.Implicit(Single to Float128)
+  nameWithType.vb: Float128.Widening(Single to Float128)
+- uid: System.Numerics.Float128.op_Implicit*
+  name: Implicit
+  href: api/System.Numerics.Float128.op_Implicit.html
+  commentId: Overload:System.Numerics.Float128.op_Implicit
+  name.vb: Widening
+  fullName: System.Numerics.Float128.Implicit
+  fullName.vb: System.Numerics.Float128.Widening
+  nameWithType: Float128.Implicit
+  nameWithType.vb: Float128.Widening
+- uid: System.Numerics.Float128.op_Increment(System.Numerics.Float128)
+  name: Increment(Float128)
+  href: api/System.Numerics.Float128.op_Increment.html#System_Numerics_Float128_op_Increment_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Increment(System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Increment(System.Numerics.Float128)
+  nameWithType: Float128.Increment(Float128)
+- uid: System.Numerics.Float128.op_Increment*
+  name: Increment
+  href: api/System.Numerics.Float128.op_Increment.html
+  commentId: Overload:System.Numerics.Float128.op_Increment
+  fullName: System.Numerics.Float128.Increment
+  nameWithType: Float128.Increment
+- uid: System.Numerics.Float128.op_Inequality(System.Numerics.Float128,System.Numerics.Float128)
+  name: Inequality(Float128, Float128)
+  href: api/System.Numerics.Float128.op_Inequality.html#System_Numerics_Float128_op_Inequality_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Inequality(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Inequality(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.Inequality(Float128, Float128)
+- uid: System.Numerics.Float128.op_Inequality*
+  name: Inequality
+  href: api/System.Numerics.Float128.op_Inequality.html
+  commentId: Overload:System.Numerics.Float128.op_Inequality
+  fullName: System.Numerics.Float128.Inequality
+  nameWithType: Float128.Inequality
+- uid: System.Numerics.Float128.op_LessThan(System.Numerics.Float128,System.Numerics.Float128)
+  name: LessThan(Float128, Float128)
+  href: api/System.Numerics.Float128.op_LessThan.html#System_Numerics_Float128_op_LessThan_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_LessThan(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.LessThan(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.LessThan(Float128, Float128)
+- uid: System.Numerics.Float128.op_LessThan*
+  name: LessThan
+  href: api/System.Numerics.Float128.op_LessThan.html
+  commentId: Overload:System.Numerics.Float128.op_LessThan
+  fullName: System.Numerics.Float128.LessThan
+  nameWithType: Float128.LessThan
+- uid: System.Numerics.Float128.op_LessThanOrEqual(System.Numerics.Float128,System.Numerics.Float128)
+  name: LessThanOrEqual(Float128, Float128)
+  href: api/System.Numerics.Float128.op_LessThanOrEqual.html#System_Numerics_Float128_op_LessThanOrEqual_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_LessThanOrEqual(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.LessThanOrEqual(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.LessThanOrEqual(Float128, Float128)
+- uid: System.Numerics.Float128.op_LessThanOrEqual*
+  name: LessThanOrEqual
+  href: api/System.Numerics.Float128.op_LessThanOrEqual.html
+  commentId: Overload:System.Numerics.Float128.op_LessThanOrEqual
+  fullName: System.Numerics.Float128.LessThanOrEqual
+  nameWithType: Float128.LessThanOrEqual
+- uid: System.Numerics.Float128.op_Modulus(System.Numerics.Float128,System.Numerics.Float128)
+  name: Modulus(Float128, Float128)
+  href: api/System.Numerics.Float128.op_Modulus.html#System_Numerics_Float128_op_Modulus_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Modulus(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Modulus(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.Modulus(Float128, Float128)
+- uid: System.Numerics.Float128.op_Modulus*
+  name: Modulus
+  href: api/System.Numerics.Float128.op_Modulus.html
+  commentId: Overload:System.Numerics.Float128.op_Modulus
+  fullName: System.Numerics.Float128.Modulus
+  nameWithType: Float128.Modulus
+- uid: System.Numerics.Float128.op_Multiply(System.Numerics.Float128,System.Numerics.Float128)
+  name: Multiply(Float128, Float128)
+  href: api/System.Numerics.Float128.op_Multiply.html#System_Numerics_Float128_op_Multiply_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Multiply(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Multiply(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.Multiply(Float128, Float128)
+- uid: System.Numerics.Float128.op_Multiply*
+  name: Multiply
+  href: api/System.Numerics.Float128.op_Multiply.html
+  commentId: Overload:System.Numerics.Float128.op_Multiply
+  fullName: System.Numerics.Float128.Multiply
+  nameWithType: Float128.Multiply
+- uid: System.Numerics.Float128.op_Subtraction(System.Numerics.Float128,System.Numerics.Float128)
+  name: Subtraction(Float128, Float128)
+  href: api/System.Numerics.Float128.op_Subtraction.html#System_Numerics_Float128_op_Subtraction_System_Numerics_Float128_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.op_Subtraction(System.Numerics.Float128,System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Subtraction(System.Numerics.Float128, System.Numerics.Float128)
+  nameWithType: Float128.Subtraction(Float128, Float128)
+- uid: System.Numerics.Float128.op_Subtraction*
+  name: Subtraction
+  href: api/System.Numerics.Float128.op_Subtraction.html
+  commentId: Overload:System.Numerics.Float128.op_Subtraction
+  fullName: System.Numerics.Float128.Subtraction
+  nameWithType: Float128.Subtraction
+- uid: System.Numerics.Float128.ToString
+  name: ToString()
+  href: api/System.Numerics.Float128.ToString.html#System_Numerics_Float128_ToString
+  commentId: M:System.Numerics.Float128.ToString
+  fullName: System.Numerics.Float128.ToString()
+  nameWithType: Float128.ToString()
+- uid: System.Numerics.Float128.ToString*
+  name: ToString
+  href: api/System.Numerics.Float128.ToString.html
+  commentId: Overload:System.Numerics.Float128.ToString
+  fullName: System.Numerics.Float128.ToString
+  nameWithType: Float128.ToString
+- uid: System.Numerics.Float128.Truncate(System.Numerics.Float128)
+  name: Truncate(Float128)
+  href: api/System.Numerics.Float128.Truncate.html#System_Numerics_Float128_Truncate_System_Numerics_Float128_
+  commentId: M:System.Numerics.Float128.Truncate(System.Numerics.Float128)
+  fullName: System.Numerics.Float128.Truncate(System.Numerics.Float128)
+  nameWithType: Float128.Truncate(Float128)
+- uid: System.Numerics.Float128.Truncate*
+  name: Truncate
+  href: api/System.Numerics.Float128.Truncate.html
+  commentId: Overload:System.Numerics.Float128.Truncate
+  fullName: System.Numerics.Float128.Truncate
+  nameWithType: Float128.Truncate
+- uid: System.Numerics.Float256
+  name: Float256
+  href: api/System.Numerics.Float256.html
+  commentId: T:System.Numerics.Float256
+  fullName: System.Numerics.Float256
+  nameWithType: Float256
+- uid: System.Numerics.Float256.Cast*
+  name: Cast
+  href: api/System.Numerics.Float256.Cast.html
+  commentId: Overload:System.Numerics.Float256.Cast
+  fullName: System.Numerics.Float256.Cast
+  nameWithType: Float256.Cast
+- uid: System.Numerics.Float256.Cast``1(System.Numerics.BigRational.Float{``0})
+  name: Cast<T>(BigRational.Float<T>)
+  href: api/System.Numerics.Float256.Cast.html#System_Numerics_Float256_Cast__1_System_Numerics_BigRational_Float___0__
+  commentId: M:System.Numerics.Float256.Cast``1(System.Numerics.BigRational.Float{``0})
+  name.vb: Cast(Of T)(BigRational.Float(Of T))
+  fullName: System.Numerics.Float256.Cast<T>(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.Float256.Cast(Of T)(System.Numerics.BigRational.Float(Of T))
+  nameWithType: Float256.Cast<T>(BigRational.Float<T>)
+  nameWithType.vb: Float256.Cast(Of T)(BigRational.Float(Of T))
+- uid: System.Numerics.Float256.Cast``1(System.Numerics.Float256)
+  name: Cast<T>(Float256)
+  href: api/System.Numerics.Float256.Cast.html#System_Numerics_Float256_Cast__1_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.Cast``1(System.Numerics.Float256)
+  name.vb: Cast(Of T)(Float256)
+  fullName: System.Numerics.Float256.Cast<T>(System.Numerics.Float256)
+  fullName.vb: System.Numerics.Float256.Cast(Of T)(System.Numerics.Float256)
+  nameWithType: Float256.Cast<T>(Float256)
+  nameWithType.vb: Float256.Cast(Of T)(Float256)
+- uid: System.Numerics.Float256.CompareTo(System.Numerics.Float256)
+  name: CompareTo(Float256)
+  href: api/System.Numerics.Float256.CompareTo.html#System_Numerics_Float256_CompareTo_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.CompareTo(System.Numerics.Float256)
+  fullName: System.Numerics.Float256.CompareTo(System.Numerics.Float256)
+  nameWithType: Float256.CompareTo(Float256)
+- uid: System.Numerics.Float256.CompareTo*
+  name: CompareTo
+  href: api/System.Numerics.Float256.CompareTo.html
+  commentId: Overload:System.Numerics.Float256.CompareTo
+  fullName: System.Numerics.Float256.CompareTo
+  nameWithType: Float256.CompareTo
+- uid: System.Numerics.Float256.Equals(System.Numerics.Float256)
+  name: Equals(Float256)
+  href: api/System.Numerics.Float256.Equals.html#System_Numerics_Float256_Equals_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.Equals(System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Equals(System.Numerics.Float256)
+  nameWithType: Float256.Equals(Float256)
+- uid: System.Numerics.Float256.Equals(System.Object)
+  name: Equals(Object)
+  href: api/System.Numerics.Float256.Equals.html#System_Numerics_Float256_Equals_System_Object_
+  commentId: M:System.Numerics.Float256.Equals(System.Object)
+  fullName: System.Numerics.Float256.Equals(System.Object)
+  nameWithType: Float256.Equals(Object)
+- uid: System.Numerics.Float256.Equals*
+  name: Equals
+  href: api/System.Numerics.Float256.Equals.html
+  commentId: Overload:System.Numerics.Float256.Equals
+  fullName: System.Numerics.Float256.Equals
+  nameWithType: Float256.Equals
+- uid: System.Numerics.Float256.GetHashCode
+  name: GetHashCode()
+  href: api/System.Numerics.Float256.GetHashCode.html#System_Numerics_Float256_GetHashCode
+  commentId: M:System.Numerics.Float256.GetHashCode
+  fullName: System.Numerics.Float256.GetHashCode()
+  nameWithType: Float256.GetHashCode()
+- uid: System.Numerics.Float256.GetHashCode*
+  name: GetHashCode
+  href: api/System.Numerics.Float256.GetHashCode.html
+  commentId: Overload:System.Numerics.Float256.GetHashCode
+  fullName: System.Numerics.Float256.GetHashCode
+  nameWithType: Float256.GetHashCode
+- uid: System.Numerics.Float256.op_Addition(System.Numerics.Float256,System.Numerics.Float256)
+  name: Addition(Float256, Float256)
+  href: api/System.Numerics.Float256.op_Addition.html#System_Numerics_Float256_op_Addition_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Addition(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Addition(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.Addition(Float256, Float256)
+- uid: System.Numerics.Float256.op_Addition*
+  name: Addition
+  href: api/System.Numerics.Float256.op_Addition.html
+  commentId: Overload:System.Numerics.Float256.op_Addition
+  fullName: System.Numerics.Float256.Addition
+  nameWithType: Float256.Addition
+- uid: System.Numerics.Float256.op_Decrement(System.Numerics.Float256)
+  name: Decrement(Float256)
+  href: api/System.Numerics.Float256.op_Decrement.html#System_Numerics_Float256_op_Decrement_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Decrement(System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Decrement(System.Numerics.Float256)
+  nameWithType: Float256.Decrement(Float256)
+- uid: System.Numerics.Float256.op_Decrement*
+  name: Decrement
+  href: api/System.Numerics.Float256.op_Decrement.html
+  commentId: Overload:System.Numerics.Float256.op_Decrement
+  fullName: System.Numerics.Float256.Decrement
+  nameWithType: Float256.Decrement
+- uid: System.Numerics.Float256.op_Division(System.Numerics.Float256,System.Numerics.Float256)
+  name: Division(Float256, Float256)
+  href: api/System.Numerics.Float256.op_Division.html#System_Numerics_Float256_op_Division_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Division(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Division(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.Division(Float256, Float256)
+- uid: System.Numerics.Float256.op_Division*
+  name: Division
+  href: api/System.Numerics.Float256.op_Division.html
+  commentId: Overload:System.Numerics.Float256.op_Division
+  fullName: System.Numerics.Float256.Division
+  nameWithType: Float256.Division
+- uid: System.Numerics.Float256.op_Equality(System.Numerics.Float256,System.Numerics.Float256)
+  name: Equality(Float256, Float256)
+  href: api/System.Numerics.Float256.op_Equality.html#System_Numerics_Float256_op_Equality_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Equality(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Equality(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.Equality(Float256, Float256)
+- uid: System.Numerics.Float256.op_Equality*
+  name: Equality
+  href: api/System.Numerics.Float256.op_Equality.html
+  commentId: Overload:System.Numerics.Float256.op_Equality
+  fullName: System.Numerics.Float256.Equality
+  nameWithType: Float256.Equality
+- uid: System.Numerics.Float256.op_Explicit(System.Numerics.BigRational)~System.Numerics.Float256
+  name: Explicit(BigRational to Float256)
+  href: api/System.Numerics.Float256.op_Explicit.html#System_Numerics_Float256_op_Explicit_System_Numerics_BigRational__System_Numerics_Float256
+  commentId: M:System.Numerics.Float256.op_Explicit(System.Numerics.BigRational)~System.Numerics.Float256
+  name.vb: Narrowing(BigRational to Float256)
+  fullName: System.Numerics.Float256.Explicit(System.Numerics.BigRational to System.Numerics.Float256)
+  fullName.vb: System.Numerics.Float256.Narrowing(System.Numerics.BigRational to System.Numerics.Float256)
+  nameWithType: Float256.Explicit(BigRational to Float256)
+  nameWithType.vb: Float256.Narrowing(BigRational to Float256)
+- uid: System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Double
+  name: Explicit(Float256 to Double)
+  href: api/System.Numerics.Float256.op_Explicit.html#System_Numerics_Float256_op_Explicit_System_Numerics_Float256__System_Double
+  commentId: M:System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Double
+  name.vb: Narrowing(Float256 to Double)
+  fullName: System.Numerics.Float256.Explicit(System.Numerics.Float256 to System.Double)
+  fullName.vb: System.Numerics.Float256.Narrowing(System.Numerics.Float256 to System.Double)
+  nameWithType: Float256.Explicit(Float256 to Double)
+  nameWithType.vb: Float256.Narrowing(Float256 to Double)
+- uid: System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Half
+  name: Explicit(Float256 to Half)
+  href: api/System.Numerics.Float256.op_Explicit.html#System_Numerics_Float256_op_Explicit_System_Numerics_Float256__System_Half
+  commentId: M:System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Half
+  name.vb: Narrowing(Float256 to Half)
+  fullName: System.Numerics.Float256.Explicit(System.Numerics.Float256 to System.Half)
+  fullName.vb: System.Numerics.Float256.Narrowing(System.Numerics.Float256 to System.Half)
+  nameWithType: Float256.Explicit(Float256 to Half)
+  nameWithType.vb: Float256.Narrowing(Float256 to Half)
+- uid: System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Int32
+  name: Explicit(Float256 to Int32)
+  href: api/System.Numerics.Float256.op_Explicit.html#System_Numerics_Float256_op_Explicit_System_Numerics_Float256__System_Int32
+  commentId: M:System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Int32
+  name.vb: Narrowing(Float256 to Int32)
+  fullName: System.Numerics.Float256.Explicit(System.Numerics.Float256 to System.Int32)
+  fullName.vb: System.Numerics.Float256.Narrowing(System.Numerics.Float256 to System.Int32)
+  nameWithType: Float256.Explicit(Float256 to Int32)
+  nameWithType.vb: Float256.Narrowing(Float256 to Int32)
+- uid: System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Numerics.Float128
+  name: Explicit(Float256 to Float128)
+  href: api/System.Numerics.Float256.op_Explicit.html#System_Numerics_Float256_op_Explicit_System_Numerics_Float256__System_Numerics_Float128
+  commentId: M:System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Numerics.Float128
+  name.vb: Narrowing(Float256 to Float128)
+  fullName: System.Numerics.Float256.Explicit(System.Numerics.Float256 to System.Numerics.Float128)
+  fullName.vb: System.Numerics.Float256.Narrowing(System.Numerics.Float256 to System.Numerics.Float128)
+  nameWithType: Float256.Explicit(Float256 to Float128)
+  nameWithType.vb: Float256.Narrowing(Float256 to Float128)
+- uid: System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Single
+  name: Explicit(Float256 to Single)
+  href: api/System.Numerics.Float256.op_Explicit.html#System_Numerics_Float256_op_Explicit_System_Numerics_Float256__System_Single
+  commentId: M:System.Numerics.Float256.op_Explicit(System.Numerics.Float256)~System.Single
+  name.vb: Narrowing(Float256 to Single)
+  fullName: System.Numerics.Float256.Explicit(System.Numerics.Float256 to System.Single)
+  fullName.vb: System.Numerics.Float256.Narrowing(System.Numerics.Float256 to System.Single)
+  nameWithType: Float256.Explicit(Float256 to Single)
+  nameWithType.vb: Float256.Narrowing(Float256 to Single)
+- uid: System.Numerics.Float256.op_Explicit*
+  name: Explicit
+  href: api/System.Numerics.Float256.op_Explicit.html
+  commentId: Overload:System.Numerics.Float256.op_Explicit
+  name.vb: Narrowing
+  fullName: System.Numerics.Float256.Explicit
+  fullName.vb: System.Numerics.Float256.Narrowing
+  nameWithType: Float256.Explicit
+  nameWithType.vb: Float256.Narrowing
+- uid: System.Numerics.Float256.op_GreaterThan(System.Numerics.Float256,System.Numerics.Float256)
+  name: GreaterThan(Float256, Float256)
+  href: api/System.Numerics.Float256.op_GreaterThan.html#System_Numerics_Float256_op_GreaterThan_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_GreaterThan(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.GreaterThan(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.GreaterThan(Float256, Float256)
+- uid: System.Numerics.Float256.op_GreaterThan*
+  name: GreaterThan
+  href: api/System.Numerics.Float256.op_GreaterThan.html
+  commentId: Overload:System.Numerics.Float256.op_GreaterThan
+  fullName: System.Numerics.Float256.GreaterThan
+  nameWithType: Float256.GreaterThan
+- uid: System.Numerics.Float256.op_GreaterThanOrEqual(System.Numerics.Float256,System.Numerics.Float256)
+  name: GreaterThanOrEqual(Float256, Float256)
+  href: api/System.Numerics.Float256.op_GreaterThanOrEqual.html#System_Numerics_Float256_op_GreaterThanOrEqual_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_GreaterThanOrEqual(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.GreaterThanOrEqual(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.GreaterThanOrEqual(Float256, Float256)
+- uid: System.Numerics.Float256.op_GreaterThanOrEqual*
+  name: GreaterThanOrEqual
+  href: api/System.Numerics.Float256.op_GreaterThanOrEqual.html
+  commentId: Overload:System.Numerics.Float256.op_GreaterThanOrEqual
+  fullName: System.Numerics.Float256.GreaterThanOrEqual
+  nameWithType: Float256.GreaterThanOrEqual
+- uid: System.Numerics.Float256.op_Implicit(System.Double)~System.Numerics.Float256
+  name: Implicit(Double to Float256)
+  href: api/System.Numerics.Float256.op_Implicit.html#System_Numerics_Float256_op_Implicit_System_Double__System_Numerics_Float256
+  commentId: M:System.Numerics.Float256.op_Implicit(System.Double)~System.Numerics.Float256
+  name.vb: Widening(Double to Float256)
+  fullName: System.Numerics.Float256.Implicit(System.Double to System.Numerics.Float256)
+  fullName.vb: System.Numerics.Float256.Widening(System.Double to System.Numerics.Float256)
+  nameWithType: Float256.Implicit(Double to Float256)
+  nameWithType.vb: Float256.Widening(Double to Float256)
+- uid: System.Numerics.Float256.op_Implicit(System.Half)~System.Numerics.Float256
+  name: Implicit(Half to Float256)
+  href: api/System.Numerics.Float256.op_Implicit.html#System_Numerics_Float256_op_Implicit_System_Half__System_Numerics_Float256
+  commentId: M:System.Numerics.Float256.op_Implicit(System.Half)~System.Numerics.Float256
+  name.vb: Widening(Half to Float256)
+  fullName: System.Numerics.Float256.Implicit(System.Half to System.Numerics.Float256)
+  fullName.vb: System.Numerics.Float256.Widening(System.Half to System.Numerics.Float256)
+  nameWithType: Float256.Implicit(Half to Float256)
+  nameWithType.vb: Float256.Widening(Half to Float256)
+- uid: System.Numerics.Float256.op_Implicit(System.Int32)~System.Numerics.Float256
+  name: Implicit(Int32 to Float256)
+  href: api/System.Numerics.Float256.op_Implicit.html#System_Numerics_Float256_op_Implicit_System_Int32__System_Numerics_Float256
+  commentId: M:System.Numerics.Float256.op_Implicit(System.Int32)~System.Numerics.Float256
+  name.vb: Widening(Int32 to Float256)
+  fullName: System.Numerics.Float256.Implicit(System.Int32 to System.Numerics.Float256)
+  fullName.vb: System.Numerics.Float256.Widening(System.Int32 to System.Numerics.Float256)
+  nameWithType: Float256.Implicit(Int32 to Float256)
+  nameWithType.vb: Float256.Widening(Int32 to Float256)
+- uid: System.Numerics.Float256.op_Implicit(System.Numerics.Float128)~System.Numerics.Float256
+  name: Implicit(Float128 to Float256)
+  href: api/System.Numerics.Float256.op_Implicit.html#System_Numerics_Float256_op_Implicit_System_Numerics_Float128__System_Numerics_Float256
+  commentId: M:System.Numerics.Float256.op_Implicit(System.Numerics.Float128)~System.Numerics.Float256
+  name.vb: Widening(Float128 to Float256)
+  fullName: System.Numerics.Float256.Implicit(System.Numerics.Float128 to System.Numerics.Float256)
+  fullName.vb: System.Numerics.Float256.Widening(System.Numerics.Float128 to System.Numerics.Float256)
+  nameWithType: Float256.Implicit(Float128 to Float256)
+  nameWithType.vb: Float256.Widening(Float128 to Float256)
+- uid: System.Numerics.Float256.op_Implicit(System.Numerics.Float256)~System.Numerics.BigRational
+  name: Implicit(Float256 to BigRational)
+  href: api/System.Numerics.Float256.op_Implicit.html#System_Numerics_Float256_op_Implicit_System_Numerics_Float256__System_Numerics_BigRational
+  commentId: M:System.Numerics.Float256.op_Implicit(System.Numerics.Float256)~System.Numerics.BigRational
+  name.vb: Widening(Float256 to BigRational)
+  fullName: System.Numerics.Float256.Implicit(System.Numerics.Float256 to System.Numerics.BigRational)
+  fullName.vb: System.Numerics.Float256.Widening(System.Numerics.Float256 to System.Numerics.BigRational)
+  nameWithType: Float256.Implicit(Float256 to BigRational)
+  nameWithType.vb: Float256.Widening(Float256 to BigRational)
+- uid: System.Numerics.Float256.op_Implicit(System.Single)~System.Numerics.Float256
+  name: Implicit(Single to Float256)
+  href: api/System.Numerics.Float256.op_Implicit.html#System_Numerics_Float256_op_Implicit_System_Single__System_Numerics_Float256
+  commentId: M:System.Numerics.Float256.op_Implicit(System.Single)~System.Numerics.Float256
+  name.vb: Widening(Single to Float256)
+  fullName: System.Numerics.Float256.Implicit(System.Single to System.Numerics.Float256)
+  fullName.vb: System.Numerics.Float256.Widening(System.Single to System.Numerics.Float256)
+  nameWithType: Float256.Implicit(Single to Float256)
+  nameWithType.vb: Float256.Widening(Single to Float256)
+- uid: System.Numerics.Float256.op_Implicit*
+  name: Implicit
+  href: api/System.Numerics.Float256.op_Implicit.html
+  commentId: Overload:System.Numerics.Float256.op_Implicit
+  name.vb: Widening
+  fullName: System.Numerics.Float256.Implicit
+  fullName.vb: System.Numerics.Float256.Widening
+  nameWithType: Float256.Implicit
+  nameWithType.vb: Float256.Widening
+- uid: System.Numerics.Float256.op_Increment(System.Numerics.Float256)
+  name: Increment(Float256)
+  href: api/System.Numerics.Float256.op_Increment.html#System_Numerics_Float256_op_Increment_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Increment(System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Increment(System.Numerics.Float256)
+  nameWithType: Float256.Increment(Float256)
+- uid: System.Numerics.Float256.op_Increment*
+  name: Increment
+  href: api/System.Numerics.Float256.op_Increment.html
+  commentId: Overload:System.Numerics.Float256.op_Increment
+  fullName: System.Numerics.Float256.Increment
+  nameWithType: Float256.Increment
+- uid: System.Numerics.Float256.op_Inequality(System.Numerics.Float256,System.Numerics.Float256)
+  name: Inequality(Float256, Float256)
+  href: api/System.Numerics.Float256.op_Inequality.html#System_Numerics_Float256_op_Inequality_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Inequality(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Inequality(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.Inequality(Float256, Float256)
+- uid: System.Numerics.Float256.op_Inequality*
+  name: Inequality
+  href: api/System.Numerics.Float256.op_Inequality.html
+  commentId: Overload:System.Numerics.Float256.op_Inequality
+  fullName: System.Numerics.Float256.Inequality
+  nameWithType: Float256.Inequality
+- uid: System.Numerics.Float256.op_LessThan(System.Numerics.Float256,System.Numerics.Float256)
+  name: LessThan(Float256, Float256)
+  href: api/System.Numerics.Float256.op_LessThan.html#System_Numerics_Float256_op_LessThan_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_LessThan(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.LessThan(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.LessThan(Float256, Float256)
+- uid: System.Numerics.Float256.op_LessThan*
+  name: LessThan
+  href: api/System.Numerics.Float256.op_LessThan.html
+  commentId: Overload:System.Numerics.Float256.op_LessThan
+  fullName: System.Numerics.Float256.LessThan
+  nameWithType: Float256.LessThan
+- uid: System.Numerics.Float256.op_LessThanOrEqual(System.Numerics.Float256,System.Numerics.Float256)
+  name: LessThanOrEqual(Float256, Float256)
+  href: api/System.Numerics.Float256.op_LessThanOrEqual.html#System_Numerics_Float256_op_LessThanOrEqual_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_LessThanOrEqual(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.LessThanOrEqual(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.LessThanOrEqual(Float256, Float256)
+- uid: System.Numerics.Float256.op_LessThanOrEqual*
+  name: LessThanOrEqual
+  href: api/System.Numerics.Float256.op_LessThanOrEqual.html
+  commentId: Overload:System.Numerics.Float256.op_LessThanOrEqual
+  fullName: System.Numerics.Float256.LessThanOrEqual
+  nameWithType: Float256.LessThanOrEqual
+- uid: System.Numerics.Float256.op_Modulus(System.Numerics.Float256,System.Numerics.Float256)
+  name: Modulus(Float256, Float256)
+  href: api/System.Numerics.Float256.op_Modulus.html#System_Numerics_Float256_op_Modulus_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Modulus(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Modulus(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.Modulus(Float256, Float256)
+- uid: System.Numerics.Float256.op_Modulus*
+  name: Modulus
+  href: api/System.Numerics.Float256.op_Modulus.html
+  commentId: Overload:System.Numerics.Float256.op_Modulus
+  fullName: System.Numerics.Float256.Modulus
+  nameWithType: Float256.Modulus
+- uid: System.Numerics.Float256.op_Multiply(System.Numerics.Float256,System.Numerics.Float256)
+  name: Multiply(Float256, Float256)
+  href: api/System.Numerics.Float256.op_Multiply.html#System_Numerics_Float256_op_Multiply_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Multiply(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Multiply(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.Multiply(Float256, Float256)
+- uid: System.Numerics.Float256.op_Multiply*
+  name: Multiply
+  href: api/System.Numerics.Float256.op_Multiply.html
+  commentId: Overload:System.Numerics.Float256.op_Multiply
+  fullName: System.Numerics.Float256.Multiply
+  nameWithType: Float256.Multiply
+- uid: System.Numerics.Float256.op_Subtraction(System.Numerics.Float256,System.Numerics.Float256)
+  name: Subtraction(Float256, Float256)
+  href: api/System.Numerics.Float256.op_Subtraction.html#System_Numerics_Float256_op_Subtraction_System_Numerics_Float256_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.op_Subtraction(System.Numerics.Float256,System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Subtraction(System.Numerics.Float256, System.Numerics.Float256)
+  nameWithType: Float256.Subtraction(Float256, Float256)
+- uid: System.Numerics.Float256.op_Subtraction*
+  name: Subtraction
+  href: api/System.Numerics.Float256.op_Subtraction.html
+  commentId: Overload:System.Numerics.Float256.op_Subtraction
+  fullName: System.Numerics.Float256.Subtraction
+  nameWithType: Float256.Subtraction
+- uid: System.Numerics.Float256.ToString
+  name: ToString()
+  href: api/System.Numerics.Float256.ToString.html#System_Numerics_Float256_ToString
+  commentId: M:System.Numerics.Float256.ToString
+  fullName: System.Numerics.Float256.ToString()
+  nameWithType: Float256.ToString()
+- uid: System.Numerics.Float256.ToString*
+  name: ToString
+  href: api/System.Numerics.Float256.ToString.html
+  commentId: Overload:System.Numerics.Float256.ToString
+  fullName: System.Numerics.Float256.ToString
+  nameWithType: Float256.ToString
+- uid: System.Numerics.Float256.Truncate(System.Numerics.Float256)
+  name: Truncate(Float256)
+  href: api/System.Numerics.Float256.Truncate.html#System_Numerics_Float256_Truncate_System_Numerics_Float256_
+  commentId: M:System.Numerics.Float256.Truncate(System.Numerics.Float256)
+  fullName: System.Numerics.Float256.Truncate(System.Numerics.Float256)
+  nameWithType: Float256.Truncate(Float256)
+- uid: System.Numerics.Float256.Truncate*
+  name: Truncate
+  href: api/System.Numerics.Float256.Truncate.html
+  commentId: Overload:System.Numerics.Float256.Truncate
+  fullName: System.Numerics.Float256.Truncate
+  nameWithType: Float256.Truncate
+- uid: System.Numerics.Float80
+  name: Float80
+  href: api/System.Numerics.Float80.html
+  commentId: T:System.Numerics.Float80
+  fullName: System.Numerics.Float80
+  nameWithType: Float80
+- uid: System.Numerics.Float80.Cast*
+  name: Cast
+  href: api/System.Numerics.Float80.Cast.html
+  commentId: Overload:System.Numerics.Float80.Cast
+  fullName: System.Numerics.Float80.Cast
+  nameWithType: Float80.Cast
+- uid: System.Numerics.Float80.Cast``1(System.Numerics.BigRational.Float{``0})
+  name: Cast<T>(BigRational.Float<T>)
+  href: api/System.Numerics.Float80.Cast.html#System_Numerics_Float80_Cast__1_System_Numerics_BigRational_Float___0__
+  commentId: M:System.Numerics.Float80.Cast``1(System.Numerics.BigRational.Float{``0})
+  name.vb: Cast(Of T)(BigRational.Float(Of T))
+  fullName: System.Numerics.Float80.Cast<T>(System.Numerics.BigRational.Float<T>)
+  fullName.vb: System.Numerics.Float80.Cast(Of T)(System.Numerics.BigRational.Float(Of T))
+  nameWithType: Float80.Cast<T>(BigRational.Float<T>)
+  nameWithType.vb: Float80.Cast(Of T)(BigRational.Float(Of T))
+- uid: System.Numerics.Float80.Cast``1(System.Numerics.Float80)
+  name: Cast<T>(Float80)
+  href: api/System.Numerics.Float80.Cast.html#System_Numerics_Float80_Cast__1_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.Cast``1(System.Numerics.Float80)
+  name.vb: Cast(Of T)(Float80)
+  fullName: System.Numerics.Float80.Cast<T>(System.Numerics.Float80)
+  fullName.vb: System.Numerics.Float80.Cast(Of T)(System.Numerics.Float80)
+  nameWithType: Float80.Cast<T>(Float80)
+  nameWithType.vb: Float80.Cast(Of T)(Float80)
+- uid: System.Numerics.Float80.CompareTo(System.Numerics.Float80)
+  name: CompareTo(Float80)
+  href: api/System.Numerics.Float80.CompareTo.html#System_Numerics_Float80_CompareTo_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.CompareTo(System.Numerics.Float80)
+  fullName: System.Numerics.Float80.CompareTo(System.Numerics.Float80)
+  nameWithType: Float80.CompareTo(Float80)
+- uid: System.Numerics.Float80.CompareTo*
+  name: CompareTo
+  href: api/System.Numerics.Float80.CompareTo.html
+  commentId: Overload:System.Numerics.Float80.CompareTo
+  fullName: System.Numerics.Float80.CompareTo
+  nameWithType: Float80.CompareTo
+- uid: System.Numerics.Float80.Equals(System.Numerics.Float80)
+  name: Equals(Float80)
+  href: api/System.Numerics.Float80.Equals.html#System_Numerics_Float80_Equals_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.Equals(System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Equals(System.Numerics.Float80)
+  nameWithType: Float80.Equals(Float80)
+- uid: System.Numerics.Float80.Equals(System.Object)
+  name: Equals(Object)
+  href: api/System.Numerics.Float80.Equals.html#System_Numerics_Float80_Equals_System_Object_
+  commentId: M:System.Numerics.Float80.Equals(System.Object)
+  fullName: System.Numerics.Float80.Equals(System.Object)
+  nameWithType: Float80.Equals(Object)
+- uid: System.Numerics.Float80.Equals*
+  name: Equals
+  href: api/System.Numerics.Float80.Equals.html
+  commentId: Overload:System.Numerics.Float80.Equals
+  fullName: System.Numerics.Float80.Equals
+  nameWithType: Float80.Equals
+- uid: System.Numerics.Float80.GetHashCode
+  name: GetHashCode()
+  href: api/System.Numerics.Float80.GetHashCode.html#System_Numerics_Float80_GetHashCode
+  commentId: M:System.Numerics.Float80.GetHashCode
+  fullName: System.Numerics.Float80.GetHashCode()
+  nameWithType: Float80.GetHashCode()
+- uid: System.Numerics.Float80.GetHashCode*
+  name: GetHashCode
+  href: api/System.Numerics.Float80.GetHashCode.html
+  commentId: Overload:System.Numerics.Float80.GetHashCode
+  fullName: System.Numerics.Float80.GetHashCode
+  nameWithType: Float80.GetHashCode
+- uid: System.Numerics.Float80.op_Addition(System.Numerics.Float80,System.Numerics.Float80)
+  name: Addition(Float80, Float80)
+  href: api/System.Numerics.Float80.op_Addition.html#System_Numerics_Float80_op_Addition_System_Numerics_Float80_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.op_Addition(System.Numerics.Float80,System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Addition(System.Numerics.Float80, System.Numerics.Float80)
+  nameWithType: Float80.Addition(Float80, Float80)
+- uid: System.Numerics.Float80.op_Addition*
+  name: Addition
+  href: api/System.Numerics.Float80.op_Addition.html
+  commentId: Overload:System.Numerics.Float80.op_Addition
+  fullName: System.Numerics.Float80.Addition
+  nameWithType: Float80.Addition
+- uid: System.Numerics.Float80.op_Decrement(System.Numerics.Float80)
+  name: Decrement(Float80)
+  href: api/System.Numerics.Float80.op_Decrement.html#System_Numerics_Float80_op_Decrement_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.op_Decrement(System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Decrement(System.Numerics.Float80)
+  nameWithType: Float80.Decrement(Float80)
+- uid: System.Numerics.Float80.op_Decrement*
+  name: Decrement
+  href: api/System.Numerics.Float80.op_Decrement.html
+  commentId: Overload:System.Numerics.Float80.op_Decrement
+  fullName: System.Numerics.Float80.Decrement
+  nameWithType: Float80.Decrement
+- uid: System.Numerics.Float80.op_Division(System.Numerics.Float80,System.Numerics.Float80)
+  name: Division(Float80, Float80)
+  href: api/System.Numerics.Float80.op_Division.html#System_Numerics_Float80_op_Division_System_Numerics_Float80_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.op_Division(System.Numerics.Float80,System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Division(System.Numerics.Float80, System.Numerics.Float80)
+  nameWithType: Float80.Division(Float80, Float80)
+- uid: System.Numerics.Float80.op_Division*
+  name: Division
+  href: api/System.Numerics.Float80.op_Division.html
+  commentId: Overload:System.Numerics.Float80.op_Division
+  fullName: System.Numerics.Float80.Division
+  nameWithType: Float80.Division
+- uid: System.Numerics.Float80.op_Explicit(System.Numerics.BigRational)~System.Numerics.Float80
+  name: Explicit(BigRational to Float80)
+  href: api/System.Numerics.Float80.op_Explicit.html#System_Numerics_Float80_op_Explicit_System_Numerics_BigRational__System_Numerics_Float80
+  commentId: M:System.Numerics.Float80.op_Explicit(System.Numerics.BigRational)~System.Numerics.Float80
+  name.vb: Narrowing(BigRational to Float80)
+  fullName: System.Numerics.Float80.Explicit(System.Numerics.BigRational to System.Numerics.Float80)
+  fullName.vb: System.Numerics.Float80.Narrowing(System.Numerics.BigRational to System.Numerics.Float80)
+  nameWithType: Float80.Explicit(BigRational to Float80)
+  nameWithType.vb: Float80.Narrowing(BigRational to Float80)
+- uid: System.Numerics.Float80.op_Explicit(System.Numerics.Float128)~System.Numerics.Float80
+  name: Explicit(Float128 to Float80)
+  href: api/System.Numerics.Float80.op_Explicit.html#System_Numerics_Float80_op_Explicit_System_Numerics_Float128__System_Numerics_Float80
+  commentId: M:System.Numerics.Float80.op_Explicit(System.Numerics.Float128)~System.Numerics.Float80
+  name.vb: Narrowing(Float128 to Float80)
+  fullName: System.Numerics.Float80.Explicit(System.Numerics.Float128 to System.Numerics.Float80)
+  fullName.vb: System.Numerics.Float80.Narrowing(System.Numerics.Float128 to System.Numerics.Float80)
+  nameWithType: Float80.Explicit(Float128 to Float80)
+  nameWithType.vb: Float80.Narrowing(Float128 to Float80)
+- uid: System.Numerics.Float80.op_Explicit(System.Numerics.Float256)~System.Numerics.Float80
+  name: Explicit(Float256 to Float80)
+  href: api/System.Numerics.Float80.op_Explicit.html#System_Numerics_Float80_op_Explicit_System_Numerics_Float256__System_Numerics_Float80
+  commentId: M:System.Numerics.Float80.op_Explicit(System.Numerics.Float256)~System.Numerics.Float80
+  name.vb: Narrowing(Float256 to Float80)
+  fullName: System.Numerics.Float80.Explicit(System.Numerics.Float256 to System.Numerics.Float80)
+  fullName.vb: System.Numerics.Float80.Narrowing(System.Numerics.Float256 to System.Numerics.Float80)
+  nameWithType: Float80.Explicit(Float256 to Float80)
+  nameWithType.vb: Float80.Narrowing(Float256 to Float80)
+- uid: System.Numerics.Float80.op_Explicit*
+  name: Explicit
+  href: api/System.Numerics.Float80.op_Explicit.html
+  commentId: Overload:System.Numerics.Float80.op_Explicit
+  name.vb: Narrowing
+  fullName: System.Numerics.Float80.Explicit
+  fullName.vb: System.Numerics.Float80.Narrowing
+  nameWithType: Float80.Explicit
+  nameWithType.vb: Float80.Narrowing
+- uid: System.Numerics.Float80.op_Implicit(System.Double)~System.Numerics.Float80
+  name: Implicit(Double to Float80)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Double__System_Numerics_Float80
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Double)~System.Numerics.Float80
+  name.vb: Widening(Double to Float80)
+  fullName: System.Numerics.Float80.Implicit(System.Double to System.Numerics.Float80)
+  fullName.vb: System.Numerics.Float80.Widening(System.Double to System.Numerics.Float80)
+  nameWithType: Float80.Implicit(Double to Float80)
+  nameWithType.vb: Float80.Widening(Double to Float80)
+- uid: System.Numerics.Float80.op_Implicit(System.Half)~System.Numerics.Float80
+  name: Implicit(Half to Float80)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Half__System_Numerics_Float80
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Half)~System.Numerics.Float80
+  name.vb: Widening(Half to Float80)
+  fullName: System.Numerics.Float80.Implicit(System.Half to System.Numerics.Float80)
+  fullName.vb: System.Numerics.Float80.Widening(System.Half to System.Numerics.Float80)
+  nameWithType: Float80.Implicit(Half to Float80)
+  nameWithType.vb: Float80.Widening(Half to Float80)
+- uid: System.Numerics.Float80.op_Implicit(System.Int32)~System.Numerics.Float80
+  name: Implicit(Int32 to Float80)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Int32__System_Numerics_Float80
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Int32)~System.Numerics.Float80
+  name.vb: Widening(Int32 to Float80)
+  fullName: System.Numerics.Float80.Implicit(System.Int32 to System.Numerics.Float80)
+  fullName.vb: System.Numerics.Float80.Widening(System.Int32 to System.Numerics.Float80)
+  nameWithType: Float80.Implicit(Int32 to Float80)
+  nameWithType.vb: Float80.Widening(Int32 to Float80)
+- uid: System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Double
+  name: Implicit(Float80 to Double)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Numerics_Float80__System_Double
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Double
+  name.vb: Widening(Float80 to Double)
+  fullName: System.Numerics.Float80.Implicit(System.Numerics.Float80 to System.Double)
+  fullName.vb: System.Numerics.Float80.Widening(System.Numerics.Float80 to System.Double)
+  nameWithType: Float80.Implicit(Float80 to Double)
+  nameWithType.vb: Float80.Widening(Float80 to Double)
+- uid: System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Half
+  name: Implicit(Float80 to Half)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Numerics_Float80__System_Half
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Half
+  name.vb: Widening(Float80 to Half)
+  fullName: System.Numerics.Float80.Implicit(System.Numerics.Float80 to System.Half)
+  fullName.vb: System.Numerics.Float80.Widening(System.Numerics.Float80 to System.Half)
+  nameWithType: Float80.Implicit(Float80 to Half)
+  nameWithType.vb: Float80.Widening(Float80 to Half)
+- uid: System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Int32
+  name: Implicit(Float80 to Int32)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Numerics_Float80__System_Int32
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Int32
+  name.vb: Widening(Float80 to Int32)
+  fullName: System.Numerics.Float80.Implicit(System.Numerics.Float80 to System.Int32)
+  fullName.vb: System.Numerics.Float80.Widening(System.Numerics.Float80 to System.Int32)
+  nameWithType: Float80.Implicit(Float80 to Int32)
+  nameWithType.vb: Float80.Widening(Float80 to Int32)
+- uid: System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Numerics.BigRational
+  name: Implicit(Float80 to BigRational)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Numerics_Float80__System_Numerics_BigRational
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Numerics.BigRational
+  name.vb: Widening(Float80 to BigRational)
+  fullName: System.Numerics.Float80.Implicit(System.Numerics.Float80 to System.Numerics.BigRational)
+  fullName.vb: System.Numerics.Float80.Widening(System.Numerics.Float80 to System.Numerics.BigRational)
+  nameWithType: Float80.Implicit(Float80 to BigRational)
+  nameWithType.vb: Float80.Widening(Float80 to BigRational)
+- uid: System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Numerics.Float128
+  name: Implicit(Float80 to Float128)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Numerics_Float80__System_Numerics_Float128
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Numerics.Float128
+  name.vb: Widening(Float80 to Float128)
+  fullName: System.Numerics.Float80.Implicit(System.Numerics.Float80 to System.Numerics.Float128)
+  fullName.vb: System.Numerics.Float80.Widening(System.Numerics.Float80 to System.Numerics.Float128)
+  nameWithType: Float80.Implicit(Float80 to Float128)
+  nameWithType.vb: Float80.Widening(Float80 to Float128)
+- uid: System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Numerics.Float256
+  name: Implicit(Float80 to Float256)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Numerics_Float80__System_Numerics_Float256
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Numerics.Float256
+  name.vb: Widening(Float80 to Float256)
+  fullName: System.Numerics.Float80.Implicit(System.Numerics.Float80 to System.Numerics.Float256)
+  fullName.vb: System.Numerics.Float80.Widening(System.Numerics.Float80 to System.Numerics.Float256)
+  nameWithType: Float80.Implicit(Float80 to Float256)
+  nameWithType.vb: Float80.Widening(Float80 to Float256)
+- uid: System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Single
+  name: Implicit(Float80 to Single)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Numerics_Float80__System_Single
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Numerics.Float80)~System.Single
+  name.vb: Widening(Float80 to Single)
+  fullName: System.Numerics.Float80.Implicit(System.Numerics.Float80 to System.Single)
+  fullName.vb: System.Numerics.Float80.Widening(System.Numerics.Float80 to System.Single)
+  nameWithType: Float80.Implicit(Float80 to Single)
+  nameWithType.vb: Float80.Widening(Float80 to Single)
+- uid: System.Numerics.Float80.op_Implicit(System.Single)~System.Numerics.Float80
+  name: Implicit(Single to Float80)
+  href: api/System.Numerics.Float80.op_Implicit.html#System_Numerics_Float80_op_Implicit_System_Single__System_Numerics_Float80
+  commentId: M:System.Numerics.Float80.op_Implicit(System.Single)~System.Numerics.Float80
+  name.vb: Widening(Single to Float80)
+  fullName: System.Numerics.Float80.Implicit(System.Single to System.Numerics.Float80)
+  fullName.vb: System.Numerics.Float80.Widening(System.Single to System.Numerics.Float80)
+  nameWithType: Float80.Implicit(Single to Float80)
+  nameWithType.vb: Float80.Widening(Single to Float80)
+- uid: System.Numerics.Float80.op_Implicit*
+  name: Implicit
+  href: api/System.Numerics.Float80.op_Implicit.html
+  commentId: Overload:System.Numerics.Float80.op_Implicit
+  name.vb: Widening
+  fullName: System.Numerics.Float80.Implicit
+  fullName.vb: System.Numerics.Float80.Widening
+  nameWithType: Float80.Implicit
+  nameWithType.vb: Float80.Widening
+- uid: System.Numerics.Float80.op_Increment(System.Numerics.Float80)
+  name: Increment(Float80)
+  href: api/System.Numerics.Float80.op_Increment.html#System_Numerics_Float80_op_Increment_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.op_Increment(System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Increment(System.Numerics.Float80)
+  nameWithType: Float80.Increment(Float80)
+- uid: System.Numerics.Float80.op_Increment*
+  name: Increment
+  href: api/System.Numerics.Float80.op_Increment.html
+  commentId: Overload:System.Numerics.Float80.op_Increment
+  fullName: System.Numerics.Float80.Increment
+  nameWithType: Float80.Increment
+- uid: System.Numerics.Float80.op_Modulus(System.Numerics.Float80,System.Numerics.Float80)
+  name: Modulus(Float80, Float80)
+  href: api/System.Numerics.Float80.op_Modulus.html#System_Numerics_Float80_op_Modulus_System_Numerics_Float80_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.op_Modulus(System.Numerics.Float80,System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Modulus(System.Numerics.Float80, System.Numerics.Float80)
+  nameWithType: Float80.Modulus(Float80, Float80)
+- uid: System.Numerics.Float80.op_Modulus*
+  name: Modulus
+  href: api/System.Numerics.Float80.op_Modulus.html
+  commentId: Overload:System.Numerics.Float80.op_Modulus
+  fullName: System.Numerics.Float80.Modulus
+  nameWithType: Float80.Modulus
+- uid: System.Numerics.Float80.op_Multiply(System.Numerics.Float80,System.Numerics.Float80)
+  name: Multiply(Float80, Float80)
+  href: api/System.Numerics.Float80.op_Multiply.html#System_Numerics_Float80_op_Multiply_System_Numerics_Float80_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.op_Multiply(System.Numerics.Float80,System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Multiply(System.Numerics.Float80, System.Numerics.Float80)
+  nameWithType: Float80.Multiply(Float80, Float80)
+- uid: System.Numerics.Float80.op_Multiply*
+  name: Multiply
+  href: api/System.Numerics.Float80.op_Multiply.html
+  commentId: Overload:System.Numerics.Float80.op_Multiply
+  fullName: System.Numerics.Float80.Multiply
+  nameWithType: Float80.Multiply
+- uid: System.Numerics.Float80.op_Subtraction(System.Numerics.Float80,System.Numerics.Float80)
+  name: Subtraction(Float80, Float80)
+  href: api/System.Numerics.Float80.op_Subtraction.html#System_Numerics_Float80_op_Subtraction_System_Numerics_Float80_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.op_Subtraction(System.Numerics.Float80,System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Subtraction(System.Numerics.Float80, System.Numerics.Float80)
+  nameWithType: Float80.Subtraction(Float80, Float80)
+- uid: System.Numerics.Float80.op_Subtraction*
+  name: Subtraction
+  href: api/System.Numerics.Float80.op_Subtraction.html
+  commentId: Overload:System.Numerics.Float80.op_Subtraction
+  fullName: System.Numerics.Float80.Subtraction
+  nameWithType: Float80.Subtraction
+- uid: System.Numerics.Float80.ToString
+  name: ToString()
+  href: api/System.Numerics.Float80.ToString.html#System_Numerics_Float80_ToString
+  commentId: M:System.Numerics.Float80.ToString
+  fullName: System.Numerics.Float80.ToString()
+  nameWithType: Float80.ToString()
+- uid: System.Numerics.Float80.ToString*
+  name: ToString
+  href: api/System.Numerics.Float80.ToString.html
+  commentId: Overload:System.Numerics.Float80.ToString
+  fullName: System.Numerics.Float80.ToString
+  nameWithType: Float80.ToString
+- uid: System.Numerics.Float80.Truncate(System.Numerics.Float80)
+  name: Truncate(Float80)
+  href: api/System.Numerics.Float80.Truncate.html#System_Numerics_Float80_Truncate_System_Numerics_Float80_
+  commentId: M:System.Numerics.Float80.Truncate(System.Numerics.Float80)
+  fullName: System.Numerics.Float80.Truncate(System.Numerics.Float80)
+  nameWithType: Float80.Truncate(Float80)
+- uid: System.Numerics.Float80.Truncate*
+  name: Truncate
+  href: api/System.Numerics.Float80.Truncate.html
+  commentId: Overload:System.Numerics.Float80.Truncate
+  fullName: System.Numerics.Float80.Truncate
+  nameWithType: Float80.Truncate

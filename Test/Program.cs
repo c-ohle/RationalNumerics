@@ -3,9 +3,9 @@ global using System.Numerics;
 global using System.Numerics.Rational;
 global using rat = System.Numerics.BigRational;
 global using BigInt = System.Numerics.BigRational.Integer;
-global using Float16 = System.Numerics.BigRational.Float<System.Int16>;
-global using Float32 = System.Numerics.BigRational.Float<System.Int32>;
-global using Float64 = System.Numerics.BigRational.Float<System.Int64>;
+global using Float16 = System.Numerics.BigRational.Float<System.UInt16>;
+global using Float32 = System.Numerics.BigRational.Float<System.UInt32>;
+//global using Float64 = System.Numerics.BigRational.Float<System.UInt64>;
 
 namespace Test
 {
@@ -14,150 +14,186 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); test();
       Application.Run(new MainFrame());
     }
 
-#if NET7_0
-
+#if true //NET7_0
     static void test()
     {
-      Float128 a; Float80 b; double d; rat r;
-      a = 8; a = Math.PI;
-      b = 8; b = Math.PI;
-      d = (double)a; r = a;
-      d = (double)b; r = b;
-      a = b;
-      b = (Float80)a;
-
-      a = test_SimpleNumber(a, b);
-      a = test_SimpleNumber(b, b);
-
-      //a = a * a;
-      var x = test_INumber(2.5, 3);
-      r = test_INumber((rat)2.5, 3);
-
+      test_str();
       test_Float64();
       test_Float80();
       test_Float32();
       test_Float16();
+      test_Float96();
       test_Float128();
-    }
+      test_Float256();
+      test_big();
 
-    static T test_INumber<T>(T a, T b) where T : INumber<T>
-    {
-      var t1 = a++; var t2 = a--; Debug.Assert(a == t1); Debug.Assert(a != t2);
-      if (a > b) { }
-      if (a <= b) { }
-      if (a == b) return a * a;
-      return a * b;
-    }
-    static T test_SimpleNumber<T>(T a, T b) where T : ISimpleNumber<T>
-    {
-      var t1 = a++; var t2 = a--; Debug.Assert(a == t1); Debug.Assert(a != t2);
-      if (a > b) { }
-      if (a <= b) { }
-      if (a == b) return a * a;
-      return a * b;
-    }
+      static void test_str()
+      {
+        Float16 a; Float32 b; Float64 c; Float80 d; Float128 e; Float256 f; double g; string s;
+        f = (Float256)rat.Pi(1000);
+        e = (Float128)f;
+        d = (Float80)e;
+        c = (Float64)e;
+        b = Float64.Cast<UInt32>(c);
+        a = Float64.Cast<UInt16>(c);
 
-    static void test_Float16()
-    {
-      Float16 a, b; Half d, e;
-      a = (double)Half.Pi; d = (Half)(double)Half.Pi; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
-      a = Half.Pi; d = (Half)Half.Pi; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
-      a = Math.PI; Debug.Assert((Half)a == d);
-      a = 2; d = (Half)2; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
-      a *= 2; d *= (Half)2; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
-      a /= 2; d /= (Half)2; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
-      a++; d++; Debug.Assert((Half)a == d);
-      a--; d--; Debug.Assert((Half)a == d);
-      for (int i = -5; i <= +3; i++)
-      {
-        a += i; d += (Half)i; Debug.Assert((Half)a == d);
-        a -= i; d -= (Half)i; Debug.Assert((Half)a == d);
+        for (int i = -32; i < +32; i++)
+        {
+          g = Math.PI * Math.Pow(10, i);
+          c = g; s = c.ToString();
+        }
       }
-      a = Half.Pi; d = Half.Pi;
-      b = Float16.Truncate(a); e = Half.Truncate(d); Debug.Assert((Half)b == e);
-      b = a * a; e = d * d; //Debug.Assert((Half)b == e);
-      b = b / a; e = e / d; //Debug.Assert((Half)b == e);
-    }
-    static void test_Float32()
-    {
-      Float32 a, b; float d, e;
-      a = MathF.PI; d = MathF.PI; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
-      a = Math.PI; Debug.Assert((float)a != d);
-      a = 2; d = 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
-      a *= 2; d *= 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
-      a /= 2; d /= 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
-      a++; d++; Debug.Assert((float)a == d);
-      a--; d--; Debug.Assert((float)a == d);
-      for (int i = -5; i <= +3; i++)
+      static void test_Float64()
       {
-        a += i; d += i; Debug.Assert((float)a == d);
-        a -= i; d -= i; Debug.Assert((float)a == d);
+        Float64 a, b; double d, e;
+        a = Math.PI; d = Math.PI; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+        a = MathF.PI; d = MathF.PI; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+        a = Math.PI; Debug.Assert((double)a != d);
+        a = 2; d = 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+        a *= 2; d *= 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+        a /= 2; d /= 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+        a++; d++; Debug.Assert((double)a == d);
+        a--; d--; Debug.Assert((double)a == d);
+        for (int i = -5; i <= +3; i++)
+        {
+          a += i; d += i; Debug.Assert((double)a == d);
+          a -= i; d -= i; Debug.Assert((double)a == d);
+        }
+        a = Math.PI; d = Math.PI;
+        b = Float64.Truncate(a); e = Math.Truncate(d); Debug.Assert((double)b == e);
+        b = a * a; e = d * d; //Debug.Assert((double)b == e);
+        var t1 = *(ulong*)&b;
+        var t2 = *(ulong*)&e;
+        b = b / a; e = e / d; // Debug.Assert((double)b == e);
       }
-      a = MathF.PI; d = MathF.PI;
-      b = Float32.Truncate(a); e = MathF.Truncate(d); Debug.Assert((float)b == e);
-      b = a * a; e = d * d; //Debug.Assert((float)b == e);
-      b = b / a; e = e / d; //Debug.Assert((float)b == e);
-    }
-    static void test_Float64()
-    {
-      Float64 a, b; double d, e;
-      a = Math.PI; d = Math.PI; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
-      a = MathF.PI; d = MathF.PI; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
-      a = Math.PI; Debug.Assert((double)a != d);
-      a = 2; d = 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
-      a *= 2; d *= 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
-      a /= 2; d /= 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
-      a++; d++; Debug.Assert((double)a == d);
-      a--; d--; Debug.Assert((double)a == d);
-      for (int i = -5; i <= +3; i++)
+      static void test_Float16()
       {
-        a += i; d += i; Debug.Assert((double)a == d);
-        a -= i; d -= i; Debug.Assert((double)a == d);
+#if NET7_0
+        Float16 a, b; Half d, e;
+        a = (Float16)(double)Half.Pi; d = (Half)(double)Half.Pi; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
+        a = (Float16)Half.Pi; d = (Half)Half.Pi; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
+        a = (Float16)Math.PI; Debug.Assert((Half)a == d);
+        a = (Float16)2; d = (Half)2; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
+        a *= (Float16)2; d *= (Half)2; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
+        a /= (Float16)2; d /= (Half)2; Debug.Assert((Half)a == d && *(Half*)&a == *(Half*)&d);
+        a++; d++; Debug.Assert((Half)a == d);
+        a--; d--; Debug.Assert((Half)a == d);
+        for (int i = -5; i <= +3; i++)
+        {
+          a += (Float16)i; d += (Half)i; Debug.Assert((Half)a == d);
+          a -= (Float16)i; d -= (Half)i; Debug.Assert((Half)a == d);
+        }
+        a = (Float16)Half.Pi; d = Half.Pi;
+        b = Float16.Truncate(a); e = Half.Truncate(d); Debug.Assert((Half)b == e);
+        b = a * a; e = d * d; //Debug.Assert((Half)b == e);
+        b = b / a; e = e / d; //Debug.Assert((Half)b == e);
+#endif
       }
-      a = Math.PI; d = Math.PI;
-      b = Float64.Truncate(a); e = Math.Truncate(d); Debug.Assert((float)b == e);
-      b = a * a; e = d * d;// Debug.Assert((double)b == e);
-      var t1 = *(ulong*)&b;
-      var t2 = *(ulong*)&e;
-      b = b / a; e = e / d;// Debug.Assert((double)b == e);
-    }
-    static void test_Float80()
-    {
-      Float80 a, b; Float128 d, e;
-      a = Math.PI; d = Math.PI; Debug.Assert(a == d);
-      a = 2; d = 2; Debug.Assert(a == d);
-      a *= 2; d *= 2; Debug.Assert(a == d);
-      a /= 2; d /= 2; Debug.Assert(a == d);
-      a++; d++; Debug.Assert(a == d);
-      a--; d--; Debug.Assert(a == d);
-      for (int i = -5; i <= +3; i++)
+      static void test_Float32()
       {
-        a += i; d += i; Debug.Assert(a == d);
-        a -= i; d -= i; Debug.Assert(a == d);
+        Float32 a, b; float d, e;
+        a = (Float32)MathF.PI; d = MathF.PI; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
+        a = (Float32)Math.PI; Debug.Assert((float)a != d);
+        a = (Float32)2; d = 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
+        a *= (Float32)2; d *= 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
+        a /= (Float32)2; d /= 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
+        a++; d++; Debug.Assert((float)a == d);
+        a--; d--; Debug.Assert((float)a == d);
+        for (int i = -5; i <= +3; i++)
+        {
+          a += (Float32)i; d += i; Debug.Assert((float)a == d);
+          a -= (Float32)i; d -= i; Debug.Assert((float)a == d);
+        }
+        a = (Float32)MathF.PI; d = MathF.PI;
+        b = Float32.Truncate(a); e = MathF.Truncate(d); Debug.Assert((float)b == e);
+        b = a * a; e = d * d; //Debug.Assert((float)b == e);
+        b = b / a; e = e / d; //Debug.Assert((float)b == e);
       }
-      a = Math.PI; d = Math.PI; Debug.Assert(a == d);
-      b = Float80.Truncate(a); e = Float128.Truncate(d); Debug.Assert(b == e);
-    }
-    static void test_Float128()
-    {
-      Float128 a, b; rat d, e;
-      a = Math.PI; d = new rat(Math.PI); Debug.Assert(a == d);
-      a = 2; d = 2; Debug.Assert(a == d);
-      a *= 2; d *= 2; Debug.Assert(a == d);
-      a /= 2; d /= 2; Debug.Assert(a == d);
-      a++; d++; Debug.Assert(a == d);
-      a--; d--; Debug.Assert(a == d);
-      for (int i = -5; i <= +3; i++)
+      static void test_Float80()
       {
-        a += i; d += i; Debug.Assert(a == d);
-        a -= i; d -= i; Debug.Assert(a == d);
+        Float80 a, b; Float128 d, e;
+        a = Math.PI; d = Math.PI; Debug.Assert(a == d);
+        a = 2; d = 2; Debug.Assert(a == d);
+        a *= 2; d *= 2; Debug.Assert(a == d);
+        a /= 2; d /= 2; Debug.Assert(a == d);
+        a++; d++; Debug.Assert(a == d);
+        a--; d--; Debug.Assert(a == d);
+        for (int i = -5; i <= +3; i++)
+        {
+          a += i; d += i; Debug.Assert(a == d);
+          a -= i; d -= i; Debug.Assert(a == d);
+        }
+        a = Math.PI; d = Math.PI; Debug.Assert(a == d);
+        b = Float80.Truncate(a); e = Float128.Truncate(d); Debug.Assert(b == e);
       }
-      a = Math.PI; d = new rat(Math.PI); Debug.Assert(a == d);
-      b = Float128.Truncate(a); e = rat.Truncate(d); Debug.Assert(b == e);
+      static void test_Float96()
+      {
+        Float96 a, b; Float128 d, e;
+        a = Math.PI; d = Math.PI; Debug.Assert(a == d);
+        a = 2; d = 2; Debug.Assert(a == d);
+        a *= 2; d *= 2; Debug.Assert(a == d);
+        a /= 2; d /= 2; Debug.Assert(a == d);
+        a++; d++; Debug.Assert(a == d);
+        a--; d--; Debug.Assert(a == d);
+        for (int i = -5; i <= +3; i++)
+        {
+          a += i; d += i; Debug.Assert(a == d);
+          a -= i; d -= i; Debug.Assert(a == d);
+        }
+        a = Math.PI; d = Math.PI; Debug.Assert(a == d);
+        b = Float96.Truncate(a); e = Float128.Truncate(d); Debug.Assert(b == e);
+      }
+      static void test_Float128()
+      {
+        Float128 a, b; rat d, e;
+        a = Math.PI; d = new rat(Math.PI); Debug.Assert(a == d);
+        a = 2; d = 2; Debug.Assert(a == d);
+        a *= 2; d *= 2; Debug.Assert(a == d);
+        a /= 2; d /= 2; Debug.Assert(a == d);
+        a++; d++; Debug.Assert(a == d);
+        a--; d--; Debug.Assert(a == d);
+        for (int i = -5; i <= +3; i++)
+        {
+          a += i; d += i; Debug.Assert(a == d);
+          a -= i; d -= i; Debug.Assert(a == d);
+        }
+        a = Math.PI; d = new rat(Math.PI); Debug.Assert(a == d);
+        b = Float128.Truncate(a); e = rat.Truncate(d); Debug.Assert(b == e);
+      }
+      static void test_Float256()
+      {
+        Float256 a, b; rat d, e;
+        a = Math.PI; d = new rat(Math.PI); Debug.Assert(a == d);
+        a = 2; d = 2; Debug.Assert(a == d);
+        a *= 2; d *= 2; Debug.Assert(a == d);
+        a /= 2; d /= 2; Debug.Assert(a == d);
+        a++; d++; Debug.Assert(a == d);
+        a--; d--; Debug.Assert(a == d);
+        for (int i = -5; i <= +3; i++)
+        {
+          a += i; d += i; Debug.Assert(a == d);
+          a -= i; d -= i; Debug.Assert(a == d);
+        }
+        a = Math.PI; d = new rat(Math.PI); Debug.Assert(a == d);
+        b = Float256.Truncate(a); e = rat.Truncate(d); Debug.Assert(b == e);
+      }
+      static void test_big()
+      {
+        var a = (Float256)rat.Pi(80);
+        var b = Float256.Cast<(UInt128, UInt128, UInt64)>(a);
+        var c = Float256.Cast<(UInt128, UInt128, UInt128)>(a);
+        var d = Float256.Cast<(UInt128, UInt128, UInt128, UInt128)>(a); // Float512
+        var e = d + d; e = e - d;
+        var f = Float256.Cast<(UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128)>(a); // Float1024      
+        f = f + f; f = f - f;
+        var g = Float256.Cast<(UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128,
+          UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128)>(a); // Float2048
+        g = g + g; g = g * g; g = g * g; g = g * g; g = g * g; g = g * g; g = g / g;
+      }
     }
 #endif
   }
