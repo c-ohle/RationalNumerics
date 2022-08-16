@@ -44,7 +44,7 @@ namespace System.Numerics
           var z = cpu.msb(); int s = cpu.sign(), x = unchecked((int)((z >> 2) + 1));
           if (s < 0 && (z & 3) == 0 && cpu.ipt()) x--; //80
           var n = l > x ? l : x; if (dest.Length < n) { cpu.pop(); charsWritten = dest == default ? n : 0; return false; }
-          if (s < 0) cpu.toc(4); cpu.get(cpu.mark() - 1, out ReadOnlySpan<uint> sp);
+          if (s < 0) cpu.toc(4); var sp = cpu.gets(cpu.mark() - 1);
           sp = sp.Slice(1, unchecked((int)(sp[0] & 0x7fffffff)));
           for (int i = 0, k, o = f[0] == 'X' ? 'A' - 10 : 'a' - 10; i < n; i++)
           {
@@ -113,7 +113,7 @@ namespace System.Numerics
         var n = s != 0 ? unchecked((int)(((z - 1) >> 3) + 1)) : isUnsigned ? 1 : 0; //todo: opt.
         var l = n; if (!isUnsigned && (z & 7) == 0 && !(s < 0 && cpu.ipt())) n++;
         if (dest.Length < n) { cpu.pop(); bytesWritten = dest != default ? 0 : n; return false; }
-        if (s == -1) cpu.toc(4); cpu.get(cpu.mark() - 1, out ReadOnlySpan<uint> sp);
+        if (s == -1) cpu.toc(4); var sp = cpu.gets(cpu.mark() - 1);
         var bb = MemoryMarshal.Cast<uint, byte>(sp.Slice(1)).Slice(0, l);
         bb.CopyTo(dest); if (l != n) dest[l] = (byte)(s < 0 ? 0xff : 0); cpu.pop();
         bytesWritten = n; if (isBigEndian) dest.Slice(0, n).Reverse(); return true;

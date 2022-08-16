@@ -456,7 +456,7 @@ namespace System.Numerics
     /// <returns>A <see cref="BigRational"/> number that is equivalent to the number specified in the value parameter.</returns>
     public BigRational(double value)
     {
-      var cpu = main_cpu; cpu.push(value, true); p = cpu.popr().p;
+      var cpu = main_cpu; cpu.push(value, true); this.p = cpu.popr().p;
     }
 
     /// <summary>
@@ -643,15 +643,6 @@ namespace System.Numerics
       var a = default(ulong); main_cpu.toi(value, (uint*)&a, 0x0102); return a;
     }
     /// <summary>
-    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="float"/> value.
-    /// </summary>
-    /// <param name="value">The value to convert to a <see cref="float"/>.</param>
-    /// <returns>The value of the current instance, converted to an <see cref="float"/>.</returns>
-    public static explicit operator float(BigRational value)
-    {
-      return (float)(double)value; //todo: fast float convert
-    }
-    /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="IntPtr"/> value.
     /// </summary>
     /// <param name="value">The value to convert to a <see cref="IntPtr"/>.</param>
@@ -677,6 +668,15 @@ namespace System.Numerics
     public static explicit operator Half(BigRational value)
     {
       return (Half)(double)value;
+    }
+    /// <summary>
+    /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="float"/> value.
+    /// </summary>
+    /// <param name="value">The value to convert to a <see cref="float"/>.</param>
+    /// <returns>The value of the current instance, converted to an <see cref="float"/>.</returns>
+    public static explicit operator float(BigRational value)
+    {
+      return (float)(double)value; //todo: fast float convert
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="double"/> value.
@@ -737,7 +737,9 @@ namespace System.Numerics
     {
       if (value.p == null) return default;
       var cpu = main_cpu; cpu.push(value); cpu.rnd(0, 0); // trunc
-      cpu.get(cpu.mark() - 1, out BigInteger r); cpu.pop(); return r;
+      var s = cpu.gets(cpu.mark() - 1);
+      var a = MemoryMarshal.Cast<uint, byte>(s.Slice(1, unchecked((int)(s[0] & 0x3fffffff))));
+      var r = new BigInteger(a, true, false); if (cpu.sign() < 0) r = -r; cpu.pop(); return r;
     }
     /// <summary>
     /// Defines an explicit access to the internal data representation of a <see cref="BigRational"/> number.
@@ -874,7 +876,7 @@ namespace System.Numerics
       var i = cpu.i; if (i == 0) return b;
       //todo: a == 0 && k out of index is the perfect RT check, but also safe to distinguish - boost or op
       var k = 0; if (p.p != null) { for (; k < i && cpu.p[k] != p.p; k++) ; k++; } //frame support //todo: check opt. test reverse?
-      var t = cpu.sp; cpu.sp = null; cpu.get(unchecked((uint)(i - 1)), out BigRational r); //fetch
+      var t = cpu.sp; cpu.sp = null; var r = cpu.getr(unchecked((uint)(i - 1))); //fetch
       if (k != 0) cpu.sp = t; cpu.pop(i - k); return r;
     }
 
@@ -1379,7 +1381,7 @@ namespace System.Numerics
       /// <seealso href="https://c-ohle.github.io/RationalNumerics/#data-layout"/><br/>
       /// (exception: it does not have to be a normalized fraction.)<br/>
       /// For performance reasons, there are no validation checks at this layer.<br/><br/> 
-      /// Together with <see cref="get(uint, out ReadOnlySpan{uint})"/> the operation represent a fast low level interface for direct access in form of the internal data representation.<br/> 
+      /// Together with <see cref="gets(uint)"/> the operation represent a fast low level interface for direct access in form of the internal data representation.<br/> 
       /// This is intended to allow:<br/>
       /// 1. custom algorithms working on bitlevel<br/>
       /// 2. custom binary serialization<br/>
@@ -1403,21 +1405,20 @@ namespace System.Numerics
       /// For absolute positions see: <see cref="mark"/>
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out BigRational v)
+      public BigRational getr(uint i)
       {
         fixed (uint* p = this.p[i])
         {
-          if (isz(p)) { v = default; return; }
+          if (isz(p)) return default;
           if ((p[0] & 0x40000000) != 0) norm(p);
           var n = len(p);
           if (n == 4 && p[1] == p[3])
           {
             Debug.Assert(p[1] <= 1); // 11, 00
-            v = cachx(p[3] + (p[0] >> 31), p, n); return; //NaN, 1, -1            
+            return cachx(p[3] + (p[0] >> 31), p, n); //NaN, 1, -1            
           }
           var a = new uint[n]; fixed (uint* s = a) copy(s, p, n);
-          v = new BigRational(a);
+          return new BigRational(a);
         }
       }
       /// <summary>
@@ -1429,10 +1430,9 @@ namespace System.Numerics
       /// For absolute positions see: <see cref="mark"/>
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out double v)
+      public double getd(uint i)
       {
-        v = (double)new BigRational(p[i]);
+        return (double)new BigRational(p[i]);
       }
       /// <summary>
       /// Converts the value at absolute position <paramref name="i"/> on stack to a 
@@ -1443,27 +1443,9 @@ namespace System.Numerics
       /// For absolute positions see: <see cref="mark"/>
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out float v)
+      public float getf(uint i)
       {
-        v = (float)new BigRational(p[i]);
-      }
-      /// <summary>
-      /// Converts the numerator of the value at absolute position <paramref name="i"/> on stack to a 
-      /// <see cref="BigInteger"/> number and returns it.
-      /// </summary>
-      /// <remarks>
-      /// In the case of fractional values, it is advisable to round them beforehand using the desired rounding mode.
-      /// </remarks>
-      /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out BigInteger v)
-      {
-        fixed (uint* p = this.p[i])
-        {
-          v = new BigInteger(new ReadOnlySpan<byte>((byte*)(p + 1), unchecked((int)(p[0] & 0x3fffffff) << 2)), true, false);
-          if (sig(p) < 0) v = -v; //fast BigInteger
-        }
+        return (float)getd(i); //new BigRational(p[i]);
       }
       /// <summary>
       /// Exposes the internal data representation of the value at absolute position i on the stack.<br/>
@@ -1479,11 +1461,9 @@ namespace System.Numerics
       /// For absolute positions see: <see cref="mark"/>
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out ReadOnlySpan<uint> v)
+      public ReadOnlySpan<uint> gets(uint i)
       {
-        var p = this.p[i];
-        fixed (uint* u = p) v = new ReadOnlySpan<uint>(p).Slice(0, unchecked((int)len(u)));
+        var p = this.p[i]; fixed (uint* u = p) return new ReadOnlySpan<uint>(p).Slice(0, unchecked((int)len(u)));
       }
 
       /// <summary>
@@ -1493,8 +1473,8 @@ namespace System.Numerics
       /// <returns>A always normalized <see cref="BigRational"/> number.</returns>
       public BigRational popr()
       {
-        if (sp != null) { long d = (long)sp - (long)&d; if (d < 1024) return new BigRational(p[i - 1]); }
-        get(unchecked((uint)(i - 1)), out BigRational r); pop(); return r;
+        if (sp != null) { long d = (long)sp - (long)&d; if (d < 1024) return new BigRational(this.p[this.i - 1]); }
+        var r = getr(unchecked((uint)(i - 1))); pop(); return r;
       }
       /// <summary>
       /// Removes the value currently on top of the stack, 
@@ -1507,7 +1487,7 @@ namespace System.Numerics
       /// <returns>A <see cref="double"/> value.</returns>
       public double popd()
       {
-        get(unchecked((uint)(i - 1)), out double t); pop(); return t;
+        var t = getd(unchecked((uint)(i - 1))); pop(); return t;
       }
       /// <summary>
       /// Removes the value currently on top of the stack, 
@@ -2893,7 +2873,7 @@ namespace System.Numerics
       /// </summary>
       /// <remarks>
       /// Negative signed integer values are converted to it's unsigned variant.<br/>
-      /// Positive unsigned integers are converted to it' signed variant.<br/>
+      /// Positive unsigned integers are converted to it's signed negative variant.<br/>
       /// Parameter <paramref name="c"/> defines a integer type size in bytes.
       /// </remarks>
       /// <param name="c">Integer type size in bytes.</param>
@@ -3405,7 +3385,11 @@ namespace System.Numerics
         for (; i < nb; i++, c = d >> 32) a[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
-      #region experimental
+      #region experimental      
+      internal bool bt(int c) //BT Bit Test, BTS and Set, BTR and Reset, BTC and Complement
+      {
+        return (p[i - 1][1 + (c >> 5)] & (1 << (c & 31))) != 0;
+      }
       internal void toi(BigRational v, uint* p, uint f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
       {
         if (v.p == null) return; uint n = f & 0xff;

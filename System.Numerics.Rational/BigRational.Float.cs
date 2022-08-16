@@ -28,13 +28,10 @@ namespace System.Numerics
       public override readonly string ToString() => ToString(null, null);
       public readonly string ToString(string? format, IFormatProvider? provider = default)
       {
-        var dig = (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f));
-        var cpu = main_cpu; var p = this.p; var e = push(cpu, (uint*)&p);
+        var dig = (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f)); if (sizeof(T) == 2) dig = 5;
+        var cpu = main_cpu; var p = this.p; var e = push(cpu, (uint*)&p); //if (dig < e) dig = e;
         cpu.pow(2, e); cpu.mul(); var r = new BigRational(cpu.p[cpu.i - 1]);
-        //Span<char> s = stackalloc char[dig+32]; r.TryFormat(s, out var sw, "L" + dig); //.ToString("L10000"); 
-        var ss = r.ToString("Ö" + dig);
-        cpu.pop(); //var ss = s.Slice(0, sw).ToString(); 
-        return ss;
+        var ss = r.ToString("Ö" + dig); cpu.pop(); return ss;
       }
       public override readonly int GetHashCode()
       {
@@ -135,10 +132,6 @@ namespace System.Numerics
         var cpu = main_cpu; int ae = push(cpu, (uint*)&a), be = push(cpu, (uint*)&b), l = ae < be ? 1 : 0, e;
         cpu.shr(l == 0 ? (e = ae) - be : (e = be) - ae, l); cpu.sub();
         Float<T> c; pop(cpu, e, (uint*)&c); return c;
-
-        //uint* u = (uint*)&a, v = (uint*)&b;
-        //if ((sizeof(T) & 2) == 0) v[lui] ^= 0x80000000; else v[lui] ^= 0x8000;
-        //Float<T> c; add(u, v, (uint*)&c); return c;
       }
       public static Float<T> operator *(Float<T> a, Float<T> b)
       {
@@ -189,6 +182,21 @@ namespace System.Numerics
         Float<B> c; Float<B>.pop(cpu, e, (uint*)&c); return c;
       }
 
+      public static Float<T> MaxValue
+      {
+        get
+        {
+          Float<T> u; new Span<byte>(&u, sizeof(T)).Fill(0xff);
+          ref var p = ref ((uint*)&u)[lui]; p = 0x7fffffffu ^ (1u << ((mbi - 1) & 31));
+          if ((sizeof(T) & 2) != 0) p = sizeof(T) != 2 ? p >> 16 : 0x7bff;
+          return u;
+        }
+      }
+      public static Float<T> MinValue
+      {
+        get { return -MaxValue; }
+      }
+
       #region private
       //[DebuggerBrowsable(DebuggerBrowsableState.Never)]
       private readonly T p;
@@ -206,10 +214,14 @@ namespace System.Numerics
       private static void pop(CPU cpu, int e, uint* p)
       {
         int s = unchecked((int)cpu.msb()); if (s == 0) { cpu.pop(); *(Float<T>*)p = default; return; }
-        int d = s - mbi, l; cpu.shr(d); cpu.get(cpu.mark() - 1, out ReadOnlySpan<uint> sp);
+        int d = s - mbi, l;
+        if (d > 0) { var c = cpu.bt(d - 1); cpu.shr(d); if (c) cpu.inc(); } //x87 rnd
+        else if (d != 0) cpu.shl(-d);
+        var sp = cpu.gets(cpu.mark() - 1);
         p[l = lui] = (sp[0] & 0x80000000) | (unchecked((uint)((e + d) + bia)) << ((31 - sbi))) | (sp[l + 1] & ((1u << (mbi - 1)) - 1u));
         if ((sizeof(T) & 2) != 0) if (l != 0) p[l] >>= 16; else p[l] = (p[l] & 0xffff) | p[l] >> 16;
-        for (int i = 0; i < l; i++) p[i] = sp[i + 1]; cpu.pop();
+        for (int i = 0; i < l; i++) p[i] = sp[i + 1];
+        cpu.pop();
       }
       private static bool Equals(uint* a, uint* b)
       {
@@ -231,7 +243,7 @@ namespace System.Numerics
         if (ea != eb) { cpu.pop(2); return ea > eb ? sa : -sa; }
         ea = cpu.cmp(); cpu.pop(2); return ea * sa;
       }
-      //[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)]
       private static readonly int sbi, mbi, bia, lui; //todo: inline
       static Float()
       {
@@ -245,7 +257,6 @@ namespace System.Numerics
       internal static int Bits => sizeof(T) << 3;
       internal static int BiasedExponentShift => mbi - 1; // dbl 52
       internal static int ExponentBits => (sizeof(T) << 3) - mbi; // dbl 11
-      internal static int MinBiasedExponent => 0;
       internal static int MaxBiasedExponent => (1 << sbi) - 1; // dbl 0x07FF;
       internal static int ExponentBias => (1 << (ExponentBits - 1)) - 1; // dbl 1023
       internal static int MinExponent => 1 - ExponentBias; // dbl -1022;
@@ -266,8 +277,6 @@ namespace System.Numerics
       //    case 32: Debug.Assert(Bits == 256 && mbi == 237 && ExponentBits == 19 && MinExponent == -262142 && MaxExponent == 262143); break;
       //  }
       //}
-      //public static Float<T> MinValue { get { return 0; } }
-      //public static Float<T> MaxValue { get { return 0; } }
     }
 
     // func's spec
@@ -616,9 +625,5 @@ namespace System.Numerics
       }
     }
   }
-
-#if NET6_0 //todo: remove
-  public struct UInt128 { public UInt64 upper, lower; }
-#endif
 
 }

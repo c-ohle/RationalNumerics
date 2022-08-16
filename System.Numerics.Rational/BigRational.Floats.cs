@@ -50,8 +50,15 @@ namespace System.Numerics
     public static Float128 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float128(BigRational.Float<T>.Cast<UInt128>(a));
     public static BigRational.Float<T> Cast<T>(Float128 a) where T : unmanaged => BigRational.Float<UInt128>.Cast<T>(a.p);
 
+    public static Float128 MinValue => new Float128(BigRational.Float<UInt128>.MinValue);
+    public static Float128 MaxValue => new Float128(BigRational.Float<UInt128>.MaxValue);
+
     Float128(BigRational.Float<UInt128> p) => this.p = p;
     private readonly BigRational.Float<UInt128> p;
+
+    [StructLayout(LayoutKind.Sequential, Size = 16)]
+    private readonly struct UInt128 { }
+
   }
 
   /// <summary>
@@ -65,15 +72,15 @@ namespace System.Numerics
     public readonly override string ToString() => p.ToString();
     public override readonly int GetHashCode() => p.GetHashCode();
     public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
-    public readonly bool Equals(Float256 b) => BigRational.Float<(UInt128, UInt128)>.Equals(this.p, b.p);
-    public readonly int CompareTo(Float256 b) => BigRational.Float<(UInt128, UInt128)>.Compare(this.p, b.p);
+    public readonly bool Equals(Float256 b) => BigRational.Float<UInt256>.Equals(this.p, b.p);
+    public readonly int CompareTo(Float256 b) => BigRational.Float<UInt256>.Compare(this.p, b.p);
 
-    public static implicit operator Float256(int value) => new Float256((BigRational.Float<(UInt128, UInt128)>)value);
-    public static implicit operator Float256(Half value) => new Float256((BigRational.Float<(UInt128, UInt128)>)value);
-    public static implicit operator Float256(float value) => new Float256((BigRational.Float<(UInt128, UInt128)>)value);
-    public static implicit operator Float256(double value) => new Float256((BigRational.Float<(UInt128, UInt128)>)value);
-    public static implicit operator Float256(Float128 value) => new Float256(Float128.Cast<(UInt128, UInt128)>(value));
-    public static explicit operator Float256(BigRational value) => new Float256((BigRational.Float<(UInt128, UInt128)>)value);
+    public static implicit operator Float256(int value) => new Float256((BigRational.Float<UInt256>)value);
+    public static implicit operator Float256(Half value) => new Float256((BigRational.Float<UInt256>)value);
+    public static implicit operator Float256(float value) => new Float256((BigRational.Float<UInt256>)value);
+    public static implicit operator Float256(double value) => new Float256((BigRational.Float<UInt256>)value);
+    public static implicit operator Float256(Float128 value) => new Float256(Float128.Cast<UInt256>(value));
+    public static explicit operator Float256(BigRational value) => new Float256((BigRational.Float<UInt256>)value);
 
     public static explicit operator int(Float256 value) => (int)value.p;
     public static explicit operator Half(Float256 value) => (Half)value.p;
@@ -96,12 +103,17 @@ namespace System.Numerics
     public static bool operator <(Float256 a, Float256 b) => a.p < b.p;
     public static bool operator >(Float256 a, Float256 b) => a.p > b.p;
 
-    public static Float256 Truncate(Float256 a) => new Float256(BigRational.Float<(UInt128, UInt128)>.Truncate(a.p));    
-    public static Float256 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float256(BigRational.Float<T>.Cast<(UInt128, UInt128)>(a));
-    public static BigRational.Float<T> Cast<T>(Float256 a) where T : unmanaged => BigRational.Float<(UInt128, UInt128)>.Cast<T>(a.p);
+    public static Float256 Truncate(Float256 a) => new Float256(BigRational.Float<UInt256>.Truncate(a.p));    
+    public static Float256 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float256(BigRational.Float<T>.Cast<UInt256>(a));
+    public static BigRational.Float<T> Cast<T>(Float256 a) where T : unmanaged => BigRational.Float<UInt256>.Cast<T>(a.p);
+    
+    public static Float256 MinValue => new Float256(BigRational.Float<UInt256>.MinValue);
+    public static Float256 MaxValue => new Float256(BigRational.Float<UInt256>.MaxValue);
 
-    private readonly BigRational.Float<(UInt128, UInt128)> p;
-    Float256(BigRational.Float<(UInt128, UInt128)> p) => this.p = p;
+    private readonly BigRational.Float<UInt256> p;
+    Float256(BigRational.Float<UInt256> p) => this.p = p;
+    [StructLayout(LayoutKind.Sequential, Size = 32)]
+    private readonly struct UInt256 { }
   }
 
   /// <summary>
@@ -148,10 +160,13 @@ namespace System.Numerics
     public static Float80 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float80(BigRational.Float<T>.Cast<UInt80>(a));
     public static BigRational.Float<T> Cast<T>(Float80 a) where T : unmanaged => BigRational.Float<UInt80>.Cast<T>(a.p);
 
+    public static Float80 MinValue => new Float80(BigRational.Float<UInt80>.MinValue);
+    public static Float80 MaxValue => new Float80(BigRational.Float<UInt80>.MaxValue);
+
     Float80(BigRational.Float<UInt80> p) => this.p = p;
     private readonly BigRational.Float<UInt80> p;
-    [StructLayout(LayoutKind.Sequential, Pack = 2, Size = 10)]
-    private readonly struct UInt80 { readonly UInt16 upper; readonly UInt64 lower; }
+    [StructLayout(LayoutKind.Sequential, Size = 10)] // Pack = 2 
+    private readonly struct UInt80 { } // readonly UInt16 upper; readonly UInt64 lower; }
   }
 
 }

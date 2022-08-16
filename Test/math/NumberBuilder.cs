@@ -27,7 +27,7 @@ namespace Test
     public override string ToString()
     {
       return string.Join("; ", Enumerable.Range(0, (int)cpu.mark()).Reverse().
-        Select(i => { cpu.get((uint)i, out BigRational r); return r.ToString(); }));
+        Select(i => cpu.getr((uint)i).ToString()));
     }
     void INumberBuilder.Push<T>(T value) => cpu.push(CreateChecked<BigRational, T>(value));
     T INumberBuilder.Pop<T>() => CreateChecked<T, BigRational>(cpu.popr());

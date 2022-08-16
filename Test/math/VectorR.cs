@@ -1,6 +1,7 @@
 ﻿
 
 using System.Diagnostics.CodeAnalysis;
+
 using Test;
 
 namespace System.Numerics.Rational
@@ -126,12 +127,12 @@ namespace System.Numerics.Rational
       for (uint i = 0; i < count; i++)
       {
         cpu.norm(unchecked((int)(count - i - 1)));
-        cpu.get(m + i, out ReadOnlySpan<uint> s); a += s.Length;
+        var s = cpu.gets(m + i); a += s.Length;
       }
       var p = new uint[count + a]; var w = new Span<uint>(p);
       for (uint i = 0, b = c; i < count; i++)
       {
-        p[i] = i == 0 ? c : b; cpu.get(m + i, out ReadOnlySpan<uint> s);
+        p[i] = i == 0 ? c : b; var s = cpu.gets(m + i);
         s.CopyTo(w.Slice(unchecked((int)b))); b += unchecked((uint)s.Length);
       }
       return new VectorR(p);

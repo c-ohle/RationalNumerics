@@ -5,7 +5,6 @@ global using rat = System.Numerics.BigRational;
 global using BigInt = System.Numerics.BigRational.Integer;
 global using Float16 = System.Numerics.BigRational.Float<System.UInt16>;
 global using Float32 = System.Numerics.BigRational.Float<System.UInt32>;
-//global using Float64 = System.Numerics.BigRational.Float<System.UInt64>;
 
 namespace Test
 {
@@ -14,21 +13,55 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); test();
+      ApplicationConfiguration.Initialize(); //test();
       Application.Run(new MainFrame());
     }
 
-#if true //NET7_0
+#if false //NET7_0
     static void test()
     {
-      test_str();
+      Float64 a, b; double d, e;
+
+      a = Float64.MinValue; Debug.Assert(a == double.MinValue);
+      a = Float64.MaxValue; Debug.Assert(a == double.MaxValue);
+
+      a = (double)Float32.MinValue; Debug.Assert(a == float.MinValue);
+      a = (double)Float32.MaxValue; Debug.Assert(a == float.MaxValue);
+
+      var z1 = Float16.MaxValue; Debug.Assert((double)z1 == +65504);
+      var z2 = Float16.MinValue; Debug.Assert((double)z2 == -65504);
+
+      var x2 = Float80.MaxValue;
+      var x1 = Float80.MinValue;
+
+      var t1 = Float128.MaxValue; t1 = Float128.MinValue;
+      var t2 = Float256.MaxValue; t2 = Float256.MinValue;
+
+      a = 2; d = 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+      a *= 2; d *= 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+      a *= 2; d *= 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+      a /= 2; d /= 2; Debug.Assert((double)a == d && *(double*)&a == *(double*)&d);
+      var rnd = new Random(13);
+      for (int i = 0; i < 10000; i++)
+      {
+        d = -rnd.NextDouble() * 1e-20; a = d; Debug.Assert(*(double*)&a == *(double*)&d);
+        a *= 2; d *= 2; Debug.Assert(*(double*)&a == *(double*)&d);
+        a /= 2; d /= 2; Debug.Assert(*(double*)&a == *(double*)&d);
+        b = a; e = d;
+        a = b * b; d = e * e; Debug.Assert(*(double*)&a == *(double*)&d);
+      }
+      a = Math.PI; d = Math.PI; Debug.Assert((double)a == d);
+      b = a * a; e = d * d; Debug.Assert((double)b == e);
+      b = b / a; e = e / d; Debug.Assert((double)b == e);
+
       test_Float64();
-      test_Float80();
       test_Float32();
+      test_Float80();
       test_Float16();
       test_Float96();
       test_Float128();
       test_Float256();
+      test_str();
       test_big();
 
       static void test_str()
@@ -65,10 +98,10 @@ namespace Test
         }
         a = Math.PI; d = Math.PI;
         b = Float64.Truncate(a); e = Math.Truncate(d); Debug.Assert((double)b == e);
-        b = a * a; e = d * d; //Debug.Assert((double)b == e);
+        b = a * a; e = d * d; Debug.Assert((double)b == e);
         var t1 = *(ulong*)&b;
         var t2 = *(ulong*)&e;
-        b = b / a; e = e / d; // Debug.Assert((double)b == e);
+        b = b / a; e = e / d; Debug.Assert((double)b == e);
       }
       static void test_Float16()
       {
@@ -97,7 +130,7 @@ namespace Test
       {
         Float32 a, b; float d, e;
         a = (Float32)MathF.PI; d = MathF.PI; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
-        a = (Float32)Math.PI; Debug.Assert((float)a != d);
+        a = (Float32)Math.PI; Debug.Assert((float)a == d);
         a = (Float32)2; d = 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
         a *= (Float32)2; d *= 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
         a /= (Float32)2; d /= 2; Debug.Assert((float)a == d && *(float*)&a == *(float*)&d);
@@ -183,6 +216,7 @@ namespace Test
       }
       static void test_big()
       {
+#if NET7_0
         var a = (Float256)rat.Pi(80);
         var b = Float256.Cast<(UInt128, UInt128, UInt64)>(a);
         var c = Float256.Cast<(UInt128, UInt128, UInt128)>(a);
@@ -193,8 +227,9 @@ namespace Test
         var g = Float256.Cast<(UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128,
           UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128, UInt128)>(a); // Float2048
         g = g + g; g = g * g; g = g * g; g = g * g; g = g * g; g = g * g; g = g / g;
+#endif
       }
     }
 #endif
-  }
+      }
 }

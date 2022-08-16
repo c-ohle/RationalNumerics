@@ -122,7 +122,7 @@ namespace System.Numerics
       /// <seealso href="https://c-ohle.github.io/RationalNumerics/#data-layout"/><br/>
       /// (exception: it does not have to be a normalized fraction.)<br/>
       /// For performance reasons, there are no validation checks at this layer.<br/><br/> 
-      /// Together with <see cref="get(uint, out ReadOnlySpan{uint})"/> the operation represent a fast low level interface for direct access in form of the internal data representation.<br/> 
+      /// Together with <see cref="gets(uint)"/> the operation represent a fast low level interface for direct access in form of the internal data representation.<br/> 
       /// This is intended to allow:<br/>
       /// 1. custom algorithms working on bitlevel<br/>
       /// 2. custom binary serialization<br/>
@@ -139,8 +139,7 @@ namespace System.Numerics
       /// For absolute positions see: <see cref="mark"/>
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out BigRational v) => p.get(i, out v);
+      public BigRational getr(uint i) => p.getr(i);
       /// <summary>
       /// Converts the value at absolute position <paramref name="i"/> on stack to a 
       /// <see cref="double"/> value and returns it.
@@ -150,8 +149,7 @@ namespace System.Numerics
       /// For absolute positions see: <see cref="mark"/>
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out double v) => p.get(i, out v);
+      public double getd(uint i) => p.getd(i);
       /// <summary>
       /// Converts the value at absolute position <paramref name="i"/> on stack to a 
       /// <see cref="float"/> value and returns it.
@@ -161,18 +159,7 @@ namespace System.Numerics
       /// For absolute positions see: <see cref="mark"/>
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out float v) => p.get(i, out v);
-      /// <summary>
-      /// Converts the numerator of the value at absolute position <paramref name="i"/> on stack to a 
-      /// <see cref="BigInteger"/> number and returns it.
-      /// </summary>
-      /// <remarks>
-      /// In the case of fractional values, it is advisable to round them beforehand using the desired rounding mode.
-      /// </remarks>
-      /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out BigInteger v) => p.get(i, out v);
+      public float getf(uint i) => p.getf(i);
       /// <summary>
       /// Exposes the internal data representation of the value at absolute position i on the stack.<br/>
       /// </summary>
@@ -187,8 +174,7 @@ namespace System.Numerics
       /// For absolute positions see: <see cref="mark"/>
       /// </remarks>
       /// <param name="i">Absolute index of the value to get.</param>
-      /// <param name="v">Returns the value.</param>
-      public void get(uint i, out ReadOnlySpan<uint> v) => p.get(i, out v);
+      public ReadOnlySpan<uint> gets(uint i) => p.gets(i);
       /// <summary>
       /// Removes the value currently on top of the stack, 
       /// convert and returns it as always normalized <see cref="BigRational"/> number.<br/>

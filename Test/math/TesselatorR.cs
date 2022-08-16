@@ -184,10 +184,10 @@ namespace System.Numerics.Rational
                 if (Math.Abs(old) == 1 && Math.Abs(dir) == 2) { k = i; continue; }
                 if (Math.Abs(old) == 2 && Math.Abs(dir) == 1) break;
                 goto skip;
-              //case Winding.AbsGeqThree:
-              //  if (old == 2 && dir == 3) { k = i; continue; }
-              //  if (old == 3 && dir == 2) break;
-              //  goto skip;
+                //case Winding.AbsGeqThree:
+                //  if (old == 2 && dir == 3) { k = i; continue; }
+                //  if (old == 3 && dir == 2) break;
+                //  goto skip;
             }
             var a = (uint)(kk[k].a * 8); ref var u = ref pp[kk[k].a];
             if (cpu.equ(a + 5, b + 5) && cpu.equ(a + 6, b + 6))
@@ -297,13 +297,8 @@ namespace System.Numerics.Rational
         {
           state |= 0x20;
           if (rp == null || rp.Length < np) rp = new Vector3R[np]; //ensure(ref rp, Math.Max(4, this.np));
-          for (int i = 0; i < np; i++)
-          {
-            cpu.get((uint)(i * 8 + 0), out BigRational x);
-            cpu.get((uint)(i * 8 + 1), out BigRational y);
-            cpu.get((uint)(i * 8 + 2), out BigRational z);
-            rp[i] = new Vector3R(x, y, z);
-          }
+          for (uint i = 0; i < np; i++)
+            rp[i] = new Vector3R(cpu.getr(i * 8 + 0), cpu.getr(i * 8 + 1), cpu.getr(i * 8 + 2));
         }
         return new ReadOnlyArray<Vector3R>(rp, this.np);
       }
@@ -317,13 +312,8 @@ namespace System.Numerics.Rational
         {
           state |= 0x10; //Debug.Assert(pp.Length >= np);
           if (fp == null || fp.Length < np) fp = new Vector3[np];
-          for (int i = 0; i < np; i++)
-          {
-            cpu.get((uint)(i * 8 + 0), out float x);
-            cpu.get((uint)(i * 8 + 1), out float y);
-            cpu.get((uint)(i * 8 + 2), out float z);
-            fp[i] = new Vector3(x, y, z);
-          }
+          for (uint i = 0, k; i < np; i++)
+            fp[i] = new Vector3(cpu.getf(k = i * 8), cpu.getf(k + 1), cpu.getf(k + 2));
         }
         return new ReadOnlyArray<Vector3>(fp, this.np);
       }
@@ -602,10 +592,10 @@ namespace System.Numerics.Rational
       fixed (void* tp = pp)
       {
         var dd = (Vector2*)tp;
-        for (int i = 0; i < np; i++)
+        for (uint i = 0; i < np; i++)
         {
-          cpu.get((uint)(i * 8 + 0), out dd[i].X);
-          cpu.get((uint)(i * 8 + 1), out dd[i].Y);
+          dd[i].X = cpu.getf(i * 8 + 0);
+          dd[i].Y = cpu.getf(i * 8 + 1);
         }
         for (int i = 0, s = 0, t; i < ns; i++)
         {

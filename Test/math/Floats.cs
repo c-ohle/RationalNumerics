@@ -39,6 +39,9 @@ namespace System.Numerics.Rational
     public static Float64 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float64(BigRational.Float<T>.Cast<UInt64>(a));
     public static BigRational.Float<T> Cast<T>(Float64 a) where T : unmanaged => BigRational.Float<UInt64>.Cast<T>(a.p);
 
+    public static Float64 MinValue => new Float64(BigRational.Float<UInt64>.MinValue);
+    public static Float64 MaxValue => new Float64(BigRational.Float<UInt64>.MaxValue);
+
     private Float64(BigRational.Float<UInt64> p) => this.p = p;
     private readonly BigRational.Float<UInt64> p;
   }
@@ -83,6 +86,9 @@ namespace System.Numerics.Rational
 
     public static Float96 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float96(BigRational.Float<T>.Cast<UInt96>(a));
     public static BigRational.Float<T> Cast<T>(Float96 a) where T : unmanaged => BigRational.Float<UInt96>.Cast<T>(a.p);
+
+    public static Float96 MinValue => new Float96(BigRational.Float<UInt96>.MinValue);
+    public static Float96 MaxValue => new Float96(BigRational.Float<UInt96>.MaxValue);
 
     Float96(BigRational.Float<UInt96> p) => this.p = p;
     private readonly BigRational.Float<UInt96> p;
