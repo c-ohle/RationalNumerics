@@ -5,6 +5,7 @@ global using rat = System.Numerics.BigRational;
 global using BigInt = System.Numerics.BigRational.Integer;
 global using Float16 = System.Numerics.BigRational.Float<System.UInt16>;
 global using Float32 = System.Numerics.BigRational.Float<System.UInt32>;
+using System.Globalization;
 
 namespace Test
 {
@@ -20,8 +21,115 @@ namespace Test
 #if false //NET7_0
     static void test()
     {
-      Float64 a, b; double d, e;
+      Float64 a, b; double d, e; string s, t;
 
+      d = 1054.32179;
+      t = d.ToString("F"); a = d; s = a.ToString("F");
+      t = d.ToString("F1"); a = d; s = a.ToString("F1");
+      t = d.ToString("F2"); a = d; s = a.ToString("F2");
+      t = d.ToString("F3"); a = d; s = a.ToString("F3");
+      t = d.ToString("F15"); a = d; s = a.ToString("F15");
+
+      d = 123000000;
+      t = d.ToString("F15"); a = d; s = a.ToString("F15");
+      d = 0.000000000000000000123;
+      t = d.ToString("F15"); a = d; s = a.ToString("F15");
+
+      s = a.ToString("F30");
+      s = a.ToString("F40");
+      s = a.ToString("F80");
+
+      d = -195489100.8377;
+      t = d.ToString("F"); a = d; s = a.ToString("F");
+      t = d.ToString("F1"); a = d; s = a.ToString("F1");
+      t = d.ToString("F2"); a = d; s = a.ToString("F2");
+      t = d.ToString("F3"); a = d; s = a.ToString("F3");
+      t = d.ToString("f0"); a = d; s = a.ToString("f0");
+
+      d = 1230.0012300123;
+      t = d.ToString("F"); a = d; s = a.ToString("F");
+      t = d.ToString("f0"); a = d; s = a.ToString("f0");
+      t = d.ToString("F1"); a = d; s = a.ToString("F1");
+      t = d.ToString("F2"); a = d; s = a.ToString("F2");
+      t = d.ToString("F3"); a = d; s = a.ToString("F3");
+      t = d.ToString("F4"); a = d; s = a.ToString("F4");
+      t = d.ToString("F5"); a = d; s = a.ToString("F5");
+      t = d.ToString("F6"); a = d; s = a.ToString("F6");
+      t = d.ToString("F7"); a = d; s = a.ToString("F7");
+
+      d = 1054.32179;
+      t = d.ToString("e3"); a = d; s = a.ToString("e3");
+      t = d.ToString("e2"); a = d; s = a.ToString("e2");
+      t = d.ToString("e1"); a = d; s = a.ToString("e1");
+      t = d.ToString("E"); a = d; s = a.ToString("E");
+      t = d.ToString("E10"); a = d; s = a.ToString("E10");
+
+      d = -1.954891e+008;
+      t = d.ToString("e0"); a = d; s = a.ToString("e0");
+      t = d.ToString("e1"); a = d; s = a.ToString("e1");
+      t = d.ToString("e2"); a = d; s = a.ToString("e2");
+      t = d.ToString("e3"); a = d; s = a.ToString("e3");
+
+      d = 1234567.89;
+      t = d.ToString("E0"); a = d; s = a.ToString("E0");
+      t = d.ToString("E1"); a = d; s = a.ToString("E1");
+      t = d.ToString("E2"); a = d; s = a.ToString("E2");
+      t = d.ToString("E3"); a = d; s = a.ToString("E3");
+      d = -0.00001020304;
+      t = d.ToString("E"); a = d; s = a.ToString("E");
+      t = d.ToString("E1"); a = d; s = a.ToString("E1");
+      t = d.ToString("E2"); a = d; s = a.ToString("E2");
+      t = d.ToString("E3"); a = d; s = a.ToString("E3");
+      t = d.ToString("E4"); a = d; s = a.ToString("E4");
+      t = d.ToString("E5"); a = d; s = a.ToString("E5");
+
+
+      Span<char> ss = new char[100];
+      a = Math.PI; 
+      a.TryFormat(ss, out var ns, "G", null); s = ss.Slice(0, ns).ToString();
+      a.TryFormat(ss, out ns, "G4", null); s = ss.Slice(0, ns).ToString();
+      a = Math.PI * 1e50; 
+      a.TryFormat(ss, out ns, default, null); s = ss.Slice(0, ns).ToString();
+      a.TryFormat(ss, out ns, "g7", null); s = ss.Slice(0, ns).ToString();
+
+      for (int i = -20; i <= +20; i++)
+      {
+        d = Math.PI * Math.Pow(10, i);
+        t = d.ToString(); a = d; s = a.ToString("G");
+      }
+      d = Math.PI; t = d.ToString(); a = d; s = a.ToString("G");
+      d = Math.PI; t = d.ToString("G0"); a = d; s = a.ToString("G0");
+      d = Math.PI; t = d.ToString("G1"); a = d; s = a.ToString("G1");
+      d = Math.PI; t = d.ToString("G2"); a = d; s = a.ToString("G2");
+      d = Math.PI; t = d.ToString("G3"); a = d; s = a.ToString("G3");
+      d = -Math.PI; t = d.ToString(); a = d; s = a.ToString("G");
+      d = -Math.PI; t = d.ToString("G3"); a = d; s = a.ToString("G3");
+
+      d = 123.456; t = d.ToString(); a = d; s = a.ToString("G");
+      d = 1054.32179; t = d.ToString(); a = d; s = a.ToString("G");
+      d = -195489100.8377; t = d.ToString(); a = d; s = a.ToString("G");
+      d = -195489100; t = d.ToString(); a = d; s = a.ToString("G");
+      d = -0.00123; t = d.ToString(); a = d; s = a.ToString("G");
+      d = -0.123; t = d.ToString(); a = d; s = a.ToString("G");
+      d = 1234; t = d.ToString(); a = d; s = a.ToString("G");
+      d = 0; t = d.ToString(); a = d; s = a.ToString("G");
+      d = 1; t = d.ToString(); a = d; s = a.ToString("G");
+      d = -1; t = d.ToString(); a = d; s = a.ToString("G");
+      d = 1.0437E+21; t = d.ToString(); a = d; s = a.ToString("G");
+      d = -1.0573E-05; t = d.ToString(); a = d; s = a.ToString("G");
+      d = 1.01234567891E+21; t = d.ToString(); a = d; s = a.ToString("G"); //check
+
+      d = 1054.32179;
+      t = d.ToString("E"); a = d; s = a.ToString("E");
+      t = d.ToString("E1"); a = d; s = a.ToString("E1");
+      t = d.ToString("e2"); a = d; s = a.ToString("e2");
+      t = d.ToString("E3"); a = d; s = a.ToString("E3");
+      d = -195489100.8377;
+      t = d.ToString("e"); a = d; s = a.ToString("e");
+      t = d.ToString("E1"); a = d; s = a.ToString("E1");
+      t = d.ToString("E2"); a = d; s = a.ToString("E2");
+      t = d.ToString("E3"); a = d; s = a.ToString("E3");
+       
       a = Float64.MinValue; Debug.Assert(a == double.MinValue);
       a = Float64.MaxValue; Debug.Assert(a == double.MaxValue);
 
@@ -231,5 +339,5 @@ namespace Test
       }
     }
 #endif
-      }
+  }
 }

@@ -12,13 +12,16 @@ namespace System.Numerics
   /// Also known as C/C++ (GCC) <c>__float128</c><br/> 
   /// The data format and properties as defined in <seealso href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</seealso>.<br/>
   /// </remarks>
-  public readonly struct Float128 : IComparable<Float128>, IEquatable<Float128>
+  public readonly struct Float128 : IComparable<Float128>, IEquatable<Float128>, IComparable, ISpanFormattable
   {
     public readonly override string ToString() => p.ToString();
+    public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => p.TryFormat(destination, out charsWritten, format, provider);
     public override readonly int GetHashCode() => p.GetHashCode();
     public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
     public readonly bool Equals(Float128 b) => BigRational.Float<UInt128>.Equals(this.p, b.p);
     public readonly int CompareTo(Float128 b) => BigRational.Float<UInt128>.Compare(this.p, b.p);
+    public readonly int CompareTo(object? p) => p == null ? 1 : p is Float128 b ? BigRational.Float<UInt128>.Compare(this.p, b.p) : throw new ArgumentException();
 
     public static implicit operator Float128(int value) => new Float128((BigRational.Float<UInt128>)value);
     public static implicit operator Float128(Half value) => new Float128((BigRational.Float<UInt128>)value);
@@ -55,10 +58,8 @@ namespace System.Numerics
 
     Float128(BigRational.Float<UInt128> p) => this.p = p;
     private readonly BigRational.Float<UInt128> p;
-
     [StructLayout(LayoutKind.Sequential, Size = 16)]
     private readonly struct UInt128 { }
-
   }
 
   /// <summary>
@@ -67,13 +68,16 @@ namespace System.Numerics
   /// <remarks>
   /// The data format and properties as defined in <seealso href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</seealso>.
   /// </remarks>
-  public readonly struct Float256 : IComparable<Float256>, IEquatable<Float256>
+  public readonly struct Float256 : IComparable<Float256>, IEquatable<Float256>, IComparable, ISpanFormattable
   {
     public readonly override string ToString() => p.ToString();
+    public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => p.TryFormat(destination, out charsWritten, format, provider);
     public override readonly int GetHashCode() => p.GetHashCode();
     public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
     public readonly bool Equals(Float256 b) => BigRational.Float<UInt256>.Equals(this.p, b.p);
     public readonly int CompareTo(Float256 b) => BigRational.Float<UInt256>.Compare(this.p, b.p);
+    public readonly int CompareTo(object? p) => p == null ? 1 : p is Float256 b ? BigRational.Float<UInt256>.Compare(this.p, b.p) : throw new ArgumentException();
 
     public static implicit operator Float256(int value) => new Float256((BigRational.Float<UInt256>)value);
     public static implicit operator Float256(Half value) => new Float256((BigRational.Float<UInt256>)value);
@@ -124,13 +128,16 @@ namespace System.Numerics
   /// The data format and properties as defined for the most common 
   /// <seealso href="https://en.wikipedia.org/wiki/Extended_precision#x86_extended_precision_format">x86 extended precision format</seealso>.<br/>
   /// </remarks>
-  public readonly struct Float80 : IComparable<Float80>, IEquatable<Float80>
+  public readonly struct Float80 : IComparable<Float80>, IEquatable<Float80>, IComparable, ISpanFormattable
   {
     public readonly override string ToString() => p.ToString();
+    public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => p.TryFormat(destination, out charsWritten, format, provider);
     public override readonly int GetHashCode() => p.GetHashCode();
     public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
     public readonly bool Equals(Float80 b) => BigRational.Float<UInt80>.Equals(this.p, b.p);
     public readonly int CompareTo(Float80 b) => BigRational.Float<UInt80>.Compare(this.p, b.p);
+    public readonly int CompareTo(object? p) => p == null ? 1 : p is Float80 b ? BigRational.Float<UInt80>.Compare(this.p, b.p) : throw new ArgumentException();
 
     public static implicit operator int(Float80 value) => (int)value.p;
     public static implicit operator Half(Float80 value) => (Half)value.p;

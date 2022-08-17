@@ -15,7 +15,7 @@ using static System.Numerics.BigRational;
 namespace System.Numerics
 {
   unsafe partial struct BigRational :
-    INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, //todo: check IConvertible, does it makes much sens for non system types?
+    INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, 
     IPowerFunctions<BigRational>, IRootFunctions<BigRational>, IExponentialFunctions<BigRational>,
     ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational>
   {

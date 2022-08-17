@@ -118,7 +118,6 @@ namespace System.Numerics
               if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
               emax = -(emin = int.MaxValue); goto def;
             //case 'X': throw new FormatException(nameof(format));
-            case 'Ö': digs = round; round = Math.Max(0, digs - ILog10(this)); goto def; //todo: rem
           }
         var e = ILog10(this);
         if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
@@ -2141,7 +2140,7 @@ namespace System.Numerics
       {
         uint e = unchecked((uint)(y < 0 ? -y : y)), z; //todo: pow cache
         if (x == 10) { push(unchecked((ulong)Math.Pow(x, z = e < 19 ? e : 19))); e -= z; } //todo: opt. 1, 0, -1, -2, -4,...
-        else if ((x & (x - 1)) == 0 && x >= 0)
+        else if ((x & (x - 1)) == 0 && x >= 0) // 2, 4, 8
         {
           if (x > 1) { push(unchecked((uint)BitOperations.TrailingZeroCount(x))); shl(unchecked((int)e)); }
           else push(unchecked((uint)x)); e = 0;
@@ -3500,6 +3499,48 @@ namespace System.Numerics
           return a;
         }
       }
+    }
+    #endregion
+    #region experimental 
+    static int tos(Span<char> sp, CPU cpu, char fmt, int dig, int rnd, int fl)
+    {
+      Debug.Assert(sp.Length >= dig + 16); // -.E+2147483647 14      
+      var sig = cpu.sign(); var f = fmt & ~0x20;
+      cpu.dup(); cpu.tos(default, out _, out var e, out _, false);
+      if (f == 'E') cpu.rnd(rnd - e);
+      else if (f == 'F')
+      {
+        var d = e + rnd + 1; var b = -e + rnd + 16;
+        if (b > sp.Length) { if (d > dig) { cpu.pop(); return -b; } }
+        if (d > dig) dig = d;
+        cpu.rnd(rnd);
+      }
+      else cpu.rnd(dig - e);
+
+      var tp = sp.Slice(0, dig);
+      cpu.tos(tp, out var ns, out e, out _, false);
+      tp = tp.Slice(0, ns).TrimEnd('0'); ns = tp.Length;
+
+      int x = e + 1, l = 0;
+      if (f == 'E') { x = 1; if (ns < dig) l = dig; }
+      else if (f == 'F') { if (ns < x + rnd) l = x + rnd; e = 0; }
+      else if (e <= -5 || e >= 17) x = 1; else e = 0; //'G'
+
+      if (l != 0) { sp.Slice(ns, l - ns).Fill('0'); ns = l; }
+
+      if (x >= ns) { sp.Slice(ns, x - ns).Fill('0'); ns = x; }
+      else
+      {
+        if (x <= 0) { sp.Slice(0, ns).CopyTo(sp.Slice(x = 1 - x, ns)); sp.Slice(0, x).Fill('0'); ns += x; x = 1; }
+        sp.Slice(x, ns - x).CopyTo(sp.Slice(x + 1, ns - x)); sp[x] = (fl & 0x04) != 0 ? ',' : '.'; ns++;
+      }
+      if (sig == -1) { sp.Slice(0, ns).CopyTo(sp.Slice(1, ns)); sp[0] = '-'; ns++; }
+      if (e != 0 || f == 'E')
+      {
+        sp[ns++] = (fmt & 0x20) == 0 ? 'E' : 'e'; sp[ns++] = e > 0 ? '+' : '-';
+        (e > 0 ? e : -e).TryFormat(sp.Slice(ns), out var z, f == 'E' ? "000" : "00", NumberFormatInfo.InvariantInfo); ns += z;
+      }
+      return ns;
     }
     #endregion
   }

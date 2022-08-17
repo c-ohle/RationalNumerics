@@ -733,57 +733,54 @@ references:
   commentId: Overload:System.Numerics.BigRational.CPU.gcd
   fullName: System.Numerics.BigRational.CPU.gcd
   nameWithType: BigRational.CPU.gcd
-- uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.Double@)
-  name: get(UInt32, out Double)
-  href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Double__
-  commentId: M:System.Numerics.BigRational.CPU.get(System.UInt32,System.Double@)
-  name.vb: get(UInt32, ByRef Double)
-  fullName: System.Numerics.BigRational.CPU.get(System.UInt32, out System.Double)
-  fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.Double)
-  nameWithType: BigRational.CPU.get(UInt32, out Double)
-  nameWithType.vb: BigRational.CPU.get(UInt32, ByRef Double)
-- uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.Numerics.BigInteger@)
-  name: get(UInt32, out BigInteger)
-  href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Numerics_BigInteger__
-  commentId: M:System.Numerics.BigRational.CPU.get(System.UInt32,System.Numerics.BigInteger@)
-  name.vb: get(UInt32, ByRef BigInteger)
-  fullName: System.Numerics.BigRational.CPU.get(System.UInt32, out System.Numerics.BigInteger)
-  fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.Numerics.BigInteger)
-  nameWithType: BigRational.CPU.get(UInt32, out BigInteger)
-  nameWithType.vb: BigRational.CPU.get(UInt32, ByRef BigInteger)
-- uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.Numerics.BigRational@)
-  name: get(UInt32, out BigRational)
-  href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Numerics_BigRational__
-  commentId: M:System.Numerics.BigRational.CPU.get(System.UInt32,System.Numerics.BigRational@)
-  name.vb: get(UInt32, ByRef BigRational)
-  fullName: System.Numerics.BigRational.CPU.get(System.UInt32, out System.Numerics.BigRational)
-  fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.Numerics.BigRational)
-  nameWithType: BigRational.CPU.get(UInt32, out BigRational)
-  nameWithType.vb: BigRational.CPU.get(UInt32, ByRef BigRational)
-- uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)
-  name: get(UInt32, out ReadOnlySpan<UInt32>)
-  href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___
-  commentId: M:System.Numerics.BigRational.CPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)
-  name.vb: get(UInt32, ByRef ReadOnlySpan(Of UInt32))
-  fullName: System.Numerics.BigRational.CPU.get(System.UInt32, out System.ReadOnlySpan<System.UInt32>)
-  fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.ReadOnlySpan(Of System.UInt32))
-  nameWithType: BigRational.CPU.get(UInt32, out ReadOnlySpan<UInt32>)
-  nameWithType.vb: BigRational.CPU.get(UInt32, ByRef ReadOnlySpan(Of UInt32))
-- uid: System.Numerics.BigRational.CPU.get(System.UInt32,System.Single@)
-  name: get(UInt32, out Single)
-  href: api/System.Numerics.BigRational.CPU.get.html#System_Numerics_BigRational_CPU_get_System_UInt32_System_Single__
-  commentId: M:System.Numerics.BigRational.CPU.get(System.UInt32,System.Single@)
-  name.vb: get(UInt32, ByRef Single)
-  fullName: System.Numerics.BigRational.CPU.get(System.UInt32, out System.Single)
-  fullName.vb: System.Numerics.BigRational.CPU.get(System.UInt32, ByRef System.Single)
-  nameWithType: BigRational.CPU.get(UInt32, out Single)
-  nameWithType.vb: BigRational.CPU.get(UInt32, ByRef Single)
-- uid: System.Numerics.BigRational.CPU.get*
-  name: get
-  href: api/System.Numerics.BigRational.CPU.get.html
-  commentId: Overload:System.Numerics.BigRational.CPU.get
-  fullName: System.Numerics.BigRational.CPU.get
-  nameWithType: BigRational.CPU.get
+- uid: System.Numerics.BigRational.CPU.getd(System.UInt32)
+  name: getd(UInt32)
+  href: api/System.Numerics.BigRational.CPU.getd.html#System_Numerics_BigRational_CPU_getd_System_UInt32_
+  commentId: M:System.Numerics.BigRational.CPU.getd(System.UInt32)
+  fullName: System.Numerics.BigRational.CPU.getd(System.UInt32)
+  nameWithType: BigRational.CPU.getd(UInt32)
+- uid: System.Numerics.BigRational.CPU.getd*
+  name: getd
+  href: api/System.Numerics.BigRational.CPU.getd.html
+  commentId: Overload:System.Numerics.BigRational.CPU.getd
+  fullName: System.Numerics.BigRational.CPU.getd
+  nameWithType: BigRational.CPU.getd
+- uid: System.Numerics.BigRational.CPU.getf(System.UInt32)
+  name: getf(UInt32)
+  href: api/System.Numerics.BigRational.CPU.getf.html#System_Numerics_BigRational_CPU_getf_System_UInt32_
+  commentId: M:System.Numerics.BigRational.CPU.getf(System.UInt32)
+  fullName: System.Numerics.BigRational.CPU.getf(System.UInt32)
+  nameWithType: BigRational.CPU.getf(UInt32)
+- uid: System.Numerics.BigRational.CPU.getf*
+  name: getf
+  href: api/System.Numerics.BigRational.CPU.getf.html
+  commentId: Overload:System.Numerics.BigRational.CPU.getf
+  fullName: System.Numerics.BigRational.CPU.getf
+  nameWithType: BigRational.CPU.getf
+- uid: System.Numerics.BigRational.CPU.getr(System.UInt32)
+  name: getr(UInt32)
+  href: api/System.Numerics.BigRational.CPU.getr.html#System_Numerics_BigRational_CPU_getr_System_UInt32_
+  commentId: M:System.Numerics.BigRational.CPU.getr(System.UInt32)
+  fullName: System.Numerics.BigRational.CPU.getr(System.UInt32)
+  nameWithType: BigRational.CPU.getr(UInt32)
+- uid: System.Numerics.BigRational.CPU.getr*
+  name: getr
+  href: api/System.Numerics.BigRational.CPU.getr.html
+  commentId: Overload:System.Numerics.BigRational.CPU.getr
+  fullName: System.Numerics.BigRational.CPU.getr
+  nameWithType: BigRational.CPU.getr
+- uid: System.Numerics.BigRational.CPU.gets(System.UInt32)
+  name: gets(UInt32)
+  href: api/System.Numerics.BigRational.CPU.gets.html#System_Numerics_BigRational_CPU_gets_System_UInt32_
+  commentId: M:System.Numerics.BigRational.CPU.gets(System.UInt32)
+  fullName: System.Numerics.BigRational.CPU.gets(System.UInt32)
+  nameWithType: BigRational.CPU.gets(UInt32)
+- uid: System.Numerics.BigRational.CPU.gets*
+  name: gets
+  href: api/System.Numerics.BigRational.CPU.gets.html
+  commentId: Overload:System.Numerics.BigRational.CPU.gets
+  fullName: System.Numerics.BigRational.CPU.gets
+  nameWithType: BigRational.CPU.gets
 - uid: System.Numerics.BigRational.CPU.hash(System.UInt32)
   name: hash(UInt32)
   href: api/System.Numerics.BigRational.CPU.hash.html#System_Numerics_BigRational_CPU_hash_System_UInt32_
@@ -1972,6 +1969,22 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Max
   nameWithType: BigRational.Float<T>.Max
   nameWithType.vb: BigRational.Float(Of T).Max
+- uid: System.Numerics.BigRational.Float`1.MaxValue
+  name: MaxValue
+  href: api/System.Numerics.BigRational.Float-1.MaxValue.html#System_Numerics_BigRational_Float_1_MaxValue
+  commentId: P:System.Numerics.BigRational.Float`1.MaxValue
+  fullName: System.Numerics.BigRational.Float<T>.MaxValue
+  fullName.vb: System.Numerics.BigRational.Float(Of T).MaxValue
+  nameWithType: BigRational.Float<T>.MaxValue
+  nameWithType.vb: BigRational.Float(Of T).MaxValue
+- uid: System.Numerics.BigRational.Float`1.MaxValue*
+  name: MaxValue
+  href: api/System.Numerics.BigRational.Float-1.MaxValue.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.MaxValue
+  fullName: System.Numerics.BigRational.Float<T>.MaxValue
+  fullName.vb: System.Numerics.BigRational.Float(Of T).MaxValue
+  nameWithType: BigRational.Float<T>.MaxValue
+  nameWithType.vb: BigRational.Float(Of T).MaxValue
 - uid: System.Numerics.BigRational.Float`1.Min(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
   name: Min(BigRational.Float<T>, BigRational.Float<T>)
   href: api/System.Numerics.BigRational.Float-1.Min.html#System_Numerics_BigRational_Float_1_Min_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
@@ -1989,6 +2002,22 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Min
   nameWithType: BigRational.Float<T>.Min
   nameWithType.vb: BigRational.Float(Of T).Min
+- uid: System.Numerics.BigRational.Float`1.MinValue
+  name: MinValue
+  href: api/System.Numerics.BigRational.Float-1.MinValue.html#System_Numerics_BigRational_Float_1_MinValue
+  commentId: P:System.Numerics.BigRational.Float`1.MinValue
+  fullName: System.Numerics.BigRational.Float<T>.MinValue
+  fullName.vb: System.Numerics.BigRational.Float(Of T).MinValue
+  nameWithType: BigRational.Float<T>.MinValue
+  nameWithType.vb: BigRational.Float(Of T).MinValue
+- uid: System.Numerics.BigRational.Float`1.MinValue*
+  name: MinValue
+  href: api/System.Numerics.BigRational.Float-1.MinValue.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.MinValue
+  fullName: System.Numerics.BigRational.Float<T>.MinValue
+  fullName.vb: System.Numerics.BigRational.Float(Of T).MinValue
+  nameWithType: BigRational.Float<T>.MinValue
+  nameWithType.vb: BigRational.Float(Of T).MinValue
 - uid: System.Numerics.BigRational.Float`1.op_Addition(System.Numerics.BigRational.Float{`0},System.Numerics.BigRational.Float{`0})
   name: Addition(BigRational.Float<T>, BigRational.Float<T>)
   href: api/System.Numerics.BigRational.Float-1.op_Addition.html#System_Numerics_BigRational_Float_1_op_Addition_System_Numerics_BigRational_Float__0__System_Numerics_BigRational_Float__0__
@@ -2581,6 +2610,23 @@ references:
   fullName.vb: System.Numerics.BigRational.Float(Of T).Truncate
   nameWithType: BigRational.Float<T>.Truncate
   nameWithType.vb: BigRational.Float(Of T).Truncate
+- uid: System.Numerics.BigRational.Float`1.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name: TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  href: api/System.Numerics.BigRational.Float-1.TryFormat.html#System_Numerics_BigRational_Float_1_TryFormat_System_Span_System_Char__System_Int32__System_ReadOnlySpan_System_Char__System_IFormatProvider_
+  commentId: M:System.Numerics.BigRational.Float`1.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name.vb: TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+  fullName: System.Numerics.BigRational.Float<T>.TryFormat(System.Span<System.Char>, out System.Int32, System.ReadOnlySpan<System.Char>, System.IFormatProvider)
+  fullName.vb: System.Numerics.BigRational.Float(Of T).TryFormat(System.Span(Of System.Char), ByRef System.Int32, System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
+  nameWithType: BigRational.Float<T>.TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  nameWithType.vb: BigRational.Float(Of T).TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+- uid: System.Numerics.BigRational.Float`1.TryFormat*
+  name: TryFormat
+  href: api/System.Numerics.BigRational.Float-1.TryFormat.html
+  commentId: Overload:System.Numerics.BigRational.Float`1.TryFormat
+  fullName: System.Numerics.BigRational.Float<T>.TryFormat
+  fullName.vb: System.Numerics.BigRational.Float(Of T).TryFormat
+  nameWithType: BigRational.Float<T>.TryFormat
+  nameWithType.vb: BigRational.Float(Of T).TryFormat
 - uid: System.Numerics.BigRational.Floor(System.Numerics.BigRational)
   name: Floor(BigRational)
   href: api/System.Numerics.BigRational.Floor.html#System_Numerics_BigRational_Floor_System_Numerics_BigRational_
@@ -5506,57 +5552,54 @@ references:
   commentId: Overload:System.Numerics.BigRational.SafeCPU.gcd
   fullName: System.Numerics.BigRational.SafeCPU.gcd
   nameWithType: BigRational.SafeCPU.gcd
-- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Double@)
-  name: get(UInt32, out Double)
-  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Double__
-  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Double@)
-  name.vb: get(UInt32, ByRef Double)
-  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.Double)
-  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Double)
-  nameWithType: BigRational.SafeCPU.get(UInt32, out Double)
-  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef Double)
-- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigInteger@)
-  name: get(UInt32, out BigInteger)
-  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Numerics_BigInteger__
-  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigInteger@)
-  name.vb: get(UInt32, ByRef BigInteger)
-  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.Numerics.BigInteger)
-  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Numerics.BigInteger)
-  nameWithType: BigRational.SafeCPU.get(UInt32, out BigInteger)
-  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef BigInteger)
-- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigRational@)
-  name: get(UInt32, out BigRational)
-  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Numerics_BigRational__
-  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Numerics.BigRational@)
-  name.vb: get(UInt32, ByRef BigRational)
-  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.Numerics.BigRational)
-  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Numerics.BigRational)
-  nameWithType: BigRational.SafeCPU.get(UInt32, out BigRational)
-  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef BigRational)
-- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)
-  name: get(UInt32, out ReadOnlySpan<UInt32>)
-  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_ReadOnlySpan_System_UInt32___
-  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.ReadOnlySpan{System.UInt32}@)
-  name.vb: get(UInt32, ByRef ReadOnlySpan(Of UInt32))
-  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.ReadOnlySpan<System.UInt32>)
-  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.ReadOnlySpan(Of System.UInt32))
-  nameWithType: BigRational.SafeCPU.get(UInt32, out ReadOnlySpan<UInt32>)
-  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef ReadOnlySpan(Of UInt32))
-- uid: System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Single@)
-  name: get(UInt32, out Single)
-  href: api/System.Numerics.BigRational.SafeCPU.get.html#System_Numerics_BigRational_SafeCPU_get_System_UInt32_System_Single__
-  commentId: M:System.Numerics.BigRational.SafeCPU.get(System.UInt32,System.Single@)
-  name.vb: get(UInt32, ByRef Single)
-  fullName: System.Numerics.BigRational.SafeCPU.get(System.UInt32, out System.Single)
-  fullName.vb: System.Numerics.BigRational.SafeCPU.get(System.UInt32, ByRef System.Single)
-  nameWithType: BigRational.SafeCPU.get(UInt32, out Single)
-  nameWithType.vb: BigRational.SafeCPU.get(UInt32, ByRef Single)
-- uid: System.Numerics.BigRational.SafeCPU.get*
-  name: get
-  href: api/System.Numerics.BigRational.SafeCPU.get.html
-  commentId: Overload:System.Numerics.BigRational.SafeCPU.get
-  fullName: System.Numerics.BigRational.SafeCPU.get
-  nameWithType: BigRational.SafeCPU.get
+- uid: System.Numerics.BigRational.SafeCPU.getd(System.UInt32)
+  name: getd(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.getd.html#System_Numerics_BigRational_SafeCPU_getd_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.getd(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.getd(System.UInt32)
+  nameWithType: BigRational.SafeCPU.getd(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.getd*
+  name: getd
+  href: api/System.Numerics.BigRational.SafeCPU.getd.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.getd
+  fullName: System.Numerics.BigRational.SafeCPU.getd
+  nameWithType: BigRational.SafeCPU.getd
+- uid: System.Numerics.BigRational.SafeCPU.getf(System.UInt32)
+  name: getf(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.getf.html#System_Numerics_BigRational_SafeCPU_getf_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.getf(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.getf(System.UInt32)
+  nameWithType: BigRational.SafeCPU.getf(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.getf*
+  name: getf
+  href: api/System.Numerics.BigRational.SafeCPU.getf.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.getf
+  fullName: System.Numerics.BigRational.SafeCPU.getf
+  nameWithType: BigRational.SafeCPU.getf
+- uid: System.Numerics.BigRational.SafeCPU.getr(System.UInt32)
+  name: getr(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.getr.html#System_Numerics_BigRational_SafeCPU_getr_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.getr(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.getr(System.UInt32)
+  nameWithType: BigRational.SafeCPU.getr(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.getr*
+  name: getr
+  href: api/System.Numerics.BigRational.SafeCPU.getr.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.getr
+  fullName: System.Numerics.BigRational.SafeCPU.getr
+  nameWithType: BigRational.SafeCPU.getr
+- uid: System.Numerics.BigRational.SafeCPU.gets(System.UInt32)
+  name: gets(UInt32)
+  href: api/System.Numerics.BigRational.SafeCPU.gets.html#System_Numerics_BigRational_SafeCPU_gets_System_UInt32_
+  commentId: M:System.Numerics.BigRational.SafeCPU.gets(System.UInt32)
+  fullName: System.Numerics.BigRational.SafeCPU.gets(System.UInt32)
+  nameWithType: BigRational.SafeCPU.gets(UInt32)
+- uid: System.Numerics.BigRational.SafeCPU.gets*
+  name: gets
+  href: api/System.Numerics.BigRational.SafeCPU.gets.html
+  commentId: Overload:System.Numerics.BigRational.SafeCPU.gets
+  fullName: System.Numerics.BigRational.SafeCPU.gets
+  nameWithType: BigRational.SafeCPU.gets
 - uid: System.Numerics.BigRational.SafeCPU.hash(System.UInt32)
   name: hash(UInt32)
   href: api/System.Numerics.BigRational.SafeCPU.hash.html#System_Numerics_BigRational_SafeCPU_hash_System_UInt32_
@@ -6508,6 +6551,12 @@ references:
   commentId: M:System.Numerics.Float128.CompareTo(System.Numerics.Float128)
   fullName: System.Numerics.Float128.CompareTo(System.Numerics.Float128)
   nameWithType: Float128.CompareTo(Float128)
+- uid: System.Numerics.Float128.CompareTo(System.Object)
+  name: CompareTo(Object)
+  href: api/System.Numerics.Float128.CompareTo.html#System_Numerics_Float128_CompareTo_System_Object_
+  commentId: M:System.Numerics.Float128.CompareTo(System.Object)
+  fullName: System.Numerics.Float128.CompareTo(System.Object)
+  nameWithType: Float128.CompareTo(Object)
 - uid: System.Numerics.Float128.CompareTo*
   name: CompareTo
   href: api/System.Numerics.Float128.CompareTo.html
@@ -6544,6 +6593,30 @@ references:
   commentId: Overload:System.Numerics.Float128.GetHashCode
   fullName: System.Numerics.Float128.GetHashCode
   nameWithType: Float128.GetHashCode
+- uid: System.Numerics.Float128.MaxValue
+  name: MaxValue
+  href: api/System.Numerics.Float128.MaxValue.html#System_Numerics_Float128_MaxValue
+  commentId: P:System.Numerics.Float128.MaxValue
+  fullName: System.Numerics.Float128.MaxValue
+  nameWithType: Float128.MaxValue
+- uid: System.Numerics.Float128.MaxValue*
+  name: MaxValue
+  href: api/System.Numerics.Float128.MaxValue.html
+  commentId: Overload:System.Numerics.Float128.MaxValue
+  fullName: System.Numerics.Float128.MaxValue
+  nameWithType: Float128.MaxValue
+- uid: System.Numerics.Float128.MinValue
+  name: MinValue
+  href: api/System.Numerics.Float128.MinValue.html#System_Numerics_Float128_MinValue
+  commentId: P:System.Numerics.Float128.MinValue
+  fullName: System.Numerics.Float128.MinValue
+  nameWithType: Float128.MinValue
+- uid: System.Numerics.Float128.MinValue*
+  name: MinValue
+  href: api/System.Numerics.Float128.MinValue.html
+  commentId: Overload:System.Numerics.Float128.MinValue
+  fullName: System.Numerics.Float128.MinValue
+  nameWithType: Float128.MinValue
 - uid: System.Numerics.Float128.op_Addition(System.Numerics.Float128,System.Numerics.Float128)
   name: Addition(Float128, Float128)
   href: api/System.Numerics.Float128.op_Addition.html#System_Numerics_Float128_op_Addition_System_Numerics_Float128_System_Numerics_Float128_
@@ -6814,6 +6887,12 @@ references:
   commentId: M:System.Numerics.Float128.ToString
   fullName: System.Numerics.Float128.ToString()
   nameWithType: Float128.ToString()
+- uid: System.Numerics.Float128.ToString(System.String,System.IFormatProvider)
+  name: ToString(String, IFormatProvider)
+  href: api/System.Numerics.Float128.ToString.html#System_Numerics_Float128_ToString_System_String_System_IFormatProvider_
+  commentId: M:System.Numerics.Float128.ToString(System.String,System.IFormatProvider)
+  fullName: System.Numerics.Float128.ToString(System.String, System.IFormatProvider)
+  nameWithType: Float128.ToString(String, IFormatProvider)
 - uid: System.Numerics.Float128.ToString*
   name: ToString
   href: api/System.Numerics.Float128.ToString.html
@@ -6832,6 +6911,21 @@ references:
   commentId: Overload:System.Numerics.Float128.Truncate
   fullName: System.Numerics.Float128.Truncate
   nameWithType: Float128.Truncate
+- uid: System.Numerics.Float128.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name: TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  href: api/System.Numerics.Float128.TryFormat.html#System_Numerics_Float128_TryFormat_System_Span_System_Char__System_Int32__System_ReadOnlySpan_System_Char__System_IFormatProvider_
+  commentId: M:System.Numerics.Float128.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name.vb: TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+  fullName: System.Numerics.Float128.TryFormat(System.Span<System.Char>, out System.Int32, System.ReadOnlySpan<System.Char>, System.IFormatProvider)
+  fullName.vb: System.Numerics.Float128.TryFormat(System.Span(Of System.Char), ByRef System.Int32, System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
+  nameWithType: Float128.TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  nameWithType.vb: Float128.TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+- uid: System.Numerics.Float128.TryFormat*
+  name: TryFormat
+  href: api/System.Numerics.Float128.TryFormat.html
+  commentId: Overload:System.Numerics.Float128.TryFormat
+  fullName: System.Numerics.Float128.TryFormat
+  nameWithType: Float128.TryFormat
 - uid: System.Numerics.Float256
   name: Float256
   href: api/System.Numerics.Float256.html
@@ -6868,6 +6962,12 @@ references:
   commentId: M:System.Numerics.Float256.CompareTo(System.Numerics.Float256)
   fullName: System.Numerics.Float256.CompareTo(System.Numerics.Float256)
   nameWithType: Float256.CompareTo(Float256)
+- uid: System.Numerics.Float256.CompareTo(System.Object)
+  name: CompareTo(Object)
+  href: api/System.Numerics.Float256.CompareTo.html#System_Numerics_Float256_CompareTo_System_Object_
+  commentId: M:System.Numerics.Float256.CompareTo(System.Object)
+  fullName: System.Numerics.Float256.CompareTo(System.Object)
+  nameWithType: Float256.CompareTo(Object)
 - uid: System.Numerics.Float256.CompareTo*
   name: CompareTo
   href: api/System.Numerics.Float256.CompareTo.html
@@ -6904,6 +7004,30 @@ references:
   commentId: Overload:System.Numerics.Float256.GetHashCode
   fullName: System.Numerics.Float256.GetHashCode
   nameWithType: Float256.GetHashCode
+- uid: System.Numerics.Float256.MaxValue
+  name: MaxValue
+  href: api/System.Numerics.Float256.MaxValue.html#System_Numerics_Float256_MaxValue
+  commentId: P:System.Numerics.Float256.MaxValue
+  fullName: System.Numerics.Float256.MaxValue
+  nameWithType: Float256.MaxValue
+- uid: System.Numerics.Float256.MaxValue*
+  name: MaxValue
+  href: api/System.Numerics.Float256.MaxValue.html
+  commentId: Overload:System.Numerics.Float256.MaxValue
+  fullName: System.Numerics.Float256.MaxValue
+  nameWithType: Float256.MaxValue
+- uid: System.Numerics.Float256.MinValue
+  name: MinValue
+  href: api/System.Numerics.Float256.MinValue.html#System_Numerics_Float256_MinValue
+  commentId: P:System.Numerics.Float256.MinValue
+  fullName: System.Numerics.Float256.MinValue
+  nameWithType: Float256.MinValue
+- uid: System.Numerics.Float256.MinValue*
+  name: MinValue
+  href: api/System.Numerics.Float256.MinValue.html
+  commentId: Overload:System.Numerics.Float256.MinValue
+  fullName: System.Numerics.Float256.MinValue
+  nameWithType: Float256.MinValue
 - uid: System.Numerics.Float256.op_Addition(System.Numerics.Float256,System.Numerics.Float256)
   name: Addition(Float256, Float256)
   href: api/System.Numerics.Float256.op_Addition.html#System_Numerics_Float256_op_Addition_System_Numerics_Float256_System_Numerics_Float256_
@@ -7192,6 +7316,12 @@ references:
   commentId: M:System.Numerics.Float256.ToString
   fullName: System.Numerics.Float256.ToString()
   nameWithType: Float256.ToString()
+- uid: System.Numerics.Float256.ToString(System.String,System.IFormatProvider)
+  name: ToString(String, IFormatProvider)
+  href: api/System.Numerics.Float256.ToString.html#System_Numerics_Float256_ToString_System_String_System_IFormatProvider_
+  commentId: M:System.Numerics.Float256.ToString(System.String,System.IFormatProvider)
+  fullName: System.Numerics.Float256.ToString(System.String, System.IFormatProvider)
+  nameWithType: Float256.ToString(String, IFormatProvider)
 - uid: System.Numerics.Float256.ToString*
   name: ToString
   href: api/System.Numerics.Float256.ToString.html
@@ -7210,6 +7340,21 @@ references:
   commentId: Overload:System.Numerics.Float256.Truncate
   fullName: System.Numerics.Float256.Truncate
   nameWithType: Float256.Truncate
+- uid: System.Numerics.Float256.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name: TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  href: api/System.Numerics.Float256.TryFormat.html#System_Numerics_Float256_TryFormat_System_Span_System_Char__System_Int32__System_ReadOnlySpan_System_Char__System_IFormatProvider_
+  commentId: M:System.Numerics.Float256.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name.vb: TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+  fullName: System.Numerics.Float256.TryFormat(System.Span<System.Char>, out System.Int32, System.ReadOnlySpan<System.Char>, System.IFormatProvider)
+  fullName.vb: System.Numerics.Float256.TryFormat(System.Span(Of System.Char), ByRef System.Int32, System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
+  nameWithType: Float256.TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  nameWithType.vb: Float256.TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+- uid: System.Numerics.Float256.TryFormat*
+  name: TryFormat
+  href: api/System.Numerics.Float256.TryFormat.html
+  commentId: Overload:System.Numerics.Float256.TryFormat
+  fullName: System.Numerics.Float256.TryFormat
+  nameWithType: Float256.TryFormat
 - uid: System.Numerics.Float80
   name: Float80
   href: api/System.Numerics.Float80.html
@@ -7246,6 +7391,12 @@ references:
   commentId: M:System.Numerics.Float80.CompareTo(System.Numerics.Float80)
   fullName: System.Numerics.Float80.CompareTo(System.Numerics.Float80)
   nameWithType: Float80.CompareTo(Float80)
+- uid: System.Numerics.Float80.CompareTo(System.Object)
+  name: CompareTo(Object)
+  href: api/System.Numerics.Float80.CompareTo.html#System_Numerics_Float80_CompareTo_System_Object_
+  commentId: M:System.Numerics.Float80.CompareTo(System.Object)
+  fullName: System.Numerics.Float80.CompareTo(System.Object)
+  nameWithType: Float80.CompareTo(Object)
 - uid: System.Numerics.Float80.CompareTo*
   name: CompareTo
   href: api/System.Numerics.Float80.CompareTo.html
@@ -7282,6 +7433,30 @@ references:
   commentId: Overload:System.Numerics.Float80.GetHashCode
   fullName: System.Numerics.Float80.GetHashCode
   nameWithType: Float80.GetHashCode
+- uid: System.Numerics.Float80.MaxValue
+  name: MaxValue
+  href: api/System.Numerics.Float80.MaxValue.html#System_Numerics_Float80_MaxValue
+  commentId: P:System.Numerics.Float80.MaxValue
+  fullName: System.Numerics.Float80.MaxValue
+  nameWithType: Float80.MaxValue
+- uid: System.Numerics.Float80.MaxValue*
+  name: MaxValue
+  href: api/System.Numerics.Float80.MaxValue.html
+  commentId: Overload:System.Numerics.Float80.MaxValue
+  fullName: System.Numerics.Float80.MaxValue
+  nameWithType: Float80.MaxValue
+- uid: System.Numerics.Float80.MinValue
+  name: MinValue
+  href: api/System.Numerics.Float80.MinValue.html#System_Numerics_Float80_MinValue
+  commentId: P:System.Numerics.Float80.MinValue
+  fullName: System.Numerics.Float80.MinValue
+  nameWithType: Float80.MinValue
+- uid: System.Numerics.Float80.MinValue*
+  name: MinValue
+  href: api/System.Numerics.Float80.MinValue.html
+  commentId: Overload:System.Numerics.Float80.MinValue
+  fullName: System.Numerics.Float80.MinValue
+  nameWithType: Float80.MinValue
 - uid: System.Numerics.Float80.op_Addition(System.Numerics.Float80,System.Numerics.Float80)
   name: Addition(Float80, Float80)
   href: api/System.Numerics.Float80.op_Addition.html#System_Numerics_Float80_op_Addition_System_Numerics_Float80_System_Numerics_Float80_
@@ -7516,6 +7691,12 @@ references:
   commentId: M:System.Numerics.Float80.ToString
   fullName: System.Numerics.Float80.ToString()
   nameWithType: Float80.ToString()
+- uid: System.Numerics.Float80.ToString(System.String,System.IFormatProvider)
+  name: ToString(String, IFormatProvider)
+  href: api/System.Numerics.Float80.ToString.html#System_Numerics_Float80_ToString_System_String_System_IFormatProvider_
+  commentId: M:System.Numerics.Float80.ToString(System.String,System.IFormatProvider)
+  fullName: System.Numerics.Float80.ToString(System.String, System.IFormatProvider)
+  nameWithType: Float80.ToString(String, IFormatProvider)
 - uid: System.Numerics.Float80.ToString*
   name: ToString
   href: api/System.Numerics.Float80.ToString.html
@@ -7534,3 +7715,18 @@ references:
   commentId: Overload:System.Numerics.Float80.Truncate
   fullName: System.Numerics.Float80.Truncate
   nameWithType: Float80.Truncate
+- uid: System.Numerics.Float80.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name: TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  href: api/System.Numerics.Float80.TryFormat.html#System_Numerics_Float80_TryFormat_System_Span_System_Char__System_Int32__System_ReadOnlySpan_System_Char__System_IFormatProvider_
+  commentId: M:System.Numerics.Float80.TryFormat(System.Span{System.Char},System.Int32@,System.ReadOnlySpan{System.Char},System.IFormatProvider)
+  name.vb: TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+  fullName: System.Numerics.Float80.TryFormat(System.Span<System.Char>, out System.Int32, System.ReadOnlySpan<System.Char>, System.IFormatProvider)
+  fullName.vb: System.Numerics.Float80.TryFormat(System.Span(Of System.Char), ByRef System.Int32, System.ReadOnlySpan(Of System.Char), System.IFormatProvider)
+  nameWithType: Float80.TryFormat(Span<Char>, out Int32, ReadOnlySpan<Char>, IFormatProvider)
+  nameWithType.vb: Float80.TryFormat(Span(Of Char), ByRef Int32, ReadOnlySpan(Of Char), IFormatProvider)
+- uid: System.Numerics.Float80.TryFormat*
+  name: TryFormat
+  href: api/System.Numerics.Float80.TryFormat.html
+  commentId: Overload:System.Numerics.Float80.TryFormat
+  fullName: System.Numerics.Float80.TryFormat
+  nameWithType: Float80.TryFormat

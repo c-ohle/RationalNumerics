@@ -1,6 +1,7 @@
 ﻿
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 #pragma warning disable CS1591  //xml comments
@@ -19,7 +20,7 @@ namespace System.Numerics
     /// The sizeof(<typeparamref name="T"/>) defines the type type and precision e.g.:<br/><br/>
     /// <c>BigRational.Float&lt;UInt64&gt;</c> defines a Double precision type.<br/>
     /// <c>BigRational.Float&lt;UInt128&gt;</c> defines a Quadruple precision type.<br/>
-    /// <c>BigRational.Float&lt;Matrix4x4&gt;</c> defines a Octuple precision type.<br/>
+    /// <c>BigRational.Float&lt;UInt256&gt;</c> defines a Octuple precision type.<br/>
     /// </remarks>
     /// <typeparam name="T">Any unmanaged value structure type to store the number bits.</typeparam>
     [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(),nq}")]
@@ -28,10 +29,32 @@ namespace System.Numerics
       public override readonly string ToString() => ToString(null, null);
       public readonly string ToString(string? format, IFormatProvider? provider = default)
       {
-        var dig = (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f)); if (sizeof(T) == 2) dig = 5;
-        var cpu = main_cpu; var p = this.p; var e = push(cpu, (uint*)&p); //if (dig < e) dig = e;
-        cpu.pow(2, e); cpu.mul(); var r = new BigRational(cpu.p[cpu.i - 1]);
-        var ss = r.ToString("Ö" + dig); cpu.pop(); return ss;
+        Span<char> sp = stackalloc char[Digits + 16];
+        if (!TryFormat(sp, out var ns, format, provider))
+        {
+          int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n];//todo: bigbuf
+          TryFormat(sp, out ns, format, provider);
+        }
+        return sp.Slice(0, ns).ToString();
+      }
+      public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+      {
+        var fmt = 'G'; int dig = 0, rnd = 0; var info = NumberFormatInfo.GetInstance(provider);
+        if (format.Length != 0)
+        {
+          var f = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
+          if (d) dig = int.Parse(format.Slice(1));//, NumberFormatInfo.InvariantInfo);
+          if (f == 'E') { rnd = dig; if (rnd == 0 && !d) rnd = 6; dig = rnd + 1; }
+          if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
+        }
+        if (dig == 0) dig = Digits; // (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f));
+        if (destination.Length < dig + 16) { dig += 16; goto ex; }
+        var cpu = main_cpu; var p = this.p;
+        var e = push(cpu, (uint*)&p); cpu.pow(2, e); cpu.mul();
+        var n = tos(destination, cpu, fmt, dig, rnd, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
+        if (n < 0) { dig = -n; goto ex; }
+        charsWritten = n; return true; ex:
+        charsWritten = 0; if (destination.Length >= 2) new Span<char>(&dig, 2).CopyTo(destination); return false;
       }
       public override readonly int GetHashCode()
       {
@@ -255,14 +278,14 @@ namespace System.Numerics
       #endregion
 
       internal static int Bits => sizeof(T) << 3;
-      internal static int BiasedExponentShift => mbi - 1; // dbl 52
-      internal static int ExponentBits => (sizeof(T) << 3) - mbi; // dbl 11
-      internal static int MaxBiasedExponent => (1 << sbi) - 1; // dbl 0x07FF;
-      internal static int ExponentBias => (1 << (ExponentBits - 1)) - 1; // dbl 1023
-      internal static int MinExponent => 1 - ExponentBias; // dbl -1022;
-      internal static int MaxExponent => ExponentBias; // dbl +1023;
-      internal static float DecimalDigits => mbi * MathF.Log10(2);
-
+      internal static int BiasedExponentShift => mbi - 1; // 52
+      internal static int ExponentBits => (sizeof(T) << 3) - mbi; // 11
+      internal static int MaxBiasedExponent => (1 << sbi) - 1; // 0x07FF;
+      internal static int ExponentBias => (1 << (ExponentBits - 1)) - 1; // 1023
+      internal static int MinExponent => 1 - ExponentBias; // -1022;
+      internal static int MaxExponent => ExponentBias; // +1023;
+      //internal static float DecimalDigits => mbi * MathF.Log10(2);
+      internal static int Digits => sizeof(T) != 2 ? (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f)) : 5;       
       //static void check()
       //{
       //  //if ((fltinits & (1ul << (sizeof(T) >> 1))) == 0) fltinits |= (1ul << (sizeof(T) >> 1)); else { }
