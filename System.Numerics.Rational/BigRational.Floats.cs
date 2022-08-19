@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 #pragma warning disable CS1591 //todo: xml comments
@@ -12,6 +13,7 @@ namespace System.Numerics
   /// Also known as C/C++ (GCC) <c>__float128</c><br/> 
   /// The data format and properties as defined in <seealso href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</seealso>.<br/>
   /// </remarks>
+  [Serializable, DebuggerDisplay("{ToString(),nq}")]
   public readonly struct Float128 : IComparable<Float128>, IEquatable<Float128>, IComparable, ISpanFormattable
   {
     public readonly override string ToString() => p.ToString();
@@ -53,6 +55,9 @@ namespace System.Numerics
     public static Float128 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float128(BigRational.Float<T>.Cast<UInt128>(a));
     public static BigRational.Float<T> Cast<T>(Float128 a) where T : unmanaged => BigRational.Float<UInt128>.Cast<T>(a.p);
 
+    public static Float128 Pi => new Float128(BigRational.Float<UInt128>.Pi);
+    public static Float128 Tau => new Float128(BigRational.Float<UInt128>.Tau);
+    public static Float128 E => new Float128(BigRational.Float<UInt128>.E);
     public static Float128 MinValue => new Float128(BigRational.Float<UInt128>.MinValue);
     public static Float128 MaxValue => new Float128(BigRational.Float<UInt128>.MaxValue);
 
@@ -68,6 +73,7 @@ namespace System.Numerics
   /// <remarks>
   /// The data format and properties as defined in <seealso href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</seealso>.
   /// </remarks>
+  [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct Float256 : IComparable<Float256>, IEquatable<Float256>, IComparable, ISpanFormattable
   {
     public readonly override string ToString() => p.ToString();
@@ -110,7 +116,10 @@ namespace System.Numerics
     public static Float256 Truncate(Float256 a) => new Float256(BigRational.Float<UInt256>.Truncate(a.p));    
     public static Float256 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float256(BigRational.Float<T>.Cast<UInt256>(a));
     public static BigRational.Float<T> Cast<T>(Float256 a) where T : unmanaged => BigRational.Float<UInt256>.Cast<T>(a.p);
-    
+
+    public static Float256 Pi => new Float256(BigRational.Float<UInt256>.Pi);
+    public static Float256 Tau => new Float256(BigRational.Float<UInt256>.Pi);
+    public static Float256 E => new Float256(BigRational.Float<UInt256>.E);
     public static Float256 MinValue => new Float256(BigRational.Float<UInt256>.MinValue);
     public static Float256 MaxValue => new Float256(BigRational.Float<UInt256>.MaxValue);
 
@@ -128,6 +137,7 @@ namespace System.Numerics
   /// The data format and properties as defined for the most common 
   /// <seealso href="https://en.wikipedia.org/wiki/Extended_precision#x86_extended_precision_format">x86 extended precision format</seealso>.<br/>
   /// </remarks>
+  [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct Float80 : IComparable<Float80>, IEquatable<Float80>, IComparable, ISpanFormattable
   {
     public readonly override string ToString() => p.ToString();
@@ -167,6 +177,9 @@ namespace System.Numerics
     public static Float80 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float80(BigRational.Float<T>.Cast<UInt80>(a));
     public static BigRational.Float<T> Cast<T>(Float80 a) where T : unmanaged => BigRational.Float<UInt80>.Cast<T>(a.p);
 
+    public static Float80 Pi => new Float80(BigRational.Float<UInt80>.Pi);
+    public static Float80 Tau => new Float80(BigRational.Float<UInt80>.Pi);
+    public static Float80 E => new Float80(BigRational.Float<UInt80>.E);
     public static Float80 MinValue => new Float80(BigRational.Float<UInt80>.MinValue);
     public static Float80 MaxValue => new Float80(BigRational.Float<UInt80>.MaxValue);
 

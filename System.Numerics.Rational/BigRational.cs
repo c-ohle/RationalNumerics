@@ -117,7 +117,7 @@ namespace System.Numerics
               if (round == -1) round = 6; digs = 1 + round;
               if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
               emax = -(emin = int.MaxValue); goto def;
-            //case 'X': throw new FormatException(nameof(format));
+              //case 'X': throw new FormatException(nameof(format));
           }
         var e = ILog10(this);
         if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
@@ -3510,9 +3510,8 @@ namespace System.Numerics
       if (f == 'E') cpu.rnd(rnd - e);
       else if (f == 'F')
       {
-        var d = e + rnd + 1; var b = -e + rnd + 16;
-        if (b > sp.Length) { if (d > dig) { cpu.pop(); return -b; } }
-        if (d > dig) dig = d;
+        var h = (e < 0 ? -e : e) + rnd + 16; if (h > sp.Length) { cpu.pop(); return -h; }
+        var d = e + rnd + 1; if (d > dig) dig = d;
         cpu.rnd(rnd);
       }
       else cpu.rnd(dig - e);

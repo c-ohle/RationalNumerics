@@ -20,7 +20,7 @@ namespace System.Numerics
     /// <see cref="Shl"/>, <see cref="Shr"/>, <see cref="Msb(Integer)"/>, <see cref="Lsb(Integer)"/> ...<br/>
     /// The implementation is currently not yet CPU optimized.
     /// </remarks>
-    [Serializable, SkipLocalsInit] //, DebuggerDisplay("{ToString(),nq}")
+    [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
     public readonly partial struct Integer : IComparable, IComparable<Integer>, IEquatable<Integer>, IFormattable, ISpanFormattable
     {
       public override readonly string ToString() => p.ToString("L0"); //public override readonly string ToString() => ((BigInteger)p).ToString();
