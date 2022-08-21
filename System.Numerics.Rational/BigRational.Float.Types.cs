@@ -13,8 +13,11 @@ namespace System.Numerics
   /// Also known as C/C++ (GCC) <c>__float128</c><br/> 
   /// The data format and properties as defined in <seealso href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</seealso>.<br/>
   /// </remarks>
-  [Serializable, DebuggerDisplay("{ToString(),nq}")]
+  [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct Float128 : IComparable<Float128>, IEquatable<Float128>, IComparable, ISpanFormattable
+#if NET7_0
+    , BigRational.Float<Float128.UInt128>.IFloat<Float128>
+#endif  
   {
     public readonly override string ToString() => p.ToString();
     public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
@@ -29,12 +32,14 @@ namespace System.Numerics
     public static implicit operator Float128(Half value) => new Float128((BigRational.Float<UInt128>)value);
     public static implicit operator Float128(float value) => new Float128((BigRational.Float<UInt128>)value);
     public static implicit operator Float128(double value) => new Float128((BigRational.Float<UInt128>)value);
+    public static implicit operator Float128(decimal value) => new Float128((BigRational.Float<UInt128>)value);
     public static explicit operator Float128(BigRational value) => new Float128((BigRational.Float<UInt128>)value);
 
     public static explicit operator int(Float128 value) => (int)value.p;
     public static explicit operator Half(Float128 value) => (Half)value.p;
     public static explicit operator float(Float128 value) => (float)value.p;
     public static explicit operator double(Float128 value) => (double)value.p;
+    public static explicit operator decimal(Float128 value) => (decimal)value.p;
     public static implicit operator BigRational(Float128 value) => (BigRational)value.p;
 
     public static Float128 operator ++(Float128 a) => new Float128(a.p + +1);
@@ -51,9 +56,8 @@ namespace System.Numerics
     public static bool operator <(Float128 a, Float128 b) => a.p < b.p;
     public static bool operator >(Float128 a, Float128 b) => a.p > b.p;
 
+    public static Float128 Round(Float128 a, int digits) => new Float128(BigRational.Float<UInt128>.Round(a.p, digits));
     public static Float128 Truncate(Float128 a) => new Float128(BigRational.Float<UInt128>.Truncate(a.p));
-    public static Float128 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float128(BigRational.Float<T>.Cast<UInt128>(a));
-    public static BigRational.Float<T> Cast<T>(Float128 a) where T : unmanaged => BigRational.Float<UInt128>.Cast<T>(a.p);
 
     public static Float128 Pi => new Float128(BigRational.Float<UInt128>.Pi);
     public static Float128 Tau => new Float128(BigRational.Float<UInt128>.Tau);
@@ -61,10 +65,12 @@ namespace System.Numerics
     public static Float128 MinValue => new Float128(BigRational.Float<UInt128>.MinValue);
     public static Float128 MaxValue => new Float128(BigRational.Float<UInt128>.MaxValue);
 
+    public static Float128 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float128(BigRational.Float<T>.Cast<UInt128>(a));
+    public static BigRational.Float<T> Cast<T>(Float128 a) where T : unmanaged => BigRational.Float<UInt128>.Cast<T>(a.p);
     Float128(BigRational.Float<UInt128> p) => this.p = p;
     private readonly BigRational.Float<UInt128> p;
     [StructLayout(LayoutKind.Sequential, Size = 16)]
-    private readonly struct UInt128 { }
+    private readonly struct UInt128 { } // for NET 6 compat
   }
 
   /// <summary>
@@ -75,6 +81,9 @@ namespace System.Numerics
   /// </remarks>
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct Float256 : IComparable<Float256>, IEquatable<Float256>, IComparable, ISpanFormattable
+#if NET7_0
+    , BigRational.Float<Float256.UInt256>.IFloat<Float256>
+#endif
   {
     public readonly override string ToString() => p.ToString();
     public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
@@ -89,6 +98,7 @@ namespace System.Numerics
     public static implicit operator Float256(Half value) => new Float256((BigRational.Float<UInt256>)value);
     public static implicit operator Float256(float value) => new Float256((BigRational.Float<UInt256>)value);
     public static implicit operator Float256(double value) => new Float256((BigRational.Float<UInt256>)value);
+    public static implicit operator Float256(decimal value) => new Float256((BigRational.Float<UInt256>)value);
     public static implicit operator Float256(Float128 value) => new Float256(Float128.Cast<UInt256>(value));
     public static explicit operator Float256(BigRational value) => new Float256((BigRational.Float<UInt256>)value);
 
@@ -96,6 +106,7 @@ namespace System.Numerics
     public static explicit operator Half(Float256 value) => (Half)value.p;
     public static explicit operator float(Float256 value) => (float)value.p;
     public static explicit operator double(Float256 value) => (double)value.p;
+    public static explicit operator decimal(Float256 value) => (decimal)value.p;
     public static explicit operator Float128(Float256 value) => Float128.Cast(value.p);
     public static implicit operator BigRational(Float256 value) => (BigRational)value.p;
 
@@ -113,7 +124,8 @@ namespace System.Numerics
     public static bool operator <(Float256 a, Float256 b) => a.p < b.p;
     public static bool operator >(Float256 a, Float256 b) => a.p > b.p;
 
-    public static Float256 Truncate(Float256 a) => new Float256(BigRational.Float<UInt256>.Truncate(a.p));    
+    public static Float256 Round(Float256 a, int digits) => new Float256(BigRational.Float<UInt256>.Round(a.p, digits));
+    public static Float256 Truncate(Float256 a) => new Float256(BigRational.Float<UInt256>.Truncate(a.p));
     public static Float256 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float256(BigRational.Float<T>.Cast<UInt256>(a));
     public static BigRational.Float<T> Cast<T>(Float256 a) where T : unmanaged => BigRational.Float<UInt256>.Cast<T>(a.p);
 
@@ -139,6 +151,9 @@ namespace System.Numerics
   /// </remarks>
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct Float80 : IComparable<Float80>, IEquatable<Float80>, IComparable, ISpanFormattable
+#if NET7_0
+    , BigRational.Float<Float80.UInt80>.IFloat<Float80>
+#endif
   {
     public readonly override string ToString() => p.ToString();
     public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
@@ -153,6 +168,7 @@ namespace System.Numerics
     public static implicit operator Half(Float80 value) => (Half)value.p;
     public static implicit operator float(Float80 value) => (float)value.p;
     public static implicit operator double(Float80 value) => (double)value.p;
+    public static explicit operator decimal(Float80 value) => (decimal)(BigRational)value; //todo: inline     
     public static implicit operator Float128(Float80 value) => Float128.Cast(value.p);
     public static implicit operator Float256(Float80 value) => Float256.Cast(value.p);
     public static implicit operator BigRational(Float80 value) => (BigRational)value.p;
@@ -173,6 +189,7 @@ namespace System.Numerics
     public static Float80 operator /(Float80 a, Float80 b) => new Float80(a.p / b.p);
     public static Float80 operator %(Float80 a, Float80 b) => new Float80(a.p % b.p);
 
+    public static Float80 Round(Float80 a, int digits) => new Float80(BigRational.Float<UInt80>.Round(a.p, digits));
     public static Float80 Truncate(Float80 a) => new Float80(BigRational.Float<UInt80>.Truncate(a.p));
     public static Float80 Cast<T>(BigRational.Float<T> a) where T : unmanaged => new Float80(BigRational.Float<T>.Cast<UInt80>(a));
     public static BigRational.Float<T> Cast<T>(Float80 a) where T : unmanaged => BigRational.Float<UInt80>.Cast<T>(a.p);
@@ -188,5 +205,4 @@ namespace System.Numerics
     [StructLayout(LayoutKind.Sequential, Size = 10)] // Pack = 2 
     private readonly struct UInt80 { } // readonly UInt16 upper; readonly UInt64 lower; }
   }
-
 }

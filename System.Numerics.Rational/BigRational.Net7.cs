@@ -1221,8 +1221,7 @@ namespace System.Numerics
     {
       return Tanh(x, MaxDigits);
     }
-  }
-    
+  }    
 }
 
 #endif //NET7_0

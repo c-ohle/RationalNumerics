@@ -5,6 +5,8 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+//todo: nans, infs, upcast rnd, parse rnd, sqr 
+
 #pragma warning disable CS1591  //xml comments
 
 namespace System.Numerics
@@ -39,7 +41,7 @@ namespace System.Numerics
         }
         return sp.Slice(0, ns).ToString();
       }
-      public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+      public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
       {
         var fmt = 'G'; int dig = 0, rnd = 0; var info = NumberFormatInfo.GetInstance(provider);
         if (format.Length != 0)
@@ -50,13 +52,33 @@ namespace System.Numerics
           if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
         }
         if (dig == 0) dig = Digits; // (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f));
-        if (destination.Length < dig + 16) { dig += 16; goto ex; }
-        var cpu = main_cpu; var p = this.p;
-        var e = push(cpu, (uint*)&p); cpu.pow(2, e); cpu.mul();
-        var n = tos(destination, cpu, fmt, dig, rnd, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
+        if (dest.Length < dig + 16) { dig += 16; goto ex; }
+        var cpu = main_cpu; var p = this.p; var es = 0;
+        var e = push(cpu, (uint*)&p);
+
+        var ep = (int)((e + mbi) * 0.30102999566398114); //Math.Log(2) / Math.Log(10) Math.Log10(2);
+        var d1 = Math.Abs(ep); var d2 = Math.Abs(dig); var dd = d1 - d2;
+        if (dd > 10)// && provider == null) //todo: opt. F? check
+        {
+          if (dig <= 0) { }
+          else if (ep > 0)
+          {
+            cpu.pop(); *(Float<T>*)&p = this * pow10(cpu, 3 - dd);
+            e = push(cpu, (uint*)&p); es = dd - 3;
+          }
+          else if (ep < 0)
+          {
+            cpu.pop(); *(Float<T>*)&p = this * pow10(cpu, dd - 3); //todo: opt. bias 
+            e = push(cpu, (uint*)&p); es = 3 - dd;
+          }
+          else { }
+        }
+
+        cpu.pow(2, e); cpu.mul(); //(char fmt,int dig,int rnd,int ex,int fl)
+        var n = tos(dest, cpu, fmt, dig, rnd, es, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
         if (n < 0) { dig = -n; goto ex; }
         charsWritten = n; return true; ex:
-        charsWritten = 0; if (destination.Length >= 2) new Span<char>(&dig, 2).CopyTo(destination); return false;
+        charsWritten = 0; if (dest.Length >= 2) new Span<char>(&dig, 2).CopyTo(dest); return false;
       }
       public readonly override int GetHashCode()
       {
@@ -70,9 +92,7 @@ namespace System.Numerics
       {
         return Compare((uint*)&a, (uint*)&b);
       }
-      // /// <inheritdoc cref="ISpanParsable{TSelf}.Parse(ReadOnlySpan{char}, IFormatProvider?)" />
       public static Float<T> Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null) { TryParse(value, provider, out var r); return r; }
-      // /// <inheritdoc cref="ISpanParsable{TSelf}.TryParse(ReadOnlySpan{char}, IFormatProvider?, out TSelf)" />
       public static bool TryParse(ReadOnlySpan<char> value, IFormatProvider? provider, out Float<T> result)
       { //todo: rnd to digits in str
         var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
@@ -90,30 +110,33 @@ namespace System.Numerics
       public static explicit operator Float<T>(Half value)
       {
         //if (sizeof(T) == 2) return *(Float<T>*)&value; //todo: enable  after  tests
-        var cpu = main_cpu; var e = Float<UInt16>.push(cpu, (uint*)&value);
-        Float<T> c; pop(cpu, e, (uint*)&c); return c;
+        return Float<UInt16>.Cast<T>(*(Float<UInt16>*)&value);
+        //var cpu = main_cpu; var e = Float<UInt16>.push(cpu, (uint*)&value);
+        //Float<T> c; pop(cpu, e, (uint*)&c); return c;
       }
       public static explicit operator Float<T>(float value)
       {
         //if (sizeof(T) == 4) return *(Float<T>*)&value; //todo: enable  after  tests
-        var cpu = main_cpu; var e = Float<UInt32>.push(cpu, (uint*)&value);
-        Float<T> c; pop(cpu, e, (uint*)&c); return c;
+        return Float<UInt32>.Cast<T>(*(Float<UInt32>*)&value);
+        //var cpu = main_cpu; var e = Float<UInt32>.push(cpu, (uint*)&value);
+        //Float<T> c; pop(cpu, e, (uint*)&c);
+        //if (Float<T>.Digits > (e = Float<UInt32>.Digits)) c = Float<T>.Round(c, e); return c; //return c;
       }
       public static explicit operator Float<T>(double value)
       {
         //if (sizeof(T) == 8) return *(Float<T>*)&value; //todo: enable  after  tests
-        var cpu = main_cpu; var e = Float<UInt64>.push(cpu, (uint*)&value);
-        Float<T> c; pop(cpu, e, (uint*)&c); return c;
+        return Float<UInt64>.Cast<T>(*(Float<UInt64>*)&value);
+        //var cpu = main_cpu; var e = Float<UInt64>.push(cpu, (uint*)&value);
+        //Float<T> c; pop(cpu, e, (uint*)&c);
+        //if (Float<T>.Digits > (e = Float<UInt64>.Digits)) c = Float<T>.Round(c, e); return c;
+      }
+      public static explicit operator Float<T>(decimal value)
+      {
+        var cpu = main_cpu; cpu.push(value); return pop(cpu);
       }
       public static explicit operator Float<T>(BigRational value)
       {
         var cpu = main_cpu; cpu.push(value); return pop(cpu);
-        //cpu.mod(8); var m = mbi;
-        //int s = cpu.sign(); if (cpu.sign() < 0) { cpu.neg(); cpu.neg(1); }
-        //int j, k, u = m - unchecked(j = (int)cpu.msb());
-        //cpu.shl(u); cpu.swp(); int v = (m << 1) - unchecked(k = (int)cpu.msb());
-        //cpu.shl(v); cpu.swp(); cpu.idiv();
-        //Float<T> c; pop(cpu, k - j - m, (uint*)&c); return c;
       }
 
       public static explicit operator int(Float<T> value)
@@ -133,9 +156,13 @@ namespace System.Numerics
         var cpu = main_cpu; var e = push(cpu, (uint*)&value);
         Float<UInt64> c; Float<UInt64>.pop(cpu, e, (uint*)&c); return *(double*)&c;
       }
+      public static explicit operator decimal(Float<T> value)
+      {
+        return (decimal)(BigRational)value; //todo: inline
+      }
       public static implicit operator BigRational(Float<T> value)
       {
-        var cpu = main_cpu; var e = push(cpu, (uint*)&value.p);
+        var cpu = main_cpu; var e = push(cpu, (uint*)&value.p); //todo: e > mbi
         cpu.pow(2, e); cpu.mul(); return cpu.popr();
       }
 
@@ -216,7 +243,15 @@ namespace System.Numerics
       public static Float<B> Cast<B>(Float<T> a) where B : unmanaged
       {
         var cpu = main_cpu; var e = push(cpu, (uint*)&a);
-        Float<B> c; Float<B>.pop(cpu, e, (uint*)&c); return c;
+        //  int b, t;
+        //  if ((b = Float<B>.mbi) > (t = Float<T>.mbi))
+        //  {
+        //    //var x1 = (int)Math.Log(b, 2); //34
+        //    //var x2 = (int)Math.Log(t, 2); //15
+        //    //e -= x1 - x2;
+        //  }
+        Float<B> c; Float<B>.pop(cpu, e, (uint*)&c);
+        return c;
       }
 
       public static Float<T> Pi => (Float<T>)BigRational.Pi(Digits);
@@ -254,24 +289,40 @@ namespace System.Numerics
       private static void pop(CPU cpu, int e, uint* p)
       {
         int s = unchecked((int)cpu.msb()); if (s == 0) { cpu.pop(); *(Float<T>*)p = default; return; }
-        int d = s - mbi, l;
+        int d = s - mbi, l; //todo: the point inf, nan starts
         if (d > 0) { var c = cpu.bt(d - 1); cpu.shr(d); if (c) cpu.inc(); } //x87 rnd
         else if (d != 0) cpu.shl(-d);
         var sp = cpu.gets(cpu.mark() - 1);
-        p[l = lui] = (sp[0] & 0x80000000) | (unchecked((uint)((e + d) + bia)) << ((31 - sbi))) | (sp[l + 1] & ((1u << (mbi - 1)) - 1u));
+        p[l = lui] = (sp[0] & 0x80000000) | (unchecked((uint)((e + d) + bia)) << (31 - sbi)) | (sp[l + 1] & ((1u << (mbi - 1)) - 1u));
         if ((sizeof(T) & 2) != 0) if (l != 0) p[l] >>= 16; else p[l] = (p[l] & 0xffff) | p[l] >> 16;
         for (int i = 0; i < l; i++) p[i] = sp[i + 1];
         cpu.pop();
       }
       private static Float<T> pop(CPU cpu)
       {
-        cpu.mod(8); var m = mbi;
-        int s = cpu.sign(); if (cpu.sign() < 0) { cpu.neg(); cpu.neg(1); }
-        int j, k, u = m - unchecked(j = (int)cpu.msb());
-        cpu.shl(u); cpu.swp(); int v = (m << 1) - unchecked(k = (int)cpu.msb());
-        cpu.shl(v); cpu.swp(); cpu.idiv();
-        Float<T> c; pop(cpu, k - j - m, (uint*)&c); return c;
+        Float<T> a, b; var s = cpu.sign(); if (s == 0) { cpu.pop(); return default; }
+        cpu.mod(8); pop(cpu, 0, (uint*)&a); pop(cpu, 0, (uint*)&b); a = b / a; return a;
+
+        //var s = cpu.sign(); if (s <= 0) { if (s == 0) return default; cpu.neg(); }
+        //var w = cpu.cmpa(); if (w > 0) { cpu.swp(); }
+        //int m = mbi; //if (s < 0) { cpu.neg(); cpu.neg(1); }
+        //int j, k, u = m - unchecked(j = (int)cpu.msb());
+        //cpu.shl(u); cpu.swp(); int v = (m << 1) - unchecked(k = (int)cpu.msb());
+        //cpu.shl(v); cpu.swp(); cpu.idiv(); if (s < 0) cpu.neg();
+        //Float<T> c; pop(cpu, k - j - m, (uint*)&c); return c;
       }
+      private static Float<T> pow10(CPU cpu, int y)
+      {
+        Float<T> x = 1, z = 10; uint e = unchecked((uint)(y >= 0 ? y : -y));
+        for (; ; e >>= 1)
+        {
+          if ((e & 1) != 0) x *= z;
+          if (e <= 1) break; z = z * z; //todo: sqr
+        }
+        if (y < 0) x = 1 / x; //static float inv(float x) { uint* i = (uint*)&x; *i = 0x7F000000 - *i; return x; }
+        return x;
+      }
+      //private static Float<T> sqr(CPU cpu, Float<T> a) => a * a;
       private static bool Equals(uint* a, uint* b)
       {
         if (a == b) return true; //sort's
@@ -293,13 +344,13 @@ namespace System.Numerics
         ea = cpu.cmp(); cpu.pop(2); return ea * sa;
       }
       [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-      private static readonly int sbi, mbi, bia, lui; //todo: inline
+      private static readonly int sbi, mbi, bia, lui; //todo: inline, for NET 7 type desc
       static Float()
       {
         int size = sizeof(T); if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
         switch (size) { case 2: sbi = 5; break; case 4: sbi = 8; break; case 8: sbi = 11; break; case <= 16: sbi = 15; break; default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break; }
         mbi = (size << 3) - sbi; bia = (1 << (sbi - 1)) + mbi - 2; lui = (size >> 2) - 1 + ((size & 2) >> 1); //check();
-        //Debug.WriteLine($"Float{size << 3} significand bits {mbi} exponent bits {((sizeof(T) << 3) - mbi) - 1} decimal digits {mbi * MathF.Log10(2):0.##}");
+                                                                                                              //Debug.WriteLine($"Float{size << 3} significand bits {mbi} exponent bits {((sizeof(T) << 3) - mbi) - 1} decimal digits {mbi * MathF.Log10(2):0.##}");
       }
       #endregion
 
@@ -310,8 +361,9 @@ namespace System.Numerics
       internal static int ExponentBias => (1 << (ExponentBits - 1)) - 1; // 1023
       internal static int MinExponent => 1 - ExponentBias; // -1022;
       internal static int MaxExponent => ExponentBias; // +1023;
-      //internal static float DecimalDigits => mbi * MathF.Log10(2);
-      internal static int Digits => sizeof(T) != 2 ? (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f)) : 5;
+                                                       //internal static float DecimalDigits => mbi * MathF.Log10(2);
+                                                       //internal static int Digits2 => sizeof(T) != 2 ? (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f)) : 5;
+      internal static int Digits => sizeof(T) != 2 ? (int)((mbi) * 0.30102999566398114) : 5;
       //static void check()
       //{
       //  //if ((fltinits & (1ul << (sizeof(T) >> 1))) == 0) fltinits |= (1ul << (sizeof(T) >> 1)); else { }
@@ -425,13 +477,16 @@ namespace System.Numerics
       /// The smallest integral value that is greater than or equal to the <paramref name="a"/> parameter.
       /// </returns>
       public static Float<T> Ceiling(Float<T> a) => (Float<T>)BigRational.Ceiling((BigRational)a);
-      /// <summary>
-      /// Rounds a <see cref="Float{T}"/> number to the nearest integral value
-      /// and rounds midpoint values to the nearest even number.
-      /// </summary>
-      /// <param name="a">A <see cref="Float{T}"/> number to be rounded.</param>
-      /// <returns></returns>
-      public static Float<T> Round(Float<T> a) => (Float<T>)BigRational.Round((BigRational)a);
+      // /// <summary>
+      // /// Rounds a <see cref="Float{T}"/> number to the nearest integral value
+      // /// and rounds midpoint values to the nearest even number.
+      // /// </summary>
+      // /// <param name="a">A <see cref="Float{T}"/> number to be rounded.</param>
+      // /// <returns></returns>
+      // public static Float<T> Round(Float<T> a)
+      // { 
+      //   retuurn (Float<T>)BigRational.Round((BigRational)a);
+      // }
       /// <summary>
       /// Rounds a <see cref="Float{T}"/> number to a specified number of fractional digits 
       /// using the specified rounding convention.
@@ -443,7 +498,13 @@ namespace System.Numerics
       /// The <see cref="Float{T}"/> number with decimals fractional digits that the value is rounded to.<br/> 
       /// If the number has fewer fractional digits than decimals, the number is returned unchanged.
       /// </returns>
-      public static Float<T> Round(Float<T> a, int digits, MidpointRounding mode) => (Float<T>)BigRational.Round((BigRational)a, digits, mode);
+      public static Float<T> Round(Float<T> a, int digits = 0, MidpointRounding mode = MidpointRounding.ToEven)
+      {
+        if (digits == 0) return Truncate(a);
+        var cpu = main_cpu; var b = pow10(cpu, digits);
+        a *= b; var e = push(cpu, (uint*)&a); cpu.shr(-e);
+        pop(cpu, 0, (uint*)&a); a /= b; return a; // (Float<T>)BigRational.Round((BigRational)a, digits, mode);
+      }
       /// <summary>
       /// Returns a specified number raised to the specified power.<br/>
       /// For fractional exponents, the result is rounded to the specified number of decimal places.
@@ -457,7 +518,10 @@ namespace System.Numerics
       /// The <see cref="Float{T}"/> number <paramref name="x"/> raised to the power <paramref name="y"/>.<br/>
       /// NaN if <paramref name="x"/> is less zero and <paramref name="y"/> is fractional.
       /// </returns>
-      public static Float<T> Pow(Float<T> x, Float<T> y) => (Float<T>)BigRational.Pow((BigRational)x, (BigRational)y, Digits);
+      public static Float<T> Pow(Float<T> x, Float<T> y)
+      {
+        return (Float<T>)BigRational.Pow((BigRational)x, (BigRational)y, Digits);
+      }
       /// <summary>
       /// Returns a specified number raised to the specified power.
       /// </summary>
@@ -531,7 +595,10 @@ namespace System.Numerics
       /// <param name="x">The value whose logarithm is to be computed.</param>
       /// <param name="newBase">The base in which the logarithm is to be computed.</param>
       /// <returns><c>log<sub><paramref name="newBase" /></sub>(<paramref name="x" />)</c></returns>
-      public static Float<T> Log(Float<T> x, Float<T> newBase) => (Float<T>)BigRational.Log((BigRational)x, (BigRational)newBase, Digits);
+      public static Float<T> Log(Float<T> x, Float<T> newBase)
+      {
+        return (Float<T>)BigRational.Log((BigRational)x, (BigRational)newBase, Digits);
+      }
       /// <summary>
       /// Returns e raised to the specified power.
       /// </summary>
@@ -698,8 +765,8 @@ namespace System.Numerics
       readonly int GetSignificandBitLength() => -1;//throw new NotImplementedException();
       readonly int GetSignificandByteCount() => -1;//throw new NotImplementedException();
       static bool TryWrite(Float<T> v, int fl, Span<byte> sp, out int bw) => throw new NotImplementedException();
-#endregion
-      
+      #endregion
+
       readonly string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString(format, formatProvider);
       readonly bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => TryFormat(destination, out charsWritten, format, provider);
       public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Float<T> result)
@@ -860,6 +927,7 @@ namespace System.Numerics
     }
 
     //readonly struct TestFloat32 : BigRational.Float<UInt32>.IFloat<TestFloat32> { }
+
     public unsafe readonly partial struct Float<T>
     {
       public interface IFloat<U> : IMinMaxValue<U>, IBinaryFloatingPointIeee754<U> where U : unmanaged, IFloat<U>
@@ -942,6 +1010,7 @@ namespace System.Numerics
         static int IFloatingPointIeee754<U>.ILogB(U x) => Float<T>.ILogB(*(Float<T>*)&x);
         static U IFloatingPointIeee754<U>.FusedMultiplyAdd(U x, U y, U z) { *(Float<T>*)&x = Float<T>.FusedMultiplyAdd(*(Float<T>*)&x, *(Float<T>*)&y, *(Float<T>*)&z); return *(U*)&x; }
         static U IFloatingPointIeee754<U>.Ieee754Remainder(U x, U y) { *(Float<T>*)&x = Float<T>.Ieee754Remainder(*(Float<T>*)&x, *(Float<T>*)&y); return *(U*)&x; }
+        static U IBinaryNumber<U>.AllBitsSet { get { var t = Float<T>.AllBitsSet; return *(U*)&t; } }
 
         static U INumberBase<U>.One { get { var t = (Float<T>)(sbyte)1; return *(U*)&t; } }
         static U INumberBase<U>.Zero => default;
@@ -1027,8 +1096,6 @@ namespace System.Numerics
         bool IFloatingPoint<U>.TryWriteSignificandBigEndian(Span<byte> sp, out int bw) => Float<T>.TryWrite(Float<T>.cast<U>((U)this), 2, sp, out bw);
         bool IFloatingPoint<U>.TryWriteSignificandLittleEndian(Span<byte> sp, out int bw) => Float<T>.TryWrite(Float<T>.cast<U>((U)this), 3, sp, out bw);
 
-        static U IBinaryNumber<U>.AllBitsSet { get { var t = Float<T>.AllBitsSet; return *(U*)&t; } }
-
         static bool INumberBase<U>.TryConvertFromChecked<TOther>(TOther value, out U result) { var t = Float<T>.TryConvertFrom<TOther>(value, 0x1000, out var x); result = *(U*)&x; return t; }
         static bool INumberBase<U>.TryConvertFromSaturating<TOther>(TOther value, out U result) { var t = Float<T>.TryConvertFrom<TOther>(value, 0, out var x); result = *(U*)&x; return t; }
         static bool INumberBase<U>.TryConvertFromTruncating<TOther>(TOther value, out U result) { var t = Float<T>.TryConvertFrom<TOther>(value, 0, out var x); result = *(U*)&x; return t; }
@@ -1037,8 +1104,7 @@ namespace System.Numerics
         static bool INumberBase<U>.TryConvertToTruncating<TOther>(U value, out TOther result) where TOther : default { var x = *(Float<T>*)&value; return Float<T>.TryConvertTo<TOther>(x, 0, out result); }
       }
     }
+
 #endif
-
   }
-
 }

@@ -1,11 +1,15 @@
 ﻿global using System.Diagnostics;
 global using System.Numerics;
 global using System.Numerics.Rational;
+
 global using rat = System.Numerics.BigRational;
-global using BigInt = System.Numerics.BigRational.Integer;
 global using Float16 = System.Numerics.BigRational.Float<System.UInt16>;
 global using Float32 = System.Numerics.BigRational.Float<System.UInt32>;
+global using BigInt = System.Numerics.BigRational.Integer;
+
 using System.Globalization;
+
+using static System.Numerics.BigRational;
 
 namespace Test
 {
@@ -14,27 +18,66 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); // test();
+      Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
+      Debug.Assert(rat.task_cpu.mark() == 0);
     }
 
-#if false //NET7_0
+#if NET7_0
     static void test()
     {
+      var s = Float128.MaxValue.ToString();//-1.18973149536e+4932, max=1.18973149536e+4932
+      s = Float128.MinValue.ToString();
+
+      var t1 = (Float128)1.2345679e+300; s = t1.ToString();
+
+      var db = Math.PI * 100000; db = Math.Round(db, 3);
+      t1 = db;
+      t1 = Math.PI * 100000; t1 = Float128.Round(t1, 3); s = t1.ToString();
+
+      t1 = (Float128)(-1.2345679e+300); s = t1.ToString();
+
+      t1 = (Float128)1.2345679e-300; s = t1.ToString();
+      t1 = (Float128)(-1.2345679e-300); s = t1.ToString(); s = t1.ToString("");
+
+      t1 = (Float128)(rat)(+Math.PI); s = t1.ToString(); s = t1.ToString("");
+      t1 = (Float128)(rat)(-Math.PI); s = t1.ToString(); s = t1.ToString("");
+      t1 = (Float128)(rat)"1.2345679e+300"; s = t1.ToString(); s = t1.ToString("");
+      t1 = (Float128)(rat)"-1.2345679e+300"; s = t1.ToString(); s = t1.ToString("");
+      t1 = (Float128)(rat)"1.2345679e+4900"; s = t1.ToString(); s = t1.ToString("");
+      t1 = (Float128)(rat)"-1.2345679e+4900"; s = t1.ToString(); s = t1.ToString("");
+      t1 = (Float128)(rat)"1.2345679e-4900"; s = t1.ToString(); s = t1.ToString("");
+      t1 = (Float128)(rat)"0"; s = t1.ToString(); s = t1.ToString("");
+
+      s = Float256.MaxValue.ToString();
+
+      Float<(UInt128, UInt128, UInt128, UInt128)> t2;
+      t2 = Float<(UInt128, UInt128, UInt128, UInt128)>.MaxValue; s = t2.ToString();
+      t2 = Float<(UInt128, UInt128, UInt128, UInt128)>.MinValue; s = t2.ToString();
+
+      //4,544297019161366309996159590797065043318010399459145627088209557343323
+      //899506844784657821009910089672287085583955571366163074591986537419841565848631E+631305
+      //s = yy.MaxValue.ToString("");
+      //4.544297019161366309996159590797065043318010399459145627088209557343323
+      //899506844784657821009910089672287085583955571366163074591986537419841565849473E+631305
       //var a = float.Pi;
       //var b = double.Pi;
-      var c = Float80.Pi;
-      var d = Float96.Pi;
-      var e = Float128.Pi;
-      var f = BigRational.Float<(UInt128, UInt64)>.Pi; // Float192
-      //var g = Float256.Pi;
-      //var h = BigRational.Float<(UInt128, UInt128, UInt128)>.Pi; // Float384
-      //var i = BigRational.Float<(UInt128, UInt128, UInt128, UInt128)>.Pi; // Float512
-      
+      var c = Float80.Pi; s = Float80.Pi.ToString();
+      var d = Float96.Pi; s = Float96.Pi.ToString();
+      var e = Float128.Pi; s = Float128.Pi.ToString();
+
+      var f = Float<(UInt128, UInt64)>.Pi; // Float192
+      var g = Float256.Pi;
+      var h = Float<(UInt128, UInt128, UInt128)>.Pi; // Float384
+      var i = Float<(UInt128, UInt128, UInt128, UInt128)>.Pi; // Float512
+
       test_strxx();
       static void test_strxx()
       {
+
         Float64 a = Float64.Pi, b = 3;
+
         b = Float64.Parse("1.23456");
         b = Float64.Parse("-1.23456");
         var s = b.ToString("", null);
@@ -47,6 +90,8 @@ namespace Test
         xxx((Float96)Math.PI, (Float96)3);
 
         xxx(Math.PI, 3); xxx(Math.PI, 0); xxx(0, Math.PI);
+
+        xxx(Float128.Pi, 3);
 
         static void xxx<T>(T a, T b) where T : IBinaryFloatingPointIeee754<T>
         {
@@ -542,5 +587,6 @@ namespace Test
       }
     }
 #endif
+
   }
 }

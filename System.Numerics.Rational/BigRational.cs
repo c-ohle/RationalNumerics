@@ -2164,8 +2164,8 @@ namespace System.Numerics
       /// </summary>
       /// <param name="y">A <see cref="int"/> value that specifies a power.</param>
       public void pow(int y)
-      { //todo: opt. ipt()
-        push(1u); swp();
+      {
+        push(1u); swp(); //todo: opt. ipt()
         for (var e = unchecked((uint)(y < 0 ? -y : y)); ; e >>= 1)
         {
           if ((e & 1) != 0) mul(1, 0);
@@ -3039,7 +3039,7 @@ namespace System.Numerics
         uint f = b[1];
         if (nb == 1)
         {
-          switch (f) //jump table
+          switch (f)
           {
             case 0: *(ulong*)r = 1; return;
             case 1: copy(r, a, na + 1); r[0] = na; return;
@@ -3048,19 +3048,14 @@ namespace System.Numerics
               //case 4: //todo: opt. shl(2)
               //...
           }
-          //if (f == 0) { *(ulong*)r = 1; return; }
-          //if (f == 1) { copy(r, a, na + 1); r[0] = na; /* r[0] = na; for (uint i = 1; i <= na; i++) r[i] = a[i]; */ return; }
         }
         if (na == 1) *(ulong*)(r + 1) = (ulong)a[1] * b[1]; //todo: jt
         else
         if (na == 2 && Bmi2.X64.IsSupported)
         {
           *(ulong*)(r + 3) = Bmi2.X64.MultiplyNoFlags(*(ulong*)(a + 1), nb == 2 ? *(ulong*)(b + 1) : b[1], (ulong*)(r + 1));
-        }
-        else if (na >= 00_32) //nb <= na
-        {
-          var n = na + nb; copy(r + 1, n); kmu(a + 1, na, b + 1, nb, r + 1, n);
-        }
+        } //todo: banchmarks nb in low range 
+        else if (na >= 00_32 && na + nb < 25000) kmu(a + 1, na, b + 1, nb, r + 1); //stack <~ 10 * (na + nb)
         else
         {
           ulong c = 0;
@@ -3072,8 +3067,7 @@ namespace System.Numerics
           r[na + 1] = unchecked((uint)c);
           for (uint k = 1; k < nb; k++)
           {
-            f = b[k + 1]; c = 0; var s = r + k;
-            //if (f == 0) { s[na + 1] = 0; continue; }
+            f = b[k + 1]; c = 0; var s = r + k; //if (f == 0) { s[na + 1] = 0; continue; }
             for (uint i = 1; i <= na; i++)
             {
               var d = (ulong)a[i] * f + c + s[i];
@@ -3109,7 +3103,7 @@ namespace System.Numerics
             ((ulong*)v)[1] = t3 + (t4 >> 32) + (t5 >> 32);
           }
         }
-        else if (n >= 0_040) { copy(v, n + n); kmu(a, n, v, n + n); }
+        else if (n >= 0_040 && n < 50000) kmu(a, n, v); //stack <~ 5 * n -> 250k
         else
         {
           for (uint i = 0; i < n; i++)
@@ -3309,60 +3303,56 @@ namespace System.Numerics
       {
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
       }
-      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r, uint nr) //todo: opt, non recursive on stack
+      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r)//, uint nr)
       {
-        Debug.Assert(na >= nb && nr == na + nb);
+        //Debug.Assert(na + nb == nr); //Debug.Assert(na >= nb && nr == na + nb);
         if (nb < 00_20)
         {
-          for (uint i = 0; i < nb; i++) //todo: opt after checks, the 0 row trick
+          ulong c = 0, d;
+          for (uint k = 0; k < na; k++, c = d >> 32)
+            r[k] = unchecked((uint)(d = c + (ulong)a[k] * b[0]));
+          r[na] = (uint)c;
+          for (uint i = 1, k; i < nb; i++)
           {
-            ulong c = 0, d;
-            for (uint k = 0; k < na; k++, c = d >> 32)  //todo: opt
-            {
-              //ref uint h = ref r[i + k]; h = unchecked((uint)(d = h + c + (ulong)a[k] * b[i]));
+            for (k = 0, c = 0; k < na; k++, c = d >> 32)
               r[i + k] = unchecked((uint)(d = r[i + k] + c + (ulong)a[k] * b[i]));
-            }
             r[i + na] = (uint)c;
           }
           return;
         }
         uint n = nb >> 1, m = n << 1;
-        kmu(a, n, b, n, r, m); // p1 = al * bl
-        kmu(a + n, na - n, b + n, nb - n, r + m, nr - m); // p2 = ah * bh
+        kmu(a, n, b, n, r);//, m);
+        kmu(a + n, na - n, b + n, nb - n, r + m);//, nr - m);
         uint r1 = na - n + 1, r2 = nb - n + 1, r3 = r1 + r2, r4 = r1 + r2 + r3;
-        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2; //todo: opt, use cpu.stack  
-        copy(t1, r4);
-        add(a + n, na - n, a, n, t1, r1);
-        add(b + n, nb - n, b, n, t2, r2);
-        kmu(t1, r1, t2, r2, t3, r3); // p3 = (ah + al) * (bh + bl)
-        sub(r + m, nr - m, r, m, t3, r3);
-        add(r + n, nr - n, t3, r3); // (p2 << m) + ((p3 - (p1 + p2)) << n) + p1        
+        uint* t1 = stackalloc uint[(int)r4], t2 = t1 + r1, t3 = t2 + r2;
+        add(a + n, na - n, a, n, t1);
+        add(b + n, nb - n, b, n, t2);
+        kmu(t1, r1, t2, r2, t3);//, r3);
+        sub(r + m, (na + nb) - m, r, m, t3, r3);
+        add(r + n, (na + nb) - n, t3, r3);
       }
-      static void kmu(uint* a, uint na, uint* r, uint nr)
+      static void kmu(uint* a, uint na, uint* r)
       {
         if (na < 0_032)
         {
-          for (uint i = 0; i < na; i++) //todo: opt after checks, the 0 row trick
+          ulong u, v, c; r[0] = unchecked((uint)(u = (ulong)a[0] * a[0])); r[1] = (uint)(u >> 32);
+          for (uint i = 1, k; i < na; i++)
           {
-            ulong c = 0, u, v;
-            for (uint k = 0; k < i; k++, c = (v + (u >> 1)) >> 31) //todo: opt
-            {
-              //ref uint h = ref r[i + k]; h = unchecked((uint)((u = h + c) + ((v = (ulong)a[k] * a[i]) << 1)));
+            for (k = 0, c = 0; k < i; k++, c = (v + (u >> 1)) >> 31)
               r[i + k] = unchecked((uint)((u = r[i + k] + c) + ((v = (ulong)a[k] * a[i]) << 1)));
-            }
             r[i + i] = unchecked((uint)(u = (ulong)a[i] * a[i] + c)); r[i + i + 1] = (uint)(u >> 32);
           }
           return;
         }
         uint n = na >> 1, m = n << 1;
-        kmu(a, n, r, m);
-        kmu(a + n, na - n, r + m, nr - m);
+        kmu(a, n, r);
+        kmu(a + n, na - n, r + m);
         uint r1 = na - n + 1, r2 = r1 + r1;
-        uint* t1 = stackalloc uint[(int)(r1 + r2)], t2 = t1 + r1; copy(t1, r1 + r2); //todo: cpu stack
-        add(a + n, na - n, a, n, t1, r1);
-        kmu(t1, r1, t2, r2);
-        sub(r + m, nr - m, r, m, t2, r2);
-        add(r + n, (nr - n), t2, r2);
+        uint* t1 = stackalloc uint[(int)(r1 + r2)], t2 = t1 + r1;
+        add(a + n, na - n, a, n, t1);
+        kmu(t1, r1, t2);
+        sub(r + m, na + na - m, r, m, t2, r2);
+        add(r + n, na + na - n, t2, r2);
       }
       static void sub(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
       {
@@ -3371,9 +3361,9 @@ namespace System.Numerics
         for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i]));
         for (; c != 0 && i < nr; i++, c = d >> 32) r[i] = unchecked((uint)(d = r[i] + c));
       }
-      static void add(uint* a, uint na, uint* b, uint nb, uint* r, uint nr)
+      static void add(uint* a, uint na, uint* b, uint nb, uint* r)//, uint nr)
       {
-        uint i = 0; ulong c = 0, d; Debug.Assert(na >= nb && nr == na + 1);
+        uint i = 0; ulong c = 0, d; //Debug.Assert(na >= nb && nr == na + 1);
         for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
         for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = a[i] + c));
         r[i] = unchecked((uint)c);
@@ -3502,7 +3492,7 @@ namespace System.Numerics
     }
     #endregion
     #region experimental 
-    static int tos(Span<char> sp, CPU cpu, char fmt, int dig, int rnd, int fl)
+    static int tos(Span<char> sp, CPU cpu, char fmt, int dig, int rnd, int es, int fl)
     {
       Debug.Assert(sp.Length >= dig + 16); // -.E+2147483647 14      
       var sig = cpu.sign(); var f = fmt & ~0x20;
@@ -3519,6 +3509,8 @@ namespace System.Numerics
       var tp = sp.Slice(0, dig);
       cpu.tos(tp, out var ns, out e, out _, false);
       tp = tp.Slice(0, ns).TrimEnd('0'); ns = tp.Length;
+
+      e += es; // if ((fl & 0x80) != 0) { var t = fl >> 8; e += t; }
 
       int x = e + 1, l = 0;
       if (f == 'E') { x = 1; if (ns < dig) l = dig; }
