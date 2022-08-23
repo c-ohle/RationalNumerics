@@ -532,9 +532,7 @@ namespace System.Numerics
     /// <b>Note</b>: In the current version, the function has not yet been finally optimized for performance<br/>and the accuracy of the last digits has not yet been ensured!
     /// </remarks>
     /// <param name="x">A number representing a tangent.</param>
-    /// <param name="digits">
-    /// The maximum number of fractional decimal digits in the return value.<br/>
-    /// </param>
+    /// <param name="digits"> The maximum number of fractional decimal digits in the return value.digits</param>
     /// <returns>An angle, θ, measured in radians, such that -π/2 ≤ θ ≤ π/2.</returns>
     public static BigRational Atan(BigRational x, int digits)
     {
@@ -578,6 +576,78 @@ namespace System.Numerics
       return default(BigRational) / 0; //NaN
     }
 
+    /// <summary>Computes the cosine of a value that has been multipled by <c>pi</c>.</summary>
+    /// <remarks>
+    /// This computes <c>cos(x * π)</c>.<br/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
+    /// </remarks>
+    /// <param name="x">The value, in half-revolutions, whose cosine is to be computed.</param>
+    /// <param name="digits"> The maximum number of fractional decimal digits in the return value.digits</param>
+    /// <returns>The cosine of <paramref name="x" /> multiplied-by <c>pi</c>.</returns>
+    public static BigRational CosPi(BigRational x, int digits)
+    {
+      return Cos(x * Pi(digits), digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the sine of a value that has been multiplied by <c>pi</c>.</summary>
+    /// <remarks>
+    /// This computes <c>sin(x * π)</c>.<br/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
+    /// </remarks>
+    /// <param name="x">The value, in half-revolutions, that is multipled by <c>pi</c> before computing its sine.</param>
+    /// <param name="digits"> The maximum number of fractional decimal digits in the return value.digits</param>
+    /// <returns>The sine of <paramref name="x" /> multiplied-by <c>pi</c>.</returns>
+    public static BigRational SinPi(BigRational x, int digits)
+    {
+      return Sin(x * Pi(digits), digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the tangent of a value that has been multipled by <c>pi</c>.</summary>
+    /// <remarks>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
+    /// </remarks>
+    /// <param name="x">The value, in half-revolutions, that is multipled by <c>pi</c> before computing its tangent.</param>
+    /// <param name="digits"> The maximum number of fractional decimal digits in the return value.digits</param>
+    /// <returns>The tangent of <paramref name="x"/> multiplied-by <c>pi</c>.</returns>
+    /// <remarks>This computes <c>tan(x * π)</c>.</remarks>
+    public static BigRational TanPi(BigRational x, int digits)
+    {
+      return Tan(x * Pi(digits), digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the arc-cosine of a value and divides the result by <c>pi</c>.</summary>
+    /// <remarks>
+    /// This computes <c>arccos(x) / π</c> in the interval <c>[-0.5, +0.5]</c>.<br/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
+    /// </remarks>
+    /// <param name="x">The value whose arc-cosine is to be computed.</param>
+    /// <param name="digits"> The maximum number of fractional decimal digits in the return value.digits</param>
+    /// <returns>The arc-cosine of <paramref name="x" />, divided by <c>pi</c>.</returns>
+    public static BigRational AcosPi(BigRational x, int digits)
+    {
+      return Acos(x, digits) / Pi(digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the arc-sine of a value and divides the result by <c>pi</c>.</summary>
+    /// <remarks>
+    /// This computes <c>arcsin(x) / π</c> in the interval <c>[-0.5, +0.5]</c>.<br/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
+    /// </remarks>
+    /// <param name="x">The value whose arc-sine is to be computed.</param>
+    /// <param name="digits"> The maximum number of fractional decimal digits in the return value.digits</param>
+    /// <returns>The arc-sine of <paramref name="x" />, divided by <c>pi</c>.</returns>
+    public static BigRational AsinPi(BigRational x, int digits)
+    {
+      return Asin(x, digits) / Pi(digits); //todo: opt. cpu
+    }
+    /// <summary>Computes the arc-tangent of a value and divides the result by pi.</summary>
+    /// <remarks>
+    /// This computes <c>arctan(x) / π</c> in the interval <c>[-0.5, +0.5]</c>.<br/>
+    /// The desired precision can preset by <see cref="MaxDigits"/>
+    /// </remarks>
+    /// <param name="x">The value whose arc-tangent is to be computed.</param>
+    /// <param name="digits"> The maximum number of fractional decimal digits in the return value.digits</param>
+    /// <returns>The arc-tangent of <paramref name="x" />, divided by <c>pi</c>.</returns>
+    public static BigRational AtanPi(BigRational x, int digits)
+    {
+      return Atan(x, digits) / Pi(digits); //todo: opt. cpu
+    }
     /// <summary>Computes the hyperbolic arc-sine of a value.</summary>
     /// <param name="x">The value, in radians, whose hyperbolic arc-sine is to be computed.</param>
     /// <param name="digits">The maximum number of fractional decimal digits in the return value.</param>

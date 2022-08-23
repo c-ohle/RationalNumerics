@@ -3449,7 +3449,7 @@ namespace System.Numerics
     }
     static void copy(uint* d, uint* s, uint n)
     {
-      //new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; // 10% slower 
+      //new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; // 10 % slower
       //if (n > 16) { new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; } // 5% slower 
       uint i = 0, c;
       for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = *(decimal*)&((byte*)s)[i << 2]; // RyuJIT vmovdqu
@@ -3459,7 +3459,7 @@ namespace System.Numerics
     [ThreadStatic, DebuggerBrowsable(DebuggerBrowsableState.Never)] //debug visualizer security
     static CPU? cpu;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] //debug visualizer security
-    static CPU main_cpu => cpu ??= new CPU();
+    internal static CPU main_cpu => cpu ??= new CPU();
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] //debug visualizer security
     static uint[][]? cache;
     static BigRational cachx(uint x, uint* s, uint n)
@@ -3492,10 +3492,23 @@ namespace System.Numerics
     }
     #endregion
     #region experimental 
-    static int tos(Span<char> sp, CPU cpu, char fmt, int dig, int rnd, int es, int fl)
+    internal static int tos(Span<char> sp, CPU cpu, char fmt, int dig, int rnd, int es, int fl)
     {
-      Debug.Assert(sp.Length >= dig + 16); // -.E+2147483647 14      
-      var sig = cpu.sign(); var f = fmt & ~0x20;
+      var sig = cpu.sign(); var f = fmt & ~0x20; Debug.Assert(sp.Length >= dig + 16); // -.E+2147483647 14
+      if (f == 'X') 
+      {
+        var z = cpu.msb(); int xx = unchecked((int)((z >> 2) + 1)); //todo: unsigned flag
+        if (sig < 0 && (z & 3) == 0 && cpu.ipt()) xx--; //80
+        var n = dig > xx ? dig : xx; if (sp.Length < n) { cpu.pop(); return -n; }
+        if (sig < 0) cpu.toc(4); var pp = cpu.gets(cpu.mark() - 1);
+        pp = pp.Slice(1, unchecked((int)(pp[0] & 0x7fffffff)));
+        for (int i = 0, k, o = fmt == 'X' ? 'A' - 10 : 'a' - 10; i < n; i++)
+        {
+          var d = (k = i >> 3) < pp.Length ? (pp[k] >> ((i & 7) << 2)) & 0xf : sig < 0 ? 0xf : 0u;
+          sp[n - i - 1] = (char)(d < 10 ? '0' + d : o + d);
+        }
+        cpu.pop(); return n;
+      }
       cpu.dup(); cpu.tos(default, out _, out var e, out _, false);
       if (f == 'E') cpu.rnd(rnd - e);
       else if (f == 'F')
@@ -3504,21 +3517,17 @@ namespace System.Numerics
         var d = e + rnd + 1; if (d > dig) dig = d;
         cpu.rnd(rnd);
       }
+      else if (f == 'D') { var h = e + 16; if (h > sp.Length) { cpu.pop(); return -h; } dig = e + 1; }
       else cpu.rnd(dig - e);
-
       var tp = sp.Slice(0, dig);
       cpu.tos(tp, out var ns, out e, out _, false);
-      tp = tp.Slice(0, ns).TrimEnd('0'); ns = tp.Length;
-
-      e += es; // if ((fl & 0x80) != 0) { var t = fl >> 8; e += t; }
-
+      tp = tp.Slice(0, ns).TrimEnd('0'); ns = tp.Length; e += es;
       int x = e + 1, l = 0;
       if (f == 'E') { x = 1; if (ns < dig) l = dig; }
       else if (f == 'F') { if (ns < x + rnd) l = x + rnd; e = 0; }
+      else if (f == 'D') { e = 0; x = ns; }
       else if (e <= -5 || e >= 17) x = 1; else e = 0; //'G'
-
-      if (l != 0) { sp.Slice(ns, l - ns).Fill('0'); ns = l; }
-
+      if (l != 0) { sp.Slice(ns, l - ns).Fill('0'); ns = l; } //todo: opt. in
       if (x >= ns) { sp.Slice(ns, x - ns).Fill('0'); ns = x; }
       else
       {

@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Numerics;
+using System.Diagnostics;
 #pragma warning disable CS8602
 
 namespace System.Numerics.Rational

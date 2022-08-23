@@ -1,6 +1,8 @@
 ﻿#pragma warning disable CS8602,CS8604
 using Microsoft.Win32;
 using System.Data;
+using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Xml;

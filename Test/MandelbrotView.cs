@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Text.RegularExpressions;
+using System.Numerics;
+using System.Numerics.Rational;
 
 namespace Test
 {

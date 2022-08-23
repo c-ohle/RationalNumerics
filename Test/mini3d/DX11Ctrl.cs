@@ -1,8 +1,10 @@
 ﻿#nullable disable
 #pragma warning disable CS0649
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security;
 

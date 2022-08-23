@@ -23,37 +23,30 @@ namespace System.Numerics
     [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
     public readonly partial struct Integer : IComparable, IComparable<Integer>, IEquatable<Integer>, IFormattable, ISpanFormattable
     {
-      public override readonly string ToString() => p.ToString("L0"); //public override readonly string ToString() => ((BigInteger)p).ToString();
+      public override readonly string ToString() => ToString(null);
       public readonly unsafe string ToString(string? format, IFormatProvider? provider = default)
       {
-        var f = format != null ? format.AsSpan().Trim() : default; var c = f.Length != 0 ? f[0] | 0x20 : 0;
-        if (c == 'x') //int hex style
+        Span<char> sp = stackalloc char[100];
+        if (!TryFormat(sp, out var ns, format, provider))
         {
-          TryFormat(default, out var n, f, provider); var s = new string('0', n);
-          fixed (char* w = s) TryFormat(new Span<char>(w, n), out n, f, provider); return s;
+          int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n]; //todo: bigbuf
+          TryFormat(sp, out ns, format, provider); Debug.Assert(ns != 0);
         }
-        return p.ToString(c == 'r' ? "L0" : format, provider);
+        return sp.Slice(0, ns).ToString();
       }
       public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
       {
-        var f = format.Trim(); var c = f.Length != 0 ? f[0] | 0x20 : 0;
-        if (c == 'x') //int hex style
+        var fmt = 'D'; int dig = 0;
+        if (format.Length != 0)
         {
-          var l = f.Length > 1 ? unchecked((int)uint.Parse(f.Slice(1))) : 0;
-          var cpu = main_cpu; cpu.push(this.p);
-          var z = cpu.msb(); int s = cpu.sign(), x = unchecked((int)((z >> 2) + 1));
-          if (s < 0 && (z & 3) == 0 && cpu.ipt()) x--; //80
-          var n = l > x ? l : x; if (dest.Length < n) { cpu.pop(); charsWritten = dest == default ? n : 0; return false; }
-          if (s < 0) cpu.toc(4); var sp = cpu.gets(cpu.mark() - 1);
-          sp = sp.Slice(1, unchecked((int)(sp[0] & 0x7fffffff)));
-          for (int i = 0, k, o = f[0] == 'X' ? 'A' - 10 : 'a' - 10; i < n; i++)
-          {
-            var d = (k = i >> 3) < sp.Length ? (sp[k] >> ((i & 7) << 2)) & 0xf : s < 0 ? 0xf : 0u;
-            dest[n - i - 1] = (char)(d < 10 ? '0' + d : o + d);
-          }
-          cpu.pop(); charsWritten = n; return true;
+          var fc = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
+          if (d) dig = int.Parse(format.Slice(1)); //if (fc != 'X') { throw new ArgumentException(nameof(format)); }
         }
-        return p.TryFormat(dest, out charsWritten, c == 'r' ? "L0" : format, provider);
+        var cpu = main_cpu; cpu.push(p);
+        var n = tos(dest, cpu, fmt, dig, 0, 0, 0);
+        if (n > 0) { charsWritten = n; return true; }
+        if (dest.Length >= 2) { n = -n; new Span<char>(&n, 2).CopyTo(dest); }
+        charsWritten = 0; return false;
       }
       public static Integer Parse(string value) => Parse(value, NumberStyles.Integer);
       public static Integer Parse(string value, NumberStyles style) => Parse(value.AsSpan(), style, NumberFormatInfo.CurrentInfo);

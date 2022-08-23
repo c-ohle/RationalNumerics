@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Numerics;
 using System.Runtime.InteropServices;
-using static System.Numerics.BigRational;
 
 // The INumber implementation is intended to reflect the public function set of double exactly.
 // It should be possible to check floating point algorithms for precision, epsilon and robustness issues
@@ -186,7 +184,7 @@ namespace System.Numerics
       //todo: ask/check spec, intended should truncate or only if it would be necessary?
       return TryConvertFrom<T>(value, out result); //BigRational - no limits
     }
-    static bool TryConvertFrom<T>(T value, out BigRational result) where T : INumberBase<T>
+    internal static bool TryConvertFrom<T>(T value, out BigRational result) where T : INumberBase<T>
     {
       //this impl works without boxing
       switch (Type.GetTypeCode(typeof(T))) //so long it does not realy work with inline ...
@@ -248,7 +246,7 @@ namespace System.Numerics
     {
       return TryConvertTo<T>(value, 0, out result); //truncating and saturating is implicite for rat 
     }
-    static bool TryConvertTo<T>(BigRational value, uint f, [NotNullWhen(true)] out T result) where T : INumberBase<T>
+    internal static bool TryConvertTo<T>(BigRational value, uint f, [NotNullWhen(true)] out T result) where T : INumberBase<T>
     {
       //this implementation works without boxing, for X64 checked: inline straight to the single operator call
       //todo: ask / check spec for the fp types, currently diffs in NET7 double, decimal, ... and for int types too
@@ -1051,7 +1049,7 @@ namespace System.Numerics
     /// <returns>The arc-cosine of <paramref name="x" />, divided by <c>pi</c>.</returns>
     public static BigRational AcosPi(BigRational x)
     {
-      return Acos(x, MaxDigits) / Pi(MaxDigits); //todo: opt. cpu
+      return AcosPi(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the arc-sine of a value and divides the result by <c>pi</c>.</summary>
     /// <remarks>
@@ -1087,7 +1085,7 @@ namespace System.Numerics
     /// <returns>The cosine of <paramref name="x" /> multiplied-by <c>pi</c>.</returns>
     public static BigRational CosPi(BigRational x)
     {
-      return Cos(x * Pi(MaxDigits), MaxDigits); //todo: opt. cpu
+      return CosPi(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the sine of a value that has been multiplied by <c>pi</c>.</summary>
     /// <remarks>
@@ -1099,7 +1097,7 @@ namespace System.Numerics
     /// <returns>The sine of <paramref name="x" /> multiplied-by <c>pi</c>.</returns>
     public static BigRational SinPi(BigRational x)
     {
-      return Sin(x * Pi(MaxDigits), MaxDigits); //todo: opt. cpu
+      return SinPi(x, MaxDigits); //todo: opt. cpu
     }
     /// <summary>Computes the tangent of a value that has been multipled by <c>pi</c>.</summary>
     /// <remarks>
@@ -1111,7 +1109,7 @@ namespace System.Numerics
     /// <remarks>This computes <c>tan(x * π)</c>.</remarks>
     public static BigRational TanPi(BigRational x)
     {
-      return Tan(x * Pi(MaxDigits), MaxDigits); //todo: opt. cpu
+      return TanPi(x, MaxDigits); //todo: opt. cpu
     }
     // /// <summary>Computes the arc-tangent of the quotient of two values.</summary>
     // /// <remarks>

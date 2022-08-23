@@ -1,6 +1,8 @@
 ﻿
 //todo:  fix: There is currently a bug for the case of coplanar planes within one of the polyhedra.
 
+using System.Diagnostics;
+
 namespace System.Numerics.Rational
 {
   /// <summary>

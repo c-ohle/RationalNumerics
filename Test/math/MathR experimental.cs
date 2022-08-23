@@ -7,39 +7,6 @@ namespace System.Numerics.Rational
   public static class MathRE
   {
     /// <summary>
-    /// Returns the numerator of the specified number.
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number</param>
-    /// <returns>Returns the numerator of <paramref name="a"/>.</returns>
-    public static BigRational Numerator(BigRational a)
-    {
-      var cpu = BigRational.task_cpu; cpu.push(a);
-      cpu.mod(8); var s = cpu.sign(); cpu.pop();
-      if (s < 0) cpu.neg(); return cpu.popr();
-    }
-    /// <summary>
-    /// Returns the denominator of the specified number.
-    /// </summary>
-    /// <param name="a">A <see cref="BigRational"/> number</param>
-    /// <returns>Returns the denominator of <paramref name="a"/>.</returns>
-    public static BigRational Denominator(BigRational a)
-    {
-      var cpu = BigRational.task_cpu; cpu.push(a);
-      cpu.mod(8); var s = cpu.sign(); cpu.swp(); cpu.pop();
-      if (s < 0) cpu.neg(); return cpu.popr();
-    }
-    /// <summary>
-    /// Calculates the factorial of <paramref name="a"/>.
-    /// </summary>
-    /// <param name="a">A positive number.</param>
-    /// <returns>Returns the factorial of <paramref name="a"/>.</returns>
-    public static BigRational Factorial(int a)
-    {
-      if (a < 0) throw new ArgumentException();
-      var cpu = BigRational.task_cpu; cpu.fac((uint)a);
-      return cpu.popr();
-    }
-    /// <summary>
     /// PI calculation based on Bellard's formula.<br/>
     /// </summary>
     /// <remarks>
