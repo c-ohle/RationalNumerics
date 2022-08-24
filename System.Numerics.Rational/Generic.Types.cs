@@ -146,6 +146,7 @@ namespace System.Numerics
     public static Float<T> Cast<T>(Float128 a) where T : unmanaged => Float<UInt128>.Cast<T>(a.p);
     
     Float128(Float<UInt128> p) => this.p = p;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Float<UInt128> p;
     [StructLayout(LayoutKind.Sequential, Size = 16)]
     private readonly struct UInt128 { } //NET6 compat
@@ -290,6 +291,7 @@ namespace System.Numerics
     public static Float256 Cast<T>(Float<T> a) where T : unmanaged => new Float256(Float<T>.Cast<UInt256>(a));
     public static Float<T> Cast<T>(Float256 a) where T : unmanaged => Float<UInt256>.Cast<T>(a.p);
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Float<UInt256> p;
     Float256(Float<UInt256> p) => this.p = p;
     [StructLayout(LayoutKind.Sequential, Size = 32)]
@@ -439,6 +441,7 @@ namespace System.Numerics
     public static Float<T> Cast<T>(Float80 a) where T : unmanaged => Float<UInt80>.Cast<T>(a.p);
 
     Float80(Float<UInt80> p) => this.p = p;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Float<UInt80> p;
     [StructLayout(LayoutKind.Sequential, Size = 10)] // Pack = 2 
     private readonly struct UInt80 { } // readonly UInt16 upper; readonly UInt64 lower; }

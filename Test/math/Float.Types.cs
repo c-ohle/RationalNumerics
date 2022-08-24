@@ -147,6 +147,7 @@ namespace System.Numerics.Rational
     public static Float<T> Cast<T>(Float64 a) where T : unmanaged => Float<UInt64>.Cast<T>(a.p);
 
     private Float64(Float<UInt64> p) => this.p = p;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Float<UInt64> p;
   }
 
@@ -290,6 +291,7 @@ namespace System.Numerics.Rational
     public static Float<T> Cast<T>(Float96 a) where T : unmanaged => Float<UInt96>.Cast<T>(a.p);
 
     Float96(Float<UInt96> p) => this.p = p;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Float<UInt96> p;
     [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
     private readonly struct UInt96 { readonly UInt32 high, mid, low; }

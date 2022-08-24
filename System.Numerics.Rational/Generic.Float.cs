@@ -6,12 +6,22 @@ using System.Runtime.CompilerServices;
 
 using static System.Numerics.BigRational;
 
-#pragma warning disable CS1591 //xml comments
+#pragma warning disable CS1591, CS1574 //xml comments
 
 namespace System.Numerics.Generic
 {
+  /// <summary>
+  /// Base template for <seealso href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</seealso> and custom floating-point numbers of any size. <b>(under construction)</b>
+  /// </summary>
+  /// <remarks>
+  /// The <c>sizeof(<typeparamref name="T"/>)</c> is used to specify the floating-point number type and properties based on IEEE 754.<br/>
+  /// The <c>typeof(<typeparamref name="T"/>)</c> itself doesn't matter.<br/>
+  /// A <see cref="UInt128"/> as type parameter for example results in a 128-bit quadruple-precision floating-point number.<br/>
+  /// Based on <see cref="IFloat{T}"/> <see cref="IBinaryFloatingPointIeee754{TSelf}"/> and <see cref="INumber{TSelf}"/> is full supported. 
+  /// </remarks>
+  /// <typeparam name="T">A unmanaged type that defines the floating-point size.</typeparam>
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public unsafe readonly struct Float<T> : IComparable<Float<T>>, IEquatable<Float<T>>, IComparable, ISpanFormattable, IFloat<Float<T>> where T : unmanaged
+  public unsafe readonly struct Float<T> : IFloat<Float<T>>, IComparable<Float<T>>, IEquatable<Float<T>>, IComparable, ISpanFormattable where T : unmanaged
   {
     public readonly override string ToString() => ToString(default);
     public readonly string ToString(string? format, IFormatProvider? provider = default)
@@ -661,6 +671,7 @@ namespace System.Numerics.Generic
     #endregion
 
     #region private
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly T p;
     private static int push(CPU cpu, uint* p)
     {
@@ -721,6 +732,7 @@ namespace System.Numerics.Generic
       if (ea != eb) { cpu.pop(2); return ea > eb ? sa : -sa; }
       ea = cpu.cmp(); cpu.pop(2); return ea * sa;
     }
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private static readonly int sbi, mbi, bia, lui; //todo: inline, for NET 7 type desc
     static Float()
     {
@@ -737,52 +749,8 @@ namespace System.Numerics.Generic
     internal static int ExponentBias => (1 << (ExponentBits - 1)) - 1; // 1023
     internal static int MinExponent => 1 - ExponentBias; // -1022;
     internal static int MaxExponent => ExponentBias; // +1023;
-    internal static int Digits => sizeof(T) != 2 ? (int)((mbi) * 0.30102999566398114) : 5;
+    internal static int Digits => sizeof(T) != 2 ? (int)((mbi) * 0.30102999566398114) : 4;
     #endregion
   }
-
-#if false
-  [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public readonly struct Float32 : IFloat<Float32>
-  {
-    public override string ToString() => p.ToString();
-    public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
-    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => p.TryFormat(destination, out charsWritten, format, provider);
-
-    public static implicit operator Float32(int value) => (Float<UInt32>)value;
-    public static implicit operator Float32(Half value) => (Float<UInt32>)value;
-    public static implicit operator Float32(float value) => (Float<UInt32>)value;
-    public static explicit operator Float32(double value) => (Float<UInt32>)value;
-    public static explicit operator Float32(decimal value) => (Float<UInt32>)value;
-    public static explicit operator Float32(BigRational value) => (Float<UInt32>)value;
-    public static implicit operator Float32(Float<UInt32> p) => new Float32(p);
-
-    public static explicit operator int(Float32 value) => (int)value.p;
-    public static explicit operator Half(Float32 value) => (Half)value.p;
-    public static explicit operator float(Float32 value) => (float)value.p;
-    public static implicit operator double(Float32 value) => (double)value.p;
-    public static explicit operator decimal(Float32 value) => (decimal)value.p;
-    public static implicit operator BigRational(Float32 value) => (BigRational)value.p;
-
-    public static Float32 operator +(Float32 a) => +a.p;
-    public static Float32 operator -(Float32 a) => -a.p;
-    public static Float32 operator ++(Float32 a) => a.p + 1;
-    public static Float32 operator --(Float32 a) => a.p - 1;
-    public static Float32 operator +(Float32 a, Float32 b) => a.p + b.p;
-    public static Float32 operator -(Float32 a, Float32 b) => a.p - b.p;
-    public static Float32 operator *(Float32 a, Float32 b) => a.p * b.p;
-    public static Float32 operator /(Float32 a, Float32 b) => a.p / b.p;
-    public static Float32 operator %(Float32 a, Float32 b) => a.p % b.p;
-
-    public static Float32 Pi => Float<UInt32>.Pi;
-    public static Float32 Tau => Float<UInt32>.Tau;
-    public static Float32 E => Float<UInt32>.E;
-    public static Float32 MinValue => Float<UInt32>.MinValue;
-    public static Float32 MaxValue => Float<UInt32>.MaxValue;
-
-    private Float32(Float<UInt32> p) => this.p = p;
-    readonly Float<UInt32> p;
-  }
-#endif
 }
 

@@ -1,51 +1,37 @@
-﻿
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-
-using static System.Numerics.BigRational;
+﻿using System.Globalization;
 
 #pragma warning disable CS1591 //xml comments
 
 namespace System.Numerics.Generic
 {
+#if NET7_0 //_OR_GREATER
 
-#if !NET7_0 //_OR_GREATER
-
-  public interface IFloat<T> { }
-
-#else
-
+  /// <summary>
+  /// Interface for <see cref="Float{T}"/> types to provide <see cref="IBinaryFloatingPointIeee754{TSelf}"/> and <see cref="INumber{TSelf}"/> support. 
+  /// </summary>
+  /// <remarks>
+  /// <see cref="Float{T}"/> does not implement <see cref="INumber{TSelf}"/> interfaces itself, 
+  /// since host types like <see cref="Float128"/> would not inherit the functionality.<br/> 
+  /// But this interface allows to extend final <see cref="Float{T}"/> type constructions with <see cref="INumber{TSelf}"/> support from top.
+  /// </remarks>
+  /// <typeparam name="T">A unmanaged <see cref="Float{T}"/> type.</typeparam>
   public unsafe interface IFloat<T> : IBinaryFloatingPointIeee754<T>, IMinMaxValue<T> where T : unmanaged, IFloat<T>
   {
-    static Float<T> cast<U>(U u) where U : unmanaged, IFloat<U> => *(Float<T>*)&u;
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => cast<T>((T)this).ToString(format, formatProvider);
-    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => cast<T>((T)this).TryFormat(destination, out charsWritten, format, provider);
-    int IComparable.CompareTo(object? obj) => cast<T>((T)this).CompareTo(obj);
-    int IComparable<T>.CompareTo(T other) => cast<T>((T)this).CompareTo(other);
-    bool IEquatable<T>.Equals(T other) => cast<T>((T)this).Equals(other);
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => Cast<T>((T)this).ToString(format, formatProvider);
+    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => Cast<T>((T)this).TryFormat(destination, out charsWritten, format, provider);
+    int IComparable.CompareTo(object? obj) => Cast<T>((T)this).CompareTo(obj);
+    int IComparable<T>.CompareTo(T other) => Cast<T>((T)this).CompareTo(other);
+    bool IEquatable<T>.Equals(T other) => Cast<T>((T)this).Equals(other);
+    static Float<T> Cast<U>(U u) where U : unmanaged, IFloat<U> => *(Float<T>*)&u;
 
     static T IParsable<T>.Parse(string value, IFormatProvider? provider) { var t = Float<T>.Parse(value, provider); return *(T*)&t; }
     static bool IParsable<T>.TryParse(string? value, IFormatProvider? provider, out T result) { var t = Float<T>.TryParse(value, provider, out var r); result = *(T*)&r; return t; }
     static T ISpanParsable<T>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider) { var t = Float<T>.TryParse(s, provider, out var r); return *(T*)&r; }
     static bool ISpanParsable<T>.TryParse(ReadOnlySpan<char> value, IFormatProvider? provider, out T result) { var t = Float<T>.TryParse(value, provider, out var r); result = *(T*)&r; return t; }
-    static T INumberBase<T>.Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
-    {
-      var t = Float<T>.TryParse(s, style, provider, out var r); return *(T*)&r;
-    }
-    static T INumberBase<T>.Parse(string s, NumberStyles style, IFormatProvider? provider)
-    {
-      var t = Float<T>.TryParse(s, style, provider, out var r); return *(T*)&r;
-    }
-    static bool INumberBase<T>.TryParse(string? s, NumberStyles style, IFormatProvider? provider, out T result)
-    {
-      var t = Float<T>.TryParse(s, style, provider, out var r); result = *(T*)&r; return t;
-    }
-    static bool INumberBase<T>.TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T result)
-    {
-      var t = Float<T>.TryParse(s, style, provider, out var r); result = *(T*)&r; return t;
-    }
+    static T INumberBase<T>.Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider) { var t = Float<T>.TryParse(s, style, provider, out var r); return *(T*)&r; }
+    static T INumberBase<T>.Parse(string s, NumberStyles style, IFormatProvider? provider) { var t = Float<T>.TryParse(s, style, provider, out var r); return *(T*)&r; }
+    static bool INumberBase<T>.TryParse(string? s, NumberStyles style, IFormatProvider? provider, out T result) { var t = Float<T>.TryParse(s, style, provider, out var r); result = *(T*)&r; return t; }
+    static bool INumberBase<T>.TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T result) { var t = Float<T>.TryParse(s, style, provider, out var r); result = *(T*)&r; return t; }
 
     static T IIncrementOperators<T>.operator ++(T a) { *(Float<T>*)&a = ++(*(Float<T>*)&a); return *(T*)&a; }
     static T IDecrementOperators<T>.operator --(T a) { *(Float<T>*)&a = --(*(Float<T>*)&a); return *(T*)&a; }
@@ -106,7 +92,6 @@ namespace System.Numerics.Generic
     static bool INumberBase<T>.IsRealNumber(T a) => Float<T>.IsRealNumber(*(Float<T>*)&a);
     static bool INumberBase<T>.IsSubnormal(T a) => Float<T>.IsSubnormal(*(Float<T>*)&a);
     static bool INumberBase<T>.IsZero(T a) => Float<T>.IsZero(*(Float<T>*)&a);
-
     static T INumberBase<T>.Abs(T a) { *(Float<T>*)&a = Float<T>.Abs(*(Float<T>*)&a); return *(T*)&a; }
 
     static T IPowerFunctions<T>.Pow(T a, T b) { *(Float<T>*)&a = Float<T>.Pow(*(Float<T>*)&a, *(Float<T>*)&b); return *(T*)&a; }
@@ -165,14 +150,14 @@ namespace System.Numerics.Generic
     static T INumberBase<T>.MinMagnitudeNumber(T a, T b) { *(Float<T>*)&a = Float<T>.MinMagnitudeNumber(*(Float<T>*)&a, *(Float<T>*)&b); return *(T*)&a; }
 
     static T IFloatingPoint<T>.Round(T a, int digits, MidpointRounding mode) { *(Float<T>*)&a = Float<T>.Round(*(Float<T>*)&a, digits, mode); return *(T*)&a; }
-    int IFloatingPoint<T>.GetExponentByteCount() => cast<T>((T)this).GetExponentByteCount();
-    int IFloatingPoint<T>.GetExponentShortestBitLength() => cast<T>((T)this).GetExponentShortestBitLength();
-    int IFloatingPoint<T>.GetSignificandBitLength() => cast<T>((T)this).GetSignificandBitLength();
-    int IFloatingPoint<T>.GetSignificandByteCount() => cast<T>((T)this).GetSignificandByteCount();
-    bool IFloatingPoint<T>.TryWriteExponentBigEndian(Span<byte> sp, out int bw) => cast<T>((T)this).TryWrite(0, sp, out bw);
-    bool IFloatingPoint<T>.TryWriteExponentLittleEndian(Span<byte> sp, out int bw) => cast<T>((T)this).TryWrite(1, sp, out bw);
-    bool IFloatingPoint<T>.TryWriteSignificandBigEndian(Span<byte> sp, out int bw) => cast<T>((T)this).TryWrite(2, sp, out bw);
-    bool IFloatingPoint<T>.TryWriteSignificandLittleEndian(Span<byte> sp, out int bw) => cast<T>((T)this).TryWrite(3, sp, out bw);
+    int IFloatingPoint<T>.GetExponentByteCount() => Cast<T>((T)this).GetExponentByteCount();
+    int IFloatingPoint<T>.GetExponentShortestBitLength() => Cast<T>((T)this).GetExponentShortestBitLength();
+    int IFloatingPoint<T>.GetSignificandBitLength() => Cast<T>((T)this).GetSignificandBitLength();
+    int IFloatingPoint<T>.GetSignificandByteCount() => Cast<T>((T)this).GetSignificandByteCount();
+    bool IFloatingPoint<T>.TryWriteExponentBigEndian(Span<byte> sp, out int bw) => Cast<T>((T)this).TryWrite(0, sp, out bw);
+    bool IFloatingPoint<T>.TryWriteExponentLittleEndian(Span<byte> sp, out int bw) => Cast<T>((T)this).TryWrite(1, sp, out bw);
+    bool IFloatingPoint<T>.TryWriteSignificandBigEndian(Span<byte> sp, out int bw) => Cast<T>((T)this).TryWrite(2, sp, out bw);
+    bool IFloatingPoint<T>.TryWriteSignificandLittleEndian(Span<byte> sp, out int bw) => Cast<T>((T)this).TryWrite(3, sp, out bw);
 
     static bool INumberBase<T>.TryConvertFromChecked<TOther>(TOther value, out T result) => Float<T>.TryConvertFrom<TOther>(value, 0, out result);
     static bool INumberBase<T>.TryConvertFromSaturating<TOther>(TOther value, out T result) => Float<T>.TryConvertFrom<TOther>(value, 1, out result);
@@ -180,9 +165,16 @@ namespace System.Numerics.Generic
     static bool INumberBase<T>.TryConvertToChecked<TOther>(T value, out TOther result) where TOther : default => Float<T>.TryConvertTo<TOther>(value, 0, out result);
     static bool INumberBase<T>.TryConvertToSaturating<TOther>(T value, out TOther result) where TOther : default => Float<T>.TryConvertTo<TOther>(value, 1, out result);
     static bool INumberBase<T>.TryConvertToTruncating<TOther>(T value, out TOther result) where TOther : default => Float<T>.TryConvertTo<TOther>(value, 2, out result);
-
   }
 
-#endif
+#else // NET6_0
+
+  /// <summary>
+  /// For NET6 IFloat as place holder interface.
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  public interface IFloat<T> { }
+
+#endif 
 }
 
