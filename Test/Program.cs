@@ -1,14 +1,14 @@
 ﻿
 global using rat = System.Numerics.BigRational;
 global using BigInt = System.Numerics.BigRational.Integer;
-global using Float16 = System.Numerics.Generic.Float<System.UInt16>;
-global using Float32 = System.Numerics.Generic.Float<System.UInt32>;
 
 using System.Diagnostics;
 using System.Numerics;
 using System.Globalization;
 using System.Numerics.Generic;
 using System.Numerics.Rational;
+using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Test
 {
@@ -17,23 +17,28 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
     }
 
+    [StructLayout(LayoutKind.Sequential, Size = 4)]
+    readonly struct FloatType32 : IFloatType<FloatType32> { }
+    [StructLayout(LayoutKind.Sequential, Size = 32)]
+    readonly struct FloatType256 : IFloatType<FloatType256> {  }
+
     static void test()
     {
-      Float128 a, b, c;
-      a = 1;
-      a = 1.5f;
-      a = 1.5m;
-      a = 1.5;      
-      b = Float128.Sqrt(a);
-      c = a * b + a / b;      
-      var d = (double)c;
-      var e = (decimal)c;
+      var a = Float<FloatType32>.Pi;
+      var b = Math.PI; 
+      var c = Float80.Pi;
+      var d = Float128.Pi;       
+      var e = Float<FloatType256>.Pi;
+
+      d = Float128.Round(d, 4);
+      e = Float<FloatType256>.Round(e, 4);
+      d = b;
     }
   }
 }

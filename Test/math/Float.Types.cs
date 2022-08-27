@@ -1,300 +1,405 @@
 ﻿
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Numerics;
 using System.Numerics.Generic;
 using System.Runtime.InteropServices;
 
-namespace System.Numerics.Rational
+namespace Test
 {
-  /// <summary>
-  /// It's just a double - as test use Float template from external
-  /// </summary>
-  [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public readonly struct Float64 : IFloat<Float64>, IComparable<Float64>, IEquatable<Float64>, IComparable, ISpanFormattable
-  {    
-    public readonly override string ToString() => p.ToString();
-    public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
-    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => p.TryFormat(destination, out charsWritten, format, provider);
-    public readonly bool Equals(Float64 b) => Float<UInt64>.Equals(this.p, b.p);
-    public readonly override bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
-    public readonly int CompareTo(Float64 b) => Float<UInt64>.Compare(this.p, b.p);
-    public readonly int CompareTo(object? p) => p == null ? 1 : p is Float64 b ? Float<UInt64>.Compare(this.p, b.p) : throw new ArgumentException();
-    public readonly override int GetHashCode() => p.GetHashCode();
-    public static Float64 Parse(ReadOnlySpan<char> s, IFormatProvider? provider = null) => new Float64(Float<UInt64>.Parse(s, provider));
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Float64 result) { var t = Float<UInt64>.TryParse(s, provider, out var r); result = new Float64(r); return t; }
+  [StructLayout(LayoutKind.Sequential, Size = 8), Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
+  public readonly struct Float64 : IFloatType<Float64>
+  {
+    public override string ToString() => ToString(null);
+    public readonly string ToString(string? format, IFormatProvider? provider = default)
+    {
+      return ((Float<Float64>)this).ToString(format, provider);
+    }
+    public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+      return ((Float<Float64>)this).TryFormat(dest, out charsWritten, format, provider);
+    }
+    public readonly override int GetHashCode() => ((Float<Float64>)this).GetHashCode();
+    public readonly override bool Equals([NotNullWhen(true)] object? obj) => ((Float<Float64>)this).Equals(obj);
+    public readonly bool Equals(Float64 other) => ((Float<Float64>)this).Equals(other);
+    public static Float64 Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
+    {
+      TryParse(value, provider, out var r); return r;
+    }
+    public static bool TryParse(ReadOnlySpan<char> value, IFormatProvider? provider, out Float64 result)
+    {
+      var ok = Float<Float64>.TryParse(value, provider, out var r); result = r; return ok;
+    }
+    public static bool TryParse(ReadOnlySpan<char> value, NumberStyles style, IFormatProvider? provider, out Float64 result)
+    {
+      var ok = Float<Float64>.TryParse(value, style, provider, out var r); result = r; return ok;
+    }
 
-    public static implicit operator int(Float64 value) => (int)value.p;
-    public static implicit operator Half(Float64 value) => (Half)value.p;
-    public static implicit operator float(Float64 value) => (float)value.p;
-    public static implicit operator double(Float64 value) => (double)value.p;
-    public static implicit operator decimal(Float64 value) => (decimal)value.p;
-    public static implicit operator Float128(Float64 value) => Float128.Cast(value.p);
-    public static implicit operator Float256(Float64 value) => Float256.Cast(value.p);
-    public static implicit operator BigRational(Float64 value) => (BigRational)value.p;
+    public static implicit operator Float64(int value) => (Float<Float64>)value;
+    public static implicit operator Float64(float value) => (Float<Float64>)value;
+    public static implicit operator Float64(double value) => (Float<Float64>)value;
+    public static explicit operator Float64(BigRational value) => (Float<Float64>)value;
+    public static implicit operator BigRational(Float64 value) => (Float<Float64>)value;
 
-    public static implicit operator Float64(int value) => new Float64((Float<UInt64>)value);
-    public static implicit operator Float64(Half value) => new Float64((Float<UInt64>)value);
-    public static implicit operator Float64(float value) => new Float64((Float<UInt64>)value);
-    public static implicit operator Float64(double value) => new Float64((Float<UInt64>)value);
-    public static implicit operator Float64(decimal value) => new Float64((Float<UInt64>)value);
-    public static explicit operator Float64(Float128 value) => new Float64(Float128.Cast<UInt64>(value));
-    public static explicit operator Float64(Float256 value) => new Float64(Float256.Cast<UInt64>(value));
-    public static explicit operator Float64(BigRational value) => new Float64((Float<UInt64>)value);
+    public static Float64 operator +(Float64 a) => a;
+    public static Float64 operator -(Float64 a) => -(Float<Float64>)a;
+    public static Float64 operator +(Float64 a, Float64 b) => (Float<Float64>)a + (Float<Float64>)b;
+    public static Float64 operator -(Float64 a, Float64 b) => (Float<Float64>)a - (Float<Float64>)b;
+    public static Float64 operator *(Float64 a, Float64 b) => (Float<Float64>)a * (Float<Float64>)b;
+    public static Float64 operator /(Float64 a, Float64 b) => (Float<Float64>)a / (Float<Float64>)b;
+    public static Float64 operator %(Float64 a, Float64 b) => (Float<Float64>)a % (Float<Float64>)b;
+    public static Float64 operator ++(Float64 a) => (Float<Float64>)a + 1;
+    public static Float64 operator --(Float64 a) => (Float<Float64>)a - 1;
+    public static bool operator ==(Float64 a, Float64 b) => (Float<Float64>)a == (Float<Float64>)b;
+    public static bool operator !=(Float64 a, Float64 b) => (Float<Float64>)a != (Float<Float64>)b;
+    public static bool operator <=(Float64 a, Float64 b) => (Float<Float64>)a <= (Float<Float64>)b;
+    public static bool operator >=(Float64 a, Float64 b) => (Float<Float64>)a >= (Float<Float64>)b;
+    public static bool operator <(Float64 a, Float64 b) => (Float<Float64>)a < (Float<Float64>)b;
+    public static bool operator >(Float64 a, Float64 b) => (Float<Float64>)a > (Float<Float64>)b;
 
-    public static Float64 operator ++(Float64 a) => new Float64(a.p + +1);
-    public static Float64 operator --(Float64 a) => new Float64(a.p + -1);
-    public static Float64 operator +(Float64 a, Float64 b) => new Float64(a.p + b.p);
-    public static Float64 operator -(Float64 a, Float64 b) => new Float64(a.p - b.p);
-    public static Float64 operator *(Float64 a, Float64 b) => new Float64(a.p * b.p);
-    public static Float64 operator /(Float64 a, Float64 b) => new Float64(a.p / b.p);
-    public static Float64 operator %(Float64 a, Float64 b) => new Float64(a.p % b.p);
+    public static Float64 E => Float<Float64>.E;
+    public static Float64 Pi => Float<Float64>.Pi;
+    public static Float64 Tau => Float<Float64>.Tau;
+    public static Float64 MinValue => Float<Float64>.MinValue;
+    public static Float64 MaxValue => Float<Float64>.MaxValue;
+    public static Float64 NaN => Float<Float64>.NaN;
+    public static Float64 Epsilon => Float<Float64>.Epsilon;
+    public static Float64 NegativeInfinity => Float<Float64>.NegativeInfinity;
+    public static Float64 NegativeZero => Float<Float64>.NegativeZero;
+    public static Float64 PositiveInfinity => Float<Float64>.PositiveInfinity;
 
-    public static bool operator ==(Float64 a, Float64 b) => a.p == b.p;
-    public static bool operator !=(Float64 a, Float64 b) => a.p != b.p;
-    public static bool operator <=(Float64 a, Float64 b) => a.p <= b.p;
-    public static bool operator >=(Float64 a, Float64 b) => a.p >= b.p;
-    public static bool operator <(Float64 a, Float64 b) => a.p < b.p;
-    public static bool operator >(Float64 a, Float64 b) => a.p > b.p;
+    public static bool IsEvenInteger(Float64 a) => Float<Float64>.IsEvenInteger(a);
+    public static bool IsInteger(Float64 a) => Float<Float64>.IsInteger(a);
+    public static bool IsOddInteger(Float64 a) => Float<Float64>.IsOddInteger(a);
+    public static bool IsPositive(Float64 a) => Float<Float64>.IsPositive(a);
+    public static bool IsRealNumber(Float64 a) => Float<Float64>.IsRealNumber(a);
+    public static bool IsFinite(Float64 a) => Float<Float64>.IsFinite(a);
+    public static bool IsInfinity(Float64 a) => Float<Float64>.IsInfinity(a);
+    public static bool IsNaN(Float64 a) => Float<Float64>.IsNaN(a);
+    public static bool IsNegative(Float64 a) => Float<Float64>.IsNegative(a);
+    public static bool IsNegativeInfinity(Float64 a) => Float<Float64>.IsNegativeInfinity(a);
+    public static bool IsNormal(Float64 a) => Float<Float64>.IsNormal(a);
+    public static bool IsPositiveInfinity(Float64 a) => Float<Float64>.IsPositiveInfinity(a);
+    public static bool IsSubnormal(Float64 a) => Float<Float64>.IsSubnormal(a);
+    public static bool IsPow2(Float64 a) => Float<Float64>.IsPow2(a);
 
-    public static Float64 Pi => new Float64(Float<UInt64>.Pi);
-    public static Float64 Tau => new Float64(Float<UInt64>.Tau);
-    public static Float64 E => new Float64(Float<UInt64>.E);
-    public static Float64 MinValue => new Float64(Float<UInt64>.MinValue);
-    public static Float64 MaxValue => new Float64(Float<UInt64>.MaxValue);
-    public static Float64 Epsilon => new Float64(Float<UInt64>.Epsilon);
-    public static Float64 NaN => new Float64(Float<UInt64>.NaN);
-    public static Float64 NegativeInfinity => new Float64(Float<UInt64>.NegativeInfinity);
-    public static Float64 PositiveInfinity => new Float64(Float<UInt64>.PositiveInfinity);
-    public static Float64 NegativeZero => new Float64(Float<UInt64>.NegativeZero);
+    public static Float64 Abs(Float64 a) => Float<Float64>.Abs(a);
+    public static Float64 Sqrt(Float64 a) => Float<Float64>.Sqrt(a);
+    public static int Sign(Float64 a) => Float<Float64>.Sign(a);
+    public static Float64 Truncate(Float64 a) => Float<Float64>.Truncate(a);
+    public static Float64 Min(Float64 a, Float64 b) => Float<Float64>.Min(a, b);
+    public static Float64 Max(Float64 a, Float64 b) => Float<Float64>.Max(a, b);
+    public static Float64 Round(Float64 a, int digits = 0, MidpointRounding mode = MidpointRounding.ToEven) => Float<Float64>.Round(a, digits, mode);
+    public static Float64 Floor(Float64 a) => Float<Float64>.Floor(a);
+    public static Float64 Ceiling(Float64 a) => Float<Float64>.Ceiling(a);
+    public static Float64 Pow(Float64 x, Float64 y) => Float<Float64>.Pow(x, y);
+    public static Float64 MaxMagnitude(Float64 x, Float64 y) => Float<Float64>.MaxMagnitude(x, y);
+    public static Float64 MaxMagnitudeNumber(Float64 x, Float64 y) => Float<Float64>.MaxMagnitudeNumber(x, y);
+    public static Float64 MinMagnitude(Float64 x, Float64 y) => Float<Float64>.MinMagnitude(x, y);
+    public static Float64 MinMagnitudeNumber(Float64 x, Float64 y) => Float<Float64>.MinMagnitudeNumber(x, y);
+    public static Float64 ScaleB(Float64 x, int n) => Float<Float64>.ScaleB(x, n);
+    public static Float64 Exp10(Float64 x) => Float<Float64>.Exp10(x);
+    public static int ILogB(Float64 x) => Float<Float64>.ILogB(x);
+    public static Float64 Atan2Pi(Float64 y, Float64 x) => Float<Float64>.Atan2Pi(y, x);
+    public static Float64 Exp2(Float64 x) => Float<Float64>.Exp2(x);
+    public static Float64 BitIncrement(Float64 x) => Float<Float64>.BitIncrement(x);
+    public static Float64 BitDecrement(Float64 x) => Float<Float64>.BitDecrement(x);
+    public static Float64 FusedMultiplyAdd(Float64 a, Float64 b, Float64 c) => Float<Float64>.FusedMultiplyAdd(a, b, c);
+    public static Float64 Ieee754Remainder(Float64 a, Float64 b) => Float<Float64>.Ieee754Remainder(a, b);
+    public static Float64 Pow2(Float64 x) => Float<Float64>.Pow2(x);
+    public static Float64 Cbrt(Float64 x) => Float<Float64>.Cbrt(x);
+    public static Float64 RootN(Float64 x, int n) => Float<Float64>.RootN(x, n);
+    public static Float64 Hypot(Float64 x, Float64 y) => Float<Float64>.Hypot(x, y);
+    public static Float64 Log2(Float64 x) => Float<Float64>.Log2(x);
+    public static Float64 Log10(Float64 x) => Float<Float64>.Log10(x);
+    public static Float64 Log(Float64 x) => Float<Float64>.Log(x);
+    public static Float64 Log(Float64 x, Float64 newBase) => Float<Float64>.Log(x, newBase);
+    public static Float64 Exp(Float64 x) => Float<Float64>.Exp(x);
+    public static Float64 Sin(Float64 x) => Float<Float64>.Sin(x);
+    public static Float64 Cos(Float64 x) => Float<Float64>.Cos(x);
+    public static Float64 Tan(Float64 x) => Float<Float64>.Tan(x);
+    public static Float64 Asin(Float64 x) => Float<Float64>.Asin(x);
+    public static Float64 Acos(Float64 x) => Float<Float64>.Acos(x);
+    public static Float64 Atan(Float64 x) => Float<Float64>.Atan(x);
+    public static Float64 Atan2(Float64 y, Float64 x) => Float<Float64>.Atan2(y, x);
+    public static Float64 Asinh(Float64 x) => Float<Float64>.Asinh(x);
+    public static Float64 Acosh(Float64 x) => Float<Float64>.Acosh(x);
+    public static Float64 Atanh(Float64 x) => Float<Float64>.Atanh(x);
+    public static Float64 Sinh(Float64 x) => Float<Float64>.Asinh(x);
+    public static Float64 Cosh(Float64 x) => Float<Float64>.Acosh(x);
+    public static Float64 Tanh(Float64 x) => Float<Float64>.Tanh(x);
+    public static Float64 SinPi(Float64 x) => Float<Float64>.SinPi(x);
+    public static Float64 TanPi(Float64 x) => Float<Float64>.TanPi(x);
+    public static Float64 AcosPi(Float64 x) => Float<Float64>.AcosPi(x);
+    public static Float64 AsinPi(Float64 x) => Float<Float64>.AsinPi(x);
+    public static Float64 AtanPi(Float64 x) => Float<Float64>.AtanPi(x);
+    public static Float64 CosPi(Float64 x) => Float<Float64>.CosPi(x);
 
-    public static Float64 Abs(Float64 a) => new Float64(Float<UInt64>.Abs(a.p));
-    public static Float64 Acos(Float64 a) => new Float64(Float<UInt64>.Acos(a.p));
-    public static Float64 Acosh(Float64 a) => new Float64(Float<UInt64>.Acosh(a.p));
-    public static Float64 AcosPi(Float64 a) => new Float64(Float<UInt64>.AcosPi(a.p));
-    public static Float64 Asin(Float64 a) => new Float64(Float<UInt64>.Asin(a.p));
-    public static Float64 Asinh(Float64 a) => new Float64(Float<UInt64>.Asinh(a.p));
-    public static Float64 AsinPi(Float64 a) => new Float64(Float<UInt64>.AsinPi(a.p));
-    public static Float64 Atan(Float64 a) => new Float64(Float<UInt64>.Atan(a.p));
-    public static Float64 Atanh(Float64 a) => new Float64(Float<UInt64>.Atanh(a.p));
-    public static Float64 AtanPi(Float64 a) => new Float64(Float<UInt64>.AtanPi(a.p));
-    public static Float64 Atan2Pi(Float64 a, Float64 b) => new Float64(Float<UInt64>.Atan2Pi(a.p, b.p));
-    public static Float64 BitDecrement(Float64 a) => new Float64(Float<UInt64>.BitDecrement(a.p));
-    public static Float64 BitIncrement(Float64 a) => new Float64(Float<UInt64>.BitIncrement(a.p));
-    public static Float64 Cbrt(Float64 a) => new Float64(Float<UInt64>.Cbrt(a.p));
-    public static Float64 Ceiling(Float64 a) => new Float64(Float<UInt64>.Ceiling(a.p));
-    public static Float64 Clamp(Float64 a, Float64 min, Float64 max) => new Float64(Float<UInt64>.Clamp(a.p, min.p, max.p));
-    public static Float64 CopySign(Float64 a, Float64 sign) => new Float64(Float<UInt64>.CopySign(a.p, sign.p));
-    public static Float64 Cos(Float64 a) => new Float64(Float<UInt64>.Cos(a.p));
-    public static Float64 Cosh(Float64 a) => new Float64(Float<UInt64>.Cosh(a.p));
-    public static Float64 CosPi(Float64 a) => new Float64(Float<UInt64>.CosPi(a.p));
-    public static Float64 Exp(Float64 a) => new Float64(Float<UInt64>.Exp(a.p));
-    public static Float64 Exp10(Float64 a) => new Float64(Float<UInt64>.Exp10(a.p));
-    public static Float64 Exp10M1(Float64 a) => new Float64(Float<UInt64>.Exp10M1(a.p));
-    public static Float64 Exp2(Float64 a) => new Float64(Float<UInt64>.Exp2(a.p));
-    public static Float64 Exp2M1(Float64 a) => new Float64(Float<UInt64>.Exp2M1(a.p));
-    public static Float64 ExpM1(Float64 a) => new Float64(Float<UInt64>.ExpM1(a.p));
-    public static Float64 Floor(Float64 a) => new Float64(Float<UInt64>.Floor(a.p));
-    public static Float64 FusedMultiplyAdd(Float64 a, Float64 b, Float64 c) => new Float64(Float<UInt64>.FusedMultiplyAdd(a.p, b.p, c.p));
-    public static Float64 Hypot(Float64 a, Float64 b) => new Float64(Float<UInt64>.Hypot(a.p, b.p));
-    public static Float64 Ieee754Remainder(Float64 a, Float64 b) => new Float64(Float<UInt64>.Ieee754Remainder(a.p, b.p));
-    public static int ILogB(Float64 a) => Float<UInt64>.ILogB(a.p);
-    public static bool IsEvenInteger(Float64 a) => Float<UInt64>.IsEvenInteger(a.p);
-    public static bool IsFinite(Float64 a) => Float<UInt64>.IsFinite(a.p);
-    public static bool IsInfinity(Float64 a) => Float<UInt64>.IsInfinity(a.p);
-    public static bool IsInteger(Float64 a) => Float<UInt64>.IsInteger(a.p);
-    public static bool IsNaN(Float64 a) => Float<UInt64>.IsNaN(a.p);
-    public static bool IsNegative(Float64 a) => Float<UInt64>.IsNegative(a.p);
-    public static bool IsNegativeInfinity(Float64 a) => Float<UInt64>.IsNegativeInfinity(a.p);
-    public static bool IsNormal(Float64 a) => Float<UInt64>.IsNormal(a.p);
-    public static bool IsOddInteger(Float64 a) => Float<UInt64>.IsOddInteger(a.p);
-    public static bool IsPositiveInfinity(Float64 a) => Float<UInt64>.IsPositiveInfinity(a.p);
-    public static bool IsPow2(Float64 a) => Float<UInt64>.IsPow2(a.p);
-    public static bool IsRealNumber(Float64 a) => Float<UInt64>.IsRealNumber(a.p);
-    public static bool IsSubnormal(Float64 a) => Float<UInt64>.IsSubnormal(a.p);
-    public static Float64 Log(Float64 a) => new Float64(Float<UInt64>.Log(a.p));
-    public static Float64 Log10(Float64 a) => new Float64(Float<UInt64>.Log10(a.p));
-    public static Float64 LogP1(Float64 a) => new Float64(Float<UInt64>.LogP1(a.p));
-    public static Float64 Log2(Float64 a) => new Float64(Float<UInt64>.Log2(a.p));
-    public static Float64 Log2P1(Float64 a) => new Float64(Float<UInt64>.Log2P1(a.p));
-    public static Float64 Max(Float64 a, Float64 b) => new Float64(Float<UInt64>.Max(a.p, b.p));
-    public static Float64 MaxMagnitude(Float64 a, Float64 b) => new Float64(Float<UInt64>.MaxMagnitude(a.p, b.p));
-    public static Float64 MaxMagnitudeNumber(Float64 a, Float64 b) => new Float64(Float<UInt64>.MaxMagnitudeNumber(a.p, b.p));
-    public static Float64 MaxNumber(Float64 a, Float64 b) => new Float64(Float<UInt64>.MaxNumber(a.p, b.p));
-    public static Float64 Min(Float64 a, Float64 b) => new Float64(Float<UInt64>.Min(a.p, b.p));
-    public static Float64 MinMagnitude(Float64 a, Float64 b) => new Float64(Float<UInt64>.MinMagnitude(a.p, b.p));
-    public static Float64 MinMagnitudeNumber(Float64 a, Float64 b) => new Float64(Float<UInt64>.MinMagnitudeNumber(a.p, b.p));
-    public static Float64 MinNumber(Float64 a, Float64 b) => new Float64(Float<UInt64>.MinNumber(a.p, b.p));
-    public static Float64 Pow(Float64 a, Float64 b) => new Float64(Float<UInt64>.Pow(a.p, b.p));
-    public static Float64 ReciprocalEstimate(Float64 a) => new Float64(Float<UInt64>.ReciprocalEstimate(a.p));
-    public static Float64 ReciprocalSqrtEstimate(Float64 a) => new Float64(Float<UInt64>.ReciprocalSqrtEstimate(a.p));
-    public static Float64 RootN(Float64 a, int n) => new Float64(Float<UInt64>.RootN(a.p, n));
-    public static Float64 Round(Float64 a) => new Float64(Float<UInt64>.Round(a.p));
-    public static Float64 Round(Float64 a, int digits) => new Float64(Float<UInt64>.Round(a.p, digits));
-    public static Float64 Round(Float64 a, int digits, MidpointRounding mode) => new Float64(Float<UInt64>.Round(a.p, digits, mode));
-    public static Float64 ScaleB(Float64 a, int n) => new Float64(Float<UInt64>.ScaleB(a.p, n));
-    public static int Sign(Float64 a) => Float<UInt64>.Sign(a.p);
-    public static (Float64 Sin, Float64 Cos) SinCos(Float64 a) { var t = Float<UInt64>.SinCos(a.p); return (new Float64(t.Sin), new Float64(t.Cos)); }
-    public static (Float64 SinPi, Float64 CosPi) SinCosPi(Float64 a) { var t = Float<UInt64>.SinCosPi(a.p); return (new Float64(t.SinPi), new Float64(t.CosPi)); }
-    public static Float64 Sinh(Float64 a) => new Float64(Float<UInt64>.Sinh(a.p));
-    public static Float64 SinPi(Float64 a) => new Float64(Float<UInt64>.SinPi(a.p));
-    public static Float64 Sqrt(Float64 a) => new Float64(Float<UInt64>.Sqrt(a.p));
-    public static Float64 Tan(Float64 a) => new Float64(Float<UInt64>.Tan(a.p));
-    public static Float64 Tanh(Float64 a) => new Float64(Float<UInt64>.Tanh(a.p));
-    public static Float64 TanPi(Float64 a) => new Float64(Float<UInt64>.TanPi(a.p));
-    public static Float64 Truncate(Float64 a) => new Float64(Float<UInt64>.Truncate(a.p));
-
-    public static Float64 Cast<T>(Float<T> a) where T : unmanaged => new Float64(Float<T>.Cast<UInt64>(a));
-    public static Float<T> Cast<T>(Float64 a) where T : unmanaged => Float<UInt64>.Cast<T>(a.p);
-
-    private Float64(Float<UInt64> p) => this.p = p;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly Float<UInt64> p;
   }
 
-  /// <summary>
-  /// It's just for test for external new floating types from Float
-  /// </summary>
-  [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public readonly struct Float96 : IFloat<Float96>, IComparable<Float96>, IEquatable<Float96>, IComparable, ISpanFormattable
+  [StructLayout(LayoutKind.Sequential, Size = 10), Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
+  public readonly struct Float80 : IFloatType<Float80>
   {
-    public readonly override string ToString() => p.ToString();
-    public readonly string ToString(string? format, IFormatProvider? provider = default) => p.ToString(format, provider);
-    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => p.TryFormat(destination, out charsWritten, format, provider);
-    public override readonly int GetHashCode() => p.GetHashCode();
-    public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
-    public readonly bool Equals(Float96 b) => Float<UInt96>.Equals(this.p, b.p);
-    public readonly int CompareTo(Float96 b) => Float<UInt96>.Compare(this.p, b.p);
-    public readonly int CompareTo(object? p) => p == null ? 1 : p is Float96 b ? Float<UInt96>.Compare(this.p, b.p) : throw new ArgumentException();
+    public override string ToString() => ToString(null);
+    public readonly string ToString(string? format, IFormatProvider? provider = default)
+    {
+      return ((Float<Float80>)this).ToString(format, provider);
+    }
+    public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+      return ((Float<Float80>)this).TryFormat(dest, out charsWritten, format, provider);
+    }
+    public readonly override int GetHashCode() => ((Float<Float80>)this).GetHashCode();
+    public readonly override bool Equals([NotNullWhen(true)] object? obj) => ((Float<Float80>)this).Equals(obj);
+    public readonly bool Equals(Float80 other) => ((Float<Float80>)this).Equals(other);
+    public static Float80 Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
+    {
+      TryParse(value, provider, out var r); return r;
+    }
+    public static bool TryParse(ReadOnlySpan<char> value, IFormatProvider? provider, out Float80 result)
+    {
+      var ok = Float<Float80>.TryParse(value, provider, out var r); result = r; return ok;
+    }
+    public static bool TryParse(ReadOnlySpan<char> value, NumberStyles style, IFormatProvider? provider, out Float80 result)
+    {
+      var ok = Float<Float80>.TryParse(value, style, provider, out var r); result = r; return ok;
+    }
 
-    public static implicit operator int(Float96 value) => (int)value.p;
-    public static implicit operator Half(Float96 value) => (Half)value.p;
-    public static implicit operator float(Float96 value) => (float)value.p;
-    public static implicit operator double(Float96 value) => (double)value.p;
-    public static implicit operator decimal(Float96 value) => (decimal)value.p;
-    public static implicit operator Float64(Float96 value) => Float64.Cast(value.p);
-    public static implicit operator Float128(Float96 value) => Float128.Cast(value.p);
-    public static implicit operator Float256(Float96 value) => Float256.Cast(value.p);
+    public static implicit operator Float80(int value) => (Float<Float80>)value;
+    public static implicit operator Float80(float value) => (Float<Float80>)value;
+    public static implicit operator Float80(double value) => (Float<Float80>)value;
+    public static explicit operator Float80(BigRational value) => (Float<Float80>)value;
+    public static implicit operator BigRational(Float80 value) => (Float<Float80>)value;
 
-    public static implicit operator Float96(int value) => new Float96((Float<UInt96>)value);
-    public static implicit operator Float96(Half value) => new Float96((Float<UInt96>)value);
-    public static implicit operator Float96(float value) => new Float96((Float<UInt96>)value);
-    public static implicit operator Float96(double value) => new Float96((Float<UInt96>)value);
-    public static implicit operator Float96(decimal value) => new Float96((Float<UInt96>)value);
-    public static implicit operator Float96(Float64 value) => new Float96(Float64.Cast<UInt96>(value));
-    public static explicit operator Float96(Float128 value) => new Float96(Float128.Cast<UInt96>(value));
-    public static explicit operator Float96(Float256 value) => new Float96(Float256.Cast<UInt96>(value));
-    public static explicit operator Float96(BigRational value) => new Float96((Float<UInt96>)value);
-     
-    public static Float96 operator ++(Float96 a) => new Float96(a.p + +1);
-    public static Float96 operator --(Float96 a) => new Float96(a.p + -1);
-    public static Float96 operator +(Float96 a, Float96 b) => new Float96(a.p + b.p);
-    public static Float96 operator -(Float96 a, Float96 b) => new Float96(a.p - b.p);
-    public static Float96 operator *(Float96 a, Float96 b) => new Float96(a.p * b.p);
-    public static Float96 operator /(Float96 a, Float96 b) => new Float96(a.p / b.p);
-    public static Float96 operator %(Float96 a, Float96 b) => new Float96(a.p % b.p);
+    public static Float80 operator +(Float80 a) => a;
+    public static Float80 operator -(Float80 a) => -(Float<Float80>)a;
+    public static Float80 operator +(Float80 a, Float80 b) => (Float<Float80>)a + (Float<Float80>)b;
+    public static Float80 operator -(Float80 a, Float80 b) => (Float<Float80>)a - (Float<Float80>)b;
+    public static Float80 operator *(Float80 a, Float80 b) => (Float<Float80>)a * (Float<Float80>)b;
+    public static Float80 operator /(Float80 a, Float80 b) => (Float<Float80>)a / (Float<Float80>)b;
+    public static Float80 operator %(Float80 a, Float80 b) => (Float<Float80>)a % (Float<Float80>)b;
+    public static Float80 operator ++(Float80 a) => (Float<Float80>)a + 1;
+    public static Float80 operator --(Float80 a) => (Float<Float80>)a - 1;
+    public static bool operator ==(Float80 a, Float80 b) => (Float<Float80>)a == (Float<Float80>)b;
+    public static bool operator !=(Float80 a, Float80 b) => (Float<Float80>)a != (Float<Float80>)b;
+    public static bool operator <=(Float80 a, Float80 b) => (Float<Float80>)a <= (Float<Float80>)b;
+    public static bool operator >=(Float80 a, Float80 b) => (Float<Float80>)a >= (Float<Float80>)b;
+    public static bool operator <(Float80 a, Float80 b) => (Float<Float80>)a < (Float<Float80>)b;
+    public static bool operator >(Float80 a, Float80 b) => (Float<Float80>)a > (Float<Float80>)b;
 
-    public static bool operator ==(Float96 a, Float96 b) => a.p == b.p;
-    public static bool operator !=(Float96 a, Float96 b) => a.p != b.p;
-    public static bool operator <=(Float96 a, Float96 b) => a.p <= b.p;
-    public static bool operator >=(Float96 a, Float96 b) => a.p >= b.p;
-    public static bool operator <(Float96 a, Float96 b) => a.p < b.p;
-    public static bool operator >(Float96 a, Float96 b) => a.p > b.p;
+    public static Float80 E => Float<Float80>.E;
+    public static Float80 Pi => Float<Float80>.Pi;
+    public static Float80 Tau => Float<Float80>.Tau;
+    public static Float80 MinValue => Float<Float80>.MinValue;
+    public static Float80 MaxValue => Float<Float80>.MaxValue;
+    public static Float80 NaN => Float<Float80>.NaN;
+    public static Float80 Epsilon => Float<Float80>.Epsilon;
+    public static Float80 NegativeInfinity => Float<Float80>.NegativeInfinity;
+    public static Float80 NegativeZero => Float<Float80>.NegativeZero;
+    public static Float80 PositiveInfinity => Float<Float80>.PositiveInfinity;
 
-    public static Float96 Pi => new Float96(Float<UInt96>.Pi);
-    public static Float96 Tau => new Float96(Float<UInt96>.Tau);
-    public static Float96 E => new Float96(Float<UInt96>.E);
-    public static Float96 MinValue => new Float96(Float<UInt96>.MinValue);
-    public static Float96 MaxValue => new Float96(Float<UInt96>.MaxValue);
-    public static Float96 Epsilon => new Float96(Float<UInt96>.Epsilon);
-    public static Float96 NaN => new Float96(Float<UInt96>.NaN);
-    public static Float96 NegativeInfinity => new Float96(Float<UInt96>.NegativeInfinity);
-    public static Float96 PositiveInfinity => new Float96(Float<UInt96>.PositiveInfinity);
-    public static Float96 NegativeZero => new Float96(Float<UInt96>.NegativeZero);
+    public static bool IsEvenInteger(Float80 a) => Float<Float80>.IsEvenInteger(a);
+    public static bool IsInteger(Float80 a) => Float<Float80>.IsInteger(a);
+    public static bool IsOddInteger(Float80 a) => Float<Float80>.IsOddInteger(a);
+    public static bool IsPositive(Float80 a) => Float<Float80>.IsPositive(a);
+    public static bool IsRealNumber(Float80 a) => Float<Float80>.IsRealNumber(a);
+    public static bool IsFinite(Float80 a) => Float<Float80>.IsFinite(a);
+    public static bool IsInfinity(Float80 a) => Float<Float80>.IsInfinity(a);
+    public static bool IsNaN(Float80 a) => Float<Float80>.IsNaN(a);
+    public static bool IsNegative(Float80 a) => Float<Float80>.IsNegative(a);
+    public static bool IsNegativeInfinity(Float80 a) => Float<Float80>.IsNegativeInfinity(a);
+    public static bool IsNormal(Float80 a) => Float<Float80>.IsNormal(a);
+    public static bool IsPositiveInfinity(Float80 a) => Float<Float80>.IsPositiveInfinity(a);
+    public static bool IsSubnormal(Float80 a) => Float<Float80>.IsSubnormal(a);
+    public static bool IsPow2(Float80 a) => Float<Float80>.IsPow2(a);
 
-    public static Float96 Abs(Float96 a) => new Float96(Float<UInt96>.Abs(a.p));
-    public static Float96 Acos(Float96 a) => new Float96(Float<UInt96>.Acos(a.p));
-    public static Float96 Acosh(Float96 a) => new Float96(Float<UInt96>.Acosh(a.p));
-    public static Float96 AcosPi(Float96 a) => new Float96(Float<UInt96>.AcosPi(a.p));
-    public static Float96 Asin(Float96 a) => new Float96(Float<UInt96>.Asin(a.p));
-    public static Float96 Asinh(Float96 a) => new Float96(Float<UInt96>.Asinh(a.p));
-    public static Float96 AsinPi(Float96 a) => new Float96(Float<UInt96>.AsinPi(a.p));
-    public static Float96 Atan(Float96 a) => new Float96(Float<UInt96>.Atan(a.p));
-    public static Float96 Atanh(Float96 a) => new Float96(Float<UInt96>.Atanh(a.p));
-    public static Float96 AtanPi(Float96 a) => new Float96(Float<UInt96>.AtanPi(a.p));
-    public static Float96 Atan2Pi(Float96 a, Float96 b) => new Float96(Float<UInt96>.Atan2Pi(a.p, b.p));
-    public static Float96 BitDecrement(Float96 a) => new Float96(Float<UInt96>.BitDecrement(a.p));
-    public static Float96 BitIncrement(Float96 a) => new Float96(Float<UInt96>.BitIncrement(a.p));
-    public static Float96 Cbrt(Float96 a) => new Float96(Float<UInt96>.Cbrt(a.p));
-    public static Float96 Ceiling(Float96 a) => new Float96(Float<UInt96>.Ceiling(a.p));
-    public static Float96 Clamp(Float96 a, Float96 min, Float96 max) => new Float96(Float<UInt96>.Clamp(a.p, min.p, max.p));
-    public static Float96 CopySign(Float96 a, Float96 sign) => new Float96(Float<UInt96>.CopySign(a.p, sign.p));
-    public static Float96 Cos(Float96 a) => new Float96(Float<UInt96>.Cos(a.p));
-    public static Float96 Cosh(Float96 a) => new Float96(Float<UInt96>.Cosh(a.p));
-    public static Float96 CosPi(Float96 a) => new Float96(Float<UInt96>.CosPi(a.p));
-    public static Float96 Exp(Float96 a) => new Float96(Float<UInt96>.Exp(a.p));
-    public static Float96 Exp10(Float96 a) => new Float96(Float<UInt96>.Exp10(a.p));
-    public static Float96 Exp10M1(Float96 a) => new Float96(Float<UInt96>.Exp10M1(a.p));
-    public static Float96 Exp2(Float96 a) => new Float96(Float<UInt96>.Exp2(a.p));
-    public static Float96 Exp2M1(Float96 a) => new Float96(Float<UInt96>.Exp2M1(a.p));
-    public static Float96 ExpM1(Float96 a) => new Float96(Float<UInt96>.ExpM1(a.p));
-    public static Float96 Floor(Float96 a) => new Float96(Float<UInt96>.Floor(a.p));
-    public static Float96 FusedMultiplyAdd(Float96 a, Float96 b, Float96 c) => new Float96(Float<UInt96>.FusedMultiplyAdd(a.p, b.p, c.p));
-    public static Float96 Hypot(Float96 a, Float96 b) => new Float96(Float<UInt96>.Hypot(a.p, b.p));
-    public static Float96 Ieee754Remainder(Float96 a, Float96 b) => new Float96(Float<UInt96>.Ieee754Remainder(a.p, b.p));
-    public static int ILogB(Float96 a) => Float<UInt96>.ILogB(a.p);
-    public static bool IsEvenInteger(Float96 a) => Float<UInt96>.IsEvenInteger(a.p);
-    public static bool IsFinite(Float96 a) => Float<UInt96>.IsFinite(a.p);
-    public static bool IsInfinity(Float96 a) => Float<UInt96>.IsInfinity(a.p);
-    public static bool IsInteger(Float96 a) => Float<UInt96>.IsInteger(a.p);
-    public static bool IsNaN(Float96 a) => Float<UInt96>.IsNaN(a.p);
-    public static bool IsNegative(Float96 a) => Float<UInt96>.IsNegative(a.p);
-    public static bool IsNegativeInfinity(Float96 a) => Float<UInt96>.IsNegativeInfinity(a.p);
-    public static bool IsNormal(Float96 a) => Float<UInt96>.IsNormal(a.p);
-    public static bool IsOddInteger(Float96 a) => Float<UInt96>.IsOddInteger(a.p);
-    public static bool IsPositiveInfinity(Float96 a) => Float<UInt96>.IsPositiveInfinity(a.p);
-    public static bool IsPow2(Float96 a) => Float<UInt96>.IsPow2(a.p);
-    public static bool IsRealNumber(Float96 a) => Float<UInt96>.IsRealNumber(a.p);
-    public static bool IsSubnormal(Float96 a) => Float<UInt96>.IsSubnormal(a.p);
-    public static Float96 Log(Float96 a) => new Float96(Float<UInt96>.Log(a.p));
-    public static Float96 Log10(Float96 a) => new Float96(Float<UInt96>.Log10(a.p));
-    public static Float96 LogP1(Float96 a) => new Float96(Float<UInt96>.LogP1(a.p));
-    public static Float96 Log2(Float96 a) => new Float96(Float<UInt96>.Log2(a.p));
-    public static Float96 Log2P1(Float96 a) => new Float96(Float<UInt96>.Log2P1(a.p));
-    public static Float96 Max(Float96 a, Float96 b) => new Float96(Float<UInt96>.Max(a.p, b.p));
-    public static Float96 MaxMagnitude(Float96 a, Float96 b) => new Float96(Float<UInt96>.MaxMagnitude(a.p, b.p));
-    public static Float96 MaxMagnitudeNumber(Float96 a, Float96 b) => new Float96(Float<UInt96>.MaxMagnitudeNumber(a.p, b.p));
-    public static Float96 MaxNumber(Float96 a, Float96 b) => new Float96(Float<UInt96>.MaxNumber(a.p, b.p));
-    public static Float96 Min(Float96 a, Float96 b) => new Float96(Float<UInt96>.Min(a.p, b.p));
-    public static Float96 MinMagnitude(Float96 a, Float96 b) => new Float96(Float<UInt96>.MinMagnitude(a.p, b.p));
-    public static Float96 MinMagnitudeNumber(Float96 a, Float96 b) => new Float96(Float<UInt96>.MinMagnitudeNumber(a.p, b.p));
-    public static Float96 MinNumber(Float96 a, Float96 b) => new Float96(Float<UInt96>.MinNumber(a.p, b.p));
-    public static Float96 Pow(Float96 a, Float96 b) => new Float96(Float<UInt96>.Pow(a.p, b.p));
-    public static Float96 ReciprocalEstimate(Float96 a) => new Float96(Float<UInt96>.ReciprocalEstimate(a.p));
-    public static Float96 ReciprocalSqrtEstimate(Float96 a) => new Float96(Float<UInt96>.ReciprocalSqrtEstimate(a.p));
-    public static Float96 RootN(Float96 a, int n) => new Float96(Float<UInt96>.RootN(a.p, n));
-    public static Float96 Round(Float96 a) => new Float96(Float<UInt96>.Round(a.p));
-    public static Float96 Round(Float96 a, int digits) => new Float96(Float<UInt96>.Round(a.p, digits));
-    public static Float96 Round(Float96 a, int digits, MidpointRounding mode) => new Float96(Float<UInt96>.Round(a.p, digits, mode));
-    public static Float96 ScaleB(Float96 a, int n) => new Float96(Float<UInt96>.ScaleB(a.p, n));
-    public static int Sign(Float96 a) => Float<UInt96>.Sign(a.p);
-    public static (Float96 Sin, Float96 Cos) SinCos(Float96 a) { var t = Float<UInt96>.SinCos(a.p); return (new Float96(t.Sin), new Float96(t.Cos)); }
-    public static (Float96 SinPi, Float96 CosPi) SinCosPi(Float96 a) { var t = Float<UInt96>.SinCosPi(a.p); return (new Float96(t.SinPi), new Float96(t.CosPi)); }
-    public static Float96 Sinh(Float96 a) => new Float96(Float<UInt96>.Sinh(a.p));
-    public static Float96 SinPi(Float96 a) => new Float96(Float<UInt96>.SinPi(a.p));
-    public static Float96 Sqrt(Float96 a) => new Float96(Float<UInt96>.Sqrt(a.p));
-    public static Float96 Tan(Float96 a) => new Float96(Float<UInt96>.Tan(a.p));
-    public static Float96 Tanh(Float96 a) => new Float96(Float<UInt96>.Tanh(a.p));
-    public static Float96 TanPi(Float96 a) => new Float96(Float<UInt96>.TanPi(a.p));
-    public static Float96 Truncate(Float96 a) => new Float96(Float<UInt96>.Truncate(a.p));
+    public static Float80 Abs(Float80 a) => Float<Float80>.Abs(a);
+    public static Float80 Sqrt(Float80 a) => Float<Float80>.Sqrt(a);
+    public static int Sign(Float80 a) => Float<Float80>.Sign(a);
+    public static Float80 Truncate(Float80 a) => Float<Float80>.Truncate(a);
+    public static Float80 Min(Float80 a, Float80 b) => Float<Float80>.Min(a, b);
+    public static Float80 Max(Float80 a, Float80 b) => Float<Float80>.Max(a, b);
+    public static Float80 Round(Float80 a, int digits = 0, MidpointRounding mode = MidpointRounding.ToEven) => Float<Float80>.Round(a, digits, mode);
+    public static Float80 Floor(Float80 a) => Float<Float80>.Floor(a);
+    public static Float80 Ceiling(Float80 a) => Float<Float80>.Ceiling(a);
+    public static Float80 Pow(Float80 x, Float80 y) => Float<Float80>.Pow(x, y);
+    public static Float80 MaxMagnitude(Float80 x, Float80 y) => Float<Float80>.MaxMagnitude(x, y);
+    public static Float80 MaxMagnitudeNumber(Float80 x, Float80 y) => Float<Float80>.MaxMagnitudeNumber(x, y);
+    public static Float80 MinMagnitude(Float80 x, Float80 y) => Float<Float80>.MinMagnitude(x, y);
+    public static Float80 MinMagnitudeNumber(Float80 x, Float80 y) => Float<Float80>.MinMagnitudeNumber(x, y);
+    public static Float80 ScaleB(Float80 x, int n) => Float<Float80>.ScaleB(x, n);
+    public static Float80 Exp10(Float80 x) => Float<Float80>.Exp10(x);
+    public static int ILogB(Float80 x) => Float<Float80>.ILogB(x);
+    public static Float80 Atan2Pi(Float80 y, Float80 x) => Float<Float80>.Atan2Pi(y, x);
+    public static Float80 Exp2(Float80 x) => Float<Float80>.Exp2(x);
+    public static Float80 BitIncrement(Float80 x) => Float<Float80>.BitIncrement(x);
+    public static Float80 BitDecrement(Float80 x) => Float<Float80>.BitDecrement(x);
+    public static Float80 FusedMultiplyAdd(Float80 a, Float80 b, Float80 c) => Float<Float80>.FusedMultiplyAdd(a, b, c);
+    public static Float80 Ieee754Remainder(Float80 a, Float80 b) => Float<Float80>.Ieee754Remainder(a, b);
+    public static Float80 Pow2(Float80 x) => Float<Float80>.Pow2(x);
+    public static Float80 Cbrt(Float80 x) => Float<Float80>.Cbrt(x);
+    public static Float80 RootN(Float80 x, int n) => Float<Float80>.RootN(x, n);
+    public static Float80 Hypot(Float80 x, Float80 y) => Float<Float80>.Hypot(x, y);
+    public static Float80 Log2(Float80 x) => Float<Float80>.Log2(x);
+    public static Float80 Log10(Float80 x) => Float<Float80>.Log10(x);
+    public static Float80 Log(Float80 x) => Float<Float80>.Log(x);
+    public static Float80 Log(Float80 x, Float80 newBase) => Float<Float80>.Log(x, newBase);
+    public static Float80 Exp(Float80 x) => Float<Float80>.Exp(x);
+    public static Float80 Sin(Float80 x) => Float<Float80>.Sin(x);
+    public static Float80 Cos(Float80 x) => Float<Float80>.Cos(x);
+    public static Float80 Tan(Float80 x) => Float<Float80>.Tan(x);
+    public static Float80 Asin(Float80 x) => Float<Float80>.Asin(x);
+    public static Float80 Acos(Float80 x) => Float<Float80>.Acos(x);
+    public static Float80 Atan(Float80 x) => Float<Float80>.Atan(x);
+    public static Float80 Atan2(Float80 y, Float80 x) => Float<Float80>.Atan2(y, x);
+    public static Float80 Asinh(Float80 x) => Float<Float80>.Asinh(x);
+    public static Float80 Acosh(Float80 x) => Float<Float80>.Acosh(x);
+    public static Float80 Atanh(Float80 x) => Float<Float80>.Atanh(x);
+    public static Float80 Sinh(Float80 x) => Float<Float80>.Asinh(x);
+    public static Float80 Cosh(Float80 x) => Float<Float80>.Acosh(x);
+    public static Float80 Tanh(Float80 x) => Float<Float80>.Tanh(x);
+    public static Float80 SinPi(Float80 x) => Float<Float80>.SinPi(x);
+    public static Float80 TanPi(Float80 x) => Float<Float80>.TanPi(x);
+    public static Float80 AcosPi(Float80 x) => Float<Float80>.AcosPi(x);
+    public static Float80 AsinPi(Float80 x) => Float<Float80>.AsinPi(x);
+    public static Float80 AtanPi(Float80 x) => Float<Float80>.AtanPi(x);
+    public static Float80 CosPi(Float80 x) => Float<Float80>.CosPi(x);
+  }
 
-    public static Float96 Cast<T>(Float<T> a) where T : unmanaged => new Float96(Float<T>.Cast<UInt96>(a));
-    public static Float<T> Cast<T>(Float96 a) where T : unmanaged => Float<UInt96>.Cast<T>(a.p);
+  [StructLayout(LayoutKind.Sequential, Size = 16), Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
+  public readonly struct Float128 : IFloatType<Float128>
+  {
+    public override string ToString() => ToString(null);
+    public readonly string ToString(string? format, IFormatProvider? provider = default)
+    {
+      return ((Float<Float128>)this).ToString(format, provider);
+    }
+    public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+      return ((Float<Float128>)this).TryFormat(dest, out charsWritten, format, provider);
+    }
+    public readonly override int GetHashCode() => ((Float<Float128>)this).GetHashCode();
+    public readonly override bool Equals([NotNullWhen(true)] object? obj) => ((Float<Float128>)this).Equals(obj);
+    public readonly bool Equals(Float128 other) => ((Float<Float128>)this).Equals(other);
+    public static Float128 Parse(ReadOnlySpan<char> value, IFormatProvider? provider = null)
+    {
+      TryParse(value, provider, out var r); return r;
+    }
+    public static bool TryParse(ReadOnlySpan<char> value, IFormatProvider? provider, out Float128 result)
+    {
+      var ok = Float<Float128>.TryParse(value, provider, out var r); result = r; return ok;
+    }
+    public static bool TryParse(ReadOnlySpan<char> value, NumberStyles style, IFormatProvider? provider, out Float128 result)
+    {
+      var ok = Float<Float128>.TryParse(value, style, provider, out var r); result = r; return ok;
+    }
 
-    Float96(Float<UInt96> p) => this.p = p;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly Float<UInt96> p;
-    [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 12)]
-    private readonly struct UInt96 { readonly UInt32 high, mid, low; }
+    public static implicit operator Float128(int value) => (Float<Float128>)value;
+    public static implicit operator Float128(float value) => (Float<Float128>)value;
+    public static implicit operator Float128(double value) => (Float<Float128>)value;
+    public static implicit operator Float128(Float80 value) => Float<Float128>.Cast<Float<Float80>>((Float<Float80>)value);
+    public static implicit operator Float128(decimal value) => (Float<Float128>)value;
+    public static explicit operator Float128(BigRational value) => (Float<Float128>)value;
+
+    public static explicit operator float(Float128 value) => (float)(Float<Float128>)value;
+    public static explicit operator double(Float128 value) => (double)(Float<Float128>)value;
+    public static explicit operator decimal(Float128 value) => (decimal)(Float<Float128>)value;
+    public static implicit operator BigRational(Float128 value) => (Float<Float128>)value;
+
+    public static Float128 operator +(Float128 a) => a;
+    public static Float128 operator -(Float128 a) => -(Float<Float128>)a;
+    public static Float128 operator +(Float128 a, Float128 b) => (Float<Float128>)a + (Float<Float128>)b;
+    public static Float128 operator -(Float128 a, Float128 b) => (Float<Float128>)a - (Float<Float128>)b;
+    public static Float128 operator *(Float128 a, Float128 b) => (Float<Float128>)a * (Float<Float128>)b;
+    public static Float128 operator /(Float128 a, Float128 b) => (Float<Float128>)a / (Float<Float128>)b;
+    public static Float128 operator %(Float128 a, Float128 b) => (Float<Float128>)a % (Float<Float128>)b;
+    public static Float128 operator ++(Float128 a) => (Float<Float128>)a + 1;
+    public static Float128 operator --(Float128 a) => (Float<Float128>)a - 1;
+    public static bool operator ==(Float128 a, Float128 b) => (Float<Float128>)a == (Float<Float128>)b;
+    public static bool operator !=(Float128 a, Float128 b) => (Float<Float128>)a != (Float<Float128>)b;
+    public static bool operator <=(Float128 a, Float128 b) => (Float<Float128>)a <= (Float<Float128>)b;
+    public static bool operator >=(Float128 a, Float128 b) => (Float<Float128>)a >= (Float<Float128>)b;
+    public static bool operator <(Float128 a, Float128 b) => (Float<Float128>)a < (Float<Float128>)b;
+    public static bool operator >(Float128 a, Float128 b) => (Float<Float128>)a > (Float<Float128>)b;
+
+    public static Float128 E => Float<Float128>.E;
+    public static Float128 Pi => Float<Float128>.Pi;
+    public static Float128 Tau => Float<Float128>.Tau;
+    public static Float128 MinValue => Float<Float128>.MinValue;
+    public static Float128 MaxValue => Float<Float128>.MaxValue;
+    public static Float128 NaN => Float<Float128>.NaN;
+    public static Float128 Epsilon => Float<Float128>.Epsilon;
+    public static Float128 NegativeInfinity => Float<Float128>.NegativeInfinity;
+    public static Float128 NegativeZero => Float<Float128>.NegativeZero;
+    public static Float128 PositiveInfinity => Float<Float128>.PositiveInfinity;
+
+    public static bool IsEvenInteger(Float128 a) => Float<Float128>.IsEvenInteger(a);
+    public static bool IsInteger(Float128 a) => Float<Float128>.IsInteger(a);
+    public static bool IsOddInteger(Float128 a) => Float<Float128>.IsOddInteger(a);
+    public static bool IsPositive(Float128 a) => Float<Float128>.IsPositive(a);
+    public static bool IsRealNumber(Float128 a) => Float<Float128>.IsRealNumber(a);
+    public static bool IsFinite(Float128 a) => Float<Float128>.IsFinite(a);
+    public static bool IsInfinity(Float128 a) => Float<Float128>.IsInfinity(a);
+    public static bool IsNaN(Float128 a) => Float<Float128>.IsNaN(a);
+    public static bool IsNegative(Float128 a) => Float<Float128>.IsNegative(a);
+    public static bool IsNegativeInfinity(Float128 a) => Float<Float128>.IsNegativeInfinity(a);
+    public static bool IsNormal(Float128 a) => Float<Float128>.IsNormal(a);
+    public static bool IsPositiveInfinity(Float128 a) => Float<Float128>.IsPositiveInfinity(a);
+    public static bool IsSubnormal(Float128 a) => Float<Float128>.IsSubnormal(a);
+    public static bool IsPow2(Float128 a) => Float<Float128>.IsPow2(a);
+
+    public static Float128 Abs(Float128 a) => Float<Float128>.Abs(a);
+    public static Float128 Sqrt(Float128 a) => Float<Float128>.Sqrt(a);
+    public static int Sign(Float128 a) => Float<Float128>.Sign(a);
+    public static Float128 Truncate(Float128 a) => Float<Float128>.Truncate(a);
+    public static Float128 Min(Float128 a, Float128 b) => Float<Float128>.Min(a, b);
+    public static Float128 Max(Float128 a, Float128 b) => Float<Float128>.Max(a, b);
+    public static Float128 Round(Float128 a, int digits = 0, MidpointRounding mode = MidpointRounding.ToEven) => Float<Float128>.Round(a, digits, mode);
+    public static Float128 Floor(Float128 a) => Float<Float128>.Floor(a);
+    public static Float128 Ceiling(Float128 a) => Float<Float128>.Ceiling(a);
+    public static Float128 Pow(Float128 x, Float128 y) => Float<Float128>.Pow(x, y);
+    public static Float128 MaxMagnitude(Float128 x, Float128 y) => Float<Float128>.MaxMagnitude(x, y);
+    public static Float128 MaxMagnitudeNumber(Float128 x, Float128 y) => Float<Float128>.MaxMagnitudeNumber(x, y);
+    public static Float128 MinMagnitude(Float128 x, Float128 y) => Float<Float128>.MinMagnitude(x, y);
+    public static Float128 MinMagnitudeNumber(Float128 x, Float128 y) => Float<Float128>.MinMagnitudeNumber(x, y);
+    public static Float128 ScaleB(Float128 x, int n) => Float<Float128>.ScaleB(x, n);
+    public static Float128 Exp10(Float128 x) => Float<Float128>.Exp10(x);
+    public static int ILogB(Float128 x) => Float<Float128>.ILogB(x);
+    public static Float128 Atan2Pi(Float128 y, Float128 x) => Float<Float128>.Atan2Pi(y, x);
+    public static Float128 Exp2(Float128 x) => Float<Float128>.Exp2(x);
+    public static Float128 BitIncrement(Float128 x) => Float<Float128>.BitIncrement(x);
+    public static Float128 BitDecrement(Float128 x) => Float<Float128>.BitDecrement(x);
+    public static Float128 FusedMultiplyAdd(Float128 a, Float128 b, Float128 c) => Float<Float128>.FusedMultiplyAdd(a, b, c);
+    public static Float128 Ieee754Remainder(Float128 a, Float128 b) => Float<Float128>.Ieee754Remainder(a, b);
+    public static Float128 Pow2(Float128 x) => Float<Float128>.Pow2(x);
+    public static Float128 Cbrt(Float128 x) => Float<Float128>.Cbrt(x);
+    public static Float128 RootN(Float128 x, int n) => Float<Float128>.RootN(x, n);
+    public static Float128 Hypot(Float128 x, Float128 y) => Float<Float128>.Hypot(x, y);
+    public static Float128 Log2(Float128 x) => Float<Float128>.Log2(x);
+    public static Float128 Log10(Float128 x) => Float<Float128>.Log10(x);
+    public static Float128 Log(Float128 x) => Float<Float128>.Log(x);
+    public static Float128 Log(Float128 x, Float128 newBase) => Float<Float128>.Log(x, newBase);
+    public static Float128 Exp(Float128 x) => Float<Float128>.Exp(x);
+    public static Float128 Sin(Float128 x) => Float<Float128>.Sin(x);
+    public static Float128 Cos(Float128 x) => Float<Float128>.Cos(x);
+    public static Float128 Tan(Float128 x) => Float<Float128>.Tan(x);
+    public static Float128 Asin(Float128 x) => Float<Float128>.Asin(x);
+    public static Float128 Acos(Float128 x) => Float<Float128>.Acos(x);
+    public static Float128 Atan(Float128 x) => Float<Float128>.Atan(x);
+    public static Float128 Atan2(Float128 y, Float128 x) => Float<Float128>.Atan2(y, x);
+    public static Float128 Asinh(Float128 x) => Float<Float128>.Asinh(x);
+    public static Float128 Acosh(Float128 x) => Float<Float128>.Acosh(x);
+    public static Float128 Atanh(Float128 x) => Float<Float128>.Atanh(x);
+    public static Float128 Sinh(Float128 x) => Float<Float128>.Asinh(x);
+    public static Float128 Cosh(Float128 x) => Float<Float128>.Acosh(x);
+    public static Float128 Tanh(Float128 x) => Float<Float128>.Tanh(x);
+    public static Float128 SinPi(Float128 x) => Float<Float128>.SinPi(x);
+    public static Float128 TanPi(Float128 x) => Float<Float128>.TanPi(x);
+    public static Float128 AcosPi(Float128 x) => Float<Float128>.AcosPi(x);
+    public static Float128 AsinPi(Float128 x) => Float<Float128>.AsinPi(x);
+    public static Float128 AtanPi(Float128 x) => Float<Float128>.AtanPi(x);
+    public static Float128 CosPi(Float128 x) => Float<Float128>.CosPi(x);
   }
 
 }
