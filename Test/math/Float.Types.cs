@@ -1,4 +1,14 @@
 ﻿
+
+global using rat = System.Numerics.BigRational;
+global using BigInt = System.Numerics.BigRational.Integer;
+
+global using Float32 = System.Numerics.Generic.Float<Test.SizeType32>;
+global using Float64 = System.Numerics.Generic.Float<Test.SizeType64>;
+global using Float80 = System.Numerics.Generic.Float<Test.SizeType80>;
+global using Float128 = System.Numerics.Generic.Float<Test.SizeType128>;
+global using Float256 = System.Numerics.Generic.Float<Test.SizeType256>;
+
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -8,6 +18,13 @@ using System.Runtime.InteropServices;
 
 namespace Test
 {
+  [StructLayout(LayoutKind.Sequential, Size = 04)] readonly struct SizeType32 { }
+  [StructLayout(LayoutKind.Sequential, Size = 08)] readonly struct SizeType64 { }
+  [StructLayout(LayoutKind.Sequential, Size = 10)] readonly struct SizeType80 { }
+  [StructLayout(LayoutKind.Sequential, Size = 16)] readonly struct SizeType128 { }
+  [StructLayout(LayoutKind.Sequential, Size = 32)] readonly struct SizeType256 { }
+
+#if false
   [StructLayout(LayoutKind.Sequential, Size = 8), Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct Float64 : IFloatType<Float64>
   {
@@ -401,5 +418,5 @@ namespace Test
     public static Float128 AtanPi(Float128 x) => Float<Float128>.AtanPi(x);
     public static Float128 CosPi(Float128 x) => Float<Float128>.CosPi(x);
   }
-
+#endif
 }

@@ -708,20 +708,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="decimal"/>.</returns>
     public static explicit operator decimal(BigRational value)
     {
-      if (value.p == null) return default;
-      fixed (uint* p = value.p)
-      {
-        var d = dec(p, out var s) / dec(p + (p[0] & 0x3fffffff) + 1, out var t);
-        if (s != t) d *= new decimal(Math.Pow(2, s - t)); return d;
-      }
-      static decimal dec(uint* p, out int e)
-      {
-        var n = p[0] & 0x3fffffff; var c = n < 4 ? n : 4;
-        var t = stackalloc uint[5] { c, 0, 0, 0, 0 }; copy(t + 1, p + 1 + (n - c), c);
-        e = unchecked((int)(n << 5) - BitOperations.LeadingZeroCount(p[n]) - 96);
-        if (e <= 0) e = 0; else CPU.shr(t, e - unchecked(((int)(n - c) << 5)));
-        return new decimal(unchecked((int)t[1]), unchecked((int)t[2]), unchecked((int)t[3]), (p[0] & 0x80000000) != 0, 0);
-      }
+      var cpu = main_cpu; cpu.push(value); return cpu.popm();
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="BigInteger"/> value.
@@ -3016,6 +3003,10 @@ namespace System.Numerics
       {
         fixed (uint* p = rent(4)) *(ulong*)p = *(ulong*)(p + 2) = 1;
       }
+      bool isnan()
+      {
+        fixed (uint* p = this.p[this.i - 1]) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
+      }
 
       static void add(uint* a, uint* b, uint* r)
       {
@@ -3200,7 +3191,7 @@ namespace System.Numerics
         for (uint i = 1; i <= d; i++) p[i] = 0;
         n += d; p[0] = p[n + 1] != 0 ? n + 1 : n;
       }
-      internal static void shr(uint* p, int c)
+      static void shr(uint* p, int c)
       {
         int s = c & 31, r = 32 - s; uint n = p[0] & 0x3fffffff, i = 0, k = 1 + unchecked((uint)c >> 5), l = k <= n ? p[k++] >> s : 0;
         while (k <= n) { var t = p[k++]; p[++i] = l | unchecked((uint)((ulong)t << r)); l = t >> s; }
@@ -3303,9 +3294,8 @@ namespace System.Numerics
       {
         return (p[0] & 0x80000000) != 0 ? -1 : isz(p) ? 0 : +1;
       }
-      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r)//, uint nr)
+      static void kmu(uint* a, uint na, uint* b, uint nb, uint* r)
       {
-        //Debug.Assert(na + nb == nr); //Debug.Assert(na >= nb && nr == na + nb);
         if (nb < 00_20)
         {
           ulong c = 0, d;
@@ -3361,7 +3351,7 @@ namespace System.Numerics
         for (; i < na; i++, c = d >> 32) r[i] = unchecked((uint)(d = (r[i] + c) - a[i]));
         for (; c != 0 && i < nr; i++, c = d >> 32) r[i] = unchecked((uint)(d = r[i] + c));
       }
-      static void add(uint* a, uint na, uint* b, uint nb, uint* r)//, uint nr)
+      static void add(uint* a, uint na, uint* b, uint nb, uint* r)
       {
         uint i = 0; ulong c = 0, d; //Debug.Assert(na >= nb && nr == na + 1);
         for (; i < nb; i++, c = d >> 32) r[i] = unchecked((uint)(d = (a[i] + c) + b[i]));
@@ -3375,18 +3365,60 @@ namespace System.Numerics
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
       #region experimental      
+      private uint msd()
+      {
+        fixed (uint* p = this.p[this.i - 1])
+        {
+          uint i1 = p[0] & 0x3fffffff, i2 = p[i1 + 1];
+          return (i2 << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[i1 + 1 + i2]));
+        }
+      }
+      private double clog(uint f)
+      {
+        fixed (uint* u = this.p[this.i - 1])
+        {
+          uint n = u[0] & 0x3fffffff; var p = u; if ((f & 1) != 0) { p = p + n + 1; n = p[0]; }
+          var c = BitOperations.LeadingZeroCount(p[n]); //if (c == 32) return 0;
+          var b = ((long)n << 5) - unchecked((uint)c);
+          ulong h = p[n], m = n > 1 ? p[n - 1] : 0, l = n > 2 ? p[n - 2] : 0;
+          ulong x = (h << 32 + c) | (m << c) | (l >> 32 - c);
+          return Math.Log(x) * 0.4342944819032518276 + (b - 64) * 0.3010299956639811952;
+        }
+      }
+      internal decimal popm()
+      {
+        var e = 0; // dup(); tos(default, out _, out var ee, out _, false);
+        var a = msb(); if (a == 0) goto ex; // 0
+        var b = msd(); if (b == 1) { if (a > 96) goto ex; }
+        else
+        {
+          double u = clog(0), v = clog(1), w = u - v; e = (int)w; if (w < 0) e--; 
+          if (e < -28 || e > 28) goto ex; e = 28 - (e < 0 ? 0 : e);
+          pow(10, e); mul(); rnd(0); b = msb(); if (b > 96) { push(10u); idiv(); e--; }
+        }
+        fixed (uint* u = this.p[this.i - 1])
+        {
+          var v = (int*)u; var n = v[0] & 0x3fffffff; Debug.Assert(n <= 3);
+          var d = new decimal(v[1], n >= 2 ? v[2] : 0, n >= 3 ? v[3] : 0, (u[0] & 0x80000000) != 0, unchecked((byte)e));
+          pop(); return d;
+        }
+      ex: pop(); return default;
+      }
       internal bool bt(int c) //BT Bit Test, BTS and Set, BTR and Reset, BTC and Complement
       {
         return (p[i - 1][1 + (c >> 5)] & (1 << (c & 31))) != 0;
       }
-      internal void toi(BigRational v, uint* p, uint f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
+      internal void toi(BigRational v, uint* p, uint f)
       {
-        if (v.p == null) return; uint n = f & 0xff;
-        push(v); var s = sign();
+        if (v.p == null) return; push(v); toi(p, f);
+      }
+      internal void toi(uint* p, uint f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
+      {
+        uint n = f & 0xff; var s = sign();
         if ((f & 0x0100) != 0 && s <= 0) //uint <= 0 -> 0 incl. NaN 
         {
-          pop(); if ((f & 0x1000) != 0 && s < 0 || IsNaN(v)) throw new OverflowException(); //todo: message text range       
-          return;
+          if ((f & 0x1000) != 0 && s < 0 || isnan()) { pop(); throw new OverflowException(); } //todo: message text range       
+          pop(); return;
         }
         rnd(0, 0); uint b = msb(), c = n << 5;
         if (b >= c)
@@ -3424,10 +3456,54 @@ namespace System.Numerics
           var x = unchecked((ulong)(p[b] ^ 0xffffffff) + c);
           p[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
         }
-      }
+      }      
       //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access 
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
+      #endregion
+      #region float support      
+      internal int fpush(uint* p, int desc)
+      {
+        int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
+        var l = unchecked((uint)(size >> 2)); Debug.Assert((size & 2) == 0 || ec <= 16);
+        var h = (size & 2) == 0 ? p[l - 1] : (p[l++] & 0xffff) << 16;
+        if (h == 0) { push(); return 0; }
+        fixed (uint* u = rent(l + 3))
+        {
+          u[0] = l | (h & 0x80000000); copy(u + 1, p, l - 1); // for (uint i = 1; i < l; i++) u[i] = p[i - 1];
+          u[l] = (1u << bc) | (h & ((1u << bc) - 1)); *(ulong*)&u[l + 1] = 0x100000001;
+        }
+        return unchecked((int)((h & 0x7fffffff) >> (32 - ec))) - bi;
+      }
+      internal void fpop(uint* p, int e, int desc)
+      {
+        fixed (uint* u = this.p[this.i - 1])
+        {
+          var n = u[0] & 0x3fffffff; var msb = (n << 5) - unchecked((uint)BitOperations.LeadingZeroCount(u[n]));
+          int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc, bi = ((1 << (ec - 2)) + bc) - 1;
+          if (msb == 0) { pop(); copy(p, unchecked((uint)((size >> 2) + ((size >> 1) & 1)))); return; }
+          var d = unchecked((int)msb - (bc + 1)); var s = u[0] & 0x80000000;
+          if (d != 0)
+          {
+            if (d > 0)
+            {
+              //var c = bt(d - 1);
+              shr(u, unchecked((int)d)); //if (c) { var o = 1u; add(u + 1, u[0], &o, 1); }
+            }
+            else
+            {
+              var need = 1 + ((msb - d) >> 5);
+              if (need >= this.p[this.i - 1].Length) { Debug.Assert(false); }
+              shl(u, -d);
+            }
+            e += d;
+          }
+          var h = unchecked((uint)(e + bi)) << (32 - ec); Debug.Assert((h & 0x80000000) == 0);
+          var l = unchecked((uint)(size >> 2));
+          h = s | h | (u[l] & ((1u << bc) - 1)); if ((size & 2) != 0) { Debug.Assert((h & 0xffff) == 0); l++; h >>= 16; }
+          copy(p, u + 1, l - 1); p[l - 1] = h; pop(); // for (uint i = 1; i < l; i++) p[i - 1] = u[i]; 
+        }
+      }
       #endregion
     }
     #region private 
@@ -3495,7 +3571,7 @@ namespace System.Numerics
     internal static int tos(Span<char> sp, CPU cpu, char fmt, int dig, int rnd, int es, int fl)
     {
       var sig = cpu.sign(); var f = fmt & ~0x20; Debug.Assert(sp.Length >= dig + 16); // -.E+2147483647 14
-      if (f == 'X') 
+      if (f == 'X')
       {
         var z = cpu.msb(); int xx = unchecked((int)((z >> 2) + 1)); //todo: unsigned flag
         if (sig < 0 && (z & 3) == 0 && cpu.ipt()) xx--; //80
@@ -3544,5 +3620,4 @@ namespace System.Numerics
     }
     #endregion
   }
-
 }
