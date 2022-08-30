@@ -116,7 +116,8 @@ namespace System.Numerics.Generic
       var cpu = main_cpu; var mbi = desc >> 16;
       var u = cpu.fpush((uint*)&left, desc); cpu.shl(mbi);
       var v = cpu.fpush((uint*)&right, desc); cpu.idiv();
-      cpu.fpop((uint*)&left, u - v - mbi, desc); return left;
+      var w = u - v - mbi; if (v > 0x7ffffff0) w = 0x7ffffff1; else if (u > 0x7ffffff0) w = 0x7ffffff3; //todo: rem. or check inf rules
+      cpu.fpop((uint*)&left, w, desc); return left;
     }
     public static Float<T> operator %(Float<T> left, Float<T> right)
     {
@@ -138,17 +139,30 @@ namespace System.Numerics.Generic
     }
     public static Float<T> MaxValue
     {
-      get
+      get //0x7fefffffffffffff
       {
-        int size = desc & 0xffff, bc = desc >> 16; Float<T> a; new Span<uint>(&a, size >> 2).Fill(0xffffffff);
-        ((uint*)&a)[(size >> 2) - (((size >> 1) & 1) ^ 1)] = 0x7fffffff ^ (1u << bc); return a;
+        Float<T> a; new Span<uint>(&a, sizeof(Float<T>) >> 2).Fill(0xffffffff);
+        *(uint*)(((byte*)&a) + (sizeof(Float<T>) - 4)) = 0x7fffffff ^ (1u << (desc >> 16)); return a;
       }
     }
-    public static Float<T> Epsilon => -1;
-    public static Float<T> NaN => -1;
-    public static Float<T> NegativeInfinity => -1;
-    public static Float<T> NegativeZero => -1;
-    public static Float<T> PositiveInfinity => -1;
+    public static Float<T> Epsilon
+    {
+      get { var a = default(Float<T>); *(uint*)&a |= 1; return a; }
+    }
+    public static Float<T> NaN
+    {
+      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop((uint*)&a, 0x7ffffff3, desc); return a; }
+    }
+    public static Float<T> NegativeInfinity
+    {
+      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop((uint*)&a, 0x7ffffff2, desc); return a; }
+    }
+    public static Float<T> PositiveInfinity
+    {
+      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop((uint*)&a, 0x7ffffff1, desc); return a; }
+    }
+    public static Float<T> NegativeZero => default; //todo: cpu 
+
     public static Float<T> E
     {
       get { var cpu = main_cpu; cpu.push(1u); cpu.exp(digbin); cpu.rnd(digdec); return pop(cpu); }
@@ -167,14 +181,45 @@ namespace System.Numerics.Generic
       var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4));
       return h == 0 ? 0 : (h & 0x80000000) != 0 ? -1 : +1;
     }
+    public static bool IsPositive(Float<T> value) 
+    {
+      var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4));
+      return (h & 0x80000000) == 0;
+    }
+    public static bool IsNegative(Float<T> value) 
+    {
+      var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4)); 
+      return (h & 0x80000000) != 0;
+    }
     public static bool IsInteger(Float<T> value)
     {
-      return IsFinite(value) && (value == Truncate(value));
+      return IsFinite(value) && value == Truncate(value); //todo: inline
     }
     public static bool IsFinite(Float<T> value)
     {
-      return true;
+      var e = CPU.ftest((uint*)&value, desc); return e < 0x7ffffff0;
     }
+    public static bool IsNaN(Float<T> value)
+    {
+      var e = CPU.ftest((uint*)&value, desc); return e == 0x7ffffff3;
+    }
+    public static bool IsRealNumber(Float<T> value)
+    {
+      var e = CPU.ftest((uint*)&value, desc); return e != 0x7ffffff3;
+    }
+    public static bool IsInfinity(Float<T> value)
+    {
+      var e = CPU.ftest((uint*)&value, desc); return e == 0x7ffffff1 || e == 0x7ffffff2;
+    }
+    public static bool IsNegativeInfinity(Float<T> value)
+    {
+      var e = CPU.ftest((uint*)&value, desc); return e == 0x7ffffff1;
+    }
+    public static bool IsPositiveInfinity(Float<T> value)
+    {
+      var e = CPU.ftest((uint*)&value, desc); return e == 0x7ffffff2;
+    }
+
     public static Float<T> Abs(Float<T> value)
     {
       return value < 0 ? -value : value;
@@ -255,12 +300,19 @@ namespace System.Numerics.Generic
     }
 
     #region private
-    private readonly T p;
-    private static int desc;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static int desc;
     static Float()
     {
       int size = sizeof(T), sbi; if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
-      switch (size) { case 2: sbi = 5; break; case 4: sbi = 8; break; case 8: sbi = 11; break; case <= 16: sbi = 15; break; default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break; }
+      switch (size)
+      {
+        case 2: sbi = 5; break;
+        case 4: sbi = 8; break;
+        case 8: sbi = 11; break;
+        case <= 16: sbi = 15; break;
+        default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break;
+      }
       desc = sizeof(T) | ((((size << 3) - sbi) - 1) << 16);
     }
     private static bool Equals(Float<T>* a, Float<T>* b)
@@ -287,12 +339,12 @@ namespace System.Numerics.Generic
     private static Float<T> pop(CPU cpu)
     {
       var s = cpu.sign(); if (s == 0) { cpu.pop(); return default; }
-      cpu.mod(8); Float<T> a, b;
+      cpu.mod(8); Float<T> a, b; //todo: strat. rdiv
       cpu.fpop((uint*)&a, 0, desc);
       cpu.fpop((uint*)&b, 0, desc); return b / a;
     }
-    private static uint digbin => unchecked((uint)((desc >> 16) * 3.321928095f));
-    private static int digdec => unchecked((int)((desc >> 16) * 0.30103f));
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static uint digbin => unchecked((uint)((desc >> 16) * 3.321928095f));
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static int digdec => unchecked((int)((desc >> 16) * 0.30103f));
     #endregion
 
     public readonly override string ToString() => ToString(null, null);
@@ -320,7 +372,20 @@ namespace System.Numerics.Generic
       if (dig == 0) dig = DecimalDigits; // (int)MathF.Round(MathF.Ceiling(mbi * 0.30103f));
       if (dest.Length < dig + 16) { dig += 16; goto ex; }
       var cpu = main_cpu; var value = this; var es = 0;
+
+      //var x = cpu.ftest((uint*)&value, desc);
+      //if (x >= 0x7ffffff0)
+      //{
+      //  var s = ((x & 7) == 1 ? info.NegativeInfinitySymbol : (x & 7) == 2 ? info.PositiveInfinitySymbol : info.NaNSymbol).AsSpan();
+      //  s.CopyTo(dest); charsWritten = s.Length; return true;
+      //}
+
       var e = cpu.fpush((uint*)&value, desc);
+      if (e >= 0x7ffffff0)
+      {
+        var s = ((e & 7) == 1 ? info.NegativeInfinitySymbol : (e & 7) == 2 ? info.PositiveInfinitySymbol : info.NaNSymbol).AsSpan();
+        cpu.pop(); s.CopyTo(dest); charsWritten = s.Length; return true;
+      }
 
       var ep = (int)((e + (desc >> 16)) * 0.30103f); //Math.Log(2) / Math.Log(10) Math.Log10(2);
       var d1 = Math.Abs(ep); var d2 = Math.Abs(dig); var dd = d1 - d2;
@@ -468,25 +533,26 @@ namespace System.Numerics.Generic
     // static Float<T> IFloatingPointConstants<Float<T>>.Pi => throw new NotImplementedException();
     // static Float<T> IFloatingPointConstants<Float<T>>.Tau => throw new NotImplementedException();
 
-    static bool INumberBase<Float<T>>.IsEvenInteger(Float<T> value) => throw new NotImplementedException();
+    // static bool INumberBase<Float<T>>.IsNaN(Float<T> value) => throw new NotImplementedException();//value == value; 
+    // static bool INumberBase<Float<T>>.IsRealNumber(Float<T> value) => throw new NotImplementedException();//value == value;
     // static bool INumberBase<Float<T>>.IsFinite(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsInfinity(Float<T> value) => throw new NotImplementedException();
+    // static bool INumberBase<Float<T>>.IsInfinity(Float<T> value) => throw new NotImplementedException();
+    // static bool INumberBase<Float<T>>.IsNegativeInfinity(Float<T> value) => throw new NotImplementedException();
+    // static bool INumberBase<Float<T>>.IsPositiveInfinity(Float<T> value) => throw new NotImplementedException();
     // static bool INumberBase<Float<T>>.IsInteger(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsNaN(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsNegative(Float<T> value) => throw new NotImplementedException();
+    // static bool INumberBase<Float<T>>.IsPositive(Float<T> value) => throw new NotImplementedException(); //BitConverter.DoubleToInt64Bits(value) >= 0;
+    // static bool INumberBase<Float<T>>.IsNegative(Float<T> value) => throw new NotImplementedException();
+    static bool INumberBase<Float<T>>.IsEvenInteger(Float<T> value) => throw new NotImplementedException(); //IsInteger(value) && (Abs(value % 2) == 0);
+    static bool INumberBase<Float<T>>.IsOddInteger(Float<T> value) => throw new NotImplementedException(); //IsInteger(value) && (Abs(value % 2) == 1);
     static bool INumberBase<Float<T>>.IsNegativeInfinity(Float<T> value) => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.IsNormal(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsOddInteger(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsPositive(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsPositiveInfinity(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsRealNumber(Float<T> value) => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.IsSubnormal(Float<T> value) => throw new NotImplementedException();
     static bool IBinaryNumber<Float<T>>.IsPow2(Float<T> value) => throw new NotImplementedException();
 
     static bool INumberBase<Float<T>>.IsCanonical(Float<T> value) => true;
     static bool INumberBase<Float<T>>.IsComplexNumber(Float<T> value) => false;
     static bool INumberBase<Float<T>>.IsImaginaryNumber(Float<T> value) => false;
-    static bool INumberBase<Float<T>>.IsZero(Float<T> value) => value == default;
+    static bool INumberBase<Float<T>>.IsZero(Float<T> value) => value == default; //value == 0
 
     static int INumberBase<Float<T>>.Radix => 2;
     static Float<T> INumberBase<Float<T>>.One => 1;

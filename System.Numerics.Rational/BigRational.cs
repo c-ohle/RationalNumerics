@@ -1882,8 +1882,8 @@ namespace System.Numerics
         fixed (uint* v = p[this.i - 2])
         fixed (uint* w = rent(len(u))) // nu - nv + 1
         {
-          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
-          *(ulong*)(w + w[0] + 1) = 0x100000001;
+          var h = v[0]; v[0] &= 0x3fffffff; if (*(ulong*)u == 1) { swp(1, 2); pop(2); return; }
+          div(v, u, w); *(ulong*)(w + w[0] + 1) = 0x100000001;
           if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
         }
         swp(2); pop(2);
@@ -3005,7 +3005,7 @@ namespace System.Numerics
       }
       bool isnan()
       {
-        fixed (uint* p = this.p[this.i - 1]) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
+        fixed (uint* p = this.p[this.i - 1]) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 1;// 0x100000000;
       }
 
       static void add(uint* a, uint* b, uint* r)
@@ -3392,7 +3392,7 @@ namespace System.Numerics
         var b = msd(); if (b == 1) { if (a > 96) goto ex; }
         else
         {
-          double u = clog(0), v = clog(1), w = u - v; e = (int)w; if (w < 0) e--; 
+          double u = clog(0), v = clog(1), w = u - v; e = (int)w; if (w < 0) e--;
           if (e < -28 || e > 28) goto ex; e = 28 - (e < 0 ? 0 : e);
           pow(10, e); mul(); rnd(0); b = msb(); if (b > 96) { push(10u); idiv(); e--; }
         }
@@ -3456,24 +3456,45 @@ namespace System.Numerics
           var x = unchecked((ulong)(p[b] ^ 0xffffffff) + c);
           p[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
         }
-      }      
+      }
       //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
       #endregion
-      #region float support      
+      #region float support  
+      internal static int ftest(uint* p, int desc)
+      {
+        int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
+        var h = *(uint*)(((byte*)p) + (size - 4));
+        var pin = ~(((1u << (32 - ec)) - 1) | 0x80000000); // 0x7ff00000
+        if ((h & pin) == pin)
+        {
+          if (h == pin) return 0x7ffffff2;
+          var nan = (pin >> 1) | 0xc0000000; if (h == nan) return 0x7ffffff3; // 0xfff80000
+          var nin = nan << 1; if (h == nin) return 0x7ffffff1;                // 0xfff00000
+        }
+        if (h == 0) return 0;
+        return unchecked((int)((h & 0x7fffffff) >> (32 - ec))) - (((1 << (ec - 2)) + bc) - 1);// bi;
+      }
       internal int fpush(uint* p, int desc)
       {
-        int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
-        var l = unchecked((uint)(size >> 2)); Debug.Assert((size & 2) == 0 || ec <= 16);
-        var h = (size & 2) == 0 ? p[l - 1] : (p[l++] & 0xffff) << 16;
+        int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
+        var h = *(uint*)(((byte*)p) + (size - 4));
+        var pin = ~(((1u << (32 - ec)) - 1) | 0x80000000); // 0x7ff00000
+        if ((h & pin) == pin)
+        {
+          if (h == pin) { pnan(); return 0x7ffffff2; }
+          var nan = (pin >> 1) | 0xc0000000; if (h == nan) { pnan(); return 0x7ffffff3; } // 0xfff80000
+          var nin = nan << 1; if (h == nin) { pnan(); return 0x7ffffff1; } // 0xfff00000
+        }
         if (h == 0) { push(); return 0; }
+        var l = unchecked(((uint)size >> 2) + (((uint)size >> 1) & 1));
         fixed (uint* u = rent(l + 3))
         {
           u[0] = l | (h & 0x80000000); copy(u + 1, p, l - 1); // for (uint i = 1; i < l; i++) u[i] = p[i - 1];
           u[l] = (1u << bc) | (h & ((1u << bc) - 1)); *(ulong*)&u[l + 1] = 0x100000001;
         }
-        return unchecked((int)((h & 0x7fffffff) >> (32 - ec))) - bi;
+        return unchecked((int)((h & 0x7fffffff) >> (32 - ec))) - (((1 << (ec - 2)) + bc) - 1); // bi;
       }
       internal void fpop(uint* p, int e, int desc)
       {
@@ -3481,14 +3502,16 @@ namespace System.Numerics
         {
           var n = u[0] & 0x3fffffff; var msb = (n << 5) - unchecked((uint)BitOperations.LeadingZeroCount(u[n]));
           int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc, bi = ((1 << (ec - 2)) + bc) - 1;
-          if (msb == 0) { pop(); copy(p, unchecked((uint)((size >> 2) + ((size >> 1) & 1)))); return; }
-          var d = unchecked((int)msb - (bc + 1)); var s = u[0] & 0x80000000;
+          if (e >= 0x7ffffff0) goto ex;
+          if (msb == 0) { if (*(ulong*)(u + (n + 1)) == 1) e = 0x7ffffff3; goto ex; } //NaN                     
+          var d = unchecked((int)msb - (bc + 1));
+          var s = u[0] & 0x80000000;
           if (d != 0)
           {
             if (d > 0)
             {
               //var c = bt(d - 1);
-              shr(u, unchecked((int)d)); //if (c) { var o = 1u; add(u + 1, u[0], &o, 1); }
+              shr(u, d); //if (c) { var o = 1u; add(u + 1, u[0], &o, 1); }
             }
             else
             {
@@ -3498,10 +3521,17 @@ namespace System.Numerics
             }
             e += d;
           }
-          var h = unchecked((uint)(e + bi)) << (32 - ec); Debug.Assert((h & 0x80000000) == 0);
+          if (e + bi > ((1u << (ec - 1)) - 2)) { e = s == 0 ? 0x7ffffff1 : 0x7ffffff2; goto ex; }
+          var h = unchecked((uint)(e + bi)) << (32 - ec); //Debug.Assert((h & 0x80000000) == 0);
           var l = unchecked((uint)(size >> 2));
           h = s | h | (u[l] & ((1u << bc) - 1)); if ((size & 2) != 0) { Debug.Assert((h & 0xffff) == 0); l++; h >>= 16; }
           copy(p, u + 1, l - 1); p[l - 1] = h; pop(); // for (uint i = 1; i < l; i++) p[i - 1] = u[i]; 
+          return; ex:
+          pop(); copy(p, unchecked((uint)((size >> 2) + ((size >> 1) & 1)))); if (e < 0x7ffffff0) return;
+          var pin = ~(((1u << (32 - ec)) - 1) | 0x80000000); // 0x7ff00000 
+          if ((e & 7) != 1) pin = (pin >> 1) | 0xc0000000; // 0xfff80000 nan
+          if ((e & 7) == 2) pin <<= 1; // 0xfff00000
+          *(uint*)(((byte*)p) + (size - 4)) = pin;
         }
       }
       #endregion
