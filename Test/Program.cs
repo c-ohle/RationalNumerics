@@ -1,5 +1,6 @@
 ﻿
 using System.Diagnostics;
+using System.Globalization;
 using System.Numerics;
 
 namespace Test
@@ -9,7 +10,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // test();
+      ApplicationConfiguration.Initialize(); //test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -17,9 +18,68 @@ namespace Test
 
 #if NET7_0
 
+    readonly struct Number64
+    {
+      public override string ToString() => p.ToString();
+      public string ToString(string? format, IFormatProvider? formatProvider = null) => p.ToString(format, formatProvider);
+
+      public static implicit operator Number64(int value) => new Number64(value);
+      public static implicit operator Number64(double value) => new Number64(value);
+
+      public static explicit operator int(Number64 value) => (int)value.p;
+      public static implicit operator BigRational(Number64 value) => (BigRational)value.p;
+
+      private Number64(System.Numerics.Generic.Float<Test.SizeType32> value) => this.p = value;
+      readonly System.Numerics.Generic.Float<Test.SizeType32> p;
+    }
+
     static void test()
     {
-      float a; Float32 b; double c; Float64 d; Float80 e; Float128 f; Float256 g;
+      test_s(Math.PI); test_s(Math.PI * 1000); test_s(Math.PI * 0.00001); 
+      test_s(12345678); test_s(-12345678); test_s(1234000000);
+
+      rat r; float a; Float32 b; double c; Float64 d, x; Float80 e; Float128 f; Float256 g; string s1, s2;
+
+      r = 0; d = r; r = 7; d = r; r = -7; d = r;
+      c = Math.PI; d = c; r = rat.Pi(20); d = r; d = Float64.Pi; //16 dig
+      c = Math.Sqrt(2); d = c; r = rat.Sqrt(2, 20); d = r; d = Float64.Sqrt(2);
+
+      a = MathF.PI; b = a; r = rat.Pi(20); b = r; b = Float32.Pi;
+      a = MathF.Sqrt(2); b = a;
+
+      r = rat.Sqrt(2, 20); b = r; b = Float32.Sqrt(2);
+
+      x = 7; x = 7.7; r = (rat)x; s1 = r.ToString2(); s1 = r.ToString2("G5"); s1 = r.ToString2("G10");
+      r = 3; r = 1 / r; r = rat.Parse("123.456'789"); s1 = r.ToString2("G");
+      s1 = r.ToString2("Ö");
+
+      d = Float64.Parse("123.456");
+
+      a = MathF.PI; b = a; Debug.Assert(*(uint*)&a == *(uint*)&b);
+      c = Math.PI; d = c; Debug.Assert(*(ulong*)&c == *(ulong*)&d);
+      c = a; d = c; Debug.Assert(*(ulong*)&c == *(ulong*)&d);
+
+      c = Math.PI; a = (float)c; b = (Float32)c; Debug.Assert(*(uint*)&a == *(uint*)&b);
+
+      cast_test(1); cast_test(0.000001); cast_test(100000);
+      static void cast_test(double f)
+      {
+        var rnd = new Random(13);
+        for (int i = 0; i < 10000; i++)
+        {
+          var d = (0.5 - rnd.NextDouble()) * f;
+          var a = (float)d;
+          var b = (Float32)d;
+          Debug.Assert(*(uint*)&a == *(uint*)&b);
+        }
+      }
+
+      a = MathF.PI; c = a; d = a; Debug.Assert(*(ulong*)&c == *(ulong*)&d);
+
+      d = 7.7; d = 12345.6789; d = 0.00012345; d = 1234567.0;
+      d = 7.7f; d = 12345.6789f; d = 0.00012345f; d = 1234567.0f;
+      e = 7.7f; e = 12345.6789f; e = 0.00012345f; e = 1234567.0f;
+
 
       a = MathF.PI; a = a * a; a = -10000 * a;
       b = Float32.Pi; b = b * b; b = -10000 * b;
@@ -35,7 +95,7 @@ namespace Test
       a = (float)double.MinValue;
       c = +1e-300; a = (float)c; b = c;
       c = -1e-300; a = (float)c; b = c;
-       
+
       d = 123; a = Float64.Sign(d); d = -123; a = Float64.Sign(d); d -= d; a = Float64.Sign(d);
       e = 123; a = Float80.Sign(e); e = -123; a = Float80.Sign(e); e -= e; a = Float80.Sign(e);
       a = MathF.PI; b = MathF.PI; c = MathF.PI; d = MathF.PI; e = MathF.PI; f = MathF.PI; g = MathF.PI;
@@ -72,6 +132,37 @@ namespace Test
       test128();
       test32();
       test64();
+    }
+
+    static void test_s(double a)
+    {
+      Float64 b = a; float c = (float)a; Float32 d = c; string s1, s2;
+      Debug.Assert(*(ulong*)&a == *(ulong*)&b);
+      Debug.Assert(*(uint*)&c == *(uint*)&d);
+      if (a > 0.001)
+      {
+        s1 = a.ToString(); s2 = b.ToString(); Debug.Assert(s1 == s2);
+        s1 = a.ToString("G"); s2 = b.ToString("G"); Debug.Assert(s1 == s2);
+        s1 = a.ToString("G0"); s2 = b.ToString("G0"); Debug.Assert(s1 == s2);
+      }
+      s1 = a.ToString("G1"); s2 = b.ToString("G1"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G2"); s2 = b.ToString("G2"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G3"); s2 = b.ToString("G3"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G4"); s2 = b.ToString("G4"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G5"); s2 = b.ToString("G5"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G14"); s2 = b.ToString("G14"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G15"); s2 = b.ToString("G15"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G16"); s2 = b.ToString("G16"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G17", NumberFormatInfo.InvariantInfo); s2 = b.ToString("", null); //d:G17
+
+      s1 = c.ToString(); s2 = d.ToString(); Debug.Assert(s1 == s2);
+      s1 = c.ToString("G"); s2 = d.ToString("G"); Debug.Assert(s1 == s2);
+      s1 = c.ToString("G0"); s2 = d.ToString("G0"); Debug.Assert(s1 == s2);
+      s1 = a.ToString("G2"); s2 = d.ToString("G2");
+      s1 = a.ToString("G3"); s2 = d.ToString("G3");
+      s1 = a.ToString("G4"); s2 = d.ToString("G4");
+      s1 = a.ToString("G5"); s2 = d.ToString("G5");
+      s1 = c.ToString("G9", NumberFormatInfo.InvariantInfo); s2 = d.ToString("", null); //f:G9
     }
 
     static void test64()

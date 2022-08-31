@@ -3365,7 +3365,7 @@ namespace System.Numerics
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
       #region experimental      
-      private uint msd()
+      internal uint msd()
       {
         fixed (uint* p = this.p[this.i - 1])
         {
@@ -3373,7 +3373,12 @@ namespace System.Numerics
           return (i2 << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[i1 + 1 + i2]));
         }
       }
-      private double clog(uint f)
+      internal int ilog2()
+      {
+        double u = clog(0), v = clog(1), w = u - v;
+        int e = (int)w; if (w < 0) e--; return e;
+      }
+      internal double clog(uint f)
       {
         fixed (uint* u = this.p[this.i - 1])
         {
@@ -3502,37 +3507,47 @@ namespace System.Numerics
         {
           var n = u[0] & 0x3fffffff; var msb = (n << 5) - unchecked((uint)BitOperations.LeadingZeroCount(u[n]));
           int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc, bi = ((1 << (ec - 2)) + bc) - 1;
-          if (e >= 0x7ffffff0) goto ex;
-          if (msb == 0) { if (*(ulong*)(u + (n + 1)) == 1) e = 0x7ffffff3; goto ex; } //NaN                     
-          var d = unchecked((int)msb - (bc + 1));
-          var s = u[0] & 0x80000000;
+          if (e >= 0x7ffffff0) goto ex; if (msb == 0) { if (*(ulong*)(u + (n + 1)) == 1) e = 0x7ffffff3; goto ex; } //NaN                     
+          var d = unchecked((int)msb - (bc + 1)); var s = u[0] & 0x80000000;
           if (d != 0)
           {
+            if (e + d > ((1u << (ec - 1)) - 2)) { e = s == 0 ? 0x7ffffff1 : 0x7ffffff2; goto ex; }
             if (d > 0)
             {
-              //var c = bt(d - 1);
-              shr(u, d); //if (c) { var o = 1u; add(u + 1, u[0], &o, 1); }
+              var t = d - 1; var c = (u[1 + (t >> 5)] & (1 << (t & 31))) != 0; //Debug.Assert(bt(d - 1) == y);
+              shr(u, d); if (c) { u[1]++; if (u[1] == 0) { } } // Debug.Assert(u[1] != 0); //if (c) { var o = 1u; add(u + 1, u[0], &o, 1); } 
             }
             else
             {
-              var need = 1 + ((msb - d) >> 5);
-              if (need >= this.p[this.i - 1].Length) { Debug.Assert(false); }
+              if (size >= this.p[this.i - 1].Length << 2)
+                fixed (uint* t = rent((unchecked((uint)(size >> 2) + 1)))) { copy(t, u, n + 1); fpop(p, e, desc); pop(); return; }
+              Debug.Assert(n + ((uint)(-d) >> 5) + 1 <= this.p[this.i - 1].Length);
               shl(u, -d);
             }
             e += d;
           }
-          if (e + bi > ((1u << (ec - 1)) - 2)) { e = s == 0 ? 0x7ffffff1 : 0x7ffffff2; goto ex; }
+          Debug.Assert(e <= ((1u << (ec - 1)) - 2)); //if (e > ((1u << (ec - 1)) - 2)) { e = s == 0 ? 0x7ffffff1 : 0x7ffffff2; goto ex; }
           var h = unchecked((uint)(e + bi)) << (32 - ec); //Debug.Assert((h & 0x80000000) == 0);
           var l = unchecked((uint)(size >> 2));
           h = s | h | (u[l] & ((1u << bc) - 1)); if ((size & 2) != 0) { Debug.Assert((h & 0xffff) == 0); l++; h >>= 16; }
           copy(p, u + 1, l - 1); p[l - 1] = h; pop(); // for (uint i = 1; i < l; i++) p[i - 1] = u[i]; 
           return; ex:
           pop(); copy(p, unchecked((uint)((size >> 2) + ((size >> 1) & 1)))); if (e < 0x7ffffff0) return;
-          var pin = ~(((1u << (32 - ec)) - 1) | 0x80000000); // 0x7ff00000 
-          if ((e & 7) != 1) pin = (pin >> 1) | 0xc0000000; // 0xfff80000 nan
-          if ((e & 7) == 2) pin <<= 1; // 0xfff00000
-          *(uint*)(((byte*)p) + (size - 4)) = pin;
+          h = ~(((1u << (32 - ec)) - 1) | 0x80000000); // 0x7ff00000 ninf
+          if ((e & 7) != 1) h = (h >> 1) | 0xc0000000; // 0xfff80000 nan
+          if ((e & 7) == 2) h <<= 1; // 0xfff00000 pinf
+          *(uint*)(((byte*)p) + (size - 4)) = h;
         }
+      }
+      internal void fpop(uint* p, int desc)
+      {
+        var b = msd(); if (b <= 1) { fpop(p, 0, desc); return; } // 0, int, nan
+        var a = msb(); if (a == 0) { } // 0, nan
+        var c = unchecked((int)a - (int)b);
+        var d = (desc >> 16) + 1; // 52 + 1
+        var e = d - c; Debug.Assert(e > 0);
+        shl(e); mod(0); swp(); pop(); //var f = msb(); if (f != d) { }
+        fpop(p, -e, desc);
       }
       #endregion
     }
@@ -3616,6 +3631,7 @@ namespace System.Numerics
         cpu.pop(); return n;
       }
       cpu.dup(); cpu.tos(default, out _, out var e, out _, false);
+      var t = cpu.ilog2(); Debug.Assert(t == e); //todo: remove
       if (f == 'E') cpu.rnd(rnd - e);
       else if (f == 'F')
       {
@@ -3624,7 +3640,7 @@ namespace System.Numerics
         cpu.rnd(rnd);
       }
       else if (f == 'D') { var h = e + 16; if (h > sp.Length) { cpu.pop(); return -h; } dig = e + 1; }
-      else cpu.rnd(dig - e);
+      else { var h = dig - e - 1; cpu.rnd(h); } // G3 double bug in NET ?
       var tp = sp.Slice(0, dig);
       cpu.tos(tp, out var ns, out e, out _, false);
       tp = tp.Slice(0, ns).TrimEnd('0'); ns = tp.Length; e += es;
@@ -3632,7 +3648,8 @@ namespace System.Numerics
       if (f == 'E') { x = 1; if (ns < dig) l = dig; }
       else if (f == 'F') { if (ns < x + rnd) l = x + rnd; e = 0; }
       else if (f == 'D') { e = 0; x = ns; }
-      else if (e <= -5 || e >= 17) x = 1; else e = 0; //'G'
+      else if (e <= -5 || e >= 17) x = 1;
+      else { var h = dig - e - 1; if (h < 0) x = 1; else e = 0;  } // 'G'
       if (l != 0) { sp.Slice(ns, l - ns).Fill('0'); ns = l; } //todo: opt. in
       if (x >= ns) { sp.Slice(ns, x - ns).Fill('0'); ns = x; }
       else
@@ -3647,6 +3664,40 @@ namespace System.Numerics
         (e > 0 ? e : -e).TryFormat(sp.Slice(ns), out var z, f == 'E' ? "000" : "00", NumberFormatInfo.InvariantInfo); ns += z;
       }
       return ns;
+    }
+    /// <summary></summary>
+    public string ToString2() { return ToString2(null, null); }
+    /// <summary></summary>
+    public string ToString2(string? format, IFormatProvider? formatProvider = null)
+    {
+      //if (format != default && format.Length == 0) formatProvider = NumberFormatInfo.InvariantInfo;
+      Span<char> sp = stackalloc char[032 + 16];
+      if (!TryFormat2(sp, out var ns, format, formatProvider))
+      {
+        int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n];
+        TryFormat2(sp, out ns, format, formatProvider); Debug.Assert(ns != 0);
+      }
+      return sp.Slice(0, ns).ToString();
+    }
+    /// <summary></summary>
+    public bool TryFormat2(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+      var dbg = provider == null && format.Length == 0 && format != default;
+      var fmt = 'G'; int dig = 0, rnd = 0; var info = dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.GetInstance(provider);
+      if (format.Length != 0)
+      {
+        var f = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
+        if (d) dig = int.Parse(format.Slice(1));//, NumberFormatInfo.InvariantInfo);
+        if (f == 'E') { rnd = dig; if (rnd == 0 && !d) rnd = 6; dig = rnd + 1; }
+        if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
+      }
+      if (dig == 0) dig = 032; // DecimalDigits;
+      if (dest.Length < dig + 16) { dig += 16; goto ex; }
+      var cpu = main_cpu; cpu.push(this);
+      var n = tos(dest, cpu, fmt, dig, rnd, 0, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
+      if (n < 0) { dig = -n; goto ex; }
+      charsWritten = n; return true; ex:
+      charsWritten = 0; if (dest.Length >= 2) new Span<char>(&dig, 2).CopyTo(dest); return false;
     }
     #endregion
   }
