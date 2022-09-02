@@ -3479,7 +3479,7 @@ namespace System.Numerics
         Debug.Assert(sign() != 0 && !isnan());
         //var x = (int)Math.Floor(flog10(0) - flog10(1));
         double a = flog10(0), b = flog10(1), c = a - b;
-        int e = (int)c; if (c < 0 ) e--;
+        int e = (int)c; if (c < 0) e--;
         //Debug.Assert(e == x);
         return e;
       }
@@ -3559,8 +3559,8 @@ namespace System.Numerics
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
       #endregion
-      #region float support  
-      internal static int ftest(uint* p, int desc)
+      #region fp support        
+      internal static int ftest(void* p, int desc)
       {
         int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
         var h = *(uint*)(((byte*)p) + (size - 4));
@@ -3572,9 +3572,51 @@ namespace System.Numerics
           var nin = nan << 1; if (h == nin) return 0x7ffffff1;                // 0xfff00000
         }
         if (h == 0) return 0;
-        return unchecked((int)((h & 0x7fffffff) >> (32 - ec))) - (((1 << (ec - 2)) + bc) - 1);// bi;
+        return unchecked((int)((h & 0x7fffffff) >> (32 - ec))) - (((1 << (ec - 2)) + bc) - 1); // bi;
       }
-      internal int fpush(uint* p, int desc)
+      internal static int fcmp(void* a, void* b, int desc)
+      {
+        //todo: nan cmp
+        int size = desc & 0xffff;
+        var ha = *(uint*)(((byte*)a) + (size - 4));
+        var hb = *(uint*)(((byte*)b) + (size - 4));
+        var sa = ha == 0 ? 0 : (ha & 0x80000000) != 0 ? -1 : +1;
+        var sb = hb == 0 ? 0 : (hb & 0x80000000) != 0 ? -1 : +1;
+        if (sa != sb) return Math.Sign(sa - sb); if (sa == 0) return 0;
+        int bc = desc >> 16, ec = (size << 3) - bc, bi = ((1 << (ec - 2)) + bc) - 1;
+        var ea = unchecked((int)((ha & 0x7fffffff) >> (32 - ec))) - bi;
+        var eb = unchecked((int)((hb & 0x7fffffff) >> (32 - ec))) - bi;
+        if (ea != eb) { return Math.Sign(ea - eb) * sa; }
+        int i = (size >> 2) - 1;
+        if ((size & 2) != 0) Debug.Assert((ha >> 16) == (hb >> 16));
+        for (; i >= 0; i--) if (((uint*)a)[i] != ((uint*)b)[i])
+          {
+            var g = ((uint*)a)[i] > ((uint*)b)[i] ? +1 : -1; return g * sa;
+          }
+        return 0;
+      }
+      internal static int _fcmp(void* a, void* b, int desc)
+      {
+        int size = desc & 0xffff; //, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
+        var ha = (uint*)(((byte*)a) + (size - 4));
+        var hb = (uint*)(((byte*)b) + (size - 4));
+        var sa = *ha == 0 ? 0 : (*ha & 0x80000000) != 0 ? -1 : +1;
+        var sb = *hb == 0 ? 0 : (*hb & 0x80000000) != 0 ? -1 : +1;
+        if (sa != sb) return Math.Sign(sa - sb); if (sa == 0) return 0;
+        var cpu = main_cpu; int eb = cpu.fpush((uint*)b, desc), ea = cpu.fpush((uint*)a, desc);
+        if (ea != eb) { cpu.pop(2); return Math.Sign(ea - eb) * sa; }
+        ea = cpu.cmp(); cpu.pop(2); return ea;
+      }
+      internal static bool fequ(void* a, void* b, int desc)
+      {
+        uint n = unchecked((uint)desc & 0xffff), c, i = 0;
+        uint* u = (uint*)a, v = (uint*)b;
+        for (c = n >> 2; i < c; i++) if (u[i] != v[i]) return false;
+        if (c << 2 < n) if (*(ushort*)&u[c] != *(ushort*)&v[c]) return false;
+        return true;
+      }
+
+      internal int fpush(void* p, int desc)
       {
         int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
         var h = *(uint*)(((byte*)p) + (size - 4));
@@ -3589,12 +3631,12 @@ namespace System.Numerics
         var l = unchecked(((uint)size >> 2) + (((uint)size >> 1) & 1));
         fixed (uint* u = rent(l + 3))
         {
-          u[0] = l | (h & 0x80000000); copy(u + 1, p, l - 1); // for (uint i = 1; i < l; i++) u[i] = p[i - 1];
+          u[0] = l | (h & 0x80000000); copy(u + 1, (uint*)p, l - 1); // for (uint i = 1; i < l; i++) u[i] = p[i - 1];
           u[l] = (1u << bc) | (h & ((1u << bc) - 1)); *(ulong*)&u[l + 1] = 0x100000001;
         }
         return unchecked((int)((h & 0x7fffffff) >> (32 - ec))) - (((1 << (ec - 2)) + bc) - 1); // bi;
       }
-      internal void fpop(uint* p, int e, int desc)
+      internal void fpop(void* p, int e, int desc)
       {
         fixed (uint* u = this.p[this.i - 1])
         {
@@ -3623,23 +3665,23 @@ namespace System.Numerics
           var h = unchecked((uint)(e + bi)) << (32 - ec); //Debug.Assert((h & 0x80000000) == 0);
           var l = unchecked((uint)(size >> 2));
           h = s | h | (u[l] & ((1u << bc) - 1)); if ((size & 2) != 0) { Debug.Assert((h & 0xffff) == 0); l++; h >>= 16; }
-          copy(p, u + 1, l - 1); p[l - 1] = h; pop(); // for (uint i = 1; i < l; i++) p[i - 1] = u[i]; 
+          copy(((uint*)p), u + 1, l - 1); ((uint*)p)[l - 1] = h; pop(); // for (uint i = 1; i < l; i++) p[i - 1] = u[i]; 
           return; ex:
-          pop(); copy(p, unchecked((uint)((size >> 2) + ((size >> 1) & 1)))); if (e < 0x7ffffff0) return;
+          pop(); copy(((uint*)p), unchecked((uint)((size >> 2) + ((size >> 1) & 1)))); if (e < 0x7ffffff0) return;
           h = ~(((1u << (32 - ec)) - 1) | 0x80000000); // 0x7ff00000 ninf
           if ((e & 7) != 1) h = (h >> 1) | 0xc0000000; // 0xfff80000 nan
           if ((e & 7) == 2) h <<= 1; // 0xfff00000 pinf
           *(uint*)(((byte*)p) + (size - 4)) = h;
         }
       }
-      internal void fpop(uint* p, int desc)
+      internal void fpop(void* p, int desc)
       {
         var b = msd(); if (b <= 1) { fpop(p, 0, desc); return; } // 0, int, nan
         var a = msb(); if (a == 0) { } // 0, nan
         var c = unchecked((int)a - (int)b);
         var d = (desc >> 16) + 1; // 52 + 1
         var e = d - c; Debug.Assert(e > 0);
-        shl(e); mod(0); swp(); pop(); //var f = msb(); if (f != d) { }
+        shl(e); mod(0); swp(); pop(); //todo: noshift cases //var f = msb(); if (f != d) { }
         fpop(p, -e, desc);
       }
       #endregion

@@ -24,116 +24,116 @@ namespace System.Numerics.Generic
     public static implicit operator Float<T>(int value)
     {
       var cpu = main_cpu; cpu.push(value);
-      Float<T> a; cpu.fpop((uint*)&a, 0, desc); return a;
+      Float<T> a; cpu.fpop(&a, 0, desc); return a;
     }
     public static implicit operator Float<T>(long value)
     {
       var cpu = main_cpu; cpu.push(value);
-      Float<T> a; cpu.fpop((uint*)&a, 0, desc); return a;
+      Float<T> a; cpu.fpop(&a, 0, desc); return a;
     }
     public static implicit operator Float<T>(float value)
     {
       //if(sizeof(T) == 4) return *(Float<T>*)&value;
       var cpu = main_cpu; //cpu.push(value); return pop(cpu);
-      var e = cpu.fpush((uint*)&value, sizeof(float) | (23 << 16));
-      Float<T> a; cpu.fpop((uint*)&a, e, desc); return a;
+      var e = cpu.fpush(&value, sizeof(float) | (23 << 16));
+      Float<T> a; cpu.fpop(&a, e, desc); return a;
     }
     public static implicit operator Float<T>(double value)
     {
       //if(sizeof(T) == 8) return *(Float<T>*)&value;
       var cpu = main_cpu; //cpu.push(value); return pop(cpu);
-      var e = cpu.fpush((uint*)&value, sizeof(double) | (52 << 16));
-      Float<T> a; cpu.fpop((uint*)&a, e, desc); return a;
+      var e = cpu.fpush(&value, sizeof(double) | (52 << 16));
+      Float<T> a; cpu.fpop(&a, e, desc); return a;
     }
     public static implicit operator Float<T>(decimal value)
     {
-      var cpu = main_cpu; cpu.push(value); return pop(cpu);
+      var cpu = main_cpu; cpu.push(value); Float<T> x; cpu.fpop(&x, desc); return x;
     }
     public static implicit operator Float<T>(BigRational value)
     {
-      var cpu = main_cpu; cpu.push(value); return pop(cpu);
+      var cpu = main_cpu; cpu.push(value); Float<T> x; cpu.fpop(&x, desc); return x;
     }
 
     public static explicit operator int(Float<T> value)
     {
       var cpu = main_cpu;
-      var e = cpu.fpush((uint*)&value, desc); cpu.pow(2, e); cpu.mul();
+      var e = cpu.fpush(&value, desc); cpu.pow(2, e); cpu.mul();
       var a = default(int); cpu.toi((uint*)&a, 0x0001); return a;
     }
     public static explicit operator long(Float<T> value)
     {
       var cpu = main_cpu;
-      var e = cpu.fpush((uint*)&value, desc); cpu.pow(2, e); cpu.mul();
+      var e = cpu.fpush(&value, desc); cpu.pow(2, e); cpu.mul();
       var a = default(long); cpu.toi((uint*)&a, 0x0002); return a;
     }
     public static explicit operator float(Float<T> value)
     {
       //todo: direct cast, now just for test
-      var cpu = main_cpu; var e = cpu.fpush((uint*)&value, desc);
-      float c; cpu.fpop((uint*)&c, e, sizeof(float) | (23 << 16)); return c;
+      var cpu = main_cpu; var e = cpu.fpush(&value, desc);
+      float c; cpu.fpop(&c, e, sizeof(float) | (23 << 16)); return c;
     }
     public static explicit operator double(Float<T> value)
     {
       //todo: direct cast, now just for test
-      var cpu = main_cpu; var e = cpu.fpush((uint*)&value, desc);
-      double c; cpu.fpop((uint*)&c, e, sizeof(double) | (52 << 16)); return c;
+      var cpu = main_cpu; var e = cpu.fpush(&value, desc);
+      double c; cpu.fpop(&c, e, sizeof(double) | (52 << 16)); return c;
     }
     public static explicit operator decimal(Float<T> value)
     {
-      var cpu = main_cpu; var e = cpu.fpush((uint*)&value, desc); 
+      var cpu = main_cpu; var e = cpu.fpush(&value, desc);
       cpu.pow(2, e); cpu.mul(); return cpu.popm();
     }
     public static implicit operator BigRational(Float<T> value)
     {
-      var cpu = main_cpu; var e = cpu.fpush((uint*)&value, desc); 
+      var cpu = main_cpu; var e = cpu.fpush(&value, desc);
       cpu.pow(2, e); cpu.mul(); return cpu.popr(); //todo: e > mbi, see tos
     }
 
     public static Float<T> operator +(Float<T> value) => value;
     public static Float<T> operator -(Float<T> value)
     {
-      var cpu = main_cpu; int u = cpu.fpush((uint*)&value, desc);
-      cpu.neg(); cpu.fpop((uint*)&value, u, desc); return value;
+      var cpu = main_cpu; int u = cpu.fpush(&value, desc);
+      cpu.neg(); cpu.fpop(&value, u, desc); return value;
     }
     public static Float<T> operator +(Float<T> left, Float<T> right)
     {
       var cpu = main_cpu;
-      int u = cpu.fpush((uint*)&left, desc), v = cpu.fpush((uint*)&right.p, desc), l = u < v ? 1 : 0, e;
+      int u = cpu.fpush(&left, desc), v = cpu.fpush(&right.p, desc), l = u < v ? 1 : 0, e;
       cpu.shr(l == 0 ? (e = u) - v : (e = v) - u, l); cpu.add();
-      cpu.fpop((uint*)&left, e, desc); return left;
+      cpu.fpop(&left, e, desc); return left;
     }
     public static Float<T> operator -(Float<T> left, Float<T> right)
     {
-      var cpu = main_cpu; int u = cpu.fpush((uint*)&left, desc), v = cpu.fpush((uint*)&right, desc), l = u < v ? 1 : 0, e;
+      var cpu = main_cpu; int u = cpu.fpush(&left, desc), v = cpu.fpush(&right, desc), l = u < v ? 1 : 0, e;
       cpu.shr(l == 0 ? (e = u) - v : (e = v) - u, l); cpu.sub();
-      cpu.fpop((uint*)&left, e, desc); return left;
+      cpu.fpop(&left, e, desc); return left;
     }
     public static Float<T> operator *(Float<T> left, Float<T> right)
     {
       var cpu = main_cpu;
-      int u = cpu.fpush((uint*)&left, desc);
-      int v = cpu.fpush((uint*)&right, desc); cpu.mul();
-      cpu.fpop((uint*)&left, u + v, desc); return left;
+      int u = cpu.fpush(&left, desc);
+      int v = cpu.fpush(&right, desc); cpu.mul();
+      cpu.fpop(&left, u + v, desc); return left;
     }
     public static Float<T> operator /(Float<T> left, Float<T> right)
     {
       var cpu = main_cpu; var mbi = desc >> 16;
-      var u = cpu.fpush((uint*)&left, desc); cpu.shl(mbi);
-      var v = cpu.fpush((uint*)&right, desc); cpu.idiv();
+      var u = cpu.fpush(&left, desc); cpu.shl(mbi);
+      var v = cpu.fpush(&right, desc); cpu.idiv();
       var w = u - v - mbi; if (v > 0x7ffffff0) w = 0x7ffffff1; else if (u > 0x7ffffff0) w = 0x7ffffff3; //todo: rem. or check inf rules
-      cpu.fpop((uint*)&left, w, desc); return left;
+      cpu.fpop(&left, w, desc); return left;
     }
     public static Float<T> operator %(Float<T> left, Float<T> right)
     {
       return left - Truncate(left / right) * right; //todo: opt. inline
     }
 
-    public static bool operator ==(Float<T> left, Float<T> right) => Equals(&left, &right);
-    public static bool operator !=(Float<T> left, Float<T> right) => !Equals(&left, &right);
-    public static bool operator >=(Float<T> left, Float<T> right) => Compare(&left, &right) >= 0;
-    public static bool operator <=(Float<T> left, Float<T> right) => Compare(&left, &right) <= 0;
-    public static bool operator >(Float<T> left, Float<T> right) => Compare(&left, &right) > 0;
-    public static bool operator <(Float<T> left, Float<T> right) => Compare(&left, &right) < 0;
+    public static bool operator ==(Float<T> left, Float<T> right) => CPU.fequ(&left, &right, desc);
+    public static bool operator !=(Float<T> left, Float<T> right) => !CPU.fequ(&left, &right, desc);
+    public static bool operator >=(Float<T> left, Float<T> right) => CPU.fcmp(&left, &right, desc) >= 0;
+    public static bool operator <=(Float<T> left, Float<T> right) => CPU.fcmp(&left, &right, desc) <= 0;
+    public static bool operator >(Float<T> left, Float<T> right) => CPU.fcmp(&left, &right, desc) > 0;
+    public static bool operator <(Float<T> left, Float<T> right) => CPU.fcmp(&left, &right, desc) < 0;
 
     public static int Bits => sizeof(Float<T>) << 3;
     public static int MaxDigits
@@ -158,29 +158,29 @@ namespace System.Numerics.Generic
     }
     public static Float<T> NaN
     {
-      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop((uint*)&a, 0x7ffffff3, desc); return a; }
+      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop(&a, 0x7ffffff3, desc); return a; }
     }
     public static Float<T> NegativeInfinity
     {
-      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop((uint*)&a, 0x7ffffff2, desc); return a; }
+      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop(&a, 0x7ffffff2, desc); return a; }
     }
     public static Float<T> PositiveInfinity
     {
-      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop((uint*)&a, 0x7ffffff1, desc); return a; }
+      get { var cpu = main_cpu; cpu.push(); Float<T> a; cpu.fpop(&a, 0x7ffffff1, desc); return a; }
     }
     public static Float<T> NegativeZero => default; //todo: cpu 
 
     public static Float<T> E
     {
-      get { var cpu = main_cpu; cpu.push(1u); cpu.exp(unchecked((uint)(desc >> 16) + 2)); return pop(cpu); }
+      get { var cpu = main_cpu; cpu.push(1u); cpu.exp(unchecked((uint)(desc >> 16) + 2)); Float<T> x; cpu.fpop(&x, desc); return x; }
     }
     public static Float<T> Pi
     {
-      get { var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); return pop(cpu); }
+      get { var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); Float<T> x; cpu.fpop(&x, desc); return x; }
     }
     public static Float<T> Tau
     {
-      get { var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); cpu.shl(1); return pop(cpu); }
+      get { var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); cpu.shl(1); Float<T> x; cpu.fpop(&x, desc); return x; }
     }
 
     public static int Sign(Float<T> value)
@@ -204,27 +204,27 @@ namespace System.Numerics.Generic
     }
     public static bool IsFinite(Float<T> value)
     {
-      var e = CPU.ftest((uint*)&value, desc); return e < 0x7ffffff0;
+      var e = CPU.ftest(&value, desc); return e < 0x7ffffff0;
     }
     public static bool IsNaN(Float<T> value)
     {
-      var e = CPU.ftest((uint*)&value, desc); return e == 0x7ffffff3;
+      var e = CPU.ftest(&value, desc); return e == 0x7ffffff3;
     }
     public static bool IsRealNumber(Float<T> value)
     {
-      var e = CPU.ftest((uint*)&value, desc); return e != 0x7ffffff3;
+      var e = CPU.ftest(&value, desc); return e != 0x7ffffff3;
     }
     public static bool IsInfinity(Float<T> value)
     {
-      var e = CPU.ftest((uint*)&value, desc); return e == 0x7ffffff1 || e == 0x7ffffff2;
+      var e = CPU.ftest(&value, desc); return e == 0x7ffffff1 || e == 0x7ffffff2;
     }
     public static bool IsNegativeInfinity(Float<T> value)
     {
-      var e = CPU.ftest((uint*)&value, desc); return e == 0x7ffffff1;
+      var e = CPU.ftest(&value, desc); return e == 0x7ffffff1;
     }
     public static bool IsPositiveInfinity(Float<T> value)
     {
-      var e = CPU.ftest((uint*)&value, desc); return e == 0x7ffffff2;
+      var e = CPU.ftest(&value, desc); return e == 0x7ffffff2;
     }
 
     public static Float<T> Abs(Float<T> value)
@@ -233,8 +233,8 @@ namespace System.Numerics.Generic
     }
     public static Float<T> Truncate(Float<T> a)
     {
-      var cpu = main_cpu; var e = cpu.fpush((uint*)&a, desc);
-      cpu.shl(e); cpu.fpop((uint*)&a, 0, desc); return a;
+      var cpu = main_cpu; var e = cpu.fpush(&a, desc);
+      cpu.shl(e); cpu.fpop(&a, 0, desc); return a;
     }
     public static Float<T> Round(Float<T> x, int digits = 0, MidpointRounding mode = MidpointRounding.ToEven)
     {
@@ -254,37 +254,45 @@ namespace System.Numerics.Generic
     public static Float<T> Sqrt(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.sqrt(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
+      cpu.sqrt(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Sin(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.sin(unchecked((uint)(desc >> 16) + 2), false); return pop(cpu);
+      cpu.sin(unchecked((uint)(desc >> 16) + 2), false); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Cos(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.sin(unchecked((uint)(desc >> 16) + 2), true); return pop(cpu);
+      cpu.sin(unchecked((uint)(desc >> 16) + 2), true); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Atan(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.atan(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
+      cpu.atan(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Exp(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.exp(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
+      cpu.exp(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
+    }
+    public static Float<T> Exp2(Float<T> x)
+    {
+      return Pow(2, x);
+    }
+    public static Float<T> Exp10(Float<T> x)
+    {
+      return Pow(10, x);
     }
     public static Float<T> Log(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.log(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
+      cpu.log(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Log2(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.log2(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
+      cpu.log2(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Pow(Float<T> x, Float<T> y)
     {
@@ -302,8 +310,8 @@ namespace System.Numerics.Generic
     }
     public static Float<T> Cast<TOther>(Float<TOther> value) where TOther : unmanaged
     {
-      var cpu = main_cpu; var e = cpu.fpush((uint*)&value, Float<TOther>.desc);
-      Float<T> b; cpu.fpop((uint*)&b, e, desc); return b;
+      var cpu = main_cpu; var e = cpu.fpush(&value, Float<TOther>.desc);
+      Float<T> b; cpu.fpop(&b, e, desc); return b;
     }
 
     #region private
@@ -321,33 +329,6 @@ namespace System.Numerics.Generic
         default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break;
       }
       desc = sizeof(T) | ((((size << 3) - sbi) - 1) << 16);
-    }
-    private static bool Equals(Float<T>* a, Float<T>* b)
-    {
-      uint n = unchecked((uint)sizeof(T)), i = 0, c;
-      uint* u = (uint*)a, v = (uint*)b;
-      for (c = n >> 2; i < c; i++) if (u[i] != v[i]) return false;
-      if (c << 2 < n) if (*(ushort*)&u[c] != *(ushort*)&v[c]) return false;
-      return true;
-    }
-    private static int Compare(Float<T>* a, Float<T>* b)
-    {
-      uint* u = (uint*)a, v = (uint*)b;
-      int s = sizeof(Float<T>), l = (s >> 2) - (((s >> 1) & 1) ^ 1);
-      var ha = (s & 2) == 0 ? u[l] : (u[l] & 0xffff) << 16;
-      var hb = (s & 2) == 0 ? v[l] : (v[l] & 0xffff) << 16;
-      var sa = ha == 0 ? 0 : (ha & 0x80000000) != 0 ? -1 : +1;
-      var sb = hb == 0 ? 0 : (hb & 0x80000000) != 0 ? -1 : +1;
-      if (sa != sb) return Math.Sign(sa - sb); if (sa == 0) return 0;
-      var cpu = main_cpu; int ea = cpu.fpush(u, desc), eb = cpu.fpush(v, desc);
-      if (ea != eb) { cpu.pop(2); return ea > eb ? sa : -sa; }
-      ea = cpu.cmp(); cpu.pop(2); return ea * sa;
-    }
-    private static Float<T> pop(CPU cpu)
-    {
-      //var s = cpu.sign(); if (s == 0) { cpu.pop(); return default; }
-      Float<T> a; cpu.fpop((uint*)&a, desc); return a;
-      //cpu.mod(8); Float<T> a, b; cpu.fpop((uint*)&a, 0, desc) cpu.fpop((uint*)&b, 0, desc); return b / a;
     }
     #endregion
 
@@ -377,7 +358,7 @@ namespace System.Numerics.Generic
       if (dig == 0) { dig = MaxDigits; if (dbg) dig++; } //dbg like float G9, double G17         
       if (dest.Length < dig + 16) { dig += 16; goto ex; }
       var cpu = main_cpu; var value = this; var es = 0;
-      var e = cpu.fpush((uint*)&value, desc);
+      var e = cpu.fpush(&value, desc);
       if (e >= 0x7ffffff0)
       {
         var s = ((e & 7) == 1 ? info.NegativeInfinitySymbol : (e & 7) == 2 ? info.PositiveInfinitySymbol : info.NaNSymbol).AsSpan();
@@ -391,12 +372,12 @@ namespace System.Numerics.Generic
         else if (ep > 0)
         {
           cpu.pop(); value *= Pow10(-(es = dd - 3));
-          e = cpu.fpush((uint*)&value, desc); ;
+          e = cpu.fpush(&value, desc);
         }
         else if (ep < 0)
         {
           cpu.pop(); value *= Pow10(-(es = 3 - dd));
-          e = cpu.fpush((uint*)&value, desc);
+          e = cpu.fpush(&value, desc);
         }
         else { }
       }
@@ -414,7 +395,7 @@ namespace System.Numerics.Generic
     {
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
       var cpu = main_cpu; cpu.tor(s, 10, info != null ? info.NumberDecimalSeparator[0] : default);
-      return pop(cpu);
+      Float<T> x; cpu.fpop(&x, desc); return x;
     }
     public readonly override int GetHashCode()
     {
@@ -426,11 +407,11 @@ namespace System.Numerics.Generic
     public readonly override bool Equals([NotNullWhen(true)] object? obj)
     {
       if (obj is not Float<T> b) return false;
-      var a = this; return Equals(&a, &b);
+      var a = this; return CPU.fequ(&a, &b, desc);
     }
-    public readonly bool Equals(Float<T> other) { var t = this; return Equals(&t, &other); }
+    public readonly bool Equals(Float<T> other) { var t = this; return CPU.fequ(&t, &other, desc); }
     public readonly int CompareTo(object? obj) => obj == null ? 1 : p is Float<T> b ? this.CompareTo(b) : throw new ArgumentException();
-    public readonly int CompareTo(Float<T> other) { var a = this; return Compare(&a, &other); }
+    public readonly int CompareTo(Float<T> other) { var a = this; return CPU.fcmp(&a, &other, desc); }
   }
 
 #if NET7_0
@@ -454,6 +435,19 @@ namespace System.Numerics.Generic
     static bool INumberBase<Float<T>>.IsComplexNumber(Float<T> value) => false;
     static bool INumberBase<Float<T>>.IsImaginaryNumber(Float<T> value) => false;
     static bool INumberBase<Float<T>>.IsZero(Float<T> value) => value == default; //value == 0
+    int IFloatingPoint<Float<T>>.GetExponentByteCount() => (((desc >> 16) + 1) >> 5) + 1; //sizeof(sbyte), sizeof(short), 4;
+    int IFloatingPoint<Float<T>>.GetSignificandBitLength() => (desc >> 16) + 1; // 53
+    int IFloatingPoint<Float<T>>.GetSignificandByteCount() => sizeof(T); // ??? like float and double // (((desc >> 16) + 1) >> 3) + 1; // 2
+    int IFloatingPoint<Float<T>>.GetExponentShortestBitLength()
+    {
+      int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc; //, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
+      var t = this; var h = *(uint*)(((byte*)&t) + (size - 4));
+      var ExponentBias = (0xffffffff >> (32 - ec)) >> 2; //1023 127
+      var BiasedExponent = (h & 0x7fffffff) >> (32 - ec);
+      var Exponent = unchecked((int)BiasedExponent - (int)ExponentBias);
+      var bl = Exponent >= 0 ? 32 - int.LeadingZeroCount(Exponent) : 33 - int.LeadingZeroCount((int)(~Exponent));
+      return bl;
+    }
 
     #region todo: impl. optimized
     // static Float<T> IUnaryNegationOperators<Float<T>, Float<T>>.operator -(Float<T> value) => throw new NotImplementedException();
@@ -487,12 +481,8 @@ namespace System.Numerics.Generic
     static int IFloatingPointIeee754<Float<T>>.ILogB(Float<T> x) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.ScaleB(Float<T> x, int n) => throw new NotImplementedException();
     // static Float<T> IExponentialFunctions<Float<T>>.Exp(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IExponentialFunctions<Float<T>>.Exp10(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IExponentialFunctions<Float<T>>.Exp2(Float<T> x) => throw new NotImplementedException();
-    int IFloatingPoint<Float<T>>.GetExponentByteCount() => throw new NotImplementedException();
-    int IFloatingPoint<Float<T>>.GetExponentShortestBitLength() => throw new NotImplementedException();
-    int IFloatingPoint<Float<T>>.GetSignificandBitLength() => throw new NotImplementedException();
-    int IFloatingPoint<Float<T>>.GetSignificandByteCount() => throw new NotImplementedException();
+    // static Float<T> IExponentialFunctions<Float<T>>.Exp10(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> IExponentialFunctions<Float<T>>.Exp2(Float<T> x) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteExponentBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteExponentLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteSignificandBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
@@ -574,7 +564,7 @@ namespace System.Numerics.Generic
     static bool INumberBase<Float<T>>.IsNormal(Float<T> value) => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.IsSubnormal(Float<T> value) => throw new NotImplementedException();
     static bool IBinaryNumber<Float<T>>.IsPow2(Float<T> value) => throw new NotImplementedException();
-#endregion
+    #endregion
   }
 #endif
 

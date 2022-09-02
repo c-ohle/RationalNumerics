@@ -10,7 +10,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // test();
+      ApplicationConfiguration.Initialize(); //test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -23,17 +23,95 @@ namespace Test
 #endif
 
 #if NET7_0
+
+    readonly struct Number64
+    {
+      public override string ToString() => p.ToString();
+      public string ToString(string? format, IFormatProvider? formatProvider = null) => p.ToString(format, formatProvider);
+
+      public static implicit operator Number64(int value) => new Number64(value);
+      public static implicit operator Number64(double value) => new Number64(value);
+      public static explicit operator int(Number64 value) => (int)value.p;
+      public static implicit operator BigRational(Number64 value) => (BigRational)value.p;
+
+      public static Number64 operator +(Number64 left, Number64 right) => new Number64(left.p + right.p);
+      public static Number64 operator -(Number64 left, Number64 right) => new Number64(left.p - right.p);
+      public static Number64 operator *(Number64 left, Number64 right) => new Number64(left.p * right.p);
+      public static Number64 operator /(Number64 left, Number64 right) => new Number64(left.p / right.p);
+      public static Number64 operator %(Number64 left, Number64 right) => new Number64(left.p % right.p);
+
+      public static Number64 Sqrt(Number64 value) => 
+        new Number64(System.Numerics.Generic.Float<Test.SizeType64>.Sqrt(value.p));
+
+      private Number64(System.Numerics.Generic.Float<Test.SizeType64> value) => this.p = value;
+      readonly System.Numerics.Generic.Float<Test.SizeType64> p;
+    }
     
+    static void testnum()
+    {
+      Number64 a, b; a = Math.PI;
+      b = Number64.Sqrt(2);
+      b *= 1000; b /= 1000;
+    }
+
     static void test()
     {
+      testnum();
+
+      //gamma();
+      //decimal.Parse("1".AsSpan(), null);
       //System.Numerics.Generic.UInt<uint> a = 1; a = a * a;
       //System.Numerics.Generic.Decimal<uint> b = 1; b = b * b;
- 
+
       test_s(Math.PI); test_s(Math.PI * 1000); test_s(Math.PI * 0.00001);
       test_s(12345678); test_s(-12345678); test_s(1234000000);
       cast_ilogs(); //test_rath();
 
       rat r; float a; Float32 b; double c; Float64 d, x; Float80 e; Float128 f; Float256 g; string s1, s2;
+
+      e = 1.2346; var ee = e + 0.0000001; if (e < ee) { }
+
+      for (int i = 1; i < 13; i++) r = (rat)i / 13;
+      for (int i = 1; i < 19; i++) r = (rat)i / 19;
+      for (int i = 1; i < 7; i++) r = (rat)i / 7;
+
+      var rnd = new Random(13);
+      for (int i = 0; i < 1000; i++)
+      {
+        var t1 = (0.5 - rnd.NextDouble()) * 100;
+        var t2 = (0.5 - rnd.NextDouble()) * 100; if ((i % 50) == 0) if ((i % 100) == 0) t1 = t2 = 0; else t1 = t2;
+        var x1 = t1.CompareTo(t2);
+        var x2 = (*(Float64*)&t1).CompareTo((*(Float64*)&t2));
+        Debug.Assert(x1 == x2);
+
+        Debug.Assert((t1 < t2) == (*(Float64*)&t1 < *(Float64*)&t2));
+        Debug.Assert((t1 > t2) == (*(Float64*)&t1 > *(Float64*)&t2));
+        Debug.Assert((t1 <= t2) == (*(Float64*)&t1 <= *(Float64*)&t2));
+        Debug.Assert((t1 >= t2) == (*(Float64*)&t1 >= *(Float64*)&t2));
+        Debug.Assert((t1 == t2) == (*(Float64*)&t1 == *(Float64*)&t2));
+        Debug.Assert((t1 != t2) == (*(Float64*)&t1 != *(Float64*)&t2));
+        compareeq(t1, (*(Float64*)&t1));
+      }
+      for (int i = 0; i < 1000; i++)
+      {
+        var t1 = (float)((0.5 - rnd.NextDouble()) * 100);
+        var t2 = (float)((0.5 - rnd.NextDouble()) * 100); if ((i % 50) == 0) if ((i % 100) == 0) t1 = t2 = 0; else t1 = t2;
+        var x1 = t1.CompareTo(t2);
+        var x2 = (*(Float32*)&t1).CompareTo((*(Float32*)&t2));
+        Debug.Assert(x1 == x2);
+        compareeq(t1, (*(Float32*)&t1));
+      }
+      static void compareeq<A, B>(A a, B b)
+        where A : IBinaryFloatingPointIeee754<A>, IMinMaxValue<A>
+        where B : IBinaryFloatingPointIeee754<B>, IMinMaxValue<B>
+      {
+        Debug.Assert(A.Radix == B.Radix); int c, d;
+        c = a.GetSignificandBitLength(); d = b.GetSignificandBitLength(); Debug.Assert(c == d);
+        c = a.GetSignificandByteCount(); d = b.GetSignificandByteCount(); Debug.Assert(c == d);
+        c = a.GetExponentByteCount(); d = b.GetExponentByteCount(); Debug.Assert(c == d);
+        c = a.GetExponentShortestBitLength(); d = b.GetExponentShortestBitLength(); Debug.Assert(c == d);
+        //var x = A.AllBitsSet; var y = B.AllBitsSet; Debug.Assert(x. == y);
+      }
 
       r = 1.5M; var dec = (decimal)r; Debug.Assert(r == dec); r = 0; dec = (decimal)r; Debug.Assert(r == dec);
       r = 1e32; s1 = r.ToString(); r = float.NaN; s1 = r.ToString(); r = 1e-8;
@@ -416,19 +494,23 @@ namespace Test
 
     }
 
-    readonly struct Number64
+
+
+    static void gamma()
     {
-      public override string ToString() => p.ToString();
-      public string ToString(string? format, IFormatProvider? formatProvider = null) => p.ToString(format, formatProvider);
+      rat z = (rat)3 / 2;
+      int n = 1500;
 
-      public static implicit operator Number64(int value) => new Number64(value);
-      public static implicit operator Number64(double value) => new Number64(value);
+      Float128 f = 1; for (int i = 2; i <= n; i++) { f *= i; }
+      var p = rat.Factorial(n);
 
-      public static explicit operator int(Number64 value) => (int)value.p;
-      public static implicit operator BigRational(Number64 value) => (BigRational)value.p;
+      f = Float128.Pow(n, z);
+      p = rat.Pow(n, z);
 
-      private Number64(System.Numerics.Generic.Float<Test.SizeType32> value) => this.p = value;
-      readonly System.Numerics.Generic.Float<Test.SizeType32> p;
+      var num = rat.Factorial(n) * rat.Pow(n, z);
+      var den = z; for (int i = 1; i <= n; i++) den = den * (z + i);
+      var g = num / den;
+      //0.8862269254527580136490837416705725913987747280611935641069038949
     }
 
 #endif
