@@ -23,60 +23,6 @@ namespace System.Numerics
     [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
     public readonly partial struct Integer : IComparable, IComparable<Integer>, IEquatable<Integer>, IFormattable, ISpanFormattable
     {
-      public override readonly string ToString() => ToString(null);
-      public readonly unsafe string ToString(string? format, IFormatProvider? provider = default)
-      {
-        Span<char> sp = stackalloc char[100];
-        if (!TryFormat(sp, out var ns, format, provider))
-        {
-          int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n]; //todo: bigbuf
-          TryFormat(sp, out ns, format, provider); Debug.Assert(ns != 0);
-        }
-        return sp.Slice(0, ns).ToString();
-      }
-      public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-      {
-        var fmt = 'D'; int dig = 0;
-        if (format.Length != 0)
-        {
-          var fc = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
-          if (d) dig = int.Parse(format.Slice(1)); //if (fc != 'X') { throw new ArgumentException(nameof(format)); }
-        }
-        var cpu = main_cpu; cpu.push(p);
-        var n = tos(dest, cpu, fmt, dig, 0, 0, 0);
-        if (n > 0) { charsWritten = n; return true; }
-        if (dest.Length >= 2) { n = -n; new Span<char>(&n, 2).CopyTo(dest); }
-        charsWritten = 0; return false;
-      }
-      public static Integer Parse(string value) => Parse(value, NumberStyles.Integer);
-      public static Integer Parse(string value, NumberStyles style) => Parse(value.AsSpan(), style, NumberFormatInfo.CurrentInfo);
-      public static Integer Parse(string value, IFormatProvider? provider) => Parse(value, NumberStyles.Integer, NumberFormatInfo.GetInstance(provider));
-      public static Integer Parse(string value, NumberStyles style, IFormatProvider? provider) => Parse(value.AsSpan(), style, provider);
-      public static Integer Parse(ReadOnlySpan<char> value, IFormatProvider? provider) => Parse(value, NumberStyles.Integer, provider);
-      public static Integer Parse(ReadOnlySpan<char> value, NumberStyles style = NumberStyles.Integer, IFormatProvider? provider = null)
-      {
-        if (style == NumberStyles.HexNumber)
-        {
-          var cpu = main_cpu; cpu.tor(value = value.Trim(), 16);
-          if (value[0] > '7') //int hex style
-          {
-            var t = cpu.msb(); cpu.push(1u); cpu.shl(unchecked((int)t)); //todo: opt. check cpu.pow(2, t); ??? 
-            cpu.dec(); cpu.xor(); cpu.inc(); cpu.neg();
-          }
-          return new Integer(cpu);
-        }
-        var p = BigRational.Parse(value, style, provider);
-        if (!BigRational.IsInteger(p)) throw new ArgumentException(nameof(value));
-        return new Integer(p);
-      }
-      public override readonly int GetHashCode() => p.GetHashCode();
-      public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
-      public readonly bool Equals(Integer other) => p.Equals(other.p);
-      public readonly bool Equals(long other) => p.Equals(other);
-      public readonly int CompareTo(Integer other) => p.CompareTo(other.p);
-      public readonly int CompareTo(long other) => p.CompareTo(other);
-      public readonly int CompareTo(object? obj) => obj == null ? 1 : obj is Integer v ? CompareTo(v) : throw new ArgumentException();
-
       public Integer(int value) => p = value;
       public Integer(uint value) => p = value;
       public Integer(long value) => p = value;
@@ -220,8 +166,13 @@ namespace System.Numerics
       public static (Integer Quotient, Integer Remainder) DivRem(Integer left, Integer right) { var q = DivRem(left, right, out var r); return (q, r); }
       public static Integer Negate(Integer value) => -value;
       public static double Log(Integer value) => Log(value, Math.E);
-      public static double Log(Integer value, double baseValue) => (double)BigRational.Log(value.p, baseValue, 0);
-      public static double Log10(Integer value) => (double)BigRational.Log10(value.p, 0);
+      public static double Log(Integer value, double baseValue) => (double)BigRational.Log(value.p, baseValue, 17);
+      public static double Log10(Integer value)
+      {
+        //var a = BigRational.Log10(value.p, 17); return (double)a;
+        var cpu = main_cpu; cpu.push(value.p); var s = cpu.sign();
+        var d = s > 0 ? cpu.flog10(0) : s == 0 ? double.NegativeInfinity : double.NaN; cpu.pop(); return d;
+      } 
       /// <summary>
       /// Finds the greatest common divisor (GCD) of two <see cref="Integer"/> integer values.
       /// </summary>
@@ -265,8 +216,62 @@ namespace System.Numerics
         cpu.shr(shift); return new Integer(cpu);
       }
 
+      public override readonly string ToString() => ToString(null);
+      public readonly unsafe string ToString(string? format, IFormatProvider? provider = default)
+      {
+        Span<char> sp = stackalloc char[100];
+        if (!TryFormat(sp, out var ns, format, provider))
+        {
+          int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n]; //todo: bigbuf
+          TryFormat(sp, out ns, format, provider); Debug.Assert(ns != 0);
+        }
+        return sp.Slice(0, ns).ToString();
+      }
+      public readonly bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+      {
+        var fmt = 'D'; int dig = 0;
+        if (format.Length != 0)
+        {
+          var fc = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
+          if (d) dig = stoi(format.Slice(1));// int.Parse(format.Slice(1)); //if (fc != 'X') { throw new ArgumentException(nameof(format)); }
+        }
+        var cpu = main_cpu; cpu.push(p);
+        var n = tos(dest, cpu, fmt, dig, 0, 0, 0);
+        if (n > 0) { charsWritten = n; return true; }
+        if (dest.Length >= 2) { n = -n; new Span<char>(&n, 2).CopyTo(dest); }
+        charsWritten = 0; return false;
+      }
+      public static Integer Parse(string value) => Parse(value, NumberStyles.Integer);
+      public static Integer Parse(string value, NumberStyles style) => Parse(value.AsSpan(), style, NumberFormatInfo.CurrentInfo);
+      public static Integer Parse(string value, IFormatProvider? provider) => Parse(value, NumberStyles.Integer, NumberFormatInfo.GetInstance(provider));
+      public static Integer Parse(string value, NumberStyles style, IFormatProvider? provider) => Parse(value.AsSpan(), style, provider);
+      public static Integer Parse(ReadOnlySpan<char> value, IFormatProvider? provider) => Parse(value, NumberStyles.Integer, provider);
+      public static Integer Parse(ReadOnlySpan<char> value, NumberStyles style = NumberStyles.Integer, IFormatProvider? provider = null)
+      {
+        if (style == NumberStyles.HexNumber)
+        {
+          var cpu = main_cpu; cpu.tor(value = value.Trim(), 16);
+          if (value[0] > '7') //int hex style
+          {
+            var t = cpu.msb(); cpu.push(1u); cpu.shl(unchecked((int)t)); //todo: opt. check cpu.pow(2, t); ??? 
+            cpu.dec(); cpu.xor(); cpu.inc(); cpu.neg();
+          }
+          return new Integer(cpu);
+        }
+        var p = BigRational.Parse(value, style, provider);
+        if (!BigRational.IsInteger(p)) throw new ArgumentException(nameof(value));
+        return new Integer(p);
+      }
+      public override readonly int GetHashCode() => p.GetHashCode();
+      public override readonly bool Equals([NotNullWhen(true)] object? obj) => p.Equals(obj);
+      public readonly bool Equals(Integer other) => p.Equals(other.p);
+      public readonly bool Equals(long other) => p.Equals(other);
+      public readonly int CompareTo(Integer other) => p.CompareTo(other.p);
+      public readonly int CompareTo(long other) => p.CompareTo(other);
+      public readonly int CompareTo(object? obj) => obj == null ? 1 : obj is Integer v ? CompareTo(v) : throw new ArgumentException();
+
       #region private
-      private readonly BigRational p;
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly BigRational p;
       private Integer(BigRational p) => this.p = p;
       private Integer(BigRational.CPU cpu) => p = cpu.popr();
       #endregion

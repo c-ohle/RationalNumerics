@@ -15,6 +15,90 @@ namespace System.Numerics
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly partial struct BigRational : IComparable<BigRational>, IComparable, IEquatable<BigRational>, IFormattable, ISpanFormattable
   {
+#if true
+    /// <summary></summary>
+    public override string ToString() { return ToString(null, null); }
+    /// <summary></summary>
+    public string ToString(string? format, IFormatProvider? formatProvider = null)
+    {
+      //if (format != default && format.Length == 0) formatProvider = NumberFormatInfo.InvariantInfo;
+      Span<char> sp = stackalloc char[032 + (16 + 32)]; //32 dbg
+      if (!TryFormat(sp, out var ns, format, formatProvider))
+      {
+        int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n + 32];
+        TryFormat(sp, out ns, format, formatProvider); Debug.Assert(ns != 0);
+      }
+      return sp.Slice(0, ns).ToString();
+    }
+    /// <summary></summary>
+    public bool TryFormat(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+      var dbg = provider == null && format.Length == 0 && format != default;
+      var fmt = 'H'; int dig = 0, rnd = 0; var info = dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.GetInstance(provider);
+      if (format.Length != 0)
+      {
+        var f = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
+        if (d) dig = stoi(format.Slice(1)); //int.Parse(format.Slice(1));//, NumberFormatInfo.InvariantInfo);
+        if (f == 'E') { rnd = dig; if (rnd == 0 && !d) rnd = 6; dig = rnd + 1; }
+        if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
+      }
+      if (dig == 0) dig = 032; // dec digits;
+      if (dest.Length < dig + 16) { dig += 16; goto ex; }
+      var cpu = main_cpu; uint u, v; // debug safety to allow core debug
+      if (dbg && this.p != null && (((u = this.p[0] & 0x3fffffff) == 0 || (u + 3 > this.p.Length)) || (((v = this.p[u + 1]) == 0)) || (u + v + 2 > this.p.Length)))
+        goto nan;
+
+      cpu.push(this); if (cpu.msd() == 0) { cpu.pop(); goto nan; }
+      var n = tos(dest, cpu, fmt, dig, rnd, 0, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
+      if (n < 0) { dig = -n; goto ex; }
+      if (dbg && this.p != null && (this.p[0] & 0x40000000) != 0 && dest.Length - n > 22) // debug nd info ₀ ₀  
+      {
+        dest[n++] = ' '; n += utos(dest.Slice(n), u = (this.p[0] & 0x3fffffff), '₀', 0);
+        dest[n++] = ' '; n += utos(dest.Slice(n), this.p[u + 1], '₀', 0);
+      }
+      charsWritten = n; return true; ex:
+      charsWritten = 0; if (dest.Length >= 2) new Span<char>(&dig, 2).CopyTo(dest); return false; nan:
+      var s = info.NaNSymbol.AsSpan(); s.CopyTo(dest); charsWritten = s.Length; return true;
+    }
+#else
+    /// <summary></summary>
+    public string ToString2() { return ToString2(null, null); }
+    /// <summary></summary>
+    public string ToString2(string? format, IFormatProvider? formatProvider = null)
+    {
+      //if (format != default && format.Length == 0) formatProvider = NumberFormatInfo.InvariantInfo;
+      Span<char> sp = stackalloc char[032 + 16];
+      if (!TryFormat2(sp, out var ns, format, formatProvider))
+      {
+        int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n];
+        TryFormat2(sp, out ns, format, formatProvider); Debug.Assert(ns != 0);
+      }
+      return sp.Slice(0, ns).ToString();
+    }
+    /// <summary></summary>
+    public bool TryFormat2(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+      var dbg = provider == null && format.Length == 0 && format != default;
+      var fmt = 'H'; int dig = 0, rnd = 0; var info = dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.GetInstance(provider);
+      if (format.Length != 0)
+      {
+        var f = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
+        if (d) dig = int.Parse(format.Slice(1));//, NumberFormatInfo.InvariantInfo);
+        if (f == 'E') { rnd = dig; if (rnd == 0 && !d) rnd = 6; dig = rnd + 1; }
+        if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
+      }
+      if (dig == 0) dig = 032; // DecimalDigits;
+      if (dest.Length < dig + 16) { dig += 16; goto ex; }
+      var cpu = main_cpu; uint u, v;
+      if (dbg && this.p != null && (((u = this.p[0] & 0x3fffffff) == 0 || (u + 3 > this.p.Length)) || (((v = this.p[u + 1]) == 0)) || (u + v + 2 > this.p.Length)))
+        cpu.push(float.NaN); // debug safety to allow core debug
+      else cpu.push(this);
+      var n = tos(dest, cpu, fmt, dig, rnd, 0, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
+      if (n < 0) { dig = -n; goto ex; }
+      charsWritten = n; return true; ex:
+      charsWritten = 0; if (dest.Length >= 2) new Span<char>(&dig, 2).CopyTo(dest); return false;
+    }
+     
     /// <summary>
     /// Converts the numeric value of the current <see cref="BigRational"/> instance to its equivalent string representation.
     /// </summary>
@@ -62,7 +146,7 @@ namespace System.Numerics
         if (a != null) ArrayPool<char>.Shared.Return(a);
         if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(na = Math.Max(ns, na << 1));
       }
-      #region debug ext
+    #region debug ext
       if (dbg && p != null && (p[0] & 0x40000000) != 0) // debug nd info ₀ ₀  
       {
         var x = p[0] & 0x3fffffff; var i = s.Length; s += ' ' + x.ToString() + ' ' + p[x + 1].ToString();
@@ -77,7 +161,7 @@ namespace System.Numerics
         if (p[u + v + 1] == 0) return true;
         return false;
       }
-      #endregion
+    #endregion
       return s;
     }
     /// <summary>
@@ -210,6 +294,8 @@ namespace System.Numerics
         if (s < 0) ws[x++] = '-'; ws.Slice(0, x).Reverse(); ws = ws.Slice(x);
       }
     }
+#endif
+
     /// <summary>
     /// Converts the representation of a number, contained in the specified read-only 
     /// span of characters to its <see cref="BigRational"/> equivalent.
@@ -874,7 +960,7 @@ namespace System.Numerics
     /// <returns>true if the left and right parameters have the same value; otherwise, false.</returns>
     public static bool operator ==(BigRational a, BigRational b)
     {
-      return a.Equals(b);
+      return main_cpu.equ(a, b); //return a.Equals(b);
     }
     /// <summary>
     /// Returns a value that indicates whether two <see cref="BigRational"/> numbers have different values.
@@ -884,7 +970,7 @@ namespace System.Numerics
     /// <returns>true if left and right are not equal; otherwise, false.</returns>
     public static bool operator !=(BigRational a, BigRational b)
     {
-      return !a.Equals(b);
+      return !main_cpu.equ(a, b); //return !a.Equals(b);
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="BigRational"/> value is
@@ -895,7 +981,7 @@ namespace System.Numerics
     /// <returns>true if left is less than or equal to right; otherwise, false.</returns>
     public static bool operator <=(BigRational a, BigRational b)
     {
-      return a.CompareTo(b) <= 0;
+      return main_cpu.cmp(a, b) <= 0; //return a.CompareTo(b) <= 0;
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="BigRational"/> value is
@@ -906,7 +992,7 @@ namespace System.Numerics
     /// <returns>true if left is greater than or equal to right; otherwise, false.</returns>
     public static bool operator >=(BigRational a, BigRational b)
     {
-      return a.CompareTo(b) >= 0;
+      return main_cpu.cmp(a, b) >= 0; // return a.CompareTo(b) >= 0;
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="BigRational"/> value is
@@ -917,7 +1003,7 @@ namespace System.Numerics
     /// <returns>true if left is less than right; otherwise, false.</returns>
     public static bool operator <(BigRational a, BigRational b)
     {
-      return a.CompareTo(b) < 0;
+      return main_cpu.cmp(a, b) < 0; // return a.CompareTo(b) < 0;
     }
     /// <summary>
     /// Returns a value that indicates whether a <see cref="BigRational"/> value is
@@ -928,7 +1014,7 @@ namespace System.Numerics
     /// <returns>true if left is greater than right; otherwise, false.</returns>
     public static bool operator >(BigRational a, BigRational b)
     {
-      return a.CompareTo(b) > 0;
+      return main_cpu.cmp(a, b) > 0; // return a.CompareTo(b) > 0;
     }
 
     #region integer operator
@@ -3373,22 +3459,29 @@ namespace System.Numerics
           return (i2 << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[i1 + 1 + i2]));
         }
       }
-      internal int ilog2()
-      {
-        double u = clog(0), v = clog(1), w = u - v;
-        int e = (int)w; if (w < 0) e--; return e;
-      }
-      internal double clog(uint f)
+      internal double flog10(uint f)
       {
         fixed (uint* u = this.p[this.i - 1])
         {
           uint n = u[0] & 0x3fffffff; var p = u; if ((f & 1) != 0) { p = p + n + 1; n = p[0]; }
-          var c = BitOperations.LeadingZeroCount(p[n]); //if (c == 32) return 0;
+          if (n == 1) return Math.Log10(p[1]);
+          var c = BitOperations.LeadingZeroCount(p[n]); Debug.Assert(c != 32);
           var b = ((long)n << 5) - unchecked((uint)c);
-          ulong h = p[n], m = n > 1 ? p[n - 1] : 0, l = n > 2 ? p[n - 2] : 0;
+          ulong h = p[n], m = p[n - 1], l = n > 2 ? p[n - 2] : 0;
           ulong x = (h << 32 + c) | (m << c) | (l >> 32 - c);
-          return Math.Log(x) * 0.4342944819032518276 + (b - 64) * 0.3010299956639811952;
+          //var s = Math.Log(x, 10) + (b - 64) / Math.Log(10, 2);
+          //var o = Math.Log(x) * 0.4342944819032518276 + (b - 64) * 0.3010299956639811952;
+          var r = Math.Log10(x) + (b - 64) * 0.3010299956639811952; return r;
         }
+      }
+      internal int ilog10()
+      {
+        Debug.Assert(sign() != 0 && !isnan());
+        //var x = (int)Math.Floor(flog10(0) - flog10(1));
+        double a = flog10(0), b = flog10(1), c = a - b;
+        int e = (int)c; if (c < 0 ) e--;
+        //Debug.Assert(e == x);
+        return e;
       }
       internal decimal popm()
       {
@@ -3397,7 +3490,7 @@ namespace System.Numerics
         var b = msd(); if (b == 1) { if (a > 96) goto ex; }
         else
         {
-          double u = clog(0), v = clog(1), w = u - v; e = (int)w; if (w < 0) e--;
+          double u = flog10(0), v = flog10(1), w = u - v; e = (int)w; if (w < 0) e--;
           if (e < -28 || e > 28) goto ex; e = 28 - (e < 0 ? 0 : e);
           pow(10, e); mul(); rnd(0); b = msb(); if (b > 96) { push(10u); idiv(); e--; }
         }
@@ -3630,8 +3723,10 @@ namespace System.Numerics
         }
         cpu.pop(); return n;
       }
-      cpu.dup(); cpu.tos(default, out _, out var e, out _, false);
-      var t = cpu.ilog2(); Debug.Assert(t == e); //todo: remove
+      var e = sig != 0 ? cpu.ilog10() : 0;
+#if DEBUG
+      { cpu.dup(); cpu.tos(default, out _, out var ee, out _, false); Debug.Assert(e == ee); } //todo: remove 
+#endif
       if (f == 'E') cpu.rnd(rnd - e);
       else if (f == 'F')
       {
@@ -3640,16 +3735,27 @@ namespace System.Numerics
         cpu.rnd(rnd);
       }
       else if (f == 'D') { var h = e + 16; if (h > sp.Length) { cpu.pop(); return -h; } dig = e + 1; }
+      else if (f == 'H') { }
       else { var h = dig - e - 1; cpu.rnd(h); } // G3 double bug in NET ?
       var tp = sp.Slice(0, dig);
-      cpu.tos(tp, out var ns, out e, out _, false);
-      tp = tp.Slice(0, ns).TrimEnd('0'); ns = tp.Length; e += es;
+      cpu.tos(tp, out var ns, out e, out var r, f == 'H');
+      if (f == 'H')
+      {
+        if (r != -1) { sp.Slice(r, ns - r).CopyTo(sp.Slice(r + 1)); sp[r] = '\''; ns++; }
+        if (r == 0) { sp.Slice(0, ns).CopyTo(sp.Slice(1)); sp[0] = '0'; ns++; e++; } //r++; 
+      }
+      else { tp = tp.Slice(0, ns).TrimEnd('0'); ns = tp.Length; e += es; }
       int x = e + 1, l = 0;
       if (f == 'E') { x = 1; if (ns < dig) l = dig; }
       else if (f == 'F') { if (ns < x + rnd) l = x + rnd; e = 0; }
-      else if (f == 'D') { e = 0; x = ns; }
+      else if (f == 'D') { x = e + 1; e = 0; }
+      else if (f == 'H')
+      {
+        if ((r != -1 && e >= r) || (e <= -5 || e >= 17)) x = 1; else e = 0;
+        if (ns == dig && r == -1) sp[ns++] = '…';
+      }
       else if (e <= -5 || e >= 17) x = 1;
-      else { var h = dig - e - 1; if (h < 0) x = 1; else e = 0;  } // 'G'
+      else { var h = dig - e - 1; if (h < 0) x = 1; else e = 0; } // 'G'
       if (l != 0) { sp.Slice(ns, l - ns).Fill('0'); ns = l; } //todo: opt. in
       if (x >= ns) { sp.Slice(ns, x - ns).Fill('0'); ns = x; }
       else
@@ -3661,43 +3767,20 @@ namespace System.Numerics
       if (e != 0 || f == 'E')
       {
         sp[ns++] = (fmt & 0x20) == 0 ? 'E' : 'e'; sp[ns++] = e > 0 ? '+' : '-';
-        (e > 0 ? e : -e).TryFormat(sp.Slice(ns), out var z, f == 'E' ? "000" : "00", NumberFormatInfo.InvariantInfo); ns += z;
+        ns += utos(sp.Slice(ns), unchecked((uint)(e > 0 ? e : -e)), '0', f == 'E' ? 3 : 2);
+        //(e > 0 ? e : -e).TryFormat(sp.Slice(ns), out var z, f == 'E' ? "000" : "00", NumberFormatInfo.InvariantInfo); ns += z;
       }
       return ns;
     }
-    /// <summary></summary>
-    public string ToString2() { return ToString2(null, null); }
-    /// <summary></summary>
-    public string ToString2(string? format, IFormatProvider? formatProvider = null)
+    internal static int utos(Span<char> s, uint u, char z, int m) // avoid uint.Parse as they use ArrayPool<>.Shared which keeps crashing the debug visualizer
     {
-      //if (format != default && format.Length == 0) formatProvider = NumberFormatInfo.InvariantInfo;
-      Span<char> sp = stackalloc char[032 + 16];
-      if (!TryFormat2(sp, out var ns, format, formatProvider))
-      {
-        int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n];
-        TryFormat2(sp, out ns, format, formatProvider); Debug.Assert(ns != 0);
-      }
-      return sp.Slice(0, ns).ToString();
+      int i = 0; for (; u != 0 || i < m; u /= 10u) s[i++] = unchecked((char)(z + u % 10));
+      s.Slice(0, i).Reverse(); return i;
     }
-    /// <summary></summary>
-    public bool TryFormat2(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    internal static int stoi(ReadOnlySpan<char> s) // avoid int.ToString as they use ArrayPool<>.Shared which keeps crashing the debug visualizer
     {
-      var dbg = provider == null && format.Length == 0 && format != default;
-      var fmt = 'G'; int dig = 0, rnd = 0; var info = dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.GetInstance(provider);
-      if (format.Length != 0)
-      {
-        var f = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
-        if (d) dig = int.Parse(format.Slice(1));//, NumberFormatInfo.InvariantInfo);
-        if (f == 'E') { rnd = dig; if (rnd == 0 && !d) rnd = 6; dig = rnd + 1; }
-        if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
-      }
-      if (dig == 0) dig = 032; // DecimalDigits;
-      if (dest.Length < dig + 16) { dig += 16; goto ex; }
-      var cpu = main_cpu; cpu.push(this);
-      var n = tos(dest, cpu, fmt, dig, rnd, 0, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
-      if (n < 0) { dig = -n; goto ex; }
-      charsWritten = n; return true; ex:
-      charsWritten = 0; if (dest.Length >= 2) new Span<char>(&dig, 2).CopyTo(dest); return false;
+      int v = 0; for (int i = 0, n = s.Length; i < n; i++) { var x = s[i] - '0'; if (x < 0 || x > 9) break; v = v * 10 + x; }
+      return v;
     }
     #endregion
   }

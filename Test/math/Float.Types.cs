@@ -1,19 +1,12 @@
 ﻿
-
 global using rat = System.Numerics.BigRational;
 global using BigInt = System.Numerics.BigRational.Integer;
-
+global using Float128 = System.Numerics.Generic.Float<Test.SizeType128>;
+global using Float256 = System.Numerics.Generic.Float<Test.SizeType256>;
 global using Float32 = System.Numerics.Generic.Float<Test.SizeType32>;
 global using Float64 = System.Numerics.Generic.Float<Test.SizeType64>;
 global using Float80 = System.Numerics.Generic.Float<Test.SizeType80>;
-global using Float128 = System.Numerics.Generic.Float<Test.SizeType128>;
-global using Float256 = System.Numerics.Generic.Float<Test.SizeType256>;
 
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Numerics;
-using System.Numerics.Generic;
 using System.Runtime.InteropServices;
 
 namespace Test

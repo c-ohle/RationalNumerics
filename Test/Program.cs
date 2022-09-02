@@ -10,35 +10,36 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); // test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
     }
 
-#if NET7_0
-
-    readonly struct Number64
-    {
-      public override string ToString() => p.ToString();
-      public string ToString(string? format, IFormatProvider? formatProvider = null) => p.ToString(format, formatProvider);
-
-      public static implicit operator Number64(int value) => new Number64(value);
-      public static implicit operator Number64(double value) => new Number64(value);
-
-      public static explicit operator int(Number64 value) => (int)value.p;
-      public static implicit operator BigRational(Number64 value) => (BigRational)value.p;
-
-      private Number64(System.Numerics.Generic.Float<Test.SizeType32> value) => this.p = value;
-      readonly System.Numerics.Generic.Float<Test.SizeType32> p;
-    }
-
+#if NET6_0
     static void test()
     {
-      test_s(Math.PI); test_s(Math.PI * 1000); test_s(Math.PI * 0.00001); 
+    }
+#endif
+
+#if NET7_0
+    
+    static void test()
+    {
+      //System.Numerics.Generic.UInt<uint> a = 1; a = a * a;
+      //System.Numerics.Generic.Decimal<uint> b = 1; b = b * b;
+ 
+      test_s(Math.PI); test_s(Math.PI * 1000); test_s(Math.PI * 0.00001);
       test_s(12345678); test_s(-12345678); test_s(1234000000);
+      cast_ilogs(); //test_rath();
 
       rat r; float a; Float32 b; double c; Float64 d, x; Float80 e; Float128 f; Float256 g; string s1, s2;
+
+      r = 1.5M; var dec = (decimal)r; Debug.Assert(r == dec); r = 0; dec = (decimal)r; Debug.Assert(r == dec);
+      r = 1e32; s1 = r.ToString(); r = float.NaN; s1 = r.ToString(); r = 1e-8;
+      d = r; s2 = d.ToString("F");
+      d = 123.4567; s2 = d.ToString("F"); s2 = d.ToString("F10"); s2 = d.ToString("E"); s2 = d.ToString("E10");
+      r = d; s1 = r.ToString("F"); s1 = r.ToString("F10"); s1 = r.ToString("E"); s1 = r.ToString("E10");
 
       r = 0; d = r; r = 7; d = r; r = -7; d = r;
       c = Math.PI; d = c; r = rat.Pi(20); d = r; d = Float64.Pi; //16 dig
@@ -49,9 +50,7 @@ namespace Test
 
       r = rat.Sqrt(2, 20); b = r; b = Float32.Sqrt(2);
 
-      x = 7; x = 7.7; r = (rat)x; s1 = r.ToString2(); s1 = r.ToString2("G5"); s1 = r.ToString2("G10");
-      r = 3; r = 1 / r; r = rat.Parse("123.456'789"); s1 = r.ToString2("G");
-      s1 = r.ToString2("Ö");
+      x = 7; x = 7.7; r = (rat)x;
 
       d = Float64.Parse("123.456");
 
@@ -134,6 +133,83 @@ namespace Test
       test64();
     }
 
+#if false
+    static void test_rath()
+    {
+      rat a; string b, c;
+
+      a = rat.Parse("123.456'789000"); b = a.ToString2("G"); c = a.ToString2();
+
+      a = rat.Parse("0.'3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+20"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E-20"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-9"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-7"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-6"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-5"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-4"); b = a.ToString(); c = a.ToString2(); //Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-2"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-1"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E-0"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E+1"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E+2"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E+3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E+4"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("0.'3E+5"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+
+      a = rat.Parse("123.456'789E-6"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E-5"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E-4"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E-3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E-2"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E-1"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E-0"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+0"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+1"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+2"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+4"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+5"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+6"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+7"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      a = rat.Parse("123.456'789E+8"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+
+      var rnd = new Random(13);
+      for (int i = 0; i < 10000; i++)
+      {
+        var d = (0.5 - rnd.NextDouble());
+        a = d; a *= a; b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+        a *= a; b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+      }
+    }
+#endif
+    static void cast_ilogs()
+    {
+      {
+        var a = BigInteger.Log10(-3); var b = BigInt.Log10(-3); Debug.Assert(a.ToString() == b.ToString());
+        a = BigInteger.Log10(0); b = BigInt.Log10(0); Debug.Assert(a.ToString() == b.ToString());
+      }
+      for (int i = 1; i < 100; i++)
+      {
+        var a = BigInteger.Pow(10, i); var b = BigInt.Pow(10, i);
+        Debug.Assert(a == b); Debug.Assert(a.ToString() == b.ToString());
+      }
+      var rnd = new Random(13);
+      for (int i = 1; i < 1000; i++)
+      {
+        var t1 = rnd.NextDouble(); var e = (int)(t1 * 100);
+        var t2 = BigInt.Pow(2, e);
+        var t3 = (BigInteger)t2;
+        var t4 = BigInteger.Pow(2, e); Debug.Assert(t4 == t2);
+        var a = BigInteger.Log10(t3);
+        var b = BigInt.Log10(t2); //var c = BigRational.Log10(t2, 17);
+        Debug.Assert(Math.Abs(a - b) < 0.000001);
+        Debug.Assert(t2.ToString() == t4.ToString());
+        Debug.Assert((-t2).ToString() == (-t4).ToString());
+      }
+    }
     static void test_s(double a)
     {
       Float64 b = a; float c = (float)a; Float32 d = c; string s1, s2;
@@ -164,7 +240,6 @@ namespace Test
       s1 = a.ToString("G5"); s2 = d.ToString("G5");
       s1 = c.ToString("G9", NumberFormatInfo.InvariantInfo); s2 = d.ToString("", null); //f:G9
     }
-
     static void test64()
     {
       Float64 a; double d; bool x, y; string s; // double.CreateChecked
@@ -340,6 +415,22 @@ namespace Test
       x = double.IsNegativeInfinity(d); y = Float128.IsNegativeInfinity(a);
 
     }
+
+    readonly struct Number64
+    {
+      public override string ToString() => p.ToString();
+      public string ToString(string? format, IFormatProvider? formatProvider = null) => p.ToString(format, formatProvider);
+
+      public static implicit operator Number64(int value) => new Number64(value);
+      public static implicit operator Number64(double value) => new Number64(value);
+
+      public static explicit operator int(Number64 value) => (int)value.p;
+      public static implicit operator BigRational(Number64 value) => (BigRational)value.p;
+
+      private Number64(System.Numerics.Generic.Float<Test.SizeType32> value) => this.p = value;
+      readonly System.Numerics.Generic.Float<Test.SizeType32> p;
+    }
+
 #endif
 
   }

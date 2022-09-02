@@ -11,6 +11,7 @@ using static System.Numerics.BigRational; //todo: remove
 
 namespace System.Numerics.Generic
 {
+
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly partial struct Float<T> : IComparable<Float<T>>, IComparable, IEquatable<Float<T>>, IFormattable, ISpanFormattable where T : unmanaged
   {
@@ -69,26 +70,23 @@ namespace System.Numerics.Generic
     {
       //todo: direct cast, now just for test
       var cpu = main_cpu; var e = cpu.fpush((uint*)&value, desc);
-      Float<UInt32> c; cpu.fpop((uint*)&c, e, Float<UInt32>.desc); return *(float*)&c;
+      float c; cpu.fpop((uint*)&c, e, sizeof(float) | (23 << 16)); return c;
     }
     public static explicit operator double(Float<T> value)
     {
       //todo: direct cast, now just for test
       var cpu = main_cpu; var e = cpu.fpush((uint*)&value, desc);
-      Float<UInt64> c; cpu.fpop((uint*)&c, e, Float<UInt64>.desc); return *(double*)&c;
+      double c; cpu.fpop((uint*)&c, e, sizeof(double) | (52 << 16)); return c;
     }
     public static explicit operator decimal(Float<T> value)
     {
-      //return (decimal)(BigRational)value; //todo: dec inline
-      var cpu = main_cpu;
-      var e = cpu.fpush((uint*)&value, desc); cpu.pow(2, e); cpu.mul();
-      return cpu.popm();
+      var cpu = main_cpu; var e = cpu.fpush((uint*)&value, desc); 
+      cpu.pow(2, e); cpu.mul(); return cpu.popm();
     }
     public static implicit operator BigRational(Float<T> value)
     {
-      var cpu = main_cpu;
-      var e = cpu.fpush((uint*)&value, desc); cpu.pow(2, e); cpu.mul(); //todo: e > mbi
-      return cpu.popr();
+      var cpu = main_cpu; var e = cpu.fpush((uint*)&value, desc); 
+      cpu.pow(2, e); cpu.mul(); return cpu.popr(); //todo: e > mbi, see tos
     }
 
     public static Float<T> operator +(Float<T> value) => value;
@@ -174,15 +172,15 @@ namespace System.Numerics.Generic
 
     public static Float<T> E
     {
-      get { var cpu = main_cpu; cpu.push(1u); cpu.exp(digbin); /*cpu.rnd(digdec);*/ return pop(cpu); }
+      get { var cpu = main_cpu; cpu.push(1u); cpu.exp(unchecked((uint)(desc >> 16) + 2)); return pop(cpu); }
     }
     public static Float<T> Pi
     {
-      get { var cpu = main_cpu; cpu.pi(digbin); /*cpu.rnd(digdec);*/ return pop(cpu); }
+      get { var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); return pop(cpu); }
     }
     public static Float<T> Tau
     {
-      get { var cpu = main_cpu; cpu.pi(digbin); cpu.shl(1); /*cpu.rnd(digdec);*/ return pop(cpu); }
+      get { var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); cpu.shl(1); return pop(cpu); }
     }
 
     public static int Sign(Float<T> value)
@@ -256,37 +254,37 @@ namespace System.Numerics.Generic
     public static Float<T> Sqrt(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.sqrt(digbin); /*cpu.rnd(digdec);*/ return pop(cpu);
+      cpu.sqrt(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
     }
     public static Float<T> Sin(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.sin(digbin, false); /*cpu.rnd(digdec);*/ return pop(cpu);
+      cpu.sin(unchecked((uint)(desc >> 16) + 2), false); return pop(cpu);
     }
     public static Float<T> Cos(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.sin(digbin, true); /*cpu.rnd(digdec);*/ return pop(cpu);
+      cpu.sin(unchecked((uint)(desc >> 16) + 2), true); return pop(cpu);
     }
     public static Float<T> Atan(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.atan(digbin); /*cpu.rnd(digdec);*/ return pop(cpu);
+      cpu.atan(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
     }
     public static Float<T> Exp(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.exp(digbin); /*cpu.rnd(digdec);*/ return pop(cpu);
+      cpu.exp(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
     }
     public static Float<T> Log(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.log(digbin); /*cpu.rnd(digdec);*/ return pop(cpu);
+      cpu.log(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
     }
     public static Float<T> Log2(Float<T> x)
     {
       var cpu = main_cpu; cpu.push(x);
-      cpu.log2(digbin); /*cpu.rnd(digdec);*/ return pop(cpu);
+      cpu.log2(unchecked((uint)(desc >> 16) + 2)); return pop(cpu);
     }
     public static Float<T> Pow(Float<T> x, Float<T> y)
     {
@@ -351,13 +349,11 @@ namespace System.Numerics.Generic
       Float<T> a; cpu.fpop((uint*)&a, desc); return a;
       //cpu.mod(8); Float<T> a, b; cpu.fpop((uint*)&a, 0, desc) cpu.fpop((uint*)&b, 0, desc); return b / a;
     }
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static uint digbin => unchecked((uint)(desc >> 16) + 2);
     #endregion
 
     public readonly override string ToString() => ToString(null, null);
     public string ToString(string? format, IFormatProvider? formatProvider = null)
     {
-      //if (format != default && format.Length == 0) formatProvider = NumberFormatInfo.InvariantInfo;
       Span<char> sp = stackalloc char[MaxDigits + 32]; // (1 + 16)];
       if (!TryFormat(sp, out var ns, format, formatProvider))
       {
@@ -373,7 +369,7 @@ namespace System.Numerics.Generic
       if (format.Length != 0)
       {
         var f = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
-        if (d) dig = int.Parse(format.Slice(1));//, NumberFormatInfo.InvariantInfo);
+        if (d) dig = stoi(format.Slice(1)); //int.Parse(format.Slice(1));//, NumberFormatInfo.InvariantInfo);
         if (f == 'E') { rnd = dig; if (rnd == 0 && !d) rnd = 6; dig = rnd + 1; }
         if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
       }
@@ -444,6 +440,22 @@ namespace System.Numerics.Generic
     public static implicit operator Float<T>(Half value) => new Float<T>(value);
     public static explicit operator Half(Float<T> value) => (Half)(double)value;
 
+    static int INumberBase<Float<T>>.Radix => 2;
+    static Float<T> INumberBase<Float<T>>.One => 1;
+    static Float<T> ISignedNumber<Float<T>>.NegativeOne => -1;
+    static Float<T> INumberBase<Float<T>>.Zero => default;
+    static Float<T> IAdditiveIdentity<Float<T>, Float<T>>.AdditiveIdentity => default;
+    static Float<T> IMultiplicativeIdentity<Float<T>, Float<T>>.MultiplicativeIdentity => 1;
+    static Float<T> IBinaryNumber<Float<T>>.AllBitsSet
+    {
+      get { Float<T> a; new Span<ushort>(&a, sizeof(Float<T>) >> 1).Fill(0xffff); return a; }
+    }
+    static bool INumberBase<Float<T>>.IsCanonical(Float<T> value) => true;
+    static bool INumberBase<Float<T>>.IsComplexNumber(Float<T> value) => false;
+    static bool INumberBase<Float<T>>.IsImaginaryNumber(Float<T> value) => false;
+    static bool INumberBase<Float<T>>.IsZero(Float<T> value) => value == default; //value == 0
+
+    #region todo: impl. optimized
     // static Float<T> IUnaryNegationOperators<Float<T>, Float<T>>.operator -(Float<T> value) => throw new NotImplementedException();
     // static Float<T> IUnaryPlusOperators<Float<T>, Float<T>>.operator +(Float<T> value) => throw new NotImplementedException();
     static Float<T> IDecrementOperators<Float<T>>.operator --(Float<T> value) => throw new NotImplementedException();
@@ -562,22 +574,7 @@ namespace System.Numerics.Generic
     static bool INumberBase<Float<T>>.IsNormal(Float<T> value) => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.IsSubnormal(Float<T> value) => throw new NotImplementedException();
     static bool IBinaryNumber<Float<T>>.IsPow2(Float<T> value) => throw new NotImplementedException();
-
-    static bool INumberBase<Float<T>>.IsCanonical(Float<T> value) => true;
-    static bool INumberBase<Float<T>>.IsComplexNumber(Float<T> value) => false;
-    static bool INumberBase<Float<T>>.IsImaginaryNumber(Float<T> value) => false;
-    static bool INumberBase<Float<T>>.IsZero(Float<T> value) => value == default; //value == 0
-
-    static int INumberBase<Float<T>>.Radix => 2;
-    static Float<T> INumberBase<Float<T>>.One => 1;
-    static Float<T> ISignedNumber<Float<T>>.NegativeOne => -1;
-    static Float<T> INumberBase<Float<T>>.Zero => default;
-    static Float<T> IAdditiveIdentity<Float<T>, Float<T>>.AdditiveIdentity => default;
-    static Float<T> IMultiplicativeIdentity<Float<T>, Float<T>>.MultiplicativeIdentity => 1;
-    static Float<T> IBinaryNumber<Float<T>>.AllBitsSet
-    {
-      get { Float<T> a; new Span<ushort>(&a, sizeof(Float<T>) >> 1).Fill(0xffff); return a; }
-    }
+#endregion
   }
 #endif
 
