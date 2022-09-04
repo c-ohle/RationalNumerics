@@ -2940,16 +2940,16 @@ namespace System.Numerics
       /// Decrements the value on top of the stack.
       /// </summary>
       public void dec() { push(1u); sub(); } //todo: opt.
-      /// <summary>
-      /// Converts an integer value on top of the stack to its two's complement and vice versa.
-      /// </summary>
-      /// <remarks>
-      /// Negative signed integer values are converted to it's unsigned variant.<br/>
-      /// Positive unsigned integers are converted to it's signed negative variant.<br/>
-      /// Parameter <paramref name="c"/> defines a integer type size in bytes.
-      /// </remarks>
-      /// <param name="c">Integer type size in bytes.</param>
-      public void toc(uint c)
+      // /// <summary>
+      // /// Converts an integer value on top of the stack to its two's complement and vice versa.
+      // /// </summary>
+      // /// <remarks>
+      // /// Negative signed integer values are converted to it's unsigned variant.<br/>
+      // /// Positive unsigned integers are converted to it's signed negative variant.<br/>
+      // /// Parameter <paramref name="c"/> defines a integer type size in bytes.
+      // /// </remarks>
+      // /// <param name="c">Integer type size in bytes.</param>
+      internal void toc(uint c) //todo: remove, replace with ipush ipop
       {
         fixed (uint* u = this.p[this.i - 1])
         {
@@ -3506,13 +3506,48 @@ namespace System.Numerics
       {
         return (p[i - 1][1 + (c >> 5)] & (1 << (c & 31))) != 0;
       }
-      internal void toi(BigRational v, uint* p, uint f)
+      //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
+      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
+      #endregion
+      #region int support
+      internal static int hash(void* p, int n)
       {
-        if (v.p == null) return; push(v); toi(p, f);
+        uint h = 0, c = unchecked((uint)n) >> 2;
+        for (uint i = 0; i < c; i++) h = ((uint*)p)[i] ^ ((h << 7) | (h >> 25));
+        if ((n & 2) != 0) h ^= ((uint*)p)[c] & 0xffff;
+        return unchecked((int)h);
       }
-      internal void toi(uint* p, uint f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
+      internal static int icmp(void* a, void* b, int f)
       {
-        uint n = f & 0xff; var s = sign();
+        uint n = unchecked((uint)f) & 0xff;
+        var sa = (f & 0x100) != 0 ? ((uint*)a)[n - 1] >> 31 : 0;
+        var sb = (f & 0x100) != 0 ? ((uint*)b)[n - 1] >> 31 : 0;
+        if (sa != sb) return sa != 0 ? -1 : +1;
+        for (uint i = n; i-- != 0;)
+          if (((uint*)a)[i] != ((uint*)b)[i])
+            return (((uint*)a)[i] > ((uint*)b)[i]) ? +1 : -1; //^ (sa == 0) 
+        return 0;
+      }
+      internal void ipush(void* p, int f)
+      {
+        uint n = unchecked((uint)f) & 0xff, s = (f & 0x0100) == 0 ? ((uint*)p)[n - 1] & 0x80000000 : 0;
+        fixed (uint* v = rent(n + 3))
+        {
+          copy(v + 1, (uint*)p, n);
+          if (s != 0)
+            for (uint b = 1, c = 1; b <= n; b++)
+            {
+              var x = unchecked((ulong)(v[b] ^ 0xffffffff) + c);
+              v[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
+            }
+          var i = n; for (; i > 1 && v[i] == 0; i--) ;
+          v[0] = i | s; *(ulong*)(v + i + 1) = 0x100000001;
+        }
+      }
+      internal void ipop(void* p, uint f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
+      {
+        var pp = (uint*)p; uint n = f & 0xff; var s = sign();
         if ((f & 0x0100) != 0 && s <= 0) //uint <= 0 -> 0 incl. NaN 
         {
           if ((f & 0x1000) != 0 && s < 0 || isnan()) { pop(); throw new OverflowException(); } //todo: message text range       
@@ -3527,8 +3562,8 @@ namespace System.Numerics
             {
               pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
               n--; //todo: opt. small types after tests
-              if (s > 0) { for (c = 0; c < n; c++) p[c] = 0xffffffff; p[n] = 0x7fffffff; } // MinValue
-              else p[n] = 0x80000000; // MinValue
+              if (s > 0) { for (c = 0; c < n; c++) pp[c] = 0xffffffff; pp[n] = 0x7fffffff; } // MinValue
+              else pp[n] = 0x80000000; // MinValue
               return;
             }
           }
@@ -3537,7 +3572,7 @@ namespace System.Numerics
             if (b > c)
             {
               pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
-              for (c = 0; c < n; c++) p[c] = 0xffffffff; //MaxValue
+              for (c = 0; c < n; c++) pp[c] = 0xffffffff; //MaxValue
               return;
             }
           }
@@ -3545,19 +3580,20 @@ namespace System.Numerics
         fixed (uint* t = this.p[this.i - 1])
         {
           var u = t[0] & 0x3fffffff;
-          if (u == 1) *p = t[1]; //most common case 
-          else copy(p, t + 1, n < u ? n : u);
+          if (u == 1) *pp = t[1]; //most common case 
+          else copy(pp, t + 1, n < u ? n : u);
         }
         pop(); if (s > 0) return;
         for (b = 0, c = 1; b < n; b++) //todo: opt. small std types after tests
         {
-          var x = unchecked((ulong)(p[b] ^ 0xffffffff) + c);
-          p[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
+          var x = unchecked((ulong)(pp[b] ^ 0xffffffff) + c);
+          pp[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
         }
       }
-      //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
-      [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
+      internal void toi(BigRational v, uint* p, uint f)
+      {
+        if (v.p == null) return; push(v); ipop(p, f);
+      }
       #endregion
       #region fp support        
       internal static int ftest(void* p, int desc)
@@ -3595,7 +3631,7 @@ namespace System.Numerics
           }
         return 0;
       }
-      internal static int _fcmp(void* a, void* b, int desc)
+      internal static int _fcmp(void* a, void* b, int desc) //todo: remove
       {
         int size = desc & 0xffff; //, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
         var ha = (uint*)(((byte*)a) + (size - 4));
@@ -3615,7 +3651,6 @@ namespace System.Numerics
         if (c << 2 < n) if (*(ushort*)&u[c] != *(ushort*)&v[c]) return false;
         return true;
       }
-
       internal int fpush(void* p, int desc)
       {
         int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075

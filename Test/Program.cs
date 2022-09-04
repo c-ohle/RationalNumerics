@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
+using System.Reflection;
 
 namespace Test
 {
@@ -10,7 +11,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test();
+      ApplicationConfiguration.Initialize(); test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -19,50 +20,59 @@ namespace Test
 #if NET6_0
     static void test()
     {
-    }
+    }    
 #endif
 
 #if NET7_0
 
-    readonly struct Number64
+    static void test_uint()
     {
-      public override string ToString() => p.ToString();
-      public string ToString(string? format, IFormatProvider? formatProvider = null) => p.ToString(format, formatProvider);
-
-      public static implicit operator Number64(int value) => new Number64(value);
-      public static implicit operator Number64(double value) => new Number64(value);
-      public static explicit operator int(Number64 value) => (int)value.p;
-      public static implicit operator BigRational(Number64 value) => (BigRational)value.p;
-
-      public static Number64 operator +(Number64 left, Number64 right) => new Number64(left.p + right.p);
-      public static Number64 operator -(Number64 left, Number64 right) => new Number64(left.p - right.p);
-      public static Number64 operator *(Number64 left, Number64 right) => new Number64(left.p * right.p);
-      public static Number64 operator /(Number64 left, Number64 right) => new Number64(left.p / right.p);
-      public static Number64 operator %(Number64 left, Number64 right) => new Number64(left.p % right.p);
-
-      public static Number64 Sqrt(Number64 value) => 
-        new Number64(System.Numerics.Generic.Float<Test.SizeType64>.Sqrt(value.p));
-
-      private Number64(System.Numerics.Generic.Float<Test.SizeType64> value) => this.p = value;
-      readonly System.Numerics.Generic.Float<Test.SizeType64> p;
+      __uint128 a, b, c; uint d;
+      a = 1000; b = 88; d = (uint)b; c = a * b + 1;
+      a++; a--; a = UInt64.MaxValue; a = UInt64.MinValue; a = UInt128.MaxValue;
+      a = 100; b = 200; if (a > b) { }
+      a = 100; b = 100; if (a > b) { }
+      if (a <= b) { }
+      if (a > b) { }
+      a = 0; b = 100; if (a > b) { }
+      if (a < b) { }
     }
-    
-    static void testnum()
+    static void test_int()
     {
-      Number64 a, b; a = Math.PI;
-      b = Number64.Sqrt(2);
-      b *= 1000; b /= 1000;
-    }
+      __int128 a, b, c; int d; __int256 e; e = 234242;
+      a = 1234; b = -1234; d = (int)b;
+      b = 0; d = (int)b; a = long.MaxValue; b = long.MinValue;
+      a = Int128.MaxValue; b = Int128.MinValue;
+      a = 1000; b = 7; c = -a; c = -b; c = a + b; c = a - b; c = a * b; c = a / b;
+      a = -1000; b = -7; c = -a; c = -b; c = a + b; c = a - b; c = a * b; c = a / b;
 
+      a = 1234; b = -1234; if (a > b) { }
+      if (a <= b) { }
+      a = 12345; b = 1234; if (a > b) { }
+      if (a <= b) { }
+      a = 123; b = 123; if (a > b) { }
+      if (a <= b) { }
+      a = -123; b = -123; if (a > b) { }
+      if (a <= b) { }
+      a = -1234; b = -123; if (a > b) { }
+      if (a <= b) { }
+      a = 0; b = -123; if (a > b) { }
+      a = 0; b = +123; if (a > b) { }
+      b = 0; a = -123; if (a > b) { }
+      b = 0; a = +123; if (a > b) { }
+
+    }
     static void test()
     {
-      testnum();
+      test_uint();
+      test_int();
+
+      __float80 f1; f1 = 123.456; f1 = f1 * 1000;
+      var xx = __float80.Pi;
+      compareeq(f1, f1);
 
       //gamma();
-      //decimal.Parse("1".AsSpan(), null);
-      //System.Numerics.Generic.UInt<uint> a = 1; a = a * a;
-      //System.Numerics.Generic.Decimal<uint> b = 1; b = b * b;
-
+      
       test_s(Math.PI); test_s(Math.PI * 1000); test_s(Math.PI * 0.00001);
       test_s(12345678); test_s(-12345678); test_s(1234000000);
       cast_ilogs(); //test_rath();
@@ -493,9 +503,6 @@ namespace Test
       x = double.IsNegativeInfinity(d); y = Float128.IsNegativeInfinity(a);
 
     }
-
-
-
     static void gamma()
     {
       rat z = (rat)3 / 2;

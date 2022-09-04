@@ -20,6 +20,7 @@ namespace System.Numerics.Generic
     public Float(float value) => this = value;
     public Float(double value) => this = value;
     public Float(decimal value) => this = value;
+    public Float(Half value) => this = (double)value;
 
     public static implicit operator Float<T>(int value)
     {
@@ -30,6 +31,10 @@ namespace System.Numerics.Generic
     {
       var cpu = main_cpu; cpu.push(value);
       Float<T> a; cpu.fpop(&a, 0, desc); return a;
+    }
+    public static implicit operator Float<T>(Half value)
+    {
+      return new Float<T>(value);
     }
     public static implicit operator Float<T>(float value)
     {
@@ -53,19 +58,23 @@ namespace System.Numerics.Generic
     {
       var cpu = main_cpu; cpu.push(value); Float<T> x; cpu.fpop(&x, desc); return x;
     }
-
+   
     public static explicit operator int(Float<T> value)
     {
       var cpu = main_cpu;
       var e = cpu.fpush(&value, desc); cpu.pow(2, e); cpu.mul();
-      var a = default(int); cpu.toi((uint*)&a, 0x0001); return a;
+      var a = default(int); cpu.ipop(&a, 0x0001); return a;
     }
     public static explicit operator long(Float<T> value)
     {
       var cpu = main_cpu;
       var e = cpu.fpush(&value, desc); cpu.pow(2, e); cpu.mul();
-      var a = default(long); cpu.toi((uint*)&a, 0x0002); return a;
+      var a = default(long); cpu.ipop(&a, 0x0002); return a;
     }
+    public static explicit operator Half(Float<T> value)
+    { 
+      return (Half)(double)value; 
+    }    
     public static explicit operator float(Float<T> value)
     {
       //todo: direct cast, now just for test
@@ -399,10 +408,11 @@ namespace System.Numerics.Generic
     }
     public readonly override int GetHashCode()
     {
-      var a = this; var p = (uint*)&a; uint n = unchecked((uint)sizeof(T)), h = 0;
-      for (uint i = 0, c = n >> 2; i < c; i++) h = p[i] ^ ((h << 7) | (h >> 25));
-      if ((n & 2) != 0) h ^= p[n >> 2] & 0xffff;
-      return unchecked((int)h);
+      var a = this; return CPU.hash(&a, sizeof(T));      
+      //var p = (uint*)&a; uint n = unchecked((uint)sizeof(T)), h = 0;
+      //for (uint i = 0, c = n >> 2; i < c; i++) h = p[i] ^ ((h << 7) | (h >> 25));
+      //if ((n & 2) != 0) h ^= p[n >> 2] & 0xffff;
+      //return unchecked((int)h);
     }
     public readonly override bool Equals([NotNullWhen(true)] object? obj)
     {
@@ -417,10 +427,6 @@ namespace System.Numerics.Generic
 #if NET7_0
   public unsafe readonly partial struct Float<T> : IBinaryFloatingPointIeee754<Float<T>>, IMinMaxValue<Float<T>>
   {
-    public Float(Half value) => this = (double)value;
-    public static implicit operator Float<T>(Half value) => new Float<T>(value);
-    public static explicit operator Half(Float<T> value) => (Half)(double)value;
-
     static int INumberBase<Float<T>>.Radix => 2;
     static Float<T> INumberBase<Float<T>>.One => 1;
     static Float<T> ISignedNumber<Float<T>>.NegativeOne => -1;
