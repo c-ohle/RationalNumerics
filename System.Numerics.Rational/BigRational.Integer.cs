@@ -172,7 +172,7 @@ namespace System.Numerics
         //var a = BigRational.Log10(value.p, 17); return (double)a;
         var cpu = main_cpu; cpu.push(value.p); var s = cpu.sign();
         var d = s > 0 ? cpu.flog10(0) : s == 0 ? double.NegativeInfinity : double.NaN; cpu.pop(); return d;
-      } 
+      }
       /// <summary>
       /// Finds the greatest common divisor (GCD) of two <see cref="Integer"/> integer values.
       /// </summary>
@@ -248,7 +248,8 @@ namespace System.Numerics
       public static Integer Parse(ReadOnlySpan<char> value, IFormatProvider? provider) => Parse(value, NumberStyles.Integer, provider);
       public static Integer Parse(ReadOnlySpan<char> value, NumberStyles style = NumberStyles.Integer, IFormatProvider? provider = null)
       {
-        if (style == NumberStyles.HexNumber)
+        //if (style == NumberStyles.HexNumber)
+        if ((style & NumberStyles.AllowHexSpecifier) != 0)
         {
           var cpu = main_cpu; cpu.tor(value = value.Trim(), 16);
           if (value[0] > '7') //int hex style

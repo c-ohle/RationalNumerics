@@ -24,46 +24,20 @@ namespace Test
 #endif
 
 #if NET7_0
-
-    static void test_uint()
+    static void test_conv()
     {
-      __uint128 a, b, c; uint d;
-      a = 1000; b = 88; d = (uint)b; c = a * b + 1;
-      a++; a--; a = UInt64.MaxValue; a = UInt64.MinValue; a = UInt128.MaxValue;
-      a = 100; b = 200; if (a > b) { }
-      a = 100; b = 100; if (a > b) { }
-      if (a <= b) { }
-      if (a > b) { }
-      a = 0; b = 100; if (a > b) { }
-      if (a < b) { }
-    }
-    static void test_int()
-    {
-      __int128 a, b, c; int d; __int256 e; e = 234242;
-      a = 1234; b = -1234; d = (int)b;
-      b = 0; d = (int)b; a = long.MaxValue; b = long.MinValue;
-      a = Int128.MaxValue; b = Int128.MinValue;
-      a = 1000; b = 7; c = -a; c = -b; c = a + b; c = a - b; c = a * b; c = a / b;
-      a = -1000; b = -7; c = -a; c = -b; c = a + b; c = a - b; c = a * b; c = a / b;
-
-      a = 1234; b = -1234; if (a > b) { }
-      if (a <= b) { }
-      a = 12345; b = 1234; if (a > b) { }
-      if (a <= b) { }
-      a = 123; b = 123; if (a > b) { }
-      if (a <= b) { }
-      a = -123; b = -123; if (a > b) { }
-      if (a <= b) { }
-      a = -1234; b = -123; if (a > b) { }
-      if (a <= b) { }
-      a = 0; b = -123; if (a > b) { }
-      a = 0; b = +123; if (a > b) { }
-      b = 0; a = -123; if (a > b) { }
-      b = 0; a = +123; if (a > b) { }
-
+      var e = __uint128.CreateTruncating((__uint32)32);
+      var a = UInt128.CreateTruncating(123);
+      var b = __uint128.CreateTruncating(123);
+      var c = __uint128.CreateTruncating(a);
+      var d = __uint64.CreateTruncating(12345);
+      b = __uint128.CreateTruncating(d);
+      c = __uint128.CreateTruncating((__uint512)12345);
     }
     static void test()
     {
+      test_conv();
+      test_uint2();
       test_uint();
       test_int();
 
@@ -72,10 +46,10 @@ namespace Test
       compareeq(f1, f1);
 
       //gamma();
-      
+
       test_s(Math.PI); test_s(Math.PI * 1000); test_s(Math.PI * 0.00001);
       test_s(12345678); test_s(-12345678); test_s(1234000000);
-      cast_ilogs(); //test_rath();
+      cast_ilogs();
 
       rat r; float a; Float32 b; double c; Float64 d, x; Float80 e; Float128 f; Float256 g; string s1, s2;
 
@@ -219,60 +193,196 @@ namespace Test
       test128();
       test32();
       test64();
-    }
-
-#if false
-    static void test_rath()
+    }    
+    static void test_uint<A, B>(A a, B b)
+      where A : IBinaryInteger<A>, IUnsignedNumber<A>, IMinMaxValue<A>
+      where B : IBinaryInteger<B>, IUnsignedNumber<B>, IMinMaxValue<B>
     {
-      rat a; string b, c;
+      var s = a.ToString(); var t = b.ToString(); Debug.Assert(s == t);
+      s = a.ToString("X", null);
+      var e = A.Parse(s, NumberStyles.HexNumber, null); Debug.Assert(e == a);
+      t = b.ToString("X", null);
+      var x = B.Parse(s, NumberStyles.HexNumber, null);
+      var c = a + a;
+      var d = b + b; Debug.Assert(c.ToString("X", null) == d.ToString("X", null));
+      var t1 = A.PopCount(a); var t2 = B.PopCount(b); Debug.Assert(t1.ToString() == t2.ToString());
+      var i1 = a.GetShortestBitLength(); var i2 = b.GetShortestBitLength(); Debug.Assert(i1 == i2);
+    }
+    static void test_uint()
+    {
+      __uint128 a, b, c; uint d; UInt128 e; string s;// rat r;
 
-      a = rat.Parse("123.456'789000"); b = a.ToString2("G"); c = a.ToString2();
-
-      a = rat.Parse("0.'3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+20"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E-20"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-9"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-7"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-6"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-5"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-4"); b = a.ToString(); c = a.ToString2(); //Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-2"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-1"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E-0"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E+1"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E+2"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E+3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E+4"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("0.'3E+5"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-
-      a = rat.Parse("123.456'789E-6"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E-5"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E-4"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E-3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E-2"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E-1"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E-0"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+0"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+1"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+2"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+3"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+4"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+5"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+6"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+7"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-      a = rat.Parse("123.456'789E+8"); b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-
-      var rnd = new Random(13);
-      for (int i = 0; i < 10000; i++)
+      e = 0x1234abcd; a = 0x1234abcd; 
+      for (int i = 0; i < 200; i++)
       {
-        var d = (0.5 - rnd.NextDouble());
-        a = d; a *= a; b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
-        a *= a; b = a.ToString(); c = a.ToString2(); Debug.Assert(b == c);
+        e = UInt128.RotateRight(e, 1);
+        a = __uint128.RotateRight(a, 1); Debug.Assert(e == a);
+      }
+      e = 0x1234abcd; a = 0x1234abcd;
+      for (int i = 0; i < 200; i++)
+      {
+        e = UInt128.RotateLeft(e, 1);
+        a = __uint128.RotateLeft(a, 1); Debug.Assert(e == a);
+      }
+
+      e = UInt128.RotateLeft(0, 27);
+      a = __uint128.RotateLeft(0, 27); Debug.Assert(e == a);
+
+      e = UInt128.RotateLeft(10, -27);
+      a = __uint128.RotateLeft(10, -27); Debug.Assert(e == a);
+
+      e = 0x1234; e = UInt128.RotateRight(e, 10);
+      a = 0x1234; a = __uint128.RotateRight(a, 10); Debug.Assert(e == a);
+      e = 0xff00ff001234ff; e = UInt128.RotateRight(e, 10);
+      a = 0xff00ff001234ff; a = __uint128.RotateRight(a, 10); Debug.Assert(e == a);
+      e = UInt128.RotateLeft(e, 10);
+      a = __uint128.RotateLeft(a, 10); Debug.Assert(e == a);
+
+      e = 3252426434636; var aa = UInt128.DivRem(e, 234242);
+      a = 3252426434636; var bb = __uint128.DivRem(a, 234242); Debug.Assert(aa.Quotient == bb.Quotient && aa.Remainder == bb.Remainder);
+       
+      e = 10; aa = UInt128.DivRem(e, 3);
+      a = 10; bb = __uint128.DivRem(a, 3); Debug.Assert(aa.Quotient == bb.Quotient && aa.Remainder == bb.Remainder);
+
+      Debug.Assert(aa == bb);
+
+      e = (UInt128)1232424232423456.79m;
+      a = __uint128.CreateChecked(e);
+      a = (__uint128)1232424232423456.79m;
+      var x1 = UInt128.LeadingZeroCount(e);
+      var x2 = __uint128.LeadingZeroCount(a);
+      test_uint(e, a);
+      e <<= 19; a <<= 19; Debug.Assert(e == a);
+      e >>= 50; a >>= 50; Debug.Assert(e == a);
+      e |= 0xfffff0000000000;
+      a |= 0xfffff0000000000; Debug.Assert(e == a);
+      e ^= 0x00034A345000000;
+      a ^= 0x00034A345000000; Debug.Assert(e == a);
+      e &= 0x03ffffff5234000;
+      a &= 0x03ffffff5234000;
+      e = ~e; Debug.Assert(e == a);
+      a = ~a; Debug.Assert(e == a);
+      e ^= e; a ^= a; Debug.Assert(e == a);
+
+      
+      a = 1000; b = 88; d = (uint)b; c = a * b + 1;
+      a++; a--; a = UInt64.MaxValue; a = UInt64.MinValue; a = UInt128.MaxValue;
+      a = 100; b = 200; if (a > b) { }
+      a = (UInt128.MaxValue / UInt64.MaxValue);
+      a = (UInt128)(Int128.MaxValue / Int64.MaxValue);
+      a = UInt128.MaxValue; b = UInt64.MaxValue; c = a / b;//18446744073709551617
+
+      a = 100; b = 100; if (a > b) { }
+      if (a <= b) { }
+      if (a > b) { }
+      a = 0; b = 100; if (a > b) { }
+      if (a < b) { }
+
+      e = (UInt128)(-1); a = (__uint128)(-1);
+      e = (UInt128)a;
+      s = e.ToString("X"); s = a.ToString("X");
+      e = UInt64.MaxValue; s = e.ToString("X");
+      a = UInt64.MaxValue; s = a.ToString("X");
+      a = UInt128.MaxValue; s = a.ToString("X");
+      e = (UInt128)decimal.MaxValue; s = e.ToString("X"); a = e;
+      a = (UInt128)decimal.MaxValue; s = a.ToString("X");
+      s = a.ToString("X4"); a = 0x00ffffff; s = a.ToString("X4"); s = a.ToString("X8");
+      e = (UInt128)a; s = e.ToString("X8");
+      var b1 = UInt128.IsPow2(e); var b2 = __uint128.IsPow2(e); Debug.Assert(b1 == b2);
+      a = 0; e = (UInt128)a; b1 = UInt128.IsPow2(e); b2 = __uint128.IsPow2(e); Debug.Assert(b1 == b2);
+      a = 12345; e = (UInt128)a; c = UInt128.Log2(e); b = __uint128.Log2(e);
+
+      a = (UInt128)decimal.MaxValue / 2; e = (UInt128)a; c = UInt128.Log2(e); b = __uint128.Log2(a);
+      a = 0; e = (UInt128)a; c = UInt128.Log2(e); b = __uint128.Log2(a);
+
+    }
+    static void test_uint2()
+    {
+      UInt128 a; __uint128 b; string s, t;
+      for (uint i = 0; i < 0x2ff; i++)
+      {
+        a = i; s = a.ToString("X");
+        b = i; t = b.ToString("X"); Debug.Assert(s == t);
+      }
+      for (uint i = 0; i < 0x2ff; i++)
+      {
+        a = i; s = a.ToString("X2");
+        b = i; t = b.ToString("X2"); Debug.Assert(s == t);
+      }
+      for (uint i = 0; i < 0x2ff; i++)
+      {
+        a = i; s = a.ToString("X4");
+        b = i; t = b.ToString("X4"); Debug.Assert(s == t);
+      }
+      for (uint i = 0; i < 100; i++)
+      {
+        var k = i * 0x678979877834535ul;
+        a = k; s = a.ToString("X8");
+        b = k; t = b.ToString("X8"); Debug.Assert(s == t);
       }
     }
-#endif
+    static void test_int()
+    {
+      __int128 a, b, c; int d; Int128 e;
+
+      e = 0x23424242;
+      a = 0x23424242;
+      e = -e; a = -a;
+      e = 0xe3424242;
+      a = 0xe3424242; // todo: ToString("x")
+      
+      Debug.Assert(Int128.Log2(4) == __int128.Log2(4));
+      Debug.Assert(Int128.Log2(0) == __int128.Log2(0));
+      Debug.Assert(Int128.Log2(897897978978997997) == __int128.Log2(897897978978997997));
+ 
+      Debug.Assert(Int128.IsPow2(4) == __int128.IsPow2(4));
+      Debug.Assert(Int128.IsPow2(-4) == __int128.IsPow2(-4));
+      Debug.Assert(Int128.IsPow2(-89797997) == __int128.IsPow2(-89797997));
+      Debug.Assert(Int128.IsPow2(897897978978997997)== __int128.IsPow2(897897978978997997));
+      Debug.Assert(Int128.IsPow2(-897897978978997997) == __int128.IsPow2(-897897978978997997));
+
+      e = 3252426434636; var s = Int128.DivRem(e, 234242);
+      a = 3252426434636; var t = __int128.DivRem(a, 234242); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
+       
+      e = -3252426434636; s = Int128.DivRem(e, 234242);
+      a = -3252426434636; t = __int128.DivRem(a, 234242); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
+
+      s = Int128.DivRem(100, 3); t = __int128.DivRem(100, 3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
+      s = Int128.DivRem(-100, 3); t = __int128.DivRem(-100, 3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
+      s = Int128.DivRem(100, -3); t = __int128.DivRem(100, -3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
+      s = Int128.DivRem(-100, -3); t = __int128.DivRem(-100, -3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
+      s = Int128.DivRem(0, 3); t = __int128.DivRem(0, 3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
+      s = Int128.DivRem(0, -3); t = __int128.DivRem(0, -3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
+       
+      a = 1234; b = -1234; d = (int)b;
+      b = 0; d = (int)b; a = long.MaxValue; b = long.MinValue;
+      a = Int128.MaxValue; b = Int128.MinValue;
+      a = 1000; b = 7; c = -a; c = -b; c = a + b; c = a - b; c = a * b; c = a / b;
+      a = -1000; b = -7; c = -a; c = -b; c = a + b; c = a - b; c = a * b; c = a / b;
+
+      a = 1234; b = -1234; if (a > b) { }
+      if (a <= b) { }
+      a = 12345; b = 1234; if (a > b) { }
+      if (a <= b) { }
+      a = 123; b = 123; if (a > b) { }
+      if (a <= b) { }
+      a = -123; b = -123; if (a > b) { }
+      if (a <= b) { }
+      a = -1234; b = -123; if (a > b) { }
+      if (a <= b) { }
+      a = 0; b = -123; if (a > b) { }
+      a = 0; b = +123; if (a > b) { }
+      b = 0; a = -123; if (a > b) { }
+      b = 0; a = +123; if (a > b) { }
+
+      Debug.Assert(Int128.IsPow2(-4) == __int128.IsPow2(-4));
+      Debug.Assert(Int128.IsPow2(0) == __int128.IsPow2(0));
+      Debug.Assert(Int128.IsPow2(1) == __int128.IsPow2(1));
+      Debug.Assert(Int128.IsPow2(2) == __int128.IsPow2(2));
+      Debug.Assert(Int128.IsPow2(3) == __int128.IsPow2(3));
+      Debug.Assert(Int128.IsPow2(4) == __int128.IsPow2(4));
+      Debug.Assert(Int128.IsPow2(5) == __int128.IsPow2(5));
+    }
     static void cast_ilogs()
     {
       {

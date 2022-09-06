@@ -3511,6 +3511,18 @@ namespace System.Numerics
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
       #endregion
       #region int support
+      internal void idr() //todo: divrem keep?
+      {
+        fixed (uint* u = p[this.i - 1])
+        fixed (uint* v = p[this.i - 2])
+        fixed (uint* w = rent(len(u))) // nu - nv + 1
+        {
+          var h = v[0]; v[0] &= 0x3fffffff; div(v, u, w);
+          *(ulong*)(v + v[0] + 1) = 0x100000001; v[0] |= h & 0x80000000;
+          *(ulong*)(w + w[0] + 1) = 0x100000001; if (((h ^ u[0]) & 0x80000000) != 0 && *(ulong*)w != 1) w[0] |= 0x80000000;
+        }
+        swp(1); pop();
+      }
       internal static int hash(void* p, int n)
       {
         uint h = 0, c = unchecked((uint)n) >> 2;
@@ -3526,9 +3538,13 @@ namespace System.Numerics
         if (sa != sb) return sa != 0 ? -1 : +1;
         for (uint i = n; i-- != 0;)
           if (((uint*)a)[i] != ((uint*)b)[i])
-            return (((uint*)a)[i] > ((uint*)b)[i]) ? +1 : -1; //^ (sa == 0) 
+            return (((uint*)a)[i] > ((uint*)b)[i]) ? +1 : -1;
         return 0;
       }
+
+      internal void upush(void* p, int size) => ipush(p, 0x100 | (size >> 2));
+      internal void upop(void* p, int size) => ipop(p, 0x100 | (size >> 2));
+
       internal void ipush(void* p, int f)
       {
         uint n = unchecked((uint)f) & 0xff, s = (f & 0x0100) == 0 ? ((uint*)p)[n - 1] & 0x80000000 : 0;
@@ -3545,13 +3561,13 @@ namespace System.Numerics
           v[0] = i | s; *(ulong*)(v + i + 1) = 0x100000001;
         }
       }
-      internal void ipop(void* p, uint f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
+      internal void ipop(void* p, int f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
       {
-        var pp = (uint*)p; uint n = f & 0xff; var s = sign();
+        var pp = (uint*)p; uint n = unchecked((uint)f) & 0xff; var s = sign();
         if ((f & 0x0100) != 0 && s <= 0) //uint <= 0 -> 0 incl. NaN 
         {
           if ((f & 0x1000) != 0 && s < 0 || isnan()) { pop(); throw new OverflowException(); } //todo: message text range       
-          pop(); return;
+          if ((f & 0x0200) == 0 || s == 0) { pop(); copy(pp, n); return; } else { }
         }
         rnd(0, 0); uint b = msb(), c = n << 5;
         if (b >= c)
@@ -3582,6 +3598,7 @@ namespace System.Numerics
           var u = t[0] & 0x3fffffff;
           if (u == 1) *pp = t[1]; //most common case 
           else copy(pp, t + 1, n < u ? n : u);
+          copy(pp + u, n - u);// for (uint i = u; i < n; i++) pp[i] = 0;
         }
         pop(); if (s > 0) return;
         for (b = 0, c = 1; b < n; b++) //todo: opt. small std types after tests
@@ -3592,7 +3609,7 @@ namespace System.Numerics
       }
       internal void toi(BigRational v, uint* p, uint f)
       {
-        if (v.p == null) return; push(v); ipop(p, f);
+        if (v.p == null) return; push(v); ipop(p, unchecked((int)f));
       }
       #endregion
       #region fp support        
@@ -3788,7 +3805,7 @@ namespace System.Numerics
       var sig = cpu.sign(); var f = fmt & ~0x20; Debug.Assert(sp.Length >= dig + 16); // -.E+2147483647 14
       if (f == 'X')
       {
-        var z = cpu.msb(); int xx = unchecked((int)((z >> 2) + 1)); //todo: unsigned flag
+        int z = unchecked((int)cpu.msb()), xx = (fl & 0x01) == 0 ? (z >> 2) + 1 : z == 0 ? 1 : (z + 3) >> 2;
         if (sig < 0 && (z & 3) == 0 && cpu.ipt()) xx--; //80
         var n = dig > xx ? dig : xx; if (sp.Length < n) { cpu.pop(); return -n; }
         if (sig < 0) cpu.toc(4); var pp = cpu.gets(cpu.mark() - 1);

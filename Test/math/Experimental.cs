@@ -86,6 +86,7 @@ namespace Test
       return cpu.popr();
     }
 
+#if false
     //var code = Experimental.TypeGen( "__float80", typeof(System.Numerics.Generic.Float<Test.SizeType80>));
     public static string TypeGen(string name, Type type)
     {
@@ -234,6 +235,6 @@ namespace Test
         return $"{t.Namespace}.{t.Name}"; //if (t.IsEnum || t.IsInterface || t.Namespace != "System") return $"{t.Namespace}.{t.Name}";
       }
     }
-
+#endif
   }
 }

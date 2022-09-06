@@ -433,10 +433,7 @@ namespace System.Numerics.Generic
     static Float<T> INumberBase<Float<T>>.Zero => default;
     static Float<T> IAdditiveIdentity<Float<T>, Float<T>>.AdditiveIdentity => default;
     static Float<T> IMultiplicativeIdentity<Float<T>, Float<T>>.MultiplicativeIdentity => 1;
-    static Float<T> IBinaryNumber<Float<T>>.AllBitsSet
-    {
-      get { Float<T> a; new Span<ushort>(&a, sizeof(Float<T>) >> 1).Fill(0xffff); return a; }
-    }
+    static Float<T> IBinaryNumber<Float<T>>.AllBitsSet { get { Float<T> a; new Span<ushort>(&a, sizeof(Float<T>) >> 1).Fill(0xffff); return a; } }
     static bool INumberBase<Float<T>>.IsCanonical(Float<T> value) => true;
     static bool INumberBase<Float<T>>.IsComplexNumber(Float<T> value) => false;
     static bool INumberBase<Float<T>>.IsImaginaryNumber(Float<T> value) => false;
@@ -455,28 +452,13 @@ namespace System.Numerics.Generic
       return bl;
     }
 
-    #region todo: impl. optimized
-    // static Float<T> IUnaryNegationOperators<Float<T>, Float<T>>.operator -(Float<T> value) => throw new NotImplementedException();
-    // static Float<T> IUnaryPlusOperators<Float<T>, Float<T>>.operator +(Float<T> value) => throw new NotImplementedException();
+    #region todo
     static Float<T> IDecrementOperators<Float<T>>.operator --(Float<T> value) => throw new NotImplementedException();
     static Float<T> IIncrementOperators<Float<T>>.operator ++(Float<T> value) => throw new NotImplementedException();
-    // static Float<T> IAdditionOperators<Float<T>, Float<T>, Float<T>>.operator +(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> ISubtractionOperators<Float<T>, Float<T>, Float<T>>.operator -(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> IMultiplyOperators<Float<T>, Float<T>, Float<T>>.operator *(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> IDivisionOperators<Float<T>, Float<T>, Float<T>>.operator /(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> IModulusOperators<Float<T>, Float<T>, Float<T>>.operator %(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IEqualityOperators<Float<T>, Float<T>, bool>.operator ==(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IEqualityOperators<Float<T>, Float<T>, bool>.operator !=(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator <=(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator >=(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator >(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator <(Float<T> left, Float<T> right) => throw new NotImplementedException();
     static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator &(Float<T> left, Float<T> right) => throw new NotImplementedException();
     static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator |(Float<T> left, Float<T> right) => throw new NotImplementedException();
     static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator ^(Float<T> left, Float<T> right) => throw new NotImplementedException();
     static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator ~(Float<T> value) => throw new NotImplementedException();
-    // static Float<T> IFloatingPoint<Float<T>>.Round(Float<T> x, int digits, MidpointRounding mode) => throw new NotImplementedException();
-    // static Float<T> IFloatingPoint<Float<T>>.Truncate(Float<T> x) => throw new NotImplementedException();
     static Float<T> IBinaryNumber<Float<T>>.Log2(Float<T> value) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.Atan2(Float<T> y, Float<T> x) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.Atan2Pi(Float<T> y, Float<T> x) => throw new NotImplementedException();
@@ -486,45 +468,32 @@ namespace System.Numerics.Generic
     static Float<T> IFloatingPointIeee754<Float<T>>.Ieee754Remainder(Float<T> left, Float<T> right) => throw new NotImplementedException();
     static int IFloatingPointIeee754<Float<T>>.ILogB(Float<T> x) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.ScaleB(Float<T> x, int n) => throw new NotImplementedException();
-    // static Float<T> IExponentialFunctions<Float<T>>.Exp(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> IExponentialFunctions<Float<T>>.Exp10(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> IExponentialFunctions<Float<T>>.Exp2(Float<T> x) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteExponentBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteExponentLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteSignificandBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteSignificandLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
-    // int IComparable.CompareTo(object? obj) => throw new NotImplementedException();
-    // int IComparable<Float<T>>.CompareTo(Float<T> other) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Acosh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Asinh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Atanh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Cosh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Sinh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Tanh(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ILogarithmicFunctions<Float<T>>.Log(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ILogarithmicFunctions<Float<T>>.Log2(Float<T> x) => throw new NotImplementedException();
     static Float<T> ILogarithmicFunctions<Float<T>>.Log(Float<T> x, Float<T> newBase) => throw new NotImplementedException();
     static Float<T> ILogarithmicFunctions<Float<T>>.Log10(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> IPowerFunctions<Float<T>>.Pow(Float<T> x, Float<T> y) => throw new NotImplementedException();
     static Float<T> IRootFunctions<Float<T>>.Cbrt(Float<T> x) => throw new NotImplementedException();
     static Float<T> IRootFunctions<Float<T>>.Hypot(Float<T> x, Float<T> y) => throw new NotImplementedException();
     static Float<T> IRootFunctions<Float<T>>.RootN(Float<T> x, int n) => throw new NotImplementedException();
-    // static Float<T> IRootFunctions<Float<T>>.Sqrt(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ITrigonometricFunctions<Float<T>>.Cos(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.Acos(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.AcosPi(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.Asin(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.AsinPi(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ITrigonometricFunctions<Float<T>>.Atan(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.AtanPi(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.CosPi(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ITrigonometricFunctions<Float<T>>.Sin(Float<T> x) => throw new NotImplementedException();
     static (Float<T> Sin, Float<T> Cos) ITrigonometricFunctions<Float<T>>.SinCos(Float<T> x) => throw new NotImplementedException();
     static (Float<T> SinPi, Float<T> CosPi) ITrigonometricFunctions<Float<T>>.SinCosPi(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.SinPi(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.Tan(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.TanPi(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> INumberBase<Float<T>>.Abs(Float<T> value) => throw new NotImplementedException();
     static Float<T> INumberBase<Float<T>>.MaxMagnitude(Float<T> x, Float<T> y) => throw new NotImplementedException();
     static Float<T> INumberBase<Float<T>>.MaxMagnitudeNumber(Float<T> x, Float<T> y) => throw new NotImplementedException();
     static Float<T> INumberBase<Float<T>>.MinMagnitude(Float<T> x, Float<T> y) => throw new NotImplementedException();
@@ -539,21 +508,16 @@ namespace System.Numerics.Generic
     static bool INumberBase<Float<T>>.TryConvertToTruncating<TOther>(Float<T> value, out TOther result) where TOther : default => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.TryParse(string? s, NumberStyles style, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
-    // bool IEquatable<Float<T>>.Equals(Float<T> other) => throw new NotImplementedException();
-    // bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => throw new NotImplementedException();
-    // string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => throw new NotImplementedException();
-    // static Float<T> ISpanParsable<Float<T>>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => throw new NotImplementedException();
     static bool ISpanParsable<Float<T>>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
     static Float<T> IParsable<Float<T>>.Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
     static bool IParsable<Float<T>>.TryParse(string? s, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.Epsilon => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.NaN => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.NegativeInfinity => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.NegativeZero => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.PositiveInfinity => throw new NotImplementedException();
-    // static Float<T> IFloatingPointConstants<Float<T>>.E => throw new NotImplementedException();
-    // static Float<T> IFloatingPointConstants<Float<T>>.Pi => throw new NotImplementedException();
-    // static Float<T> IFloatingPointConstants<Float<T>>.Tau => throw new NotImplementedException();
+    static bool INumberBase<Float<T>>.IsEvenInteger(Float<T> value) => throw new NotImplementedException(); //IsInteger(value) && (Abs(value % 2) == 0);
+    static bool INumberBase<Float<T>>.IsOddInteger(Float<T> value) => throw new NotImplementedException(); //IsInteger(value) && (Abs(value % 2) == 1);
+    static bool INumberBase<Float<T>>.IsNegativeInfinity(Float<T> value) => throw new NotImplementedException();
+    static bool INumberBase<Float<T>>.IsNormal(Float<T> value) => throw new NotImplementedException();
+    static bool INumberBase<Float<T>>.IsSubnormal(Float<T> value) => throw new NotImplementedException();
+    static bool IBinaryNumber<Float<T>>.IsPow2(Float<T> value) => throw new NotImplementedException();
+    #endregion
 
     // static bool INumberBase<Float<T>>.IsNaN(Float<T> value) => throw new NotImplementedException();//value == value; 
     // static bool INumberBase<Float<T>>.IsRealNumber(Float<T> value) => throw new NotImplementedException();//value == value;
@@ -564,13 +528,47 @@ namespace System.Numerics.Generic
     // static bool INumberBase<Float<T>>.IsInteger(Float<T> value) => throw new NotImplementedException();
     // static bool INumberBase<Float<T>>.IsPositive(Float<T> value) => throw new NotImplementedException(); //BitConverter.DoubleToInt64Bits(value) >= 0;
     // static bool INumberBase<Float<T>>.IsNegative(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsEvenInteger(Float<T> value) => throw new NotImplementedException(); //IsInteger(value) && (Abs(value % 2) == 0);
-    static bool INumberBase<Float<T>>.IsOddInteger(Float<T> value) => throw new NotImplementedException(); //IsInteger(value) && (Abs(value % 2) == 1);
-    static bool INumberBase<Float<T>>.IsNegativeInfinity(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsNormal(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsSubnormal(Float<T> value) => throw new NotImplementedException();
-    static bool IBinaryNumber<Float<T>>.IsPow2(Float<T> value) => throw new NotImplementedException();
-    #endregion
+    // static Float<T> IFloatingPointIeee754<Float<T>>.Epsilon => throw new NotImplementedException();
+    // static Float<T> IFloatingPointIeee754<Float<T>>.NaN => throw new NotImplementedException();
+    // static Float<T> IFloatingPointIeee754<Float<T>>.NegativeInfinity => throw new NotImplementedException();
+    // static Float<T> IFloatingPointIeee754<Float<T>>.NegativeZero => throw new NotImplementedException();
+    // static Float<T> IFloatingPointIeee754<Float<T>>.PositiveInfinity => throw new NotImplementedException();
+    // static Float<T> IFloatingPointConstants<Float<T>>.E => throw new NotImplementedException();
+    // static Float<T> IFloatingPointConstants<Float<T>>.Pi => throw new NotImplementedException();
+    // static Float<T> IFloatingPointConstants<Float<T>>.Tau => throw new NotImplementedException();
+    // bool IEquatable<Float<T>>.Equals(Float<T> other) => throw new NotImplementedException();
+    // bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => throw new NotImplementedException();
+    // string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => throw new NotImplementedException();
+    // static Float<T> ISpanParsable<Float<T>>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => throw new NotImplementedException();
+    // static Float<T> ITrigonometricFunctions<Float<T>>.Atan(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> ITrigonometricFunctions<Float<T>>.Sin(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> INumberBase<Float<T>>.Abs(Float<T> value) => throw new NotImplementedException();
+    // static Float<T> IPowerFunctions<Float<T>>.Pow(Float<T> x, Float<T> y) => throw new NotImplementedException();
+    // static Float<T> IRootFunctions<Float<T>>.Sqrt(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> ITrigonometricFunctions<Float<T>>.Cos(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> ILogarithmicFunctions<Float<T>>.Log(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> ILogarithmicFunctions<Float<T>>.Log2(Float<T> x) => throw new NotImplementedException();
+    // int IComparable.CompareTo(object? obj) => throw new NotImplementedException();
+    // int IComparable<Float<T>>.CompareTo(Float<T> other) => throw new NotImplementedException();
+    // static Float<T> IExponentialFunctions<Float<T>>.Exp(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> IExponentialFunctions<Float<T>>.Exp10(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> IExponentialFunctions<Float<T>>.Exp2(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> IFloatingPoint<Float<T>>.Round(Float<T> x, int digits, MidpointRounding mode) => throw new NotImplementedException();
+    // static Float<T> IFloatingPoint<Float<T>>.Truncate(Float<T> x) => throw new NotImplementedException();
+    // static Float<T> IAdditionOperators<Float<T>, Float<T>, Float<T>>.operator +(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static Float<T> ISubtractionOperators<Float<T>, Float<T>, Float<T>>.operator -(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static Float<T> IMultiplyOperators<Float<T>, Float<T>, Float<T>>.operator *(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static Float<T> IDivisionOperators<Float<T>, Float<T>, Float<T>>.operator /(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static Float<T> IModulusOperators<Float<T>, Float<T>, Float<T>>.operator %(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static bool IEqualityOperators<Float<T>, Float<T>, bool>.operator ==(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static bool IEqualityOperators<Float<T>, Float<T>, bool>.operator !=(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator <=(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator >=(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator >(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator <(Float<T> left, Float<T> right) => throw new NotImplementedException();
+    // static Float<T> IUnaryNegationOperators<Float<T>, Float<T>>.operator -(Float<T> value) => throw new NotImplementedException();
+    // static Float<T> IUnaryPlusOperators<Float<T>, Float<T>>.operator +(Float<T> value) => throw new NotImplementedException();
+
   }
 #endif
 

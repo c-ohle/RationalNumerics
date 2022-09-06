@@ -2,22 +2,28 @@
 global using rat = System.Numerics.BigRational;
 global using BigInt = System.Numerics.BigRational.Integer;
 
-global using Float128 = System.Numerics.Generic.Float<Test.SizeType128>;
-global using Float256 = System.Numerics.Generic.Float<Test.SizeType256>;
 global using Float32 = System.Numerics.Generic.Float<Test.SizeType32>;
 global using Float64 = System.Numerics.Generic.Float<Test.SizeType64>;
 global using Float80 = System.Numerics.Generic.Float<Test.SizeType80>;
+global using Float128 = System.Numerics.Generic.Float<Test.SizeType128>;
+global using Float256 = System.Numerics.Generic.Float<Test.SizeType256>;
+global using Float512 = System.Numerics.Generic.Float<Test.SizeType512>;
 
 global using __int32 = System.Numerics.Generic.Int<Test.SizeType32>;
+global using __int64 = System.Numerics.Generic.Int<Test.SizeType64>;
 global using __int128 = System.Numerics.Generic.Int<Test.SizeType128>;
 global using __int256 = System.Numerics.Generic.Int<Test.SizeType256>;
+global using __int512 = System.Numerics.Generic.Int<Test.SizeType512>;
 
 global using __uint32 = System.Numerics.Generic.UInt<Test.SizeType32>;
+global using __uint64 = System.Numerics.Generic.UInt<Test.SizeType64>;
 global using __uint128 = System.Numerics.Generic.UInt<Test.SizeType128>;
 global using __uint256 = System.Numerics.Generic.UInt<Test.SizeType256>;
+global using __uint512 = System.Numerics.Generic.UInt<Test.SizeType512>;
 
 global using __decimal64 = System.Numerics.Generic.Decimal<Test.SizeType64>;
 global using __decimal256 = System.Numerics.Generic.Decimal<Test.SizeType256>;
+global using __decimal512 = System.Numerics.Generic.Decimal<Test.SizeType512>;
 
 using System.Globalization;
 using System.Numerics;
@@ -34,6 +40,7 @@ namespace Test
   [StructLayout(LayoutKind.Sequential, Size = 12)] readonly struct SizeType96 { }
   [StructLayout(LayoutKind.Sequential, Size = 16)] readonly struct SizeType128 { }
   [StructLayout(LayoutKind.Sequential, Size = 32)] readonly struct SizeType256 { }
+  [StructLayout(LayoutKind.Sequential, Size = 64)] readonly struct SizeType512 { }
 
   /// <summary>
   /// __float80 as prototype

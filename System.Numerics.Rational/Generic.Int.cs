@@ -18,65 +18,65 @@ namespace System.Numerics.Generic
     public static implicit operator Int<T>(int value)
     {
       var cpu = main_cpu; cpu.push(value);
-      var v = default(Int<T>); cpu.ipop(&v, unchecked((uint)sizeof(T) >> 2)); return v;
+      Int<T> v; cpu.ipop(&v, sizeof(T) >> 2); return v;
     }
     public static implicit operator Int<T>(long value)
     {
       var cpu = main_cpu; cpu.push(value);
-      var v = default(Int<T>); cpu.ipop(&v, unchecked((uint)sizeof(T) >> 2)); return v;
+      Int<T> v; cpu.ipop(&v, sizeof(T) >> 2); return v;
     }
 
     public static explicit operator int(Int<T> value)
     {
       var cpu = main_cpu; cpu.ipush(&value.p, sizeof(T) >> 2);
-      var a = default(int); cpu.ipop(&a, 0x0001); return a;
+      int a; cpu.ipop(&a, sizeof(int) >> 2); return a;
     }
     public static explicit operator long(Int<T> value)
     {
       var cpu = main_cpu; cpu.ipush(&value, sizeof(T) >> 2);
-      var a = default(long); cpu.ipop(&a, 0x0002); return a;
+      long a; cpu.ipop(&a, sizeof(long) >> 2); return a;
     }
 
     public static Int<T> operator +(Int<T> value) => value;
     public static Int<T> operator -(Int<T> value)
     {
       var cpu = main_cpu; cpu.ipush(&value, sizeof(T) >> 2);
-      cpu.neg(); value = default; cpu.ipop(&value, unchecked((uint)sizeof(T) >> 2)); return value;
+      cpu.neg(); cpu.ipop(&value, sizeof(T) >> 2); return value;
     }
     public static Int<T> operator ++(Int<T> value)
     {
       var cpu = main_cpu; cpu.ipush(&value, sizeof(T) >> 2);
-      cpu.inc(); value = default; cpu.ipop(&value, unchecked((uint)sizeof(T) >> 2)); return value;
+      cpu.inc(); cpu.ipop(&value, sizeof(T) >> 2); return value;
     }
     public static Int<T> operator --(Int<T> value)
     {
       var cpu = main_cpu; cpu.ipush(&value, sizeof(T) >> 2);
-      cpu.dec(); value = default; cpu.ipop(&value, unchecked((uint)sizeof(T) >> 2)); return value;
+      cpu.dec(); cpu.ipop(&value, sizeof(T) >> 2); return value;
     }
     public static Int<T> operator +(Int<T> left, Int<T> right)
     {
       var cpu = main_cpu; cpu.ipush(&left, sizeof(T) >> 2); cpu.ipush(&right, sizeof(T) >> 2);
-      cpu.add(); left = default; cpu.ipop(&left, unchecked((uint)sizeof(T) >> 2)); return left;
+      cpu.add(); cpu.ipop(&left, sizeof(T) >> 2); return left;
     }
     public static Int<T> operator -(Int<T> left, Int<T> right)
     {
       var cpu = main_cpu; cpu.ipush(&left, sizeof(T) >> 2); cpu.ipush(&right, sizeof(T) >> 2);
-      cpu.sub(); left = default; cpu.ipop(&left, unchecked((uint)sizeof(T) >> 2)); return left;
+      cpu.sub(); cpu.ipop(&left, sizeof(T) >> 2); return left;
     }
     public static Int<T> operator *(Int<T> left, Int<T> right)
     {
       var cpu = main_cpu; cpu.ipush(&left, sizeof(T) >> 2); cpu.ipush(&right, sizeof(T) >> 2);
-      cpu.mul(); left = default; cpu.ipop(&left, unchecked((uint)sizeof(T) >> 2)); return left;
+      cpu.mul(); cpu.ipop(&left, sizeof(T) >> 2); return left;
     }
     public static Int<T> operator /(Int<T> left, Int<T> right)
     {
       var cpu = main_cpu; cpu.ipush(&left, sizeof(T) >> 2); cpu.ipush(&right, sizeof(T) >> 2);
-      cpu.idiv(); left = default; cpu.ipop(&left, unchecked((uint)sizeof(T) >> 2)); return left;
+      cpu.idiv(); cpu.ipop(&left, sizeof(T) >> 2); return left;
     }
     public static Int<T> operator %(Int<T> left, Int<T> right)
     {
       var cpu = main_cpu; cpu.ipush(&left, sizeof(T) >> 2); cpu.ipush(&right, sizeof(T) >> 2);
-      cpu.imod(); left = default; cpu.ipop(&left, unchecked((uint)sizeof(T) >> 2)); return left;
+      cpu.imod(); cpu.ipop(&left, sizeof(T) >> 2); return left;
     }
 
     public static bool operator ==(Int<T> left, Int<T> right)
@@ -104,6 +104,7 @@ namespace System.Numerics.Generic
       return CPU.icmp(&left, &right, sizeof(T) >> 2) > 0;
     }
 
+    
     public static Int<T> MaxValue
     {
       get { Int<T> v; new Span<uint>(&v, sizeof(T) >> 2).Fill(0xffffffff); ((uint*)&v)[(sizeof(T) >> 2) - 1] ^= 0x80000000; return v; }
@@ -112,6 +113,9 @@ namespace System.Numerics.Generic
     {
       get { var v = default(Int<T>); ((uint*)&v)[(sizeof(T) >> 2) - 1] = 0x80000000; return v; }
     }
+    public static Int<T> One => 1;
+    public static Int<T> Zero => default;
+    public static Int<T> NegativeOne => -1;
 
     public static Int<T> Abs(Int<T> value)
     {
@@ -126,6 +130,35 @@ namespace System.Numerics.Generic
     {
       return CPU.icmp(&x, &y, (sizeof(T) >> 2)) >= 0 ? x : y;
     }
+    //public static Int<T> RotateLeft(Int<T> value, int rotateAmount)
+    //{
+    //  return (value << rotateAmount) | (value >>> ((sizeof(T) << 3) - rotateAmount));
+    //}
+    //public static Int<T> RotateRight(Int<T> value, int rotateAmount)
+    //{
+    //  return (value >>> rotateAmount) | (value << ((sizeof(T) << 3) - rotateAmount));
+    //}
+    public static (Int<T> Quotient, Int<T> Remainder) DivRem(Int<T> left, Int<T> right)
+    {
+      //var q = left / right; return (q, left - (q * right));
+      var cpu = main_cpu; cpu.ipush(&left, sizeof(T) >> 2); cpu.ipush(&right, sizeof(T) >> 2);
+      cpu.idr(); cpu.ipop(&left, sizeof(T) >> 2); cpu.ipop(&right, sizeof(T) >> 2); return (left, right);
+    }
+    public static bool IsPow2(Int<T> value)
+    {
+      var cpu = main_cpu; cpu.ipush(&value, sizeof(T) >> 2);
+      var x = cpu.sign() > 0 && cpu.ipt(); cpu.pop(); return x;
+    }
+    public static Int<T> Log2(Int<T> value)
+    {
+      var cpu = main_cpu; cpu.ipush(&value, sizeof(T) >> 2);
+      var x = cpu.msb(); cpu.pop(); return x == 0 ? x : x - 1;
+    }
+
+    public static int Sign(Int<T> value)
+    {
+      return (((uint*)&value)[(sizeof(T) >> 2) - 1] & 0x80000000) != 0 ? -1 : value == default ? 0 : +1;
+    } 
     public static bool IsPositive(Int<T> value)
     {
       return (((uint*)&value)[(sizeof(T) >> 2) - 1] & 0x80000000) == 0;
@@ -134,10 +167,6 @@ namespace System.Numerics.Generic
     {
       return (((uint*)&value)[(sizeof(T) >> 2) - 1] & 0x80000000) != 0;
     }
-
-    #region private
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
-    #endregion
 
     public readonly override string ToString() => ToString(null, null);
     public string ToString(string? format, IFormatProvider? formatProvider = null)
@@ -177,6 +206,8 @@ namespace System.Numerics.Generic
     {
       var a = this; return CPU.hash(&a, sizeof(T));
     }
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
   }
 
 #if NET7_0
@@ -184,22 +215,19 @@ namespace System.Numerics.Generic
   {
     public static implicit operator Int<T>(Int128 value)
     {
-      var cpu = main_cpu; cpu.ipush(&value, 0x0004);
-      var v = default(Int<T>); cpu.ipop(&v, unchecked((uint)sizeof(T) >> 2)); return v;
+      var cpu = main_cpu; cpu.ipush(&value, sizeof(Int128) >> 2);
+      Int<T> v; cpu.ipop(&v, sizeof(T) >> 2); return v;
     }
     public static explicit operator Int128(Int<T> value)
     {
       var cpu = main_cpu; cpu.ipush(&value, sizeof(T) >> 2);
-      var a = default(Int128); cpu.ipop(&a, 0x0004); return a;
+      Int128 a; cpu.ipop(&a, sizeof(Int128) >> 2); return a;
     }
 
     static int INumberBase<Int<T>>.Radix => 2;
-    static Int<T> IBinaryNumber<Int<T>>.AllBitsSet => -1;
-    static Int<T> INumberBase<Int<T>>.One => 1;
-    static Int<T> INumberBase<Int<T>>.Zero => default;
+    static Int<T> IBinaryNumber<Int<T>>.AllBitsSet => NegativeOne;
     static Int<T> IAdditiveIdentity<Int<T>, Int<T>>.AdditiveIdentity => default;
     static Int<T> IMultiplicativeIdentity<Int<T>, Int<T>>.MultiplicativeIdentity => 1;
-    static Int<T> ISignedNumber<Int<T>>.NegativeOne => -1;
     static bool INumberBase<Int<T>>.IsCanonical(Int<T> value) => true;
     static bool INumberBase<Int<T>>.IsComplexNumber(Int<T> value) => false;
     static bool INumberBase<Int<T>>.IsFinite(Int<T> value) => false;
@@ -213,18 +241,40 @@ namespace System.Numerics.Generic
     static bool INumberBase<Int<T>>.IsNegativeInfinity(Int<T> value) => true;
     static bool INumberBase<Int<T>>.IsNormal(Int<T> value) => value != default;
     static bool INumberBase<Int<T>>.IsOddInteger(Int<T> value) => (((uint*)&value)[0] & 1) != 0;
-    static bool INumberBase<Int<T>>.IsEvenInteger(Int<T> value) => (((uint*)&value)[0] & 1) == 0;     
+    static bool INumberBase<Int<T>>.IsEvenInteger(Int<T> value) => (((uint*)&value)[0] & 1) == 0;
     static bool INumberBase<Int<T>>.IsZero(Int<T> value) => value == default;
+
     int IBinaryInteger<Int<T>>.GetByteCount() => sizeof(T);
-    
+    bool IBinaryInteger<Int<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten)
+    {
+      if (destination.Length < sizeof(Int<T>)) { bytesWritten = 0; return false; }
+      var t = this; new ReadOnlySpan<byte>(&t, sizeof(Int<T>)).CopyTo(destination);
+      bytesWritten = sizeof(Int<T>); return true;
+    }
+    bool IBinaryInteger<Int<T>>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten)
+    {
+      if (destination.Length < sizeof(Int<T>)) { bytesWritten = 0; return false; }
+      var t = this; new ReadOnlySpan<byte>(&t, sizeof(Int<T>)).CopyTo(destination);
+      destination.Slice(0, sizeof(Int<T>)).Reverse();
+      bytesWritten = sizeof(Int<T>); return true;
+    }
+    static bool IBinaryInteger<Int<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value)
+    {
+      if (source.Length != sizeof(Int<T>) || isUnsigned) { value = default; return false; }
+      Int<T> t; var s = new Span<byte>(&t, sizeof(Int<T>)); source.CopyTo(s); value = t; return true;
+    }
+    static bool IBinaryInteger<Int<T>>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value)
+    {
+      if (source.Length != sizeof(Int<T>) || isUnsigned) { value = default; return false; }
+      Int<T> t; var s = new Span<byte>(&t, sizeof(Int<T>)); source.CopyTo(s); s.Reverse(); value = t; return true;
+    }
+
     #region todo
     int IBinaryInteger<Int<T>>.GetShortestBitLength() => throw new NotImplementedException();
-    static bool IBinaryNumber<Int<T>>.IsPow2(Int<T> value) => throw new NotImplementedException();
-    static Int<T> IBinaryNumber<Int<T>>.Log2(Int<T> value) => throw new NotImplementedException();    
     static Int<T> INumberBase<Int<T>>.MaxMagnitude(Int<T> x, Int<T> y) => throw new NotImplementedException();
     static Int<T> INumberBase<Int<T>>.MaxMagnitudeNumber(Int<T> x, Int<T> y) => throw new NotImplementedException();
     static Int<T> INumberBase<Int<T>>.MinMagnitude(Int<T> x, Int<T> y) => throw new NotImplementedException();
-    static Int<T> INumberBase<Int<T>>.MinMagnitudeNumber(Int<T> x, Int<T> y) => throw new NotImplementedException();    
+    static Int<T> INumberBase<Int<T>>.MinMagnitudeNumber(Int<T> x, Int<T> y) => throw new NotImplementedException();
     static Int<T> INumberBase<Int<T>>.Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider) => throw new NotImplementedException();
     static Int<T> INumberBase<Int<T>>.Parse(string s, NumberStyles style, IFormatProvider? provider) => throw new NotImplementedException();
     static Int<T> ISpanParsable<Int<T>>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => throw new NotImplementedException();
@@ -241,10 +291,10 @@ namespace System.Numerics.Generic
     static bool INumberBase<Int<T>>.TryParse(string? s, NumberStyles style, IFormatProvider? provider, out Int<T> result) => throw new NotImplementedException();
     static bool ISpanParsable<Int<T>>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Int<T> result) => throw new NotImplementedException();
     static bool IParsable<Int<T>>.TryParse(string? s, IFormatProvider? provider, out Int<T> result) => throw new NotImplementedException();
-    static bool IBinaryInteger<Int<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
-    static bool IBinaryInteger<Int<T>>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
-    bool IBinaryInteger<Int<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
-    bool IBinaryInteger<Int<T>>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
+    // static bool IBinaryInteger<Int<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
+    // static bool IBinaryInteger<Int<T>>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
+    // bool IBinaryInteger<Int<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
+    // bool IBinaryInteger<Int<T>>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     static Int<T> IBitwiseOperators<Int<T>, Int<T>, Int<T>>.operator ~(Int<T> value) => throw new NotImplementedException();
     static Int<T> IBitwiseOperators<Int<T>, Int<T>, Int<T>>.operator &(Int<T> left, Int<T> right) => throw new NotImplementedException();
     static Int<T> IBitwiseOperators<Int<T>, Int<T>, Int<T>>.operator |(Int<T> left, Int<T> right) => throw new NotImplementedException();
@@ -263,6 +313,11 @@ namespace System.Numerics.Generic
     // static bool INumberBase<Int<T>>.IsPositive(Int<T> value) => throw new NotImplementedException();
     // static bool INumberBase<Int<T>>.IsNegative(Int<T> value) => throw new NotImplementedException();
     // static Int<T> INumberBase<Int<T>>.Abs(Int<T> value) => throw new NotImplementedException();
+    // static bool IBinaryNumber<Int<T>>.IsPow2(Int<T> value) => throw new NotImplementedException();
+    // static Int<T> IBinaryNumber<Int<T>>.Log2(Int<T> value) => throw new NotImplementedException();
+    // static Int<T> INumberBase<Int<T>>.One => 1;
+    // static Int<T> INumberBase<Int<T>>.Zero => default;
+    // static Int<T> ISignedNumber<Int<T>>.NegativeOne => -1;
     // static Int<T> IMinMaxValue<Int<T>>.MaxValue => throw new NotImplementedException();
     // static Int<T> IMinMaxValue<Int<T>>.MinValue => throw new NotImplementedException();
     // static Int<T> IUnaryPlusOperators<Int<T>, Int<T>>.operator +(Int<T> value)
@@ -274,6 +329,10 @@ namespace System.Numerics.Generic
     // static Int<T> IMultiplyOperators<Int<T>, Int<T>, Int<T>>.operator *(Int<T> left, Int<T> right)
     // static Int<T> IDivisionOperators<Int<T>, Int<T>, Int<T>>.operator /(Int<T> left, Int<T> right)
     // static Int<T> IModulusOperators<Int<T>, Int<T>, Int<T>>.operator %(Int<T> left, Int<T> right)
+    // static bool IBinaryInteger<Int<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
+    // static bool IBinaryInteger<Int<T>>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
+    // bool IBinaryInteger<Int<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
+    // bool IBinaryInteger<Int<T>>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
   }
 #endif
 
