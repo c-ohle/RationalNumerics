@@ -104,7 +104,6 @@ namespace System.Numerics.Generic
       return CPU.icmp(&left, &right, sizeof(T) >> 2) > 0;
     }
 
-    
     public static Int<T> MaxValue
     {
       get { Int<T> v; new Span<uint>(&v, sizeof(T) >> 2).Fill(0xffffffff); ((uint*)&v)[(sizeof(T) >> 2) - 1] ^= 0x80000000; return v; }
@@ -158,7 +157,7 @@ namespace System.Numerics.Generic
     public static int Sign(Int<T> value)
     {
       return (((uint*)&value)[(sizeof(T) >> 2) - 1] & 0x80000000) != 0 ? -1 : value == default ? 0 : +1;
-    } 
+    }
     public static bool IsPositive(Int<T> value)
     {
       return (((uint*)&value)[(sizeof(T) >> 2) - 1] & 0x80000000) == 0;
@@ -208,6 +207,54 @@ namespace System.Numerics.Generic
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
+
+    static bool TryConvertFrom<TOther>(TOther value, out Int<T> result, int f)
+    {
+      Unsafe.SkipInit(out result); return main_cpu.conv(
+        Unsafe.AsPointer(ref result), typeof(Int<T>), Unsafe.SizeOf<Int<T>>(),
+        Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
+    }
+    static bool TryConvertTo<TOther>(Int<T> value, out TOther result, int f)
+    {
+      Unsafe.SkipInit(out result); return main_cpu.conv(
+        Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
+        Unsafe.AsPointer(ref value), typeof(Int<T>), Unsafe.SizeOf<Int<T>>(), f);
+    }
+
+#if NET6_0
+    public static Int<T> CreateTruncating<TOther>(TOther value) where TOther : struct
+    {
+      Int<T> a; if (TryConvertFrom(value, out a, 0)) return a;
+      throw new NotSupportedException();
+    }
+    public static Int<T> CreateSaturating<TOther>(TOther value) where TOther : struct
+    {
+      Int<T> a; if (TryConvertFrom(value, out a, 1)) return a;
+      throw new NotSupportedException();
+    }
+    public static Int<T> CreateChecked<TOther>(TOther value) where TOther : struct
+    {
+      Int<T> a; if (TryConvertFrom(value, out a, 2)) return a;
+      throw new NotSupportedException();
+    }
+#endif
+#if NET7_0
+    public static Int<T> CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      Int<T> a; if (TryConvertFrom(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+    public static Int<T> CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      Int<T> a; if (TryConvertFrom(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+    public static Int<T> CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      Int<T> a; if (TryConvertFrom(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+#endif  
   }
 
 #if NET7_0
@@ -269,7 +316,14 @@ namespace System.Numerics.Generic
       Int<T> t; var s = new Span<byte>(&t, sizeof(Int<T>)); source.CopyTo(s); s.Reverse(); value = t; return true;
     }
 
-    #region todo
+    static bool INumberBase<Int<T>>.TryConvertFromTruncating<TOther>(TOther value, out Int<T> result) => TryConvertFrom<TOther>(value, out result, 0);
+    static bool INumberBase<Int<T>>.TryConvertFromSaturating<TOther>(TOther value, out Int<T> result) => TryConvertFrom<TOther>(value, out result, 1);
+    static bool INumberBase<Int<T>>.TryConvertFromChecked<TOther>(TOther value, out Int<T> result) => TryConvertFrom<TOther>(value, out result, 2);
+    static bool INumberBase<Int<T>>.TryConvertToChecked<TOther>(Int<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 2);
+    static bool INumberBase<Int<T>>.TryConvertToSaturating<TOther>(Int<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 1);
+    static bool INumberBase<Int<T>>.TryConvertToTruncating<TOther>(Int<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 0);
+
+  #region todo
     int IBinaryInteger<Int<T>>.GetShortestBitLength() => throw new NotImplementedException();
     static Int<T> INumberBase<Int<T>>.MaxMagnitude(Int<T> x, Int<T> y) => throw new NotImplementedException();
     static Int<T> INumberBase<Int<T>>.MaxMagnitudeNumber(Int<T> x, Int<T> y) => throw new NotImplementedException();
@@ -281,20 +335,10 @@ namespace System.Numerics.Generic
     static Int<T> IParsable<Int<T>>.Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
     static Int<T> IBinaryInteger<Int<T>>.PopCount(Int<T> value) => throw new NotImplementedException();
     static Int<T> IBinaryInteger<Int<T>>.TrailingZeroCount(Int<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Int<T>>.TryConvertFromChecked<TOther>(TOther value, out Int<T> result) => throw new NotImplementedException();
-    static bool INumberBase<Int<T>>.TryConvertFromSaturating<TOther>(TOther value, out Int<T> result) => throw new NotImplementedException();
-    static bool INumberBase<Int<T>>.TryConvertFromTruncating<TOther>(TOther value, out Int<T> result) => throw new NotImplementedException();
-    static bool INumberBase<Int<T>>.TryConvertToChecked<TOther>(Int<T> value, out TOther result) where TOther : default => throw new NotImplementedException();
-    static bool INumberBase<Int<T>>.TryConvertToSaturating<TOther>(Int<T> value, out TOther result) where TOther : default => throw new NotImplementedException();
-    static bool INumberBase<Int<T>>.TryConvertToTruncating<TOther>(Int<T> value, out TOther result) where TOther : default => throw new NotImplementedException();
     static bool INumberBase<Int<T>>.TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Int<T> result) => throw new NotImplementedException();
     static bool INumberBase<Int<T>>.TryParse(string? s, NumberStyles style, IFormatProvider? provider, out Int<T> result) => throw new NotImplementedException();
     static bool ISpanParsable<Int<T>>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Int<T> result) => throw new NotImplementedException();
     static bool IParsable<Int<T>>.TryParse(string? s, IFormatProvider? provider, out Int<T> result) => throw new NotImplementedException();
-    // static bool IBinaryInteger<Int<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
-    // static bool IBinaryInteger<Int<T>>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
-    // bool IBinaryInteger<Int<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
-    // bool IBinaryInteger<Int<T>>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     static Int<T> IBitwiseOperators<Int<T>, Int<T>, Int<T>>.operator ~(Int<T> value) => throw new NotImplementedException();
     static Int<T> IBitwiseOperators<Int<T>, Int<T>, Int<T>>.operator &(Int<T> left, Int<T> right) => throw new NotImplementedException();
     static Int<T> IBitwiseOperators<Int<T>, Int<T>, Int<T>>.operator |(Int<T> left, Int<T> right) => throw new NotImplementedException();
@@ -302,7 +346,7 @@ namespace System.Numerics.Generic
     static Int<T> IShiftOperators<Int<T>, int, Int<T>>.operator <<(Int<T> value, int shiftAmount) => throw new NotImplementedException();
     static Int<T> IShiftOperators<Int<T>, int, Int<T>>.operator >>(Int<T> value, int shiftAmount) => throw new NotImplementedException();
     static Int<T> IShiftOperators<Int<T>, int, Int<T>>.operator >>>(Int<T> value, int shiftAmount) => throw new NotImplementedException();
-    #endregion
+  #endregion
 
     // static bool IEqualityOperators<Int<T>, Int<T>, bool>.operator ==(Int<T> left, Int<T> right) => throw new NotImplementedException();
     // static bool IEqualityOperators<Int<T>, Int<T>, bool>.operator !=(Int<T> left, Int<T> right) => throw new NotImplementedException();
@@ -329,6 +373,10 @@ namespace System.Numerics.Generic
     // static Int<T> IMultiplyOperators<Int<T>, Int<T>, Int<T>>.operator *(Int<T> left, Int<T> right)
     // static Int<T> IDivisionOperators<Int<T>, Int<T>, Int<T>>.operator /(Int<T> left, Int<T> right)
     // static Int<T> IModulusOperators<Int<T>, Int<T>, Int<T>>.operator %(Int<T> left, Int<T> right)
+    // static bool IBinaryInteger<Int<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
+    // static bool IBinaryInteger<Int<T>>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
+    // bool IBinaryInteger<Int<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
+    // bool IBinaryInteger<Int<T>>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     // static bool IBinaryInteger<Int<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
     // static bool IBinaryInteger<Int<T>>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out Int<T> value) => throw new NotImplementedException();
     // bool IBinaryInteger<Int<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();

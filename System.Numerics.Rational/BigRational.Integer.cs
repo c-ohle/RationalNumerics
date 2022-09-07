@@ -276,11 +276,58 @@ namespace System.Numerics
       private Integer(BigRational p) => this.p = p;
       private Integer(BigRational.CPU cpu) => p = cpu.popr();
       #endregion
+
+      static bool TryConvertFrom<TOther>(TOther value, out Integer result, int f)
+      {
+        Unsafe.SkipInit(out result); return main_cpu.conv(
+          Unsafe.AsPointer(ref result), typeof(Integer), Unsafe.SizeOf<Integer>(),
+          Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
+      }
+      static bool TryConvertTo<TOther>(Integer value, out TOther result, int f)
+      {
+        Unsafe.SkipInit(out result); return main_cpu.conv(
+          Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
+          Unsafe.AsPointer(ref value), typeof(Integer), Unsafe.SizeOf<Integer>(), f);
+      }
+#if NET6_0
+      public static Integer CreateTruncating<TOther>(TOther value) where TOther : struct
+      {
+        Integer a; if (TryConvertFrom(value, out a, 0)) return a;
+        throw new NotSupportedException();
+      }
+      public static Integer CreateSaturating<TOther>(TOther value) where TOther : struct
+      {
+        Integer a; if (TryConvertFrom(value, out a, 1)) return a;
+        throw new NotSupportedException();
+      }
+      public static Integer CreateChecked<TOther>(TOther value) where TOther : struct
+      {
+        Integer a; if (TryConvertFrom(value, out a, 2)) return a;
+        throw new NotSupportedException();
+      }
+#endif
+#if NET7_0
+      public static Integer CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
+      {
+        Integer a; if (TryConvertFrom(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
+        throw new NotSupportedException();
+      }
+      public static Integer CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther>
+      {
+        Integer a; if (TryConvertFrom(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
+        throw new NotSupportedException();
+      }
+      public static Integer CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther>
+      {
+        Integer a; if (TryConvertFrom(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
+        throw new NotSupportedException();
+      }
+#endif
     }
 
 #if NET7_0
     public readonly partial struct Integer : ISpanFormattable, IBinaryInteger<Integer>, ISignedNumber<Integer>
-    {
+    { 
       public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out Integer result) => TryParse(s.AsSpan(), style, provider, out result);
       public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out Integer result) => TryParse(s.AsSpan(), NumberStyles.Integer, provider, out result);
       public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Integer result) => TryParse(s, NumberStyles.Integer, provider, out result);
@@ -414,6 +461,7 @@ namespace System.Numerics
       static Integer INumber<Integer>.MaxNumber(Integer x, Integer y) => Max(x, y);
       static Integer INumber<Integer>.MinNumber(Integer x, Integer y) => Min(x, y);
 
+#if false
       static bool INumberBase<Integer>.TryConvertFromChecked<T>(T value, out Integer result)
       {
         static bool f<R>(T v, out R result) where R : INumberBase<R> => R.TryConvertFromChecked(v, out result!);
@@ -447,6 +495,14 @@ namespace System.Numerics
         static bool f<R>(R v, out T result) where R : INumberBase<R> => R.TryConvertToTruncating(v, out result!);
         return f<BigRational>(value.p, out result); //ok
       }
+#endif
+      static bool INumberBase<Integer>.TryConvertFromTruncating<TOther>(TOther value, out Integer result) => TryConvertFrom<TOther>(value, out result, 0);
+      static bool INumberBase<Integer>.TryConvertFromSaturating<TOther>(TOther value, out Integer result) => TryConvertFrom<TOther>(value, out result, 1);
+      static bool INumberBase<Integer>.TryConvertFromChecked<TOther>(TOther value, out Integer result) => TryConvertFrom<TOther>(value, out result, 2);
+      static bool INumberBase<Integer>.TryConvertToTruncating<TOther>(Integer value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 0);
+      static bool INumberBase<Integer>.TryConvertToSaturating<TOther>(Integer value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 1);
+      static bool INumberBase<Integer>.TryConvertToChecked<TOther>(Integer value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 2);
+
     }
 #endif
   }

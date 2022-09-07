@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // The INumber implementation is intended to reflect the public function set of double exactly.
@@ -8,17 +9,35 @@ using System.Runtime.InteropServices;
 // simply by replacing double with BigRational.
 // But therfore also some overhead and adapted illogics of the current INumber - double implementation.
 
-#if NET7_0 
+#pragma warning disable CS1591  //todo: xml comments
 
 namespace System.Numerics
 {
+#if NET7_0
+ 
   unsafe partial struct BigRational :
-    INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>, 
+    INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>,
     IPowerFunctions<BigRational>, IRootFunctions<BigRational>, IExponentialFunctions<BigRational>,
     ILogarithmicFunctions<BigRational>, ITrigonometricFunctions<BigRational>, IHyperbolicFunctions<BigRational>
   {
+    public static BigRational CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      BigRational a; if (TryConvertFrom(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+    public static BigRational CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      BigRational a; if (TryConvertFrom(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+    public static BigRational CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      BigRational a; if (TryConvertFrom(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+   
     // INumberBase 
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static int INumberBase<BigRational>.Radix => 1; //todo: radix for rational?
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] static int INumberBase<BigRational>.Radix => 2; //todo: radix for rational?
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational INumberBase<BigRational>.Zero => default;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational INumberBase<BigRational>.One => 1u;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] static BigRational ISignedNumber<BigRational>.NegativeOne => -1;
@@ -168,217 +187,6 @@ namespace System.Numerics
     {
       if (s == null) { result = default; return false; }
       return !IsNaN(result = Parse(s, provider));
-    }
-
-    //INumberBase
-    static bool INumberBase<BigRational>.TryConvertFromChecked<T>(T value, out BigRational result)
-    {
-      return TryConvertFrom<T>(value, out result); //BigRational - no limits
-    }
-    static bool INumberBase<BigRational>.TryConvertFromSaturating<T>(T value, out BigRational result)
-    {
-      return TryConvertFrom<T>(value, out result); //BigRational - no limits
-    }
-    static bool INumberBase<BigRational>.TryConvertFromTruncating<T>(T value, out BigRational result)
-    {
-      //todo: ask/check spec, intended should truncate or only if it would be necessary?
-      return TryConvertFrom<T>(value, out result); //BigRational - no limits
-    }
-    internal static bool TryConvertFrom<T>(T value, out BigRational result) where T : INumberBase<T>
-    {
-      //this impl works without boxing
-      switch (Type.GetTypeCode(typeof(T))) //so long it does not realy work with inline ...
-      {
-        case TypeCode.Byte: { result = value is byte t ? t : default; return true; }
-        case TypeCode.SByte: { result = value is sbyte t ? t : default; return true; }
-        case TypeCode.Int16: { result = value is short t ? t : default; return true; }
-        case TypeCode.UInt16: { result = value is ushort t ? t : default; return true; }
-        case TypeCode.Char: { result = value is char t ? t : default; return true; }
-        case TypeCode.Int32: { result = value is int t ? t : default; return true; }
-        case TypeCode.UInt32: { result = value is uint t ? t : default; return true; }
-        case TypeCode.Int64: { result = value is long t ? t : default; return true; }
-        case TypeCode.UInt64: { result = value is ulong t ? t : default; return true; }
-        case TypeCode.Single: { result = value is float t ? t : default; return true; }
-        case TypeCode.Double: { result = value is double t ? t : default; return true; }
-        case TypeCode.Decimal: { result = value is decimal t ? t : default; return true; }
-        default:
-          { if (value is BigRational t) { result = t; return true; } }
-          { if (value is Int128 t) { result = t; return true; } }
-          { if (value is UInt128 t) { result = t; return true; } }
-          { if (value is nint t) { result = t; return true; } }
-          { if (value is nuint t) { result = t; return true; } }
-          { if (value is Half t) { result = t; return true; } }
-          { if (value is BigInteger t) { result = t; return true; } }
-          break;
-      }
-      result = default; return false;
-      //{ if (value is byte t) { result = t; return true; } }
-      //{ if (value is sbyte t) { result = t; return true; } }
-      //{ if (value is ushort t) { result = t; return true; } }
-      //{ if (value is short t) { result = t; return true; } }
-      //{ if (value is char t) { result = t; return true; } }
-      //{ if (value is int t) { result = t; return true; } }
-      //{ if (value is uint t) { result = t; return true; } }
-      //{ if (value is long t) { result = t; return true; } }
-      //{ if (value is ulong t) { result = t; return true; } }
-      //{ if (value is float t) { result = t; return true; } }
-      //{ if (value is double t) { result = t; return true; } }
-      //{ if (value is decimal t) { result = t; return true; } }
-      //{ if (value is Int128 t) { result = t; return true; } }
-      //{ if (value is UInt128 t) { result = t; return true; } }
-      //{ if (value is nint t) { result = t; return true; } }
-      //{ if (value is nuint t) { result = t; return true; } }
-      //{ if (value is Half t) { result = t; return true; } }
-      //{ if (value is BigInteger t) { result = t; return true; } }
-      //{ if (value is BigRational t) { result = t; return true; } }
-      //result = default; return false;
-    }
-
-    static bool INumberBase<BigRational>.TryConvertToChecked<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
-    {
-      return TryConvertTo<T>(value, 0x1000, out result);
-    }
-    static bool INumberBase<BigRational>.TryConvertToSaturating<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
-    {
-      return TryConvertTo<T>(value, 0, out result); //truncating and saturating is implicite for rat 
-    }
-    static bool INumberBase<BigRational>.TryConvertToTruncating<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
-    {
-      return TryConvertTo<T>(value, 0, out result); //truncating and saturating is implicite for rat 
-    }
-    internal static bool TryConvertTo<T>(BigRational value, uint f, [NotNullWhen(true)] out T result) where T : INumberBase<T>
-    {
-      //this implementation works without boxing, for X64 checked: inline straight to the single operator call
-      //todo: ask / check spec for the fp types, currently diffs in NET7 double, decimal, ... and for int types too
-      result = default!;
-      if (typeof(T) == typeof(byte))
-      {
-        var u = (uint)value; var v = unchecked((byte)Math.Min(Math.Max(u, byte.MinValue), byte.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false;
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(sbyte))
-      {
-        var u = (int)value; var v = unchecked((sbyte)Math.Min(Math.Max(u, sbyte.MinValue), sbyte.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(short))
-      {
-        var u = (int)value; var v = unchecked((short)Math.Min(Math.Max(u, short.MinValue), short.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(ushort))
-      {
-        var u = (uint)value; var v = unchecked((ushort)Math.Min(Math.Max(u, ushort.MinValue), ushort.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(char))
-      {
-        var u = (uint)value; var v = unchecked((char)Math.Min(Math.Max(u, char.MinValue), char.MaxValue));
-        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(int))
-      {
-        var v = default(int); main_cpu.toi(value, (uint*)&v, 0x0001 | f);
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(uint))
-      {
-        var v = default(uint); main_cpu.toi(value, (uint*)&v, 0x0101 | f);
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(long))
-      {
-        var v = default(long); main_cpu.toi(value, (uint*)&v, 0x0002 | f);
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(ulong))
-      {
-        var v = default(ulong); main_cpu.toi(value, (uint*)&v, 0x0102 | f);
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(Int128))
-      {
-        var v = default(Int128); main_cpu.toi(value, (uint*)&v, 0x0004 | f);
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(UInt128))
-      {
-        var v = default(UInt128); main_cpu.toi(value, (uint*)&v, 0x0104 | f);
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(nint))
-      {
-        var v = default(nint); main_cpu.toi(value, (uint*)&v, ((uint)sizeof(nint) >> 2) | f);
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(nuint))
-      {
-        var v = default(nuint); main_cpu.toi(value, (uint*)&v, ((uint)sizeof(nuint) >> 2) | 0x0100 | f);
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(decimal))
-      {
-        var v = f != 0 ? checked((decimal)value) : (decimal)value;
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(Half))
-      {
-        var v = f != 0 ? checked((Half)value) : (Half)value;
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(float))
-      {
-        var v = f != 0 ? checked((float)value) : (float)value;
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(double))
-      {
-        var v = f != 0 ? checked((double)value) : (double)value;
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(NFloat))
-      {
-        var v = f != 0 ? checked((NFloat)value) : (NFloat)value;
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(BigInteger))
-      {
-        var v = f != 0 ? checked((BigInteger)value) : (BigInteger)value;
-        if (v is T t) result = t; return true;
-      }
-      if (typeof(T) == typeof(BigRational))
-      {
-        if (value is T t) result = t; return true;
-      }
-      return false;
-    }
-
-    static BigRational INumberBase<BigRational>.CreateChecked<T>(T value)
-    {
-      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
-      if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToChecked(value, out r))
-        throw new NotSupportedException(typeof(T).Name);
-      return r;
-    }
-    static BigRational INumberBase<BigRational>.CreateSaturating<T>(T value)
-    {
-      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
-      if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToSaturating(value, out r))
-        throw new NotSupportedException(typeof(T).Name);
-      return r;
-    }
-    static BigRational INumberBase<BigRational>.CreateTruncating<T>(T value)
-    {
-      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
-      if (typeof(T) == typeof(BigRational)) return value is BigRational t ? t : default; // no boxing like (BigRational)(object)value;
-      if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToTruncating(value, out r))
-        throw new NotSupportedException(typeof(T).Name);
-      return r;
     }
 
     //NET7 spec, all possible conversions explicitly (even if it is actually mapped automatically).
@@ -1219,8 +1027,260 @@ namespace System.Numerics
     {
       return Tanh(x, MaxDigits);
     }
-  }    
-}
+
+    static bool INumberBase<BigRational>.TryConvertFromTruncating<TOther>(TOther value, out BigRational result) => TryConvertFrom<TOther>(value, out result, 0);
+    static bool INumberBase<BigRational>.TryConvertFromSaturating<TOther>(TOther value, out BigRational result) => TryConvertFrom<TOther>(value, out result, 1);
+    static bool INumberBase<BigRational>.TryConvertFromChecked<TOther>(TOther value, out BigRational result) => TryConvertFrom<TOther>(value, out result, 2);
+    static bool INumberBase<BigRational>.TryConvertToTruncating<TOther>(BigRational value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 0);
+    static bool INumberBase<BigRational>.TryConvertToSaturating<TOther>(BigRational value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 1);
+    static bool INumberBase<BigRational>.TryConvertToChecked<TOther>(BigRational value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 2);
+
+#if false
+    //INumberBase
+    static bool INumberBase<BigRational>.TryConvertFromChecked<T>(T value, out BigRational result)
+    {
+      return TryConvertFrom<T>(value, out result); //BigRational - no limits
+    }
+    static bool INumberBase<BigRational>.TryConvertFromSaturating<T>(T value, out BigRational result)
+    {
+      return TryConvertFrom<T>(value, out result); //BigRational - no limits
+    }
+    static bool INumberBase<BigRational>.TryConvertFromTruncating<T>(T value, out BigRational result)
+    {
+      //todo: ask/check spec, intended should truncate or only if it would be necessary?
+      return TryConvertFrom<T>(value, out result); //BigRational - no limits
+    }
+    internal static bool TryConvertFrom<T>(T value, out BigRational result) where T : INumberBase<T>
+    {
+      //this impl works without boxing
+      switch (Type.GetTypeCode(typeof(T))) //so long it does not realy work with inline ...
+      {
+        case TypeCode.Byte: { result = value is byte t ? t : default; return true; }
+        case TypeCode.SByte: { result = value is sbyte t ? t : default; return true; }
+        case TypeCode.Int16: { result = value is short t ? t : default; return true; }
+        case TypeCode.UInt16: { result = value is ushort t ? t : default; return true; }
+        case TypeCode.Char: { result = value is char t ? t : default; return true; }
+        case TypeCode.Int32: { result = value is int t ? t : default; return true; }
+        case TypeCode.UInt32: { result = value is uint t ? t : default; return true; }
+        case TypeCode.Int64: { result = value is long t ? t : default; return true; }
+        case TypeCode.UInt64: { result = value is ulong t ? t : default; return true; }
+        case TypeCode.Single: { result = value is float t ? t : default; return true; }
+        case TypeCode.Double: { result = value is double t ? t : default; return true; }
+        case TypeCode.Decimal: { result = value is decimal t ? t : default; return true; }
+        default:
+          { if (value is BigRational t) { result = t; return true; } }
+          { if (value is Int128 t) { result = t; return true; } }
+          { if (value is UInt128 t) { result = t; return true; } }
+          { if (value is nint t) { result = t; return true; } }
+          { if (value is nuint t) { result = t; return true; } }
+          { if (value is Half t) { result = t; return true; } }
+          { if (value is BigInteger t) { result = t; return true; } }
+          break;
+      }
+      result = default; return false;
+      //{ if (value is byte t) { result = t; return true; } }
+      //{ if (value is sbyte t) { result = t; return true; } }
+      //{ if (value is ushort t) { result = t; return true; } }
+      //{ if (value is short t) { result = t; return true; } }
+      //{ if (value is char t) { result = t; return true; } }
+      //{ if (value is int t) { result = t; return true; } }
+      //{ if (value is uint t) { result = t; return true; } }
+      //{ if (value is long t) { result = t; return true; } }
+      //{ if (value is ulong t) { result = t; return true; } }
+      //{ if (value is float t) { result = t; return true; } }
+      //{ if (value is double t) { result = t; return true; } }
+      //{ if (value is decimal t) { result = t; return true; } }
+      //{ if (value is Int128 t) { result = t; return true; } }
+      //{ if (value is UInt128 t) { result = t; return true; } }
+      //{ if (value is nint t) { result = t; return true; } }
+      //{ if (value is nuint t) { result = t; return true; } }
+      //{ if (value is Half t) { result = t; return true; } }
+      //{ if (value is BigInteger t) { result = t; return true; } }
+      //{ if (value is BigRational t) { result = t; return true; } }
+      //result = default; return false;
+    }
+
+    static bool INumberBase<BigRational>.TryConvertToChecked<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
+    {
+      return TryConvertTo<T>(value, 0x1000, out result);
+    }
+    static bool INumberBase<BigRational>.TryConvertToSaturating<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
+    {
+      return TryConvertTo<T>(value, 0, out result); //truncating and saturating is implicite for rat 
+    }
+    static bool INumberBase<BigRational>.TryConvertToTruncating<T>(BigRational value, [NotNullWhen(true)] out T? result) where T : default
+    {
+      return TryConvertTo<T>(value, 0, out result); //truncating and saturating is implicite for rat 
+    }
+    internal static bool TryConvertTo<T>(BigRational value, uint f, [NotNullWhen(true)] out T result) where T : INumberBase<T>
+    {
+      //this implementation works without boxing, for X64 checked: inline straight to the single operator call
+      //todo: ask / check spec for the fp types, currently diffs in NET7 double, decimal, ... and for int types too
+      result = default!;
+      if (typeof(T) == typeof(byte))
+      {
+        var u = (uint)value; var v = unchecked((byte)Math.Min(Math.Max(u, byte.MinValue), byte.MaxValue));
+        if (f != 0 && u != v) throw new ArgumentException(); // return false;
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(sbyte))
+      {
+        var u = (int)value; var v = unchecked((sbyte)Math.Min(Math.Max(u, sbyte.MinValue), sbyte.MaxValue));
+        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(short))
+      {
+        var u = (int)value; var v = unchecked((short)Math.Min(Math.Max(u, short.MinValue), short.MaxValue));
+        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(ushort))
+      {
+        var u = (uint)value; var v = unchecked((ushort)Math.Min(Math.Max(u, ushort.MinValue), ushort.MaxValue));
+        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(char))
+      {
+        var u = (uint)value; var v = unchecked((char)Math.Min(Math.Max(u, char.MinValue), char.MaxValue));
+        if (f != 0 && u != v) throw new ArgumentException(); // return false; 
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(int))
+      {
+        var v = default(int); main_cpu.toi(value, (uint*)&v, 0x0001 | f);
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(uint))
+      {
+        var v = default(uint); main_cpu.toi(value, (uint*)&v, 0x0101 | f);
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(long))
+      {
+        var v = default(long); main_cpu.toi(value, (uint*)&v, 0x0002 | f);
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(ulong))
+      {
+        var v = default(ulong); main_cpu.toi(value, (uint*)&v, 0x0102 | f);
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(Int128))
+      {
+        var v = default(Int128); main_cpu.toi(value, (uint*)&v, 0x0004 | f);
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(UInt128))
+      {
+        var v = default(UInt128); main_cpu.toi(value, (uint*)&v, 0x0104 | f);
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(nint))
+      {
+        var v = default(nint); main_cpu.toi(value, (uint*)&v, ((uint)sizeof(nint) >> 2) | f);
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(nuint))
+      {
+        var v = default(nuint); main_cpu.toi(value, (uint*)&v, ((uint)sizeof(nuint) >> 2) | 0x0100 | f);
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(decimal))
+      {
+        var v = f != 0 ? checked((decimal)value) : (decimal)value;
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(Half))
+      {
+        var v = f != 0 ? checked((Half)value) : (Half)value;
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(float))
+      {
+        var v = f != 0 ? checked((float)value) : (float)value;
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(double))
+      {
+        var v = f != 0 ? checked((double)value) : (double)value;
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(NFloat))
+      {
+        var v = f != 0 ? checked((NFloat)value) : (NFloat)value;
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(BigInteger))
+      {
+        var v = f != 0 ? checked((BigInteger)value) : (BigInteger)value;
+        if (v is T t) result = t; return true;
+      }
+      if (typeof(T) == typeof(BigRational))
+      {
+        if (value is T t) result = t; return true;
+      }
+      return false;
+    }
+
+    static BigRational INumberBase<BigRational>.CreateChecked<T>(T value)
+    {
+      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
+      if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToChecked(value, out r))
+        throw new NotSupportedException(typeof(T).Name);
+      return r;
+    }
+    static BigRational INumberBase<BigRational>.CreateSaturating<T>(T value)
+    {
+      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
+      if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToSaturating(value, out r))
+        throw new NotSupportedException(typeof(T).Name);
+      return r;
+    }
+    static BigRational INumberBase<BigRational>.CreateTruncating<T>(T value)
+    {
+      //todo: ask/check spec, exceptions? currently diffs in NET7 core implementations
+      if (typeof(T) == typeof(BigRational)) return value is BigRational t ? t : default; // no boxing like (BigRational)(object)value;
+      if (!TryConvertFrom<T>(value, out BigRational r) && !T.TryConvertToTruncating(value, out r))
+        throw new NotSupportedException(typeof(T).Name);
+      return r;
+    }
+#endif
+  }
 
 #endif //NET7_0
+  unsafe partial struct BigRational
+  {
+#if NET6_0
+    public static BigRational CreateTruncating<TOther>(TOther value) where TOther : struct
+    {
+      BigRational a; if (TryConvertFrom(value, out a, 0)) return a;
+      throw new NotSupportedException();
+    }
+    public static BigRational CreateSaturating<TOther>(TOther value) where TOther : struct
+    {
+      BigRational a; if (TryConvertFrom(value, out a, 1)) return a;
+      throw new NotSupportedException();
+    }
+    public static BigRational CreateChecked<TOther>(TOther value) where TOther : struct
+    {
+      BigRational a; if (TryConvertFrom(value, out a, 2)) return a;
+      throw new NotSupportedException();
+    }
+#endif
+    static bool TryConvertFrom<TOther>(TOther value, out BigRational result, int f)
+    {
+      Unsafe.SkipInit(out result); return main_cpu.conv(
+        Unsafe.AsPointer(ref result), typeof(BigRational), Unsafe.SizeOf<BigRational>(),
+        Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
+    }
+    static bool TryConvertTo<TOther>(BigRational value, out TOther result, int f)
+    {
+      Unsafe.SkipInit(out result); return main_cpu.conv(
+        Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
+        Unsafe.AsPointer(ref value), typeof(BigRational), Unsafe.SizeOf<BigRational>(), f);
+    }
+  }
+}
 

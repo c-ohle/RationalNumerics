@@ -5,6 +5,7 @@ global using BigInt = System.Numerics.BigRational.Integer;
 global using Float32 = System.Numerics.Generic.Float<Test.SizeType32>;
 global using Float64 = System.Numerics.Generic.Float<Test.SizeType64>;
 global using Float80 = System.Numerics.Generic.Float<Test.SizeType80>;
+global using Float96 = System.Numerics.Generic.Float<Test.SizeType96>;
 global using Float128 = System.Numerics.Generic.Float<Test.SizeType128>;
 global using Float256 = System.Numerics.Generic.Float<Test.SizeType256>;
 global using Float512 = System.Numerics.Generic.Float<Test.SizeType512>;
@@ -141,8 +142,16 @@ namespace Test
     __float80(System.Numerics.Generic.Float<Test.SizeType80> p) => this.p = p;
     private readonly System.Numerics.Generic.Float<Test.SizeType80> p;
 
+#if NET6_0
+    public static __float80 CreateTruncating<TOther>(TOther value) where TOther : struct => new __float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateTruncating(value));
+    public static __float80 CreateSaturating<TOther>(TOther value) where TOther : struct => new __float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateSaturating(value));
+    public static __float80 CreateChecked<TOther>(TOther value) where TOther : struct => new __float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateChecked(value));
+#endif
     #region INumber
 #if NET7_0
+    public static __float80 CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther> => new __float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateTruncating(value));
+    public static __float80 CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther> => new __float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateSaturating(value));
+    public static __float80 CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther> => new __float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateChecked(value));
     #region keeps static 
     static int INumberBase<__float80>.Radix => iwrap<System.Numerics.Generic.Float<Test.SizeType80>>(0);
     static __float80 IBinaryNumber<__float80>.AllBitsSet => new __float80(wrap<System.Numerics.Generic.Float<Test.SizeType80>>(0));

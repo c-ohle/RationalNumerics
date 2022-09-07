@@ -317,29 +317,12 @@ namespace System.Numerics.Generic
       // cpu.push(y); cpu.mul(); cpu.exp(c);
       // cpu.rnd(digits); return cpu.popr();
     }
+   //todo: remove -> CreateFrom...
     public static Float<T> Cast<TOther>(Float<TOther> value) where TOther : unmanaged
     {
       var cpu = main_cpu; var e = cpu.fpush(&value, Float<TOther>.desc);
       Float<T> b; cpu.fpop(&b, e, desc); return b;
     }
-
-    #region private
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static int desc;
-    static Float()
-    {
-      int size = sizeof(T), sbi; if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
-      switch (size)
-      {
-        case 2: sbi = 5; break;
-        case 4: sbi = 8; break;
-        case 8: sbi = 11; break;
-        case <= 16: sbi = 15; break;
-        default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break;
-      }
-      desc = sizeof(T) | ((((size << 3) - sbi) - 1) << 16);
-    }
-    #endregion
 
     public readonly override string ToString() => ToString(null, null);
     public string ToString(string? format, IFormatProvider? formatProvider = null)
@@ -422,6 +405,71 @@ namespace System.Numerics.Generic
     public readonly bool Equals(Float<T> other) { var t = this; return CPU.fequ(&t, &other, desc); }
     public readonly int CompareTo(object? obj) => obj == null ? 1 : p is Float<T> b ? this.CompareTo(b) : throw new ArgumentException();
     public readonly int CompareTo(Float<T> other) { var a = this; return CPU.fcmp(&a, &other, desc); }
+
+    #region private
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static int desc = CPU.fdesc(sizeof(T));
+    //static Float()
+    //{
+    //  int size = sizeof(T), sbi; if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
+    //  switch (size)
+    //  {
+    //    case 2: sbi = 5; break;
+    //    case 4: sbi = 8; break;
+    //    case 8: sbi = 11; break;
+    //    case <= 16: sbi = 15; break;
+    //    default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break;
+    //  }
+    //  desc = sizeof(T) | ((((size << 3) - sbi) - 1) << 16);
+    //}
+    #endregion
+
+    static bool TryConvertFrom<TOther>(TOther value, out Float<T> result, int f)
+    {
+      Unsafe.SkipInit(out result); return main_cpu.conv(
+        Unsafe.AsPointer(ref result), typeof(Float<T>), desc, //Unsafe.SizeOf<Float<T>>(),
+        Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
+    }
+    static bool TryConvertTo<TOther>(Float<T> value, out TOther result, int f)
+    {
+      Unsafe.SkipInit(out result); return main_cpu.conv(
+         Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
+         Unsafe.AsPointer(ref value), typeof(Float<T>), desc /*Unsafe.SizeOf<Float<T>>()*/, f);
+    }
+#if NET6_0
+    public static Float<T> CreateTruncating<TOther>(TOther value) where TOther : struct
+    {
+      Float<T> a; if (TryConvertFrom(value, out a, 0)) return a;
+      throw new NotSupportedException();
+    }
+    public static Float<T> CreateSaturating<TOther>(TOther value) where TOther : struct
+    {
+      Float<T> a; if (TryConvertFrom(value, out a, 1)) return a;
+      throw new NotSupportedException();
+    }
+    public static Float<T> CreateChecked<TOther>(TOther value) where TOther : struct
+    {
+      Float<T> a; if (TryConvertFrom(value, out a, 2)) return a;
+      throw new NotSupportedException();
+    }
+#endif
+#if NET7_0
+    public static Float<T> CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      Float<T> a; if (TryConvertFrom(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+    public static Float<T> CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      Float<T> a; if (TryConvertFrom(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+    public static Float<T> CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther>
+    {
+      Float<T> a; if (TryConvertFrom(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
+      throw new NotSupportedException();
+    }
+#endif
   }
 
 #if NET7_0
@@ -451,6 +499,12 @@ namespace System.Numerics.Generic
       var bl = Exponent >= 0 ? 32 - int.LeadingZeroCount(Exponent) : 33 - int.LeadingZeroCount((int)(~Exponent));
       return bl;
     }
+    static bool INumberBase<Float<T>>.TryConvertFromTruncating<TOther>(TOther value, out Float<T> result) => TryConvertFrom<TOther>(value, out result, 0);
+    static bool INumberBase<Float<T>>.TryConvertFromSaturating<TOther>(TOther value, out Float<T> result) => TryConvertFrom<TOther>(value, out result, 1);
+    static bool INumberBase<Float<T>>.TryConvertFromChecked<TOther>(TOther value, out Float<T> result) => TryConvertFrom<TOther>(value, out result, 2);
+    static bool INumberBase<Float<T>>.TryConvertToTruncating<TOther>(Float<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 0);
+    static bool INumberBase<Float<T>>.TryConvertToSaturating<TOther>(Float<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 1);
+    static bool INumberBase<Float<T>>.TryConvertToChecked<TOther>(Float<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 2);
 
     #region todo
     static Float<T> IDecrementOperators<Float<T>>.operator --(Float<T> value) => throw new NotImplementedException();
@@ -500,12 +554,6 @@ namespace System.Numerics.Generic
     static Float<T> INumberBase<Float<T>>.MinMagnitudeNumber(Float<T> x, Float<T> y) => throw new NotImplementedException();
     static Float<T> INumberBase<Float<T>>.Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider) => throw new NotImplementedException();
     static Float<T> INumberBase<Float<T>>.Parse(string s, NumberStyles style, IFormatProvider? provider) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.TryConvertFromChecked<TOther>(TOther value, out Float<T> result) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.TryConvertFromSaturating<TOther>(TOther value, out Float<T> result) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.TryConvertFromTruncating<TOther>(TOther value, out Float<T> result) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.TryConvertToChecked<TOther>(Float<T> value, out TOther result) where TOther : default => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.TryConvertToSaturating<TOther>(Float<T> value, out TOther result) where TOther : default => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.TryConvertToTruncating<TOther>(Float<T> value, out TOther result) where TOther : default => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.TryParse(string? s, NumberStyles style, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
     static bool ISpanParsable<Float<T>>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();

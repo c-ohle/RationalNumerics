@@ -295,7 +295,6 @@ namespace System.Numerics
       }
     }
 #endif
-
     /// <summary>
     /// Converts the representation of a number, contained in the specified read-only 
     /// span of characters to its <see cref="BigRational"/> equivalent.
@@ -3469,8 +3468,6 @@ namespace System.Numerics
           var b = ((long)n << 5) - unchecked((uint)c);
           ulong h = p[n], m = p[n - 1], l = n > 2 ? p[n - 2] : 0;
           ulong x = (h << 32 + c) | (m << c) | (l >> 32 - c);
-          //var s = Math.Log(x, 10) + (b - 64) / Math.Log(10, 2);
-          //var o = Math.Log(x) * 0.4342944819032518276 + (b - 64) * 0.3010299956639811952;
           var r = Math.Log10(x) + (b - 64) * 0.3010299956639811952; return r;
         }
       }
@@ -3483,33 +3480,13 @@ namespace System.Numerics
         //Debug.Assert(e == x);
         return e;
       }
-      internal decimal popm()
-      {
-        var e = 0; // dup(); tos(default, out _, out var ee, out _, false);
-        var a = msb(); if (a == 0) goto ex; // 0
-        var b = msd(); if (b == 1) { if (a > 96) goto ex; }
-        else
-        {
-          double u = flog10(0), v = flog10(1), w = u - v; e = (int)w; if (w < 0) e--;
-          if (e < -28 || e > 28) goto ex; e = 28 - (e < 0 ? 0 : e);
-          pow(10, e); mul(); rnd(0); b = msb(); if (b > 96) { push(10u); idiv(); e--; }
-        }
-        fixed (uint* u = this.p[this.i - 1])
-        {
-          var v = (int*)u; var n = v[0] & 0x3fffffff; Debug.Assert(n <= 3);
-          var d = new decimal(v[1], n >= 2 ? v[2] : 0, n >= 3 ? v[3] : 0, (u[0] & 0x80000000) != 0, unchecked((byte)e));
-          pop(); return d;
-        }
-      ex: pop(); return default;
-      }
       internal bool bt(int c) //BT Bit Test, BTS and Set, BTR and Reset, BTC and Complement
       {
         return (p[i - 1][1 + (c >> 5)] & (1 << (c & 31))) != 0;
       }
-      //INumber only, to avoid another ThreadLocal static root - the CPU doesn't need it
+      //for INumber to avoid another ThreadLocal static root - the CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
-      #endregion
       #region int support
       internal void idr() //todo: divrem keep?
       {
@@ -3541,10 +3518,8 @@ namespace System.Numerics
             return (((uint*)a)[i] > ((uint*)b)[i]) ? +1 : -1;
         return 0;
       }
-
       internal void upush(void* p, int size) => ipush(p, 0x100 | (size >> 2));
       internal void upop(void* p, int size) => ipop(p, 0x100 | (size >> 2));
-
       internal void ipush(void* p, int f)
       {
         uint n = unchecked((uint)f) & 0xff, s = (f & 0x0100) == 0 ? ((uint*)p)[n - 1] & 0x80000000 : 0;
@@ -3578,7 +3553,7 @@ namespace System.Numerics
             {
               pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
               n--; //todo: opt. small types after tests
-              if (s > 0) { for (c = 0; c < n; c++) pp[c] = 0xffffffff; pp[n] = 0x7fffffff; } // MinValue
+              if (s > 0) { for (c = 0; c < n; c++) pp[c] = 0xffffffff; pp[n] = 0x7fffffff; } // MaxValue
               else pp[n] = 0x80000000; // MinValue
               return;
             }
@@ -3612,7 +3587,20 @@ namespace System.Numerics
         if (v.p == null) return; push(v); ipop(p, unchecked((int)f));
       }
       #endregion
-      #region fp support        
+      #region fp support    
+      internal static int fdesc(int size)
+      {
+        int sbi; //if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
+        switch (size)
+        {
+          case 2: sbi = 5; break;
+          case 4: sbi = 8; break;
+          case 8: sbi = 11; break;
+          case <= 16: sbi = 15; break;
+          default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break;
+        }
+        return size | ((((size << 3) - sbi) - 1) << 16);
+      }
       internal static int ftest(void* p, int desc)
       {
         int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
@@ -3648,18 +3636,18 @@ namespace System.Numerics
           }
         return 0;
       }
-      internal static int _fcmp(void* a, void* b, int desc) //todo: remove
-      {
-        int size = desc & 0xffff; //, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
-        var ha = (uint*)(((byte*)a) + (size - 4));
-        var hb = (uint*)(((byte*)b) + (size - 4));
-        var sa = *ha == 0 ? 0 : (*ha & 0x80000000) != 0 ? -1 : +1;
-        var sb = *hb == 0 ? 0 : (*hb & 0x80000000) != 0 ? -1 : +1;
-        if (sa != sb) return Math.Sign(sa - sb); if (sa == 0) return 0;
-        var cpu = main_cpu; int eb = cpu.fpush((uint*)b, desc), ea = cpu.fpush((uint*)a, desc);
-        if (ea != eb) { cpu.pop(2); return Math.Sign(ea - eb) * sa; }
-        ea = cpu.cmp(); cpu.pop(2); return ea;
-      }
+      //internal static int fcmp(void* a, void* b, int desc) //todo: remove
+      //{
+      //  int size = desc & 0xffff; //, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
+      //  var ha = (uint*)(((byte*)a) + (size - 4));
+      //  var hb = (uint*)(((byte*)b) + (size - 4));
+      //  var sa = *ha == 0 ? 0 : (*ha & 0x80000000) != 0 ? -1 : +1;
+      //  var sb = *hb == 0 ? 0 : (*hb & 0x80000000) != 0 ? -1 : +1;
+      //  if (sa != sb) return Math.Sign(sa - sb); if (sa == 0) return 0;
+      //  var cpu = main_cpu; int eb = cpu.fpush((uint*)b, desc), ea = cpu.fpush((uint*)a, desc);
+      //  if (ea != eb) { cpu.pop(2); return Math.Sign(ea - eb) * sa; }
+      //  ea = cpu.cmp(); cpu.pop(2); return ea;
+      //}
       internal static bool fequ(void* a, void* b, int desc)
       {
         uint n = unchecked((uint)desc & 0xffff), c, i = 0;
@@ -3737,8 +3725,112 @@ namespace System.Numerics
         fpop(p, -e, desc);
       }
       #endregion
+      #region dec support
+      internal decimal popm()
+      {
+        var e = 0; // dup(); tos(default, out _, out var ee, out _, false);
+        var a = msb(); if (a == 0) goto ex; // 0
+        var b = msd(); if (b == 1) { if (a > 96) goto ex; }
+        else
+        {
+          double u = flog10(0), v = flog10(1), w = u - v; e = (int)w; if (w < 0) e--;
+          if (e < -28 || e > 28) goto ex; e = 28 - (e < 0 ? 0 : e);
+          pow(10, e); mul(); rnd(0); b = msb(); if (b > 96) { push(10u); idiv(); e--; }
+        }
+        fixed (uint* u = this.p[this.i - 1])
+        {
+          var v = (int*)u; var n = v[0] & 0x3fffffff; Debug.Assert(n <= 3);
+          var d = new decimal(v[1], n >= 2 ? v[2] : 0, n >= 3 ? v[3] : 0, (u[0] & 0x80000000) != 0, unchecked((byte)e));
+          pop(); return d;
+        }
+      ex: pop(); return default;
+      }
+      #endregion
+      internal bool conv(void* pd, Type td, int sd, void* ps, Type ts, int ss, int f)
+      {
+        if (ts.IsPrimitive)
+        {
+          switch (Type.GetTypeCode(ts))
+          {
+            case TypeCode.Byte: push((uint)*(byte*)ps); break;
+            case TypeCode.Char:
+            case TypeCode.UInt16: push((uint)*(ushort*)ps); break;
+            case TypeCode.UInt32: push(*(uint*)ps); break;
+            case TypeCode.UInt64: push(*(ulong*)ps); break;
+            case TypeCode.SByte: push((int)*(sbyte*)ps); break;
+            case TypeCode.Int16: push((int)*(short*)ps); break;
+            case TypeCode.Int32: push(*(int*)ps); break;
+            case TypeCode.Int64: push(*(long*)ps); break;
+            case TypeCode.Single: push(*(float*)ps); break;
+            case TypeCode.Double: push(*(double*)ps); break;
+            //case TypeCode.Decimal: push(*(decimal*)ps); break;
+            case TypeCode.Object:
+              if (ts == typeof(nint)) { push((long)*(uint*)ps); break; }
+              if (ts == typeof(nuint)) { push((ulong)*(nuint*)ps); break; }
+              return false;
+            default: return false;
+          }
+        }
+        else if (ts.IsGenericType)
+        {
+          ts = ts.GetGenericTypeDefinition();
+          if (ts == typeof(Generic.Float<>)) { var e = fpush(ps, (ss >> 16) != 0 ? ss : fdesc(ss)); pow(2, e); mul(); }
+          else if (ts == typeof(Generic.UInt<>)) upush(ps, ss);
+          else if (ts == typeof(Generic.Int<>)) ipush(ps, ss >> 2);
+          else return false;
+        }
+        else
+        {
+          if (ts == typeof(BigRational)) push(Unsafe.AsRef<BigRational>(ps));
+          else if (ts == typeof(Integer)) push(Unsafe.AsRef<Integer>(ps));
+          else if (ts == typeof(decimal)) push(*(decimal*)ps);
+          else if (ts == typeof(Half)) push((float)*(Half*)ps);
+          else if (ts == typeof(BigInteger)) push(Unsafe.AsRef<BigInteger>(ps));
+#if NET7_0
+          else if (ts == typeof(Int128)) ipush(ps, ss >> 2);
+          else if (ts == typeof(UInt128)) upush(ps, ss);
+          else if (ts == typeof(NFloat)) push(Unsafe.AsRef<NFloat>(ps));
+#endif
+          else return false;
+        }
+        //////////////////
+        if (td.IsPrimitive)
+        {
+          switch (Type.GetTypeCode(td))
+          {
+            case TypeCode.Byte: *(byte*)pd = unchecked((byte)popi()); return true;
+            case TypeCode.Char:
+            case TypeCode.UInt16: *(ushort*)pd = unchecked((ushort)popi()); return true;
+            case TypeCode.UInt32: upop(pd, sd); return true;
+            case TypeCode.UInt64: upop(pd, sd); return true;
+            case TypeCode.SByte: *(sbyte*)pd = unchecked((sbyte)popi()); return true;
+            case TypeCode.Int16: *(short*)pd = unchecked((short)popi()); return true;
+            case TypeCode.Int32: *(int*)pd = popi(); return true;
+            case TypeCode.Int64: ipop(pd, sd >> 2); return true;
+            case TypeCode.Single: *(float*)pd = (float)popd(); return true;
+            case TypeCode.Double: *(double*)pd = popd(); return true;
+            default: return false;
+          }
+        }
+        if (td.IsGenericType)
+        {
+          td = td.GetGenericTypeDefinition();
+          if (td == typeof(Generic.Float<>)) { fpop(pd, sd); return true; }
+          if (td == typeof(Generic.UInt<>)) { upop(pd, sd); return true; }
+          if (td == typeof(Generic.Int<>)) { ipop(pd, sd >> 2); return true; }
+        }
+        if (td == typeof(BigRational)) { Unsafe.AsRef<BigRational>(pd) = popr(); return true; }
+        if (td == typeof(Integer)) { Unsafe.AsRef<Integer>(pd) = (Integer)popr(); return true; }
+#if NET7_0
+        if (td == typeof(Int128)) { ipop(pd, sd >> 2); return true; }
+        if (td == typeof(UInt128)) { upop(pd, sd); return true; }
+#endif
+        if (td == typeof(decimal)) { *(decimal*)pd = popm(); return true; }
+        pop(); return false;
+      }
+#endregion experimental
     }
-    #region private 
+#region private 
     readonly uint[] p;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     BigRational(uint[] p) => this.p = p;
@@ -3779,8 +3871,8 @@ namespace System.Numerics
       //if (p == null) lock (string.Empty) fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n]) copy(d, s, n);
       //return new BigRational(p);
     }
-    #endregion
-    #region debug support
+#endregion
+#region debug support
     sealed class DebugView
     {
       readonly CPU p;
@@ -3798,8 +3890,8 @@ namespace System.Numerics
         }
       }
     }
-    #endregion
-    #region experimental 
+#endregion
+#region experimental 
     internal static int tos(Span<char> sp, CPU cpu, char fmt, int dig, int rnd, int es, int fl)
     {
       var sig = cpu.sign(); var f = fmt & ~0x20; Debug.Assert(sp.Length >= dig + 16); // -.E+2147483647 14
@@ -3819,7 +3911,7 @@ namespace System.Numerics
       }
       var e = sig != 0 ? cpu.ilog10() : 0;
 #if DEBUG
-      { cpu.dup(); cpu.tos(default, out _, out var ee, out _, false); Debug.Assert(e == ee); } //todo: remove 
+      // { cpu.dup(); cpu.tos(default, out _, out var ee, out _, false); Debug.Assert(e == ee); } //todo: remove 
 #endif
       if (f == 'E') cpu.rnd(rnd - e);
       else if (f == 'F')
@@ -3876,6 +3968,6 @@ namespace System.Numerics
       int v = 0; for (int i = 0, n = s.Length; i < n; i++) { var x = s[i] - '0'; if (x < 0 || x > 9) break; v = v * 10 + x; }
       return v;
     }
-    #endregion
+#endregion
   }
 }

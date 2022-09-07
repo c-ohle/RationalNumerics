@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Test
 {
@@ -11,7 +12,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); test();
+      ApplicationConfiguration.Initialize(); // test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -20,12 +21,126 @@ namespace Test
 #if NET6_0
     static void test()
     {
-    }    
+      object p;
+      //p = __uint128.CreateTruncating("asdad");
+      p = __uint128.CreateTruncating(64ul);
+      p = __uint128.CreateTruncating((__uint32)32);
+      p = __uint128.CreateTruncating((rat)32);
+      p = __uint128.CreateTruncating((byte)1);
+      p = __uint128.CreateTruncating((decimal)1234567890);
+      p = __uint128.CreateTruncating(123.45f);
+      p = __float80.CreateTruncating(123.45);
+      p = __float80.CreateTruncating((decimal)123456.123);
+      p = __float80.CreateSaturating(Half.MaxValue);
+      p = rat.CreateChecked(MathF.PI);
+      p = rat.CreateChecked(Math.PI);
+      p = rat.CreateChecked(Float32.Pi);
+      p = rat.CreateChecked(Float64.Pi);
+      p = rat.CreateChecked(Float128.Pi);
+      p = rat.CreateChecked(Float256.Pi);
+      p = rat.CreateChecked(Float512.Pi);
+      p = __int128.CreateSaturating(uint.MaxValue);
+      p = __int128.CreateSaturating(__int64.MaxValue);
+      p = __int128.CreateSaturating(long.MaxValue);
+      p = __int128.CreateSaturating(long.MinValue);
+      p = __int128.CreateSaturating(ulong.MaxValue);
+      p = __int64.CreateSaturating(__int128.MaxValue);
+      p = __int64.CreateSaturating(__int128.MinValue);
+      p = __int64.CreateSaturating((BigInteger)125555555555555);
+      p = __uint128.CreateTruncating((BigInteger)125555555555555);
+      p = __int64.CreateSaturating((BigInt)125555555555555);
+      p = __uint128.CreateTruncating((BigInt)125555555555555);
+      p = __int64.CreateSaturating(nint.MinValue);
+      p = __uint128.CreateTruncating(nuint.MaxValue);
+      p = BigInt.CreateTruncating(879899);
+    }
 #endif
 
 #if NET7_0
     static void test_conv()
     {
+      object p;
+
+      p = Float128.CreateTruncating(Half.Pi);
+      p = Float128.CreateTruncating(float.Pi);
+      p = Float128.CreateTruncating(double.Pi);
+      p = Float128.CreateTruncating(Float32.Pi);
+      p = Float128.CreateTruncating(Float64.Pi);
+      p = Float128.CreateTruncating(Float80.Pi);
+      p = Float128.CreateTruncating(Float96.Pi);
+      p = Float128.CreateTruncating(Float128.Pi);
+      p = Float128.CreateTruncating(Float256.Pi);
+      p = Float128.CreateTruncating(Float512.Pi);
+      p = Float128.CreateTruncating(NFloat.Pi);
+     
+      p = Float128.CreateTruncating(Half.MaxValue);
+      p = Float128.CreateTruncating(float.MaxValue);
+      p = Float128.CreateTruncating(double.MaxValue);
+      p = Float128.CreateTruncating(Float80.MaxValue);
+      p = Float128.CreateTruncating(Float96.MaxValue);
+      p = Float128.CreateTruncating(UInt128.MaxValue);
+      p = Float128.CreateTruncating(Int128.MaxValue);
+      p = Float128.CreateTruncating(Int128.MinValue);
+
+      var x1 = Half.MaxValue; var s = Half.MaxValue.ToString();
+      var x2 = (double)Half.MaxValue;
+      p = __uint128.CreateTruncating(64ul);
+      p = __uint128.CreateTruncating((__uint32)32);
+      p = __uint128.CreateTruncating((rat)32);
+      p = __uint128.CreateTruncating((byte)1);
+      p = __uint128.CreateTruncating((decimal)1234567890);
+      p = __uint128.CreateTruncating(123.45f);
+      p = __float80.CreateTruncating(123.45);
+      p = __float80.CreateTruncating((decimal)123456.123);
+      p = __float80.CreateSaturating(Half.MaxValue);
+      
+      p = rat.CreateChecked(MathF.PI);
+      p = rat.CreateChecked(Math.PI);
+      p = rat.CreateChecked(Float32.Pi);
+      p = rat.CreateChecked(Float64.Pi);
+      p = rat.CreateChecked(Float128.Pi);
+      p = rat.CreateChecked(Float256.Pi);
+      p = rat.CreateChecked(Float512.Pi);
+
+      p = __int128.CreateSaturating(uint.MaxValue);
+      p = __int128.CreateSaturating(__int64.MaxValue);
+      p = __int128.CreateSaturating(long.MaxValue);
+      p = __int128.CreateSaturating(long.MinValue);
+      p = __int128.CreateSaturating(ulong.MaxValue);
+      p = __int64.CreateSaturating(__int128.MaxValue);
+      p = __int64.CreateSaturating(__int128.MinValue);
+      p = __int64.CreateSaturating((BigInteger)125555555555555);
+      p = __uint128.CreateTruncating((BigInteger)125555555555555);
+      p = __int64.CreateSaturating((BigInt)125555555555555);
+      p = __uint128.CreateTruncating((BigInt)125555555555555);
+      p = __int64.CreateSaturating(nint.MinValue);
+      p = __uint128.CreateTruncating(nuint.MaxValue);
+      p = BigInt.CreateTruncating(879899);
+
+      p = double.CreateTruncating(1.5f);
+      p = BigInteger.CreateTruncating(1.5f);
+      p = Half.CreateTruncating(1.5f);
+
+      p = __uint128.CreateTruncating(64ul);
+      p = __uint128.CreateTruncating((__uint32)32);
+      p = __uint128.CreateTruncating((rat)32);
+      p = __uint128.CreateTruncating((byte)1);
+      p = __uint128.CreateTruncating((decimal)1234567890);
+      p = __uint128.CreateTruncating(123.45f);
+     
+      p = float.CreateTruncating((__uint128)p);
+      p = float.CreateTruncating((__int128)6868768786);
+      p = double.CreateTruncating((Float80)123.456);
+      p = ulong.CreateTruncating((Float80)123.456);
+      p = UInt128.CreateTruncating((Float128)123.456);
+      p = Int128.CreateTruncating((Float32)123.456);
+      p = decimal.CreateTruncating((Float32)123.456);
+
+      //var t1 = Half.MaxValue.ToString();
+      //var t2 = Half.Parse(t1); if(t2 == Half.MaxValue) { }
+
+      p = Float128.CreateTruncating(1.5f);
+      p = __float80.CreateSaturating(1.5f);
       var e = __uint128.CreateTruncating((__uint32)32);
       var a = UInt128.CreateTruncating(123);
       var b = __uint128.CreateTruncating(123);
@@ -260,7 +375,7 @@ namespace Test
       a ^= 0x00034A345000000; Debug.Assert(e == a);
       e &= 0x03ffffff5234000;
       a &= 0x03ffffff5234000;
-      e = ~e; Debug.Assert(e == a);
+      e = ~e;
       a = ~a; Debug.Assert(e == a);
       e ^= e; a ^= a; Debug.Assert(e == a);
 
