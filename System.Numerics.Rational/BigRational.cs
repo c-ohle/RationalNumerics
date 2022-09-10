@@ -697,7 +697,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="int"/>.</returns>
     public static explicit operator int(BigRational value)
     {
-      var a = default(int); main_cpu.toi(value, (uint*)&a, 0x0001); return a;
+      var cpu = main_cpu; cpu.push(value); int r; cpu.ipop(&r, sizeof(int)); return r;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="uint"/> value.
@@ -706,7 +706,8 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="uint"/>.</returns>
     public static explicit operator uint(BigRational value)
     {
-      var a = default(uint); main_cpu.toi(value, (uint*)&a, 0x0101); return a;
+      var cpu = main_cpu; cpu.push(value); uint r; cpu.upop(&r, sizeof(uint)); return r;
+      //var a = default(uint); main_cpu.toi(value, (uint*)&a, 0x0101); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="long"/> value.
@@ -715,7 +716,8 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="long"/>.</returns>
     public static explicit operator long(BigRational value)
     {
-      var a = default(long); main_cpu.toi(value, (uint*)&a, 0x0002); return a;
+      var cpu = main_cpu; cpu.push(value); long r; cpu.ipop(&r, sizeof(long)); return r;
+      //var a = default(long); main_cpu.toi(value, (uint*)&a, 0x0002); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="ulong"/> value.
@@ -724,7 +726,8 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="ulong"/>.</returns>
     public static explicit operator ulong(BigRational value)
     {
-      var a = default(ulong); main_cpu.toi(value, (uint*)&a, 0x0102); return a;
+      var cpu = main_cpu; cpu.push(value); ulong r; cpu.upop(&r, sizeof(ulong)); return r;
+      //var a = default(ulong); main_cpu.toi(value, (uint*)&a, 0x0102); return a;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="IntPtr"/> value.
@@ -3484,11 +3487,18 @@ namespace System.Numerics
       {
         return (p[i - 1][1 + (c >> 5)] & (1 << (c & 31))) != 0;
       }
-      //for INumber to avoid another ThreadLocal static root - the CPU doesn't need it
+      internal static int hash(void* p, int n)
+      {
+        uint h = 0, c = unchecked((uint)n) >> 2;
+        for (uint i = 0; i < c; i++) h = ((uint*)p)[i] ^ ((h << 7) | (h >> 25));
+        if ((n & 2) != 0) h ^= ((uint*)p)[c] & 0xffff;
+        return unchecked((int)h);
+      }
+      //for INumber to avoid another ThreadLocal static root - CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
       #region int support
-      internal void idr() //todo: divrem keep?
+      internal void idr() //todo: divrem public?
       {
         fixed (uint* u = p[this.i - 1])
         fixed (uint* v = p[this.i - 2])
@@ -3500,97 +3510,155 @@ namespace System.Numerics
         }
         swp(1); pop();
       }
-      internal static int hash(void* p, int n)
+      internal static int ucmp(void* a, void* b, int size)
       {
-        uint h = 0, c = unchecked((uint)n) >> 2;
-        for (uint i = 0; i < c; i++) h = ((uint*)p)[i] ^ ((h << 7) | (h >> 25));
-        if ((n & 2) != 0) h ^= ((uint*)p)[c] & 0xffff;
-        return unchecked((int)h);
-      }
-      internal static int icmp(void* a, void* b, int f)
-      {
-        uint n = unchecked((uint)f) & 0xff;
-        var sa = (f & 0x100) != 0 ? ((uint*)a)[n - 1] >> 31 : 0;
-        var sb = (f & 0x100) != 0 ? ((uint*)b)[n - 1] >> 31 : 0;
-        if (sa != sb) return sa != 0 ? -1 : +1;
-        for (uint i = n; i-- != 0;)
+        Debug.Assert(size >= 4 && (size & 3) == 0);
+        for (uint i = unchecked((uint)size >> 2); i-- != 0;)
           if (((uint*)a)[i] != ((uint*)b)[i])
             return (((uint*)a)[i] > ((uint*)b)[i]) ? +1 : -1;
         return 0;
       }
-      internal void upush(void* p, int size) => ipush(p, 0x100 | (size >> 2));
-      internal void upop(void* p, int size) => ipop(p, 0x100 | (size >> 2));
-      internal void ipush(void* p, int f)
+      internal void upush(void* p, int size)
       {
-        uint n = unchecked((uint)f) & 0xff, s = (f & 0x0100) == 0 ? ((uint*)p)[n - 1] & 0x80000000 : 0;
+        uint n = unchecked((uint)size >> 2), i; Debug.Assert(size >= 4 && (size & 3) == 0); // for now
+        fixed (uint* v = rent(n + 3))
+        {
+          copy(v + 1, (uint*)p, n); for (i = n; i > 1 && v[i] == 0; i--) ;
+          v[0] = i; *(ulong*)(v + i + 1) = 0x100000001;
+        }
+      }
+      internal void upop(void* p, int size)
+      {
+        Debug.Assert(size >= 4 && (size & 3) == 0); // for now //ipop(p, 0x100 | (size >> 2));
+        var pp = (uint*)p; uint n = unchecked((uint)size) >> 2; var s = sign();
+        if (s == 0) { pop(); copy(pp, n); return; } // zero
+        rnd(0, 0); uint b = msb(), c = n << 5;
+        if (b > c) { } //pop(); new Span<uint>(&p, size >> 2).Fill(0xffffffff); return; } //maxvalue
+        fixed (uint* t = this.p[this.i - 1])
+        {
+          var u = t[0] & 0x3fffffff; //if (u == 1) *pp = t[1]; else //most common case 
+          copy(pp, t + 1, n < u ? n : u);
+          if (n > u) copy(pp + u, n - u); // for (uint i = u; i < n; i++) pp[i] = 0;
+        }
+        pop(); if (s < 0) ineg(p, size);
+      }
+      internal static bool ineg(void* p, int size)
+      {
+        Debug.Assert(size >= 4 && (size & 3) == 0);
+        var u = (uint*)p; uint n = unchecked((uint)size) >> 2;
+        for (uint i = 0, c = 1; i < n; i++)
+        {
+          var x = unchecked((ulong)(u[i] ^ 0xffffffff) + c);
+          u[i] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
+        }
+        return true;
+      }
+      internal static int icmp(void* a, void* b, int size)
+      {
+        Debug.Assert(size >= 4 && (size & 3) == 0 && (size & 0x100) == 0);
+        uint n = unchecked((uint)size >> 2) - 1, i;
+        for (i = n; ((uint*)a)[i] == ((uint*)b)[i]; i--) if (i == 0) return 0;
+        var s = (((uint*)a)[i] > ((uint*)b)[i]) ? +1 : -1;
+        if (i == n && (((((uint*)a)[i] ^ ((uint*)b)[i])) & 0x80000000) != 0) return -s;
+        return s;
+        //var sa = (f & 0x100) == 0 ? ((uint*)a)[n - 1] >> 31 : 0;
+        //var sb = (f & 0x100) == 0 ? ((uint*)b)[n - 1] >> 31 : 0;
+        //if (sa != sb) return sa != 0 ? -1 : +1;
+        //for (uint i = n; i-- != 0;)
+        //  if (((uint*)a)[i] != ((uint*)b)[i])
+        //    return (((uint*)a)[i] > ((uint*)b)[i]) ? +1 : -1;
+        //return 0;
+      }
+      internal void ipush(void* p, int size)
+      {
+        var f = size >> 2; Debug.Assert(size >= 4 && (size & 3) == 0);
+        uint n = unchecked((uint)f), s = ((uint*)p)[n - 1] & 0x80000000;
         fixed (uint* v = rent(n + 3))
         {
           copy(v + 1, (uint*)p, n);
-          if (s != 0)
-            for (uint b = 1, c = 1; b <= n; b++)
-            {
-              var x = unchecked((ulong)(v[b] ^ 0xffffffff) + c);
-              v[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
-            }
+          if ((s & 0x80000000) != 0) ineg(v + 1, size);
           var i = n; for (; i > 1 && v[i] == 0; i--) ;
           v[0] = i | s; *(ulong*)(v + i + 1) = 0x100000001;
         }
       }
-      internal void ipop(void* p, int f) //int type conversions, Int32, Unt32,..., Int128, UInt128, 256, 512 ... 
+      internal void ipop(void* p, int size)
       {
-        var pp = (uint*)p; uint n = unchecked((uint)f) & 0xff; var s = sign();
-        if ((f & 0x0100) != 0 && s <= 0) //uint <= 0 -> 0 incl. NaN 
-        {
-          if ((f & 0x1000) != 0 && s < 0 || isnan()) { pop(); throw new OverflowException(); } //todo: message text range       
-          if ((f & 0x0200) == 0 || s == 0) { pop(); copy(pp, n); return; } else { }
-        }
+        var f = size >> 2; Debug.Assert(size >= 4 && (size & 3) == 0);
+        var pp = (uint*)p; uint n = unchecked((uint)f); var s = sign();
+        if (s == 0) { pop(); copy(pp, n); return; }
         rnd(0, 0); uint b = msb(), c = n << 5;
         if (b >= c)
         {
-          if ((f & 0x0100) == 0) //si
-          {
-            if (((f & 0x1000) == 0) || !(b == c && s < 0 && ipt()))
-            {
-              pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
-              n--; //todo: opt. small types after tests
-              if (s > 0) { for (c = 0; c < n; c++) pp[c] = 0xffffffff; pp[n] = 0x7fffffff; } // MaxValue
-              else pp[n] = 0x80000000; // MinValue
-              return;
-            }
-          }
-          else //ui
-          {
-            if (b > c)
-            {
-              pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
-              for (c = 0; c < n; c++) pp[c] = 0xffffffff; //MaxValue
-              return;
-            }
-          }
+          //if (!(b == c && s < 0 && ipt()))
+          //{
+          //  pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
+          //  n--; //todo: opt. small types after tests
+          //  if (s > 0) { for (c = 0; c < n; c++) pp[c] = 0xffffffff; pp[n] = 0x7fffffff; } // MaxValue
+          //  else pp[n] = 0x80000000; // MinValue
+          //  return;
+          //}
         }
         fixed (uint* t = this.p[this.i - 1])
         {
-          var u = t[0] & 0x3fffffff;
-          if (u == 1) *pp = t[1]; //most common case 
-          else copy(pp, t + 1, n < u ? n : u);
-          copy(pp + u, n - u);// for (uint i = u; i < n; i++) pp[i] = 0;
+          var l = t[0] & 0x3fffffff;
+          copy(pp, t + 1, n < l ? n : l);
+          if (n > l) copy(pp + l, n - l);
+          if (s < 0) { ineg(p, size); } // pp[0] |= 0x80000000; }
         }
-        pop(); if (s > 0) return;
-        for (b = 0, c = 1; b < n; b++) //todo: opt. small std types after tests
-        {
-          var x = unchecked((ulong)(pp[b] ^ 0xffffffff) + c);
-          pp[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
-        }
+        pop(); //if (s < 0) ineg(p, size);
       }
-      internal void toi(BigRational v, uint* p, uint f)
-      {
-        if (v.p == null) return; push(v); ipop(p, unchecked((int)f));
-      }
+      //internal void ipop(void* p, int size)
+      //{
+      //  var f = size >> 2; Debug.Assert(size >= 4 && (size & 3) == 0); //Debug.Assert((f & 0x0100) == 0);
+      //  var pp = (uint*)p; uint n = unchecked((uint)f) & 0xff; var s = sign();
+      //  if ((f & 0x0100) != 0 && s <= 0) //uint <= 0 -> 0 incl. NaN 
+      //  {
+      //    if ((f & 0x1000) != 0 && s < 0 || isnan()) { pop(); throw new OverflowException(); } //todo: message text range       
+      //    if ((f & 0x0200) == 0 || s == 0) { pop(); copy(pp, n); return; } else { }
+      //  }
+      //  rnd(0, 0); uint b = msb(), c = n << 5;
+      //  if (b >= c)
+      //  {
+      //    if ((f & 0x0100) == 0) //si
+      //    {
+      //      if (((f & 0x1000) == 0) || !(b == c && s < 0 && ipt()))
+      //      {
+      //        pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
+      //        n--; //todo: opt. small types after tests
+      //        if (s > 0) { for (c = 0; c < n; c++) pp[c] = 0xffffffff; pp[n] = 0x7fffffff; } // MaxValue
+      //        else pp[n] = 0x80000000; // MinValue
+      //        return;
+      //      }
+      //    }
+      //    else //ui
+      //    {
+      //      if (b > c)
+      //      {
+      //        pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
+      //        for (c = 0; c < n; c++) pp[c] = 0xffffffff; //MaxValue
+      //        return;
+      //      }
+      //    }
+      //  }
+      //  fixed (uint* t = this.p[this.i - 1])
+      //  {
+      //    var u = t[0] & 0x3fffffff;
+      //    if (u == 1) *pp = t[1]; //most common case 
+      //    else copy(pp, t + 1, n < u ? n : u);
+      //    copy(pp + u, n - u);// for (uint i = u; i < n; i++) pp[i] = 0;
+      //  }
+      //  pop(); if (s > 0) return;
+      //  for (b = 0, c = 1; b < n; b++) //todo: opt. small std types after tests
+      //  {
+      //    var x = unchecked((ulong)(pp[b] ^ 0xffffffff) + c);
+      //    pp[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
+      //  }
+      //}
       #endregion
       #region fp support    
       internal static int fdesc(int size)
       {
-        int sbi; //if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
+        int sbi; Debug.Assert((size & 1) == 0); //for now //if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
         switch (size)
         {
           case 2: sbi = 5; break;
@@ -3776,7 +3844,7 @@ namespace System.Numerics
           ts = ts.GetGenericTypeDefinition();
           if (ts == typeof(Generic.Float<>)) { var e = fpush(ps, (ss >> 16) != 0 ? ss : fdesc(ss)); pow(2, e); mul(); }
           else if (ts == typeof(Generic.UInt<>)) upush(ps, ss);
-          else if (ts == typeof(Generic.Int<>)) ipush(ps, ss >> 2);
+          else if (ts == typeof(Generic.Int<>)) ipush(ps, ss);
           else return false;
         }
         else
@@ -3787,7 +3855,7 @@ namespace System.Numerics
           else if (ts == typeof(Half)) push((float)*(Half*)ps);
           else if (ts == typeof(BigInteger)) push(Unsafe.AsRef<BigInteger>(ps));
 #if NET7_0
-          else if (ts == typeof(Int128)) ipush(ps, ss >> 2);
+          else if (ts == typeof(Int128)) ipush(ps, ss);
           else if (ts == typeof(UInt128)) upush(ps, ss);
           else if (ts == typeof(NFloat)) push(Unsafe.AsRef<NFloat>(ps));
 #endif
@@ -3806,7 +3874,7 @@ namespace System.Numerics
             case TypeCode.SByte: *(sbyte*)pd = unchecked((sbyte)popi()); return true;
             case TypeCode.Int16: *(short*)pd = unchecked((short)popi()); return true;
             case TypeCode.Int32: *(int*)pd = popi(); return true;
-            case TypeCode.Int64: ipop(pd, sd >> 2); return true;
+            case TypeCode.Int64: ipop(pd, sd); return true;
             case TypeCode.Single: *(float*)pd = (float)popd(); return true;
             case TypeCode.Double: *(double*)pd = popd(); return true;
             default: return false;
@@ -3817,20 +3885,20 @@ namespace System.Numerics
           td = td.GetGenericTypeDefinition();
           if (td == typeof(Generic.Float<>)) { fpop(pd, sd); return true; }
           if (td == typeof(Generic.UInt<>)) { upop(pd, sd); return true; }
-          if (td == typeof(Generic.Int<>)) { ipop(pd, sd >> 2); return true; }
+          if (td == typeof(Generic.Int<>)) { ipop(pd, sd); return true; }
         }
         if (td == typeof(BigRational)) { Unsafe.AsRef<BigRational>(pd) = popr(); return true; }
         if (td == typeof(Integer)) { Unsafe.AsRef<Integer>(pd) = (Integer)popr(); return true; }
+        if (td == typeof(decimal)) { *(decimal*)pd = popm(); return true; }
 #if NET7_0
-        if (td == typeof(Int128)) { ipop(pd, sd >> 2); return true; }
+        if (td == typeof(Int128)) { ipop(pd, sd); return true; }
         if (td == typeof(UInt128)) { upop(pd, sd); return true; }
 #endif
-        if (td == typeof(decimal)) { *(decimal*)pd = popm(); return true; }
         pop(); return false;
       }
-#endregion experimental
+      #endregion experimental
     }
-#region private 
+    #region private 
     readonly uint[] p;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     BigRational(uint[] p) => this.p = p;
@@ -3871,8 +3939,8 @@ namespace System.Numerics
       //if (p == null) lock (string.Empty) fixed (uint* d = (cache ??= new uint[4][])[x] = p = new uint[n]) copy(d, s, n);
       //return new BigRational(p);
     }
-#endregion
-#region debug support
+    #endregion
+    #region debug support
     sealed class DebugView
     {
       readonly CPU p;
@@ -3890,8 +3958,8 @@ namespace System.Numerics
         }
       }
     }
-#endregion
-#region experimental 
+    #endregion
+    #region experimental 
     internal static int tos(Span<char> sp, CPU cpu, char fmt, int dig, int rnd, int es, int fl)
     {
       var sig = cpu.sign(); var f = fmt & ~0x20; Debug.Assert(sp.Length >= dig + 16); // -.E+2147483647 14
@@ -3968,6 +4036,6 @@ namespace System.Numerics
       int v = 0; for (int i = 0, n = s.Length; i < n; i++) { var x = s[i] - '0'; if (x < 0 || x > 9) break; v = v * 10 + x; }
       return v;
     }
-#endregion
+    #endregion
   }
 }

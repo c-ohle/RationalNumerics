@@ -353,7 +353,7 @@ namespace System.Numerics
     /// <exception cref="OverflowException"></exception>
     public static explicit operator checked int(BigRational value)
     {
-      var a = default(int); main_cpu.toi(value, (uint*)&a, 0x1001); return a;
+      var cpu = main_cpu; cpu.push(value); int r; cpu.ipop(&r, sizeof(int)); return r;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="uint"/> value.
@@ -363,7 +363,7 @@ namespace System.Numerics
     /// <exception cref="OverflowException"></exception>
     public static explicit operator checked uint(BigRational value)
     {
-      var a = default(uint); main_cpu.toi(value, (uint*)&a, 0x1101); return a;
+      var cpu = main_cpu; cpu.push(value); uint r; cpu.upop(&r, sizeof(uint)); return r;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="long"/> value.
@@ -373,7 +373,7 @@ namespace System.Numerics
     /// <exception cref="OverflowException"></exception>
     public static explicit operator checked long(BigRational value)
     {
-      var a = default(long); main_cpu.toi(value, (uint*)&a, 0x1002); return a;
+      var cpu = main_cpu; cpu.push(value); long r; cpu.ipop(&r, sizeof(long)); return r;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="ulong"/> value.
@@ -383,7 +383,7 @@ namespace System.Numerics
     /// <exception cref="OverflowException"></exception>
     public static explicit operator checked ulong(BigRational value)
     {
-      var a = default(ulong); main_cpu.toi(value, (uint*)&a, 0x1102); return a;
+      var cpu = main_cpu; cpu.push(value); ulong r; cpu.upop(&r, sizeof(long)); return r;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="nint"/> value.
@@ -412,7 +412,8 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="Int128"/>.</returns>
     public static explicit operator Int128(BigRational value)
     {
-      var a = default(Int128); main_cpu.toi(value, (uint*)&a, 0x0004); return a;
+      var cpu = main_cpu; cpu.push(value); Int128 r; cpu.ipop(&r, sizeof(Int128)); return r;
+      //var a = default(Int128); main_cpu.toi(value, (uint*)&a, 0x0004); return a;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="Int128"/> value.
@@ -422,7 +423,7 @@ namespace System.Numerics
     /// <exception cref="OverflowException"></exception>
     public static explicit operator checked Int128(BigRational value)
     {
-      var a = default(Int128); main_cpu.toi(value, (uint*)&a, 0x1004); return a;
+      var cpu = main_cpu; cpu.push(value); Int128 r; cpu.ipop(&r, sizeof(Int128)); return r;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="UInt128"/> value.
@@ -431,7 +432,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="UInt128"/>.</returns>
     public static explicit operator UInt128(BigRational value)
     {
-      var a = default(UInt128); main_cpu.toi(value, (uint*)&a, 0x0104); return a;
+      var cpu = main_cpu; cpu.push(value); UInt128 r; cpu.upop(&r, sizeof(UInt128)); return r;
     }
     /// <summary>
     /// Defines an explicit checked conversion of a <see cref="BigRational"/> number to a <see cref="UInt128"/> value.
@@ -441,7 +442,7 @@ namespace System.Numerics
     /// <exception cref="OverflowException"></exception>
     public static explicit operator checked UInt128(BigRational value)
     {
-      var a = default(UInt128); main_cpu.toi(value, (uint*)&a, 0x1104); return a;
+      var cpu = main_cpu; cpu.push(value); UInt128 r; cpu.upop(&r, sizeof(UInt128)); return r;
     }
     /// <summary>
     /// Defines an explicit conversion of a <see cref="BigRational"/> number to a <see cref="NFloat"/> value.
@@ -450,7 +451,7 @@ namespace System.Numerics
     /// <returns>The value of the current instance, converted to an <see cref="NFloat"/>.</returns>
     public static explicit operator NFloat(BigRational value)
     {
-      var x = new decimal(1);
+      var x = new decimal(1); //todo: fpop and check
       return nint.Size == 4 ? new NFloat((float)value) : new NFloat((double)value);
     }
 

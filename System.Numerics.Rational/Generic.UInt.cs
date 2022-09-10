@@ -15,12 +15,6 @@ namespace System.Numerics.Generic
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly partial struct UInt<T> : IComparable<UInt<T>>, IComparable, IEquatable<UInt<T>>, IFormattable, ISpanFormattable where T : unmanaged
   {
-    public static explicit operator UInt<T>(int value)
-    {
-      //return (uint)value; //checked value < 0 exc
-      var cpu = main_cpu; cpu.push(value);
-      UInt<T> v; cpu.ipop(&v, 0x0300 | (sizeof(T) >> 2)); return v;
-    }
     public static implicit operator UInt<T>(uint value)
     {
       var cpu = main_cpu; cpu.push(value);
@@ -31,36 +25,45 @@ namespace System.Numerics.Generic
       var cpu = main_cpu; cpu.push(value);
       UInt<T> v; cpu.upop(&v, sizeof(T)); return v;
     }
+    public static explicit operator UInt<T>(int value)
+    {
+      var cpu = main_cpu; cpu.push(value);
+      UInt<T> v; cpu.upop(&v, sizeof(T)); return v;
+    }
+    public static explicit operator UInt<T>(long value)
+    {
+      var cpu = main_cpu; cpu.push(value);
+      UInt<T> v; cpu.upop(&v, sizeof(T)); return v;
+    }
     public static explicit operator UInt<T>(decimal value)
     {
       var cpu = main_cpu; cpu.push(value);
       UInt<T> v; cpu.upop(&v, sizeof(T)); return v;
     }
 
-    public static explicit operator int(UInt<T> value)
-    {
-      return (int)(uint)value;
-    }
     public static explicit operator uint(UInt<T> value)
     {
       var cpu = main_cpu; cpu.upush(&value.p, sizeof(T));
-      var a = default(uint); cpu.ipop(&a, 0x0101); return a;
+      uint a; cpu.upop(&a, sizeof(uint)); return a;
     }
     public static explicit operator ulong(UInt<T> value)
     {
       var cpu = main_cpu; cpu.upush(&value, sizeof(T));
-      var a = default(ulong); cpu.ipop(&a, 0x0102); return a;
+      ulong a; cpu.upop(&a, sizeof(ulong)); return a;
+    }
+    public static explicit operator int(UInt<T> value)
+    {
+      return (int)(uint)value;
+    }
+    public static explicit operator long(UInt<T> value)
+    {
+      return (long)(ulong)value;
     }
 
     public static UInt<T> operator +(UInt<T> value) => value;
-    public static UInt<T> operator -(UInt<T> value)
-    {
-      var cpu = main_cpu; cpu.upush(&value, sizeof(T));
-      cpu.neg(); cpu.upop(&value, sizeof(T)); return value;
-    }
     public static UInt<T> operator ++(UInt<T> value)
     {
-      var cpu = main_cpu; cpu.upush(&value, 4);
+      var cpu = main_cpu; cpu.upush(&value, sizeof(T));
       cpu.inc(); cpu.upop(&value, sizeof(T)); return value;
     }
     public static UInt<T> operator --(UInt<T> value)
@@ -96,65 +99,71 @@ namespace System.Numerics.Generic
 
     public static UInt<T> operator <<(UInt<T> value, int shiftAmount)
     {
-      //Debug.Assert(shiftAmount >= 0); //todo: -shiftAmount 
       var n = sizeof(T) << 3; shiftAmount &= n - 1;
-      //if (shiftAmount > n) shiftAmount %= n; if (shiftAmount == 0) return value;
       var cpu = main_cpu; cpu.upush(&value, sizeof(T));
       var t = cpu.msb(); if (t + shiftAmount > n) { cpu.pow(2, n - shiftAmount); cpu.dec(); cpu.and(); } //cut high bits       
-      cpu.shl(shiftAmount); cpu.upop(&value, sizeof(T));
-      return value;
+      cpu.shl(shiftAmount); cpu.upop(&value, sizeof(T)); return value;
     }
     public static UInt<T> operator >>(UInt<T> value, int shiftAmount)
     {
       var n = sizeof(T) << 3; shiftAmount &= n - 1;
-      //Debug.Assert(shiftAmount >= 0); //todo: -shiftAmount
       var cpu = main_cpu; cpu.upush(&value, sizeof(T));
       cpu.shr(shiftAmount); cpu.upop(&value, sizeof(T)); return value;
     }
     public static UInt<T> operator ~(UInt<T> value)
     {
-      for (int n = sizeof(T) >> 2, i = 0; i < n; i++) ((uint*)&value)[i] = ~((uint*)&value)[i];
+      for (uint n = unchecked((uint)sizeof(T) >> 2), i = 0; i < n; i++)
+        ((uint*)&value)[i] = ~((uint*)&value)[i];
       return value;
     }
     public static UInt<T> operator &(UInt<T> left, UInt<T> right)
     {
-      var cpu = main_cpu; cpu.upush(&left, sizeof(T)); cpu.upush(&right, sizeof(T));
-      cpu.and(); cpu.upop(&left, sizeof(T)); return left;
+      for (uint n = unchecked((uint)sizeof(T) >> 2), i = 0; i < n; i++)
+        ((uint*)&left)[i] &= ((uint*)&right)[i];
+      return left;
+      //var cpu = main_cpu; cpu.upush(&left, sizeof(T)); cpu.upush(&right, sizeof(T));
+      //cpu.and(); cpu.upop(&left, sizeof(T)); return left;
     }
     public static UInt<T> operator |(UInt<T> left, UInt<T> right)
     {
-      var cpu = main_cpu; cpu.upush(&left, sizeof(T)); cpu.upush(&right, sizeof(T));
-      cpu.or(); cpu.upop(&left, sizeof(T)); return left;
+      for (uint n = unchecked((uint)sizeof(T) >> 2), i = 0; i < n; i++)
+        ((uint*)&left)[i] |= ((uint*)&right)[i];
+      return left;
+      //var cpu = main_cpu; cpu.upush(&left, sizeof(T)); cpu.upush(&right, sizeof(T));
+      //cpu.or(); cpu.upop(&left, sizeof(T)); return left;
     }
     public static UInt<T> operator ^(UInt<T> left, UInt<T> right)
     {
-      var cpu = main_cpu; cpu.upush(&left, sizeof(T)); cpu.upush(&right, sizeof(T));
-      cpu.xor(); cpu.upop(&left, sizeof(T)); return left;
+      for (uint n = unchecked((uint)sizeof(T) >> 2), i = 0; i < n; i++)
+        ((uint*)&left)[i] ^= ((uint*)&right)[i];
+      return left;
+      //var cpu = main_cpu; cpu.upush(&left, sizeof(T)); cpu.upush(&right, sizeof(T));
+      //cpu.xor(); cpu.upop(&left, sizeof(T)); return left;
     }
 
     public static bool operator ==(UInt<T> left, UInt<T> right)
     {
-      return CPU.icmp(&left, &right, 0x100 | (sizeof(T) >> 2)) == 0;
+      return CPU.ucmp(&left, &right, sizeof(T)) == 0;
     }
     public static bool operator !=(UInt<T> left, UInt<T> right)
     {
-      return CPU.icmp(&left, &right, 0x100 | (sizeof(T) >> 2)) != 0;
+      return CPU.ucmp(&left, &right, sizeof(T)) != 0;
     }
     public static bool operator <=(UInt<T> left, UInt<T> right)
     {
-      return CPU.icmp(&left, &right, 0x100 | (sizeof(T) >> 2)) <= 0;
+      return CPU.ucmp(&left, &right, sizeof(T)) <= 0;
     }
     public static bool operator >=(UInt<T> left, UInt<T> right)
     {
-      return CPU.icmp(&left, &right, 0x100 | (sizeof(T) >> 2)) >= 0;
+      return CPU.ucmp(&left, &right, sizeof(T)) >= 0;
     }
     public static bool operator <(UInt<T> left, UInt<T> right)
     {
-      return CPU.icmp(&left, &right, 0x100 | (sizeof(T) >> 2)) < 0;
+      return CPU.ucmp(&left, &right, sizeof(T)) < 0;
     }
     public static bool operator >(UInt<T> left, UInt<T> right)
     {
-      return CPU.icmp(&left, &right, 0x100 | (sizeof(T) >> 2)) > 0;
+      return CPU.ucmp(&left, &right, sizeof(T)) > 0;
     }
 
     public static UInt<T> MaxValue
@@ -167,16 +176,16 @@ namespace System.Numerics.Generic
 
     public static UInt<T> Min(UInt<T> x, UInt<T> y)
     {
-      return CPU.icmp(&x, &y, 0x100 | (sizeof(T) >> 2)) <= 0 ? x : y;
+      return CPU.ucmp(&x, &y, sizeof(T)) <= 0 ? x : y;
     }
     public static UInt<T> Max(UInt<T> x, UInt<T> y)
     {
-      return CPU.icmp(&x, &y, 0x100 | (sizeof(T) >> 2)) >= 0 ? x : y;
+      return CPU.ucmp(&x, &y, sizeof(T)) >= 0 ? x : y;
     }
     public static UInt<T> Clamp(UInt<T> value, UInt<T> min, UInt<T> max)
     {
       Debug.Assert(min <= max);
-      return value < min ? min : value > max ? max : value;
+      return CPU.ucmp(&value, &min, sizeof(T)) < 0 ? min : CPU.ucmp(&value, &max, sizeof(T)) > 0 ? max : value;
     }
     public static (UInt<T> Quotient, UInt<T> Remainder) DivRem(UInt<T> left, UInt<T> right)
     {
@@ -206,13 +215,13 @@ namespace System.Numerics.Generic
       for (int n = (sizeof(T) >> 2) - 1, i = n; i >= 0; i--)
         if (((uint*)&x)[i] != 0)
           return ((n - i) << 5) + BitOperations.LeadingZeroCount(((uint*)&x)[i]);
-      return 0x7fffffff;
+      return sizeof(T) << 3;
     }
     public static int TrailingZeroCount(UInt<T> x)
     {
       for (int i = 0, n = sizeof(T) >> 2; i < n; i++)
         if (((uint*)&x)[i] != 0)
-          return (i << 3) + BitOperations.TrailingZeroCount(((uint*)&x)[i]);
+          return (i << 5) + BitOperations.TrailingZeroCount(((uint*)&x)[i]);
       return sizeof(T) << 3;
     }
     public static uint Log2(UInt<T> value)
@@ -254,12 +263,18 @@ namespace System.Numerics.Generic
       charsWritten = 0; return false;
     }
     public int CompareTo(object? obj) { return obj == null ? 1 : p is Int<T> b ? this.CompareTo(b) : throw new ArgumentException(); }
-    public int CompareTo(UInt<T> other) { var a = this; return CPU.icmp(&a, &other, 0x100 | (sizeof(T) >> 2)); }
-    public bool Equals(UInt<T> other) { var t = this; return CPU.icmp(&t, &other, 0x100 | (sizeof(T) >> 2)) == 0; }
+    public int CompareTo(UInt<T> other)
+    {
+      var a = this; return CPU.ucmp(&a, &other, sizeof(T));
+    }
+    public bool Equals(UInt<T> other)
+    {
+      var t = this; return CPU.ucmp(&t, &other, sizeof(T)) == 0;
+    }
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
       if (obj is not UInt<T> b) return false;
-      var a = this; return CPU.icmp(&a, &b, 0x100 | (sizeof(T) >> 2)) == 0;
+      var a = this; return CPU.ucmp(&a, &b, sizeof(T)) == 0;
     }
     public override int GetHashCode()
     {
@@ -274,14 +289,20 @@ namespace System.Numerics.Generic
     public static UInt<T> Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider = null)
     {
       var cpu = main_cpu; cpu.tor(s = s.Trim(), (style & NumberStyles.AllowHexSpecifier) != 0 ? 16 : 10);
-      UInt<T> v; cpu.ipop(&v, 0x0300 | (sizeof(T) >> 2)); return v;
+      UInt<T> v; cpu.upop(&v, sizeof(T)); return v;
     }
+
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out UInt<T> result)
     {
       var cpu = main_cpu; cpu.tor(s = s.Trim(), (style & NumberStyles.AllowHexSpecifier) != 0 ? 16 : 10);
-      UInt<T> v; cpu.ipop(&v, 0x0300 | (sizeof(T) >> 2)); result = v; return true;
+      UInt<T> v; cpu.upop(&v, sizeof(T)); result = v; return true;
     }
-    
+    public static bool TryParse(string? s, NumberStyles style, IFormatProvider? provider, out UInt<T> result) => TryParse(s.AsSpan(), style, provider, out result);
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out UInt<T> result) => TryParse(s, NumberStyles.Integer, provider, out result);
+    public static bool TryParse(string? s, IFormatProvider? provider, out UInt<T> result) => TryParse(s.AsSpan(), NumberStyles.Integer, provider, out result);
+    public static bool TryParse(ReadOnlySpan<char> s, out UInt<T> result) => TryParse(s, NumberStyles.Integer, null, out result);
+    public static bool TryParse([NotNullWhen(true)] string? s, out UInt<T> result) => TryParse(s.AsSpan(), NumberStyles.Integer, null, out result);
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
 
     static bool TryConvertFrom<TOther>(TOther value, out UInt<T> result, int f)
@@ -331,10 +352,10 @@ namespace System.Numerics.Generic
     }
 #endif
   }
- 
+
 #if NET7_0
   public unsafe readonly partial struct UInt<T> : IBinaryInteger<UInt<T>>, IMinMaxValue<UInt<T>>, IUnsignedNumber<UInt<T>>
-  {    
+  {
     public static implicit operator UInt<T>(UInt128 value)
     {
       var cpu = main_cpu; cpu.upush(&value, sizeof(UInt128));
@@ -374,36 +395,40 @@ namespace System.Numerics.Generic
     static UInt<T> INumberBase<UInt<T>>.MinMagnitudeNumber(UInt<T> x, UInt<T> y) => Min(x, y);
     static UInt<T> IBinaryNumber<UInt<T>>.Log2(UInt<T> value) => Log2(value);
     static UInt<T> IBinaryInteger<UInt<T>>.PopCount(UInt<T> value) => PopCount(value);
-    static UInt<T> IBinaryInteger<UInt<T>>.TrailingZeroCount(UInt<T> value) => (UInt<T>)TrailingZeroCount(value);
-    int IBinaryInteger<UInt<T>>.GetShortestBitLength() => (sizeof(T) << 3) - (int)LeadingZeroCount(this);
-    int IBinaryInteger<UInt<T>>.GetByteCount() => sizeof(T);
-    static bool INumberBase<UInt<T>>.TryParse(string? s, NumberStyles style, IFormatProvider? provider, out UInt<T> result) => TryParse(s.AsSpan(), style, provider, out result);
-    static bool ISpanParsable<UInt<T>>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out UInt<T> result) => TryParse(s, NumberStyles.Integer, provider, out result);
-    static bool IParsable<UInt<T>>.TryParse(string? s, IFormatProvider? provider, out UInt<T> result) => TryParse(s.AsSpan(), NumberStyles.Integer, provider, out result);
-    static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out UInt<T> result) => TryParse(s, NumberStyles.Integer, provider, out result);
-    bool IBinaryInteger<UInt<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten)
+    static UInt<T> IUnaryNegationOperators<UInt<T>, UInt<T>>.operator -(UInt<T> value)
     {
-      if (destination.Length < sizeof(UInt<T>)) { bytesWritten = 0; return false; }
-      var t = this; new ReadOnlySpan<byte>(&t, sizeof(UInt<T>)).CopyTo(destination);
-      bytesWritten = sizeof(UInt<T>); return true;
+      CPU.ineg(&value, sizeof(T)); return value; //todo: check
     }
+    static UInt<T> IUnaryNegationOperators<UInt<T>, UInt<T>>.operator checked -(UInt<T> value)
+    {
+      if (!CPU.ineg(&value, sizeof(T))) throw new OverflowException(); return value; //todo: check
+    }
+    static UInt<T> IBinaryInteger<UInt<T>>.TrailingZeroCount(UInt<T> value) => (UInt<T>)TrailingZeroCount(value);
+    int IBinaryInteger<UInt<T>>.GetShortestBitLength() => (sizeof(T) << 3) - LeadingZeroCount(this);
+    int IBinaryInteger<UInt<T>>.GetByteCount() => sizeof(T);
     bool IBinaryInteger<UInt<T>>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten)
     {
       if (destination.Length < sizeof(UInt<T>)) { bytesWritten = 0; return false; }
       var t = this; new ReadOnlySpan<byte>(&t, sizeof(UInt<T>)).CopyTo(destination);
-      destination.Slice(0, sizeof(UInt<T>)).Reverse();
       bytesWritten = sizeof(UInt<T>); return true;
     }
-    static bool IBinaryInteger<UInt<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out UInt<T> value)
+    bool IBinaryInteger<UInt<T>>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten)
     {
-      if (source.Length != sizeof(UInt<T>) || !isUnsigned) { value = default; return false; }
-      UInt<T> t; var s = new Span<byte>(&t, sizeof(UInt<T>)); source.CopyTo(s); value = t; return true;
+      if (destination.Length < sizeof(UInt<T>)) { bytesWritten = 0; return false; }
+      var t = this; new ReadOnlySpan<byte>(&t, sizeof(UInt<T>)).CopyTo(destination);
+      destination.Slice(0, sizeof(UInt<T>)).Reverse(); bytesWritten = sizeof(UInt<T>); return true;
     }
     static bool IBinaryInteger<UInt<T>>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out UInt<T> value)
     {
       if (source.Length != sizeof(UInt<T>) || !isUnsigned) { value = default; return false; }
+      UInt<T> t; var s = new Span<byte>(&t, sizeof(UInt<T>)); source.CopyTo(s); value = t; return true;
+    }
+    static bool IBinaryInteger<UInt<T>>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out UInt<T> value)
+    {
+      if (source.Length != sizeof(UInt<T>) || !isUnsigned) { value = default; return false; }
       UInt<T> t; var s = new Span<byte>(&t, sizeof(UInt<T>)); source.CopyTo(s); s.Reverse(); value = t; return true;
     }
+
     static bool INumberBase<UInt<T>>.TryConvertFromTruncating<TOther>(TOther value, out UInt<T> result) => TryConvertFrom<TOther>(value, out result, 0);
     static bool INumberBase<UInt<T>>.TryConvertFromSaturating<TOther>(TOther value, out UInt<T> result) => TryConvertFrom<TOther>(value, out result, 1);
     static bool INumberBase<UInt<T>>.TryConvertFromChecked<TOther>(TOther value, out UInt<T> result) => TryConvertFrom<TOther>(value, out result, 2);

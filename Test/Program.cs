@@ -12,145 +12,22 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // test();
+      ApplicationConfiguration.Initialize(); //test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
     }
+ 
+#if false // NET7_0
 
-#if NET6_0
     static void test()
     {
-      object p;
-      //p = __uint128.CreateTruncating("asdad");
-      p = __uint128.CreateTruncating(64ul);
-      p = __uint128.CreateTruncating((__uint32)32);
-      p = __uint128.CreateTruncating((rat)32);
-      p = __uint128.CreateTruncating((byte)1);
-      p = __uint128.CreateTruncating((decimal)1234567890);
-      p = __uint128.CreateTruncating(123.45f);
-      p = __float80.CreateTruncating(123.45);
-      p = __float80.CreateTruncating((decimal)123456.123);
-      p = __float80.CreateSaturating(Half.MaxValue);
-      p = rat.CreateChecked(MathF.PI);
-      p = rat.CreateChecked(Math.PI);
-      p = rat.CreateChecked(Float32.Pi);
-      p = rat.CreateChecked(Float64.Pi);
-      p = rat.CreateChecked(Float128.Pi);
-      p = rat.CreateChecked(Float256.Pi);
-      p = rat.CreateChecked(Float512.Pi);
-      p = __int128.CreateSaturating(uint.MaxValue);
-      p = __int128.CreateSaturating(__int64.MaxValue);
-      p = __int128.CreateSaturating(long.MaxValue);
-      p = __int128.CreateSaturating(long.MinValue);
-      p = __int128.CreateSaturating(ulong.MaxValue);
-      p = __int64.CreateSaturating(__int128.MaxValue);
-      p = __int64.CreateSaturating(__int128.MinValue);
-      p = __int64.CreateSaturating((BigInteger)125555555555555);
-      p = __uint128.CreateTruncating((BigInteger)125555555555555);
-      p = __int64.CreateSaturating((BigInt)125555555555555);
-      p = __uint128.CreateTruncating((BigInt)125555555555555);
-      p = __int64.CreateSaturating(nint.MinValue);
-      p = __uint128.CreateTruncating(nuint.MaxValue);
-      p = BigInt.CreateTruncating(879899);
-    }
-#endif
-
-#if NET7_0
-    static void test_conv()
-    {
-      object p;
-
-      p = Float128.CreateTruncating(Half.Pi);
-      p = Float128.CreateTruncating(float.Pi);
-      p = Float128.CreateTruncating(double.Pi);
-      p = Float128.CreateTruncating(Float32.Pi);
-      p = Float128.CreateTruncating(Float64.Pi);
-      p = Float128.CreateTruncating(Float80.Pi);
-      p = Float128.CreateTruncating(Float96.Pi);
-      p = Float128.CreateTruncating(Float128.Pi);
-      p = Float128.CreateTruncating(Float256.Pi);
-      p = Float128.CreateTruncating(Float512.Pi);
-      p = Float128.CreateTruncating(NFloat.Pi);
-     
-      p = Float128.CreateTruncating(Half.MaxValue);
-      p = Float128.CreateTruncating(float.MaxValue);
-      p = Float128.CreateTruncating(double.MaxValue);
-      p = Float128.CreateTruncating(Float80.MaxValue);
-      p = Float128.CreateTruncating(Float96.MaxValue);
-      p = Float128.CreateTruncating(UInt128.MaxValue);
-      p = Float128.CreateTruncating(Int128.MaxValue);
-      p = Float128.CreateTruncating(Int128.MinValue);
-
-      var x1 = Half.MaxValue; var s = Half.MaxValue.ToString();
-      var x2 = (double)Half.MaxValue;
-      p = __uint128.CreateTruncating(64ul);
-      p = __uint128.CreateTruncating((__uint32)32);
-      p = __uint128.CreateTruncating((rat)32);
-      p = __uint128.CreateTruncating((byte)1);
-      p = __uint128.CreateTruncating((decimal)1234567890);
-      p = __uint128.CreateTruncating(123.45f);
-      p = __float80.CreateTruncating(123.45);
-      p = __float80.CreateTruncating((decimal)123456.123);
-      p = __float80.CreateSaturating(Half.MaxValue);
-      
-      p = rat.CreateChecked(MathF.PI);
-      p = rat.CreateChecked(Math.PI);
-      p = rat.CreateChecked(Float32.Pi);
-      p = rat.CreateChecked(Float64.Pi);
-      p = rat.CreateChecked(Float128.Pi);
-      p = rat.CreateChecked(Float256.Pi);
-      p = rat.CreateChecked(Float512.Pi);
-
-      p = __int128.CreateSaturating(uint.MaxValue);
-      p = __int128.CreateSaturating(__int64.MaxValue);
-      p = __int128.CreateSaturating(long.MaxValue);
-      p = __int128.CreateSaturating(long.MinValue);
-      p = __int128.CreateSaturating(ulong.MaxValue);
-      p = __int64.CreateSaturating(__int128.MaxValue);
-      p = __int64.CreateSaturating(__int128.MinValue);
-      p = __int64.CreateSaturating((BigInteger)125555555555555);
-      p = __uint128.CreateTruncating((BigInteger)125555555555555);
-      p = __int64.CreateSaturating((BigInt)125555555555555);
-      p = __uint128.CreateTruncating((BigInt)125555555555555);
-      p = __int64.CreateSaturating(nint.MinValue);
-      p = __uint128.CreateTruncating(nuint.MaxValue);
-      p = BigInt.CreateTruncating(879899);
-
-      p = double.CreateTruncating(1.5f);
-      p = BigInteger.CreateTruncating(1.5f);
-      p = Half.CreateTruncating(1.5f);
-
-      p = __uint128.CreateTruncating(64ul);
-      p = __uint128.CreateTruncating((__uint32)32);
-      p = __uint128.CreateTruncating((rat)32);
-      p = __uint128.CreateTruncating((byte)1);
-      p = __uint128.CreateTruncating((decimal)1234567890);
-      p = __uint128.CreateTruncating(123.45f);
-     
-      p = float.CreateTruncating((__uint128)p);
-      p = float.CreateTruncating((__int128)6868768786);
-      p = double.CreateTruncating((Float80)123.456);
-      p = ulong.CreateTruncating((Float80)123.456);
-      p = UInt128.CreateTruncating((Float128)123.456);
-      p = Int128.CreateTruncating((Float32)123.456);
-      p = decimal.CreateTruncating((Float32)123.456);
-
-      //var t1 = Half.MaxValue.ToString();
-      //var t2 = Half.Parse(t1); if(t2 == Half.MaxValue) { }
-
-      p = Float128.CreateTruncating(1.5f);
-      p = __float80.CreateSaturating(1.5f);
-      var e = __uint128.CreateTruncating((__uint32)32);
-      var a = UInt128.CreateTruncating(123);
-      var b = __uint128.CreateTruncating(123);
-      var c = __uint128.CreateTruncating(a);
-      var d = __uint64.CreateTruncating(12345);
-      b = __uint128.CreateTruncating(d);
-      c = __uint128.CreateTruncating((__uint512)12345);
-    }
-    static void test()
-    {
+      test_int32();
+      test_uint32();
+      test_int64();
+      test_uint64();
+      test_int128();
+      test_uint128();
       test_conv();
       test_uint2();
       test_uint();
@@ -255,8 +132,7 @@ namespace Test
       d = 7.7; d = 12345.6789; d = 0.00012345; d = 1234567.0;
       d = 7.7f; d = 12345.6789f; d = 0.00012345f; d = 1234567.0f;
       e = 7.7f; e = 12345.6789f; e = 0.00012345f; e = 1234567.0f;
-
-
+       
       a = MathF.PI; a = a * a; a = -10000 * a;
       b = Float32.Pi; b = b * b; b = -10000 * b;
       d = Float64.Pi; d = d * d; d = -10000 * d;
@@ -308,7 +184,641 @@ namespace Test
       test128();
       test32();
       test64();
-    }    
+    }
+    static void test_int32()
+    {
+      var rnd = new Random(13);
+      for (int j = 0; j < 1000; j++)
+      {
+        var ia = rnd.Next(int.MinValue, int.MaxValue);
+        var ib = rnd.Next(int.MinValue, int.MaxValue);
+        var ic = rnd.Next(int.MinValue, int.MaxValue);
+        if (j == 0) { ia = ib = 0; }
+        else if (j == 1) ia = int.MaxValue;
+        else if (j == 2) ib = int.MaxValue;
+        else if (j == 3) ia = int.MinValue;
+        else if (j == 4) ib = int.MinValue;
+        Debug.Assert(((__int32)ia).Equals((__int32)ib) == ia.Equals(ib));
+        Debug.Assert(((__int32)ia).CompareTo((__int32)ib) == ia.CompareTo(ib));
+        Debug.Assert(__int32.Max(ia, ib) == int.Max(ia, ib));
+        Debug.Assert(__int32.MaxMagnitude(ia, ib) == int.MaxMagnitude(ia, ib));
+        Debug.Assert(__int32.MinMagnitude(ia, ib) == int.MinMagnitude(ia, ib));
+        Debug.Assert(((__int32)ia + (__int32)ib) == (ia + ib));
+        Debug.Assert(((__int32)ia - (__int32)ib) == (ia - ib));
+        Debug.Assert(((__int32)ia * (__int32)ib) == (ia * ib));
+        Debug.Assert(ib == 0 || ((__int32)ia / (__int32)ib) == (ia / ib));
+        Debug.Assert(ib == 0 || ((__int32)ia % (__int32)ib) == (ia % ib));
+        Debug.Assert(((__int32)ia | (__int32)ib) == (ia | ib));
+        Debug.Assert(((__int32)ia & (__int32)ib) == (ia & ib));
+        Debug.Assert(((__int32)ia ^ (__int32)ib) == (ia ^ ib));
+        Debug.Assert((~(__int32)ia ^ ~(__int32)ib) == (~ia ^ ~ib));
+        Debug.Assert((~(__int32)ia) == (~ia));
+        Debug.Assert(((__int32)ia >> j) == (ia >> j));
+        Debug.Assert(((__int32)ia << j) == (ia << j));
+        Debug.Assert(((__int32)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(((__int32)ia >> -j) == (ia >> -j));
+        Debug.Assert(((__int32)ia << -j) == (ia << -j));
+        Debug.Assert(((__int32)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(__int32.RotateLeft(ia, j) == int.RotateLeft(ia, j));
+        Debug.Assert(__int32.RotateRight(ia, j) == int.RotateRight(ia, j));
+        Debug.Assert(__int32.RotateLeft(ia, -j) == int.RotateLeft(ia, -j));
+        Debug.Assert(__int32.RotateRight(ia, -j) == int.RotateRight(ia, -j));
+        Debug.Assert(__int32.PopCount(ia) == int.PopCount(ia));
+        Debug.Assert(ib == 0 || __int32.DivRem(ia, ib).Quotient == int.DivRem(ia, ib).Quotient);
+        Debug.Assert(ib == 0 || __int32.DivRem(ia, ib).Remainder == int.DivRem(ia, ib).Remainder);
+        Debug.Assert(__int32.IsEvenInteger(ia) == int.IsEvenInteger(ia));
+        Debug.Assert(__int32.IsOddInteger(ia) == int.IsOddInteger(ia));
+        Debug.Assert(__int32.IsNegative(ia) == int.IsNegative(ia));
+        Debug.Assert(__int32.IsPow2(ia) == int.IsPow2(ia));
+        Debug.Assert(__int32.IsPositive(ia) == int.IsPositive(ia));
+        Debug.Assert(ia == int.MinValue || __int32.Abs(ia) == int.Abs(ia));
+        Debug.Assert(__int32.CopySign(ia, ib) == int.CopySign(ia, ib));
+        Debug.Assert(__int32.Clamp((__int32)ic, Math.Min(ib, ib), Math.Min(ib, ib)) == int.Clamp(ic, Math.Min(ib, ib), Math.Min(ib, ib)));
+        Debug.Assert(ia <= 0 || __int32.Log2(ia) == int.Log2(ia));
+        Debug.Assert(__int32.LeadingZeroCount(ia) == int.LeadingZeroCount(ia));
+        Debug.Assert(__int32.TrailingZeroCount(ia) == int.TrailingZeroCount(ia));
+        Debug.Assert(__int32.CreateChecked(ia) == (__int32)ia);
+        Debug.Assert(int.CreateChecked((__int32)ia) == ia);
+        test_num((__int32)ia, ia);
+        static void test_num<A, B>(A a, B b)
+          where A : IBinaryInteger<A>, ISignedNumber<A>, IMinMaxValue<A>
+          where B : IBinaryInteger<B>, ISignedNumber<B>, IMinMaxValue<B>
+        {
+          Debug.Assert(a.GetByteCount() == b.GetByteCount());
+          Debug.Assert(a.GetShortestBitLength() == b.GetShortestBitLength());
+          Span<byte> s1 = stackalloc byte[80]; var ss1 = s1.Slice(0, a.WriteBigEndian(s1));
+          Span<byte> s2 = stackalloc byte[80]; var ss2 = s2.Slice(0, b.WriteBigEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadBigEndian(ss1, false, out var aa);
+          B.TryReadBigEndian(ss2, false, out var bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, b.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadLittleEndian(ss1, false, out aa);
+          B.TryReadLittleEndian(ss2, false, out bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+        }
+      }
+    }
+    static void test_uint32()
+    {
+      var rnd = new Random(13);
+      for (int j = 0; j < 1000; j++)
+      {
+        var ia = unchecked((uint)rnd.Next(int.MinValue, int.MaxValue));
+        var ib = unchecked((uint)rnd.Next(int.MinValue, int.MaxValue));
+        var ic = unchecked((uint)rnd.Next(int.MinValue, int.MaxValue));
+        if (j == 0) { ia = ib = 0; }
+        else if (j == 1) ia = uint.MaxValue;
+        else if (j == 2) ib = uint.MaxValue;
+        Debug.Assert(((__uint32)ia).Equals((__uint32)ib) == ia.Equals(ib));
+        Debug.Assert(((__uint32)ia).CompareTo((__uint32)ib) == ia.CompareTo(ib));
+        Debug.Assert(__uint32.Max(ia, ib) == uint.Max(ia, ib));
+        Debug.Assert(__uint32.Min(ia, ib) == uint.Min(ia, ib));
+        Debug.Assert(((__uint32)ia + (__uint32)ib) == (ia + ib));
+        Debug.Assert(((__uint32)ia - (__uint32)ib) == (ia - ib));
+        Debug.Assert(((__uint32)ia * (__uint32)ib) == (ia * ib));
+        Debug.Assert(ib == 0 || ((__uint32)ia / (__uint32)ib) == (ia / ib));
+        Debug.Assert(ib == 0 || ((__uint32)ia % (__uint32)ib) == (ia % ib));
+        Debug.Assert(((__uint32)ia | (__uint32)ib) == (ia | ib));
+        Debug.Assert(((__uint32)ia & (__uint32)ib) == (ia & ib));
+        Debug.Assert(((__uint32)ia ^ (__uint32)ib) == (ia ^ ib));
+        Debug.Assert((~(__uint32)ia ^ ~(__uint32)ib) == (~ia ^ ~ib));
+        Debug.Assert((~(__uint32)ia) == (~ia));
+        Debug.Assert(((__uint32)ia >> j) == (ia >> j));
+        Debug.Assert(((__uint32)ia << j) == (ia << j));
+        Debug.Assert(((__uint32)ia >>> j) == (ia >>> j));
+        Debug.Assert(((__uint32)ia >> -j) == (ia >> -j));
+        Debug.Assert(((__uint32)ia << -j) == (ia << -j));
+        Debug.Assert(((__uint32)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(__uint32.RotateLeft(ia, j) == uint.RotateLeft(ia, j));
+        Debug.Assert(__uint32.RotateRight(ia, j) == uint.RotateRight(ia, j));
+        Debug.Assert(__uint32.RotateLeft(ia, -j) == uint.RotateLeft(ia, -j));
+        Debug.Assert(__uint32.RotateRight(ia, -j) == uint.RotateRight(ia, -j));
+        Debug.Assert(__uint32.PopCount(ia) == uint.PopCount(ia));
+        Debug.Assert(__uint32.Clamp((__uint32)ic, __uint32.Min(ib, ib), __uint32.Min(ib, ib)) == uint.Clamp(ic, Math.Min(ib, ib), Math.Min(ib, ib)));
+        Debug.Assert(__uint32.Log2(ia) == uint.Log2(ia));
+        Debug.Assert(__uint32.LeadingZeroCount(ia) == uint.LeadingZeroCount(ia));
+        Debug.Assert(__uint32.TrailingZeroCount(ia) == uint.TrailingZeroCount(ia));
+        Debug.Assert(ib == 0 || __uint32.DivRem(ia, ib).Quotient == uint.DivRem(ia, ib).Quotient);
+        Debug.Assert(ib == 0 || __uint32.DivRem(ia, ib).Remainder == uint.DivRem(ia, ib).Remainder);
+        Debug.Assert(__uint32.IsEvenInteger(ia) == uint.IsEvenInteger(ia));
+        Debug.Assert(__uint32.IsOddInteger(ia) == uint.IsOddInteger(ia));
+        Debug.Assert(__uint32.IsPow2(ia) == uint.IsPow2(ia));
+        Debug.Assert(__uint32.IsPow2(ia) == uint.IsPow2(ia));
+        Debug.Assert(__uint32.CreateChecked(ia) == (__uint32)ia);
+        Debug.Assert(uint.CreateChecked((__uint32)ia) == ia);
+        test_num((__uint32)ia, ia);
+        static void test_num<A, B>(A a, B b)
+          where A : IBinaryInteger<A>, IUnsignedNumber<A>, IMinMaxValue<A>//, INumberBase<A>
+          where B : IBinaryInteger<B>, IUnsignedNumber<B>, IMinMaxValue<B>//, INumberBase<B>
+        {
+          Debug.Assert(a.GetByteCount() == b.GetByteCount());
+          Debug.Assert(a.GetShortestBitLength() == b.GetShortestBitLength());
+          Span<byte> s1 = stackalloc byte[80]; var ss1 = s1.Slice(0, a.WriteBigEndian(s1));
+          Span<byte> s2 = stackalloc byte[80]; var ss2 = s2.Slice(0, b.WriteBigEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadBigEndian(ss1, true, out var aa);
+          B.TryReadBigEndian(ss2, true, out var bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, b.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadLittleEndian(ss1, true, out aa);
+          B.TryReadLittleEndian(ss2, true, out bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+        }
+      }
+    }
+    static void test_int64()
+    {
+      var rnd = new Random(13);
+      for (int j = 0; j < 1000; j++)
+      {
+        var ia = (long)rnd.Next(int.MinValue, int.MaxValue) * int.MaxValue;
+        var ib = (long)rnd.Next(int.MinValue, int.MaxValue) * int.MaxValue;
+        var ic = (long)rnd.Next(int.MinValue, int.MaxValue) * int.MaxValue;
+        if (j == 0) { ia = ib = 0; }
+        else if (j == 1) ia = long.MaxValue;
+        else if (j == 2) ib = long.MaxValue;
+        else if (j == 3) ia = long.MinValue;
+        else if (j == 4) ib = long.MinValue;
+        Debug.Assert(((__int64)ia).Equals((__int64)ib) == ia.Equals(ib));
+        Debug.Assert(((__int64)ia).CompareTo((__int64)ib) == ia.CompareTo(ib));
+        Debug.Assert(__int64.Max(ia, ib) == long.Max(ia, ib));
+        Debug.Assert(__int64.MaxMagnitude(ia, ib) == long.MaxMagnitude(ia, ib));
+        Debug.Assert(__int64.MinMagnitude(ia, ib) == long.MinMagnitude(ia, ib));
+        Debug.Assert(((__int64)ia + (__int64)ib) == (ia + ib));
+        Debug.Assert(((__int64)ia - (__int64)ib) == (ia - ib));
+        Debug.Assert(((__int64)ia * (__int64)ib) == (ia * ib));
+        Debug.Assert(ib == 0 || ((__int64)ia / (__int64)ib) == (ia / ib));
+        Debug.Assert(ib == 0 || ((__int64)ia % (__int64)ib) == (ia % ib));
+        Debug.Assert(((__int64)ia | (__int64)ib) == (ia | ib));
+        Debug.Assert(((__int64)ia & (__int64)ib) == (ia & ib));
+        Debug.Assert(((__int64)ia ^ (__int64)ib) == (ia ^ ib));
+        Debug.Assert((~(__int64)ia ^ ~(__int64)ib) == (~ia ^ ~ib));
+        Debug.Assert((~(__int64)ia) == (~ia));
+        Debug.Assert(((__int64)ia >> j) == (ia >> j));
+        Debug.Assert(((__int64)ia << j) == (ia << j));
+        Debug.Assert(((__int64)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(((__int64)ia >> -j) == (ia >> -j));
+        Debug.Assert(((__int64)ia << -j) == (ia << -j));
+        Debug.Assert(((__int64)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(__int64.RotateLeft(ia, j) == long.RotateLeft(ia, j));
+        Debug.Assert(__int64.RotateRight(ia, j) == long.RotateRight(ia, j));
+        Debug.Assert(__int64.RotateLeft(ia, -j) == long.RotateLeft(ia, -j));
+        Debug.Assert(__int64.RotateRight(ia, -j) == long.RotateRight(ia, -j));
+        Debug.Assert(__int64.PopCount(ia) == long.PopCount(ia));
+        Debug.Assert(ib == 0 || __int64.DivRem(ia, ib).Quotient == long.DivRem(ia, ib).Quotient);
+        Debug.Assert(ib == 0 || __int64.DivRem(ia, ib).Remainder == long.DivRem(ia, ib).Remainder);
+        Debug.Assert(__int64.IsEvenInteger(ia) == long.IsEvenInteger(ia));
+        Debug.Assert(__int64.IsOddInteger(ia) == long.IsOddInteger(ia));
+        Debug.Assert(__int64.IsNegative(ia) == long.IsNegative(ia));
+        Debug.Assert(__int64.IsPow2(ia) == long.IsPow2(ia));
+        Debug.Assert(__int64.IsPositive(ia) == long.IsPositive(ia));
+        Debug.Assert(ia == long.MinValue || __int64.Abs(ia) == long.Abs(ia));
+        Debug.Assert(__int64.CopySign(ia, ib) == long.CopySign(ia, ib));
+        Debug.Assert(__int64.Clamp((__int64)ic, Math.Min(ib, ib), Math.Min(ib, ib)) == long.Clamp(ic, Math.Min(ib, ib), Math.Min(ib, ib)));
+        Debug.Assert(ia <= 0 || __int64.Log2(ia) == long.Log2(ia));
+        Debug.Assert(__int64.LeadingZeroCount(ia) == long.LeadingZeroCount(ia));
+        Debug.Assert(__int64.TrailingZeroCount(ia) == long.TrailingZeroCount(ia));
+        Debug.Assert(__int64.CreateChecked(ia) == (__int64)ia);
+        Debug.Assert(long.CreateChecked((__int64)ia) == ia);
+        test_num((__int64)ia, ia);
+        static void test_num<A, B>(A a, B b)
+          where A : IBinaryInteger<A>, ISignedNumber<A>, IMinMaxValue<A>
+          where B : IBinaryInteger<B>, ISignedNumber<B>, IMinMaxValue<B>
+        {
+          Debug.Assert(a.GetByteCount() == b.GetByteCount());
+          Debug.Assert(a.GetShortestBitLength() == b.GetShortestBitLength());
+          Span<byte> s1 = stackalloc byte[80]; var ss1 = s1.Slice(0, a.WriteBigEndian(s1));
+          Span<byte> s2 = stackalloc byte[80]; var ss2 = s2.Slice(0, b.WriteBigEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadBigEndian(ss1, false, out var aa);
+          B.TryReadBigEndian(ss2, false, out var bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, b.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadLittleEndian(ss1, false, out aa);
+          B.TryReadLittleEndian(ss2, false, out bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+        }
+      }
+    }
+    static void test_uint64()
+    {
+      var rnd = new Random(13);
+      for (int j = 0; j < 1000; j++)
+      {
+        var ia = unchecked((ulong)rnd.Next(int.MinValue, int.MaxValue) * uint.MaxValue);
+        var ib = unchecked((ulong)rnd.Next(int.MinValue, int.MaxValue) * uint.MaxValue);
+        var ic = unchecked((ulong)rnd.Next(int.MinValue, int.MaxValue) * uint.MaxValue);
+        if (j == 0) { ia = ib = 0; }
+        else if (j == 1) ia = ulong.MaxValue;
+        else if (j == 2) ib = ulong.MaxValue;
+        Debug.Assert(((__uint64)ia).Equals((__uint64)ib) == ia.Equals(ib));
+        Debug.Assert(((__uint64)ia).CompareTo((__uint64)ib) == ia.CompareTo(ib));
+        Debug.Assert(__uint64.Max(ia, ib) == ulong.Max(ia, ib));
+        Debug.Assert(__uint64.Min(ia, ib) == ulong.Min(ia, ib));
+        Debug.Assert(((__uint64)ia + (__uint64)ib) == (ia + ib));
+        Debug.Assert(((__uint64)ia - (__uint64)ib) == (ia - ib));
+        Debug.Assert(((__uint64)ia * (__uint64)ib) == (ia * ib));
+        Debug.Assert(ib == 0 || ((__uint64)ia / (__uint64)ib) == (ia / ib));
+        Debug.Assert(ib == 0 || ((__uint64)ia % (__uint64)ib) == (ia % ib));
+        Debug.Assert(((__uint64)ia | (__uint64)ib) == (ia | ib));
+        Debug.Assert(((__uint64)ia & (__uint64)ib) == (ia & ib));
+        Debug.Assert(((__uint64)ia ^ (__uint64)ib) == (ia ^ ib));
+        Debug.Assert((~(__uint64)ia ^ ~(__uint64)ib) == (~ia ^ ~ib));
+        Debug.Assert((~(__uint64)ia) == (~ia));
+        Debug.Assert(((__uint64)ia >> j) == (ia >> j));
+        Debug.Assert(((__uint64)ia << j) == (ia << j));
+        Debug.Assert(((__uint64)ia >>> j) == (ia >>> j));
+        Debug.Assert(((__uint64)ia >> -j) == (ia >> -j));
+        Debug.Assert(((__uint64)ia << -j) == (ia << -j));
+        Debug.Assert(((__uint64)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(__uint64.RotateLeft(ia, j) == ulong.RotateLeft(ia, j));
+        Debug.Assert(__uint64.RotateRight(ia, j) == ulong.RotateRight(ia, j));
+        Debug.Assert(__uint64.RotateLeft(ia, -j) == ulong.RotateLeft(ia, -j));
+        Debug.Assert(__uint64.RotateRight(ia, -j) == ulong.RotateRight(ia, -j));
+        Debug.Assert(__uint64.PopCount(ia) == ulong.PopCount(ia));
+        Debug.Assert(__uint64.Clamp((__uint64)ic, __uint64.Min(ib, ib), __uint64.Min(ib, ib)) == ulong.Clamp(ic, Math.Min(ib, ib), Math.Min(ib, ib)));
+        Debug.Assert(__uint64.Log2(ia) == ulong.Log2(ia));
+        Debug.Assert(__uint64.LeadingZeroCount(ia) == (int)ulong.LeadingZeroCount(ia));
+        Debug.Assert(__uint64.TrailingZeroCount(ia) == (int)ulong.TrailingZeroCount(ia));
+        Debug.Assert(ib == 0 || __uint64.DivRem(ia, ib).Quotient == ulong.DivRem(ia, ib).Quotient);
+        Debug.Assert(ib == 0 || __uint64.DivRem(ia, ib).Remainder == ulong.DivRem(ia, ib).Remainder);
+        Debug.Assert(__uint64.IsEvenInteger(ia) == ulong.IsEvenInteger(ia));
+        Debug.Assert(__uint64.IsOddInteger(ia) == ulong.IsOddInteger(ia));
+        Debug.Assert(__uint64.IsPow2(ia) == ulong.IsPow2(ia));
+        Debug.Assert(__uint64.IsPow2(ia) == ulong.IsPow2(ia));
+        Debug.Assert(__uint64.CreateChecked(ia) == (__uint64)ia);
+        Debug.Assert(ulong.CreateChecked((__uint64)ia) == ia);
+        test_num((__uint64)ia, ia);
+        static void test_num<A, B>(A a, B b)
+          where A : IBinaryInteger<A>, IUnsignedNumber<A>, IMinMaxValue<A>//, INumberBase<A>
+          where B : IBinaryInteger<B>, IUnsignedNumber<B>, IMinMaxValue<B>//, INumberBase<B>
+        {
+          Debug.Assert(a.GetByteCount() == b.GetByteCount());
+          Debug.Assert(a.GetShortestBitLength() == b.GetShortestBitLength());
+          Span<byte> s1 = stackalloc byte[80]; var ss1 = s1.Slice(0, a.WriteBigEndian(s1));
+          Span<byte> s2 = stackalloc byte[80]; var ss2 = s2.Slice(0, b.WriteBigEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadBigEndian(ss1, true, out var aa);
+          B.TryReadBigEndian(ss2, true, out var bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, b.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadLittleEndian(ss1, true, out aa);
+          B.TryReadLittleEndian(ss2, true, out bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+        }
+      }
+    }
+    static void test_int128()
+    {
+      var rnd = new Random(13);
+      for (int j = 0; j < 1000; j++)
+      {
+        var ia = (Int128)rnd.Next(int.MinValue, int.MaxValue) * (Int128.MaxValue / int.MaxValue);
+        var ib = (Int128)rnd.Next(int.MinValue, int.MaxValue) * (Int128.MaxValue / int.MaxValue);
+        var ic = (Int128)rnd.Next(int.MinValue, int.MaxValue) * (Int128.MaxValue / int.MaxValue);
+        if (j == 0) { ia = ib = 0; }
+        else if (j == 1) ia = Int128.MaxValue;
+        else if (j == 2) ib = Int128.MaxValue;
+        else if (j == 3) ia = Int128.MinValue;
+        else if (j == 4) ib = Int128.MinValue;
+        Debug.Assert(((__int128)ia).Equals((__int128)ib) == ia.Equals(ib));
+        Debug.Assert(((__int128)ia).CompareTo((__int128)ib) == ia.CompareTo(ib));
+        Debug.Assert(__int128.Max(ia, ib) == Int128.Max(ia, ib));
+        Debug.Assert(__int128.MaxMagnitude(ia, ib) == Int128.MaxMagnitude(ia, ib));
+        Debug.Assert(__int128.MinMagnitude(ia, ib) == Int128.MinMagnitude(ia, ib));
+        Debug.Assert(((__int128)ia + (__int128)ib) == (ia + ib));
+        Debug.Assert(((__int128)ia - (__int128)ib) == (ia - ib));
+        //Debug.Assert(((__int128)ia * (__int128)ib) == (ia * ib));
+        //Debug.Assert(ib == 0 || ((__int128)ia % (__int128)ib) == (ia % ib));
+        Debug.Assert(ib == 0 || ((__int128)ia / (__int128)ib) == (ia / ib));
+        Debug.Assert(((__int128)ia | (__int128)ib) == (ia | ib));
+        Debug.Assert(((__int128)ia & (__int128)ib) == (ia & ib));
+        Debug.Assert(((__int128)ia ^ (__int128)ib) == (ia ^ ib));
+        Debug.Assert((~(__int128)ia ^ ~(__int128)ib) == (~ia ^ ~ib));
+        Debug.Assert((~(__int128)ia) == (~ia));
+        Debug.Assert(((__int128)ia >> j) == (ia >> j));
+        Debug.Assert(((__int128)ia << j) == (ia << j));
+        Debug.Assert(((__int128)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(((__int128)ia >> -j) == (ia >> -j));
+        Debug.Assert(((__int128)ia << -j) == (ia << -j));
+        Debug.Assert(((__int128)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(__int128.RotateLeft(ia, j) == Int128.RotateLeft(ia, j));
+        Debug.Assert(__int128.RotateRight(ia, j) == Int128.RotateRight(ia, j));
+        Debug.Assert(__int128.RotateLeft(ia, -j) == Int128.RotateLeft(ia, -j));
+        Debug.Assert(__int128.RotateRight(ia, -j) == Int128.RotateRight(ia, -j));
+        Debug.Assert(__int128.PopCount(ia) == Int128.PopCount(ia));
+        Debug.Assert(ib == 0 || __int128.DivRem(ia, ib).Quotient == Int128.DivRem(ia, ib).Quotient);
+        Debug.Assert(ib == 0 || __int128.DivRem(ia, ib).Remainder == Int128.DivRem(ia, ib).Remainder);
+        Debug.Assert(__int128.IsEvenInteger(ia) == Int128.IsEvenInteger(ia));
+        Debug.Assert(__int128.IsOddInteger(ia) == Int128.IsOddInteger(ia));
+        Debug.Assert(__int128.IsNegative(ia) == Int128.IsNegative(ia));
+        Debug.Assert(__int128.IsPow2(ia) == Int128.IsPow2(ia));
+        Debug.Assert(__int128.IsPositive(ia) == Int128.IsPositive(ia));
+        Debug.Assert(ia == Int128.MinValue || __int128.Abs(ia) == Int128.Abs(ia));
+        Debug.Assert(__int128.CopySign(ia, ib) == Int128.CopySign(ia, ib));
+        Debug.Assert(__int128.Clamp((__int128)ic, __int128.Min(ib, ib), __int128.Min(ib, ib)) == Int128.Clamp(ic, Int128.Min(ib, ib), Int128.Min(ib, ib)));
+        Debug.Assert(ia <= 0 || __int128.Log2(ia) == Int128.Log2(ia));
+        Debug.Assert(__int128.LeadingZeroCount(ia) == Int128.LeadingZeroCount(ia));
+        Debug.Assert(__int128.TrailingZeroCount(ia) == Int128.TrailingZeroCount(ia));
+        Debug.Assert(__int128.CreateChecked(ia) == (__int128)ia);
+        Debug.Assert(Int128.CreateChecked((__int128)ia) == ia);
+        test_num((__int128)ia, ia);
+        static void test_num<A, B>(A a, B b)
+          where A : IBinaryInteger<A>, ISignedNumber<A>, IMinMaxValue<A>
+          where B : IBinaryInteger<B>, ISignedNumber<B>, IMinMaxValue<B>
+        {
+          Debug.Assert(a.GetByteCount() == b.GetByteCount());
+          Debug.Assert(a.GetShortestBitLength() == b.GetShortestBitLength());
+          Span<byte> s1 = stackalloc byte[80]; var ss1 = s1.Slice(0, a.WriteBigEndian(s1));
+          Span<byte> s2 = stackalloc byte[80]; var ss2 = s2.Slice(0, b.WriteBigEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadBigEndian(ss1, false, out var aa);
+          B.TryReadBigEndian(ss2, false, out var bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, b.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadLittleEndian(ss1, false, out aa);
+          B.TryReadLittleEndian(ss2, false, out bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+        }
+      }
+    }
+    static void test_uint128()
+    {
+      var rnd = new Random(13);
+      for (int j = 0; j < 1000; j++)
+      {
+        var ia = (UInt128)rnd.Next(int.MinValue, int.MaxValue) * (UInt128.MaxValue / int.MaxValue);
+        var ib = (UInt128)rnd.Next(int.MinValue, int.MaxValue) * (UInt128.MaxValue / int.MaxValue);
+        var ic = (UInt128)rnd.Next(int.MinValue, int.MaxValue) * (UInt128.MaxValue / int.MaxValue);
+        if (j == 0) { ia = ib = 0; }
+        else if (j == 1) ia = UInt128.MaxValue;
+        else if (j == 2) ib = UInt128.MaxValue;
+        Debug.Assert(((__uint128)ia).Equals((__uint128)ib) == ia.Equals(ib));
+        Debug.Assert(((__uint128)ia).CompareTo((__uint128)ib) == ia.CompareTo(ib));
+        Debug.Assert(__uint128.Max(ia, ib) == UInt128.Max(ia, ib));
+        Debug.Assert(__uint128.Min(ia, ib) == UInt128.Min(ia, ib));
+        Debug.Assert(((__uint128)ia + (__uint128)ib) == (ia + ib));
+        Debug.Assert(((__uint128)ia - (__uint128)ib) == (ia - ib));
+        Debug.Assert(((__uint128)ia * (__uint128)ib) == (ia * ib));
+        Debug.Assert(ib == 0 || ((__uint128)ia / (__uint128)ib) == (ia / ib));
+        Debug.Assert(ib == 0 || ((__uint128)ia % (__uint128)ib) == (ia % ib));
+        Debug.Assert(((__uint128)ia | (__uint128)ib) == (ia | ib));
+        Debug.Assert(((__uint128)ia & (__uint128)ib) == (ia & ib));
+        Debug.Assert(((__uint128)ia ^ (__uint128)ib) == (ia ^ ib));
+        Debug.Assert((~(__uint128)ia ^ ~(__uint128)ib) == (~ia ^ ~ib));
+        Debug.Assert((~(__uint128)ia) == (~ia));
+        Debug.Assert(((__uint128)ia >> j) == (ia >> j));
+        Debug.Assert(((__uint128)ia << j) == (ia << j));
+        Debug.Assert(((__uint128)ia >>> j) == (ia >>> j));
+        Debug.Assert(((__uint128)ia >> -j) == (ia >> -j));
+        Debug.Assert(((__uint128)ia << -j) == (ia << -j));
+        Debug.Assert(((__uint128)ia >>> -j) == (ia >>> -j));
+        Debug.Assert(__uint128.RotateLeft(ia, j) == UInt128.RotateLeft(ia, j));
+        Debug.Assert(__uint128.RotateRight(ia, j) == UInt128.RotateRight(ia, j));
+        Debug.Assert(__uint128.RotateLeft(ia, -j) == UInt128.RotateLeft(ia, -j));
+        Debug.Assert(__uint128.RotateRight(ia, -j) == UInt128.RotateRight(ia, -j));
+        Debug.Assert(__uint128.PopCount(ia) == UInt128.PopCount(ia));
+        Debug.Assert(__uint128.Clamp((__uint128)ic, __uint128.Min(ib, ib), __uint128.Min(ib, ib)) == UInt128.Clamp(ic, UInt128.Min(ib, ib), UInt128.Min(ib, ib)));
+        Debug.Assert(__uint128.Log2(ia) == UInt128.Log2(ia));
+        Debug.Assert(__uint128.LeadingZeroCount(ia) == (int)UInt128.LeadingZeroCount(ia));
+        Debug.Assert(__uint128.TrailingZeroCount(ia) == (int)UInt128.TrailingZeroCount(ia));
+        Debug.Assert(ib == 0 || __uint128.DivRem(ia, ib).Quotient == UInt128.DivRem(ia, ib).Quotient);
+        Debug.Assert(ib == 0 || __uint128.DivRem(ia, ib).Remainder == UInt128.DivRem(ia, ib).Remainder);
+        Debug.Assert(__uint128.IsEvenInteger(ia) == UInt128.IsEvenInteger(ia));
+        Debug.Assert(__uint128.IsOddInteger(ia) == UInt128.IsOddInteger(ia));
+        Debug.Assert(__uint128.IsPow2(ia) == UInt128.IsPow2(ia));
+        Debug.Assert(__uint128.IsPow2(ia) == UInt128.IsPow2(ia));
+        Debug.Assert(__uint128.CreateChecked(ia) == (__uint128)ia);
+        Debug.Assert(UInt128.CreateChecked((__uint128)ia) == ia);
+        test_num((__uint128)ia, ia);
+        static void test_num<A, B>(A a, B b)
+          where A : IBinaryInteger<A>, IUnsignedNumber<A>, IMinMaxValue<A>//, INumberBase<A>
+          where B : IBinaryInteger<B>, IUnsignedNumber<B>, IMinMaxValue<B>//, INumberBase<B>
+        {
+          Debug.Assert(a.GetByteCount() == b.GetByteCount());
+          Debug.Assert(a.GetShortestBitLength() == b.GetShortestBitLength());
+          Span<byte> s1 = stackalloc byte[80]; var ss1 = s1.Slice(0, a.WriteBigEndian(s1));
+          Span<byte> s2 = stackalloc byte[80]; var ss2 = s2.Slice(0, b.WriteBigEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadBigEndian(ss1, true, out var aa);
+          B.TryReadBigEndian(ss2, true, out var bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, b.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          A.TryReadLittleEndian(ss1, true, out aa);
+          B.TryReadLittleEndian(ss2, true, out bb);
+          ss1 = s1.Slice(0, aa.WriteLittleEndian(s1));
+          ss2 = s2.Slice(0, bb.WriteLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+        }
+      }
+    }
+
+    static void test_conv()
+    {
+      var r = (BigRational)100 / 3;
+      var i = (int)r; i = checked((int)r);
+      var u = (uint)r;
+
+      var ii = (__int32)i;
+      var uu = (__uint32)u;
+
+      u = (uint)i; u = (uint)(-i);
+      uu = (__uint32)i; uu = (__uint32)(-i);
+
+      u = unchecked((uint)long.MaxValue);
+      uu = unchecked((__uint32)long.MaxValue);
+      u = unchecked((uint)long.MinValue);
+      uu = unchecked((__uint32)long.MinValue);
+
+      u = uint.MaxValue - 2; uu = uint.MaxValue - 2;
+      u++; uu++; Debug.Assert(u == uu);
+      u++; uu++; Debug.Assert(u == uu);
+      u++; uu++; Debug.Assert(u == uu);
+      u++; uu++; Debug.Assert(u == uu);
+      u++; uu++; Debug.Assert(u == uu);
+
+      //int.MinMagnitude
+
+      u = uint.Parse("123", NumberStyles.Integer);
+      uu = __uint32.Parse("123", NumberStyles.Integer); Debug.Assert(u == uu);
+      u = uint.Parse("0", NumberStyles.Integer);
+      uu = __uint32.Parse("0", NumberStyles.Integer); Debug.Assert(u == uu);
+      u = uint.Parse("ABC", NumberStyles.HexNumber);
+      uu = __uint32.Parse("ABC", NumberStyles.HexNumber); Debug.Assert(u == uu);
+      u = uint.Parse("0ABC", NumberStyles.HexNumber);
+      uu = __uint32.Parse("0ABC", NumberStyles.HexNumber); Debug.Assert(u == uu);
+
+      i = int.Parse("123", NumberStyles.Integer);
+      ii = __int32.Parse("123", NumberStyles.Integer); Debug.Assert(i == ii);
+      i = int.Parse("-123", NumberStyles.Integer);
+      ii = __int32.Parse("-123", NumberStyles.Integer); Debug.Assert(i == ii);
+      i = int.Parse("AbC", NumberStyles.HexNumber);
+      ii = __int32.Parse("AbC", NumberStyles.HexNumber); Debug.Assert(i == ii);
+
+      i = 3; ii = 3;
+      i = -3; ii = -3; //var ss = ii.ToString();
+
+      i++; ii++;
+      i++; ii++;
+      i++; ii++;
+      i++; ii++;
+      i++; ii++;
+      i--; ii--;
+      i--; ii--;
+      i--; ii--;
+      i--; ii--;
+
+      i = int.MaxValue - 2; ii = int.MaxValue - 2;
+      i++; ii++;
+      i++; ii++;
+      i++; ii++;
+      i++; ii++;
+      i++; ii++;
+      i--; ii--;
+      i--; ii--;
+      i--; ii--;
+      i--; ii--;
+      i--; ii--;
+
+      object p;
+
+      p = (uint)(__uint128)123;
+      p = (uint)(__int128)123;
+
+      p = uint.CreateTruncating(float.Pi);
+      p = uint.CreateTruncating(-float.Pi);
+      p = uint.CreateSaturating(-float.Pi);
+      p = ulong.CreateSaturating(-float.Pi);
+      p = UInt128.CreateSaturating(-float.Pi);
+      //p = uint.CreateChecked(-float.Pi);
+      p = (uint)float.Pi;
+      p = __uint128.CreateTruncating(float.Pi);
+      p = __uint128.CreateTruncating(float.Pi);
+      p = __uint128.CreateTruncating(-float.Pi);
+
+      p = Float128.CreateTruncating(Half.Pi);
+      p = Float128.CreateTruncating(float.Pi);
+      p = Float128.CreateTruncating(double.Pi);
+      p = Float128.CreateTruncating(Float32.Pi);
+      p = Float128.CreateTruncating(Float64.Pi);
+      p = Float128.CreateTruncating(Float80.Pi);
+      p = Float128.CreateTruncating(Float96.Pi);
+      p = Float128.CreateTruncating(Float128.Pi);
+      p = Float128.CreateTruncating(Float256.Pi);
+      p = Float128.CreateTruncating(Float512.Pi);
+      p = Float128.CreateTruncating(NFloat.Pi);
+
+      p = Float128.CreateTruncating(Half.MaxValue);
+      p = Float128.CreateTruncating(float.MaxValue);
+      p = Float128.CreateTruncating(double.MaxValue);
+      p = Float128.CreateTruncating(Float80.MaxValue);
+      p = Float128.CreateTruncating(Float96.MaxValue);
+      p = Float128.CreateTruncating(UInt128.MaxValue);
+      p = Float128.CreateTruncating(Int128.MaxValue);
+      p = Float128.CreateTruncating(Int128.MinValue);
+
+      var x1 = Half.MaxValue; var s = Half.MaxValue.ToString();
+      var x2 = (double)Half.MaxValue;
+      p = __uint128.CreateTruncating(64ul);
+      p = __uint128.CreateTruncating((__uint32)32);
+      p = __uint128.CreateTruncating((rat)32);
+      p = __uint128.CreateTruncating((byte)1);
+      p = __uint128.CreateTruncating((decimal)1234567890);
+      p = __uint128.CreateTruncating(123.45f);
+      p = __float80.CreateTruncating(123.45);
+      p = __float80.CreateTruncating((decimal)123456.123);
+      p = __float80.CreateSaturating(Half.MaxValue);
+
+      p = rat.CreateChecked(MathF.PI);
+      p = rat.CreateChecked(Math.PI);
+      p = rat.CreateChecked(Float32.Pi);
+      p = rat.CreateChecked(Float64.Pi);
+      p = rat.CreateChecked(Float128.Pi);
+      p = rat.CreateChecked(Float256.Pi);
+      p = rat.CreateChecked(Float512.Pi);
+
+      p = __int128.CreateSaturating(uint.MaxValue);
+      p = __int128.CreateSaturating(__int64.MaxValue);
+      p = __int128.CreateSaturating(long.MaxValue);
+      p = __int128.CreateSaturating(long.MinValue);
+      p = __int128.CreateSaturating(ulong.MaxValue);
+      p = __int64.CreateSaturating(__int128.MaxValue);
+      p = __int64.CreateSaturating(__int128.MinValue);
+      p = __int64.CreateSaturating((BigInteger)125555555555555);
+      p = __uint128.CreateTruncating((BigInteger)125555555555555);
+      p = __int64.CreateSaturating((BigInt)125555555555555);
+      p = __uint128.CreateTruncating((BigInt)125555555555555);
+      p = __int64.CreateSaturating(nint.MinValue);
+      p = __uint128.CreateTruncating(nuint.MaxValue);
+      p = BigInt.CreateTruncating(879899);
+
+      p = double.CreateTruncating(1.5f);
+      p = BigInteger.CreateTruncating(1.5f);
+      p = Half.CreateTruncating(1.5f);
+
+      p = __uint128.CreateTruncating(64ul);
+      p = __uint128.CreateTruncating((__uint32)32);
+      p = __uint128.CreateTruncating((rat)32);
+      p = __uint128.CreateTruncating((byte)1);
+      p = __uint128.CreateTruncating((decimal)1234567890);
+      p = __uint128.CreateTruncating(123.45f);
+
+      p = float.CreateTruncating((__uint128)p);
+      p = float.CreateTruncating((__int128)6868768786);
+      p = double.CreateTruncating((Float80)123.456);
+      p = ulong.CreateTruncating((Float80)123.456);
+      p = UInt128.CreateTruncating((Float128)123.456);
+      p = Int128.CreateTruncating((Float32)123.456);
+      p = decimal.CreateTruncating((Float32)123.456);
+
+      //var t1 = Half.MaxValue.ToString();
+      //var t2 = Half.Parse(t1); if(t2 == Half.MaxValue) { }
+
+      p = Float128.CreateTruncating(1.5f);
+      p = __float80.CreateSaturating(1.5f);
+      var e = __uint128.CreateTruncating((__uint32)32);
+      var a = UInt128.CreateTruncating(123);
+      var b = __uint128.CreateTruncating(123);
+      var c = __uint128.CreateTruncating(a);
+      var d = __uint64.CreateTruncating(12345);
+      b = __uint128.CreateTruncating(d);
+      c = __uint128.CreateTruncating((__uint512)12345);
+    }
     static void test_uint<A, B>(A a, B b)
       where A : IBinaryInteger<A>, IUnsignedNumber<A>, IMinMaxValue<A>
       where B : IBinaryInteger<B>, IUnsignedNumber<B>, IMinMaxValue<B>
@@ -327,7 +837,7 @@ namespace Test
     {
       __uint128 a, b, c; uint d; UInt128 e; string s;// rat r;
 
-      e = 0x1234abcd; a = 0x1234abcd; 
+      e = 0x1234abcd; a = 0x1234abcd;
       for (int i = 0; i < 200; i++)
       {
         e = UInt128.RotateRight(e, 1);
@@ -355,7 +865,7 @@ namespace Test
 
       e = 3252426434636; var aa = UInt128.DivRem(e, 234242);
       a = 3252426434636; var bb = __uint128.DivRem(a, 234242); Debug.Assert(aa.Quotient == bb.Quotient && aa.Remainder == bb.Remainder);
-       
+
       e = 10; aa = UInt128.DivRem(e, 3);
       a = 10; bb = __uint128.DivRem(a, 3); Debug.Assert(aa.Quotient == bb.Quotient && aa.Remainder == bb.Remainder);
 
@@ -379,7 +889,7 @@ namespace Test
       a = ~a; Debug.Assert(e == a);
       e ^= e; a ^= a; Debug.Assert(e == a);
 
-      
+
       a = 1000; b = 88; d = (uint)b; c = a * b + 1;
       a++; a--; a = UInt64.MaxValue; a = UInt64.MinValue; a = UInt128.MaxValue;
       a = 100; b = 200; if (a > b) { }
@@ -445,20 +955,20 @@ namespace Test
       e = -e; a = -a;
       e = 0xe3424242;
       a = 0xe3424242; // todo: ToString("x")
-      
+
       Debug.Assert(Int128.Log2(4) == __int128.Log2(4));
       Debug.Assert(Int128.Log2(0) == __int128.Log2(0));
       Debug.Assert(Int128.Log2(897897978978997997) == __int128.Log2(897897978978997997));
- 
+
       Debug.Assert(Int128.IsPow2(4) == __int128.IsPow2(4));
       Debug.Assert(Int128.IsPow2(-4) == __int128.IsPow2(-4));
       Debug.Assert(Int128.IsPow2(-89797997) == __int128.IsPow2(-89797997));
-      Debug.Assert(Int128.IsPow2(897897978978997997)== __int128.IsPow2(897897978978997997));
+      Debug.Assert(Int128.IsPow2(897897978978997997) == __int128.IsPow2(897897978978997997));
       Debug.Assert(Int128.IsPow2(-897897978978997997) == __int128.IsPow2(-897897978978997997));
 
       e = 3252426434636; var s = Int128.DivRem(e, 234242);
       a = 3252426434636; var t = __int128.DivRem(a, 234242); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
-       
+
       e = -3252426434636; s = Int128.DivRem(e, 234242);
       a = -3252426434636; t = __int128.DivRem(a, 234242); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
 
@@ -468,7 +978,7 @@ namespace Test
       s = Int128.DivRem(-100, -3); t = __int128.DivRem(-100, -3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
       s = Int128.DivRem(0, 3); t = __int128.DivRem(0, 3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
       s = Int128.DivRem(0, -3); t = __int128.DivRem(0, -3); Debug.Assert(s.Quotient == t.Quotient && s.Remainder == t.Remainder);
-       
+
       a = 1234; b = -1234; d = (int)b;
       b = 0; d = (int)b; a = long.MaxValue; b = long.MinValue;
       a = Int128.MaxValue; b = Int128.MinValue;

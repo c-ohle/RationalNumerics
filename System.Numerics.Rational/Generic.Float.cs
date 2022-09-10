@@ -63,13 +63,13 @@ namespace System.Numerics.Generic
     {
       var cpu = main_cpu;
       var e = cpu.fpush(&value, desc); cpu.pow(2, e); cpu.mul();
-      var a = default(int); cpu.ipop(&a, 0x0001); return a;
+      int a; cpu.ipop(&a, sizeof(int)); return a;
     }
     public static explicit operator long(Float<T> value)
     {
       var cpu = main_cpu;
       var e = cpu.fpush(&value, desc); cpu.pow(2, e); cpu.mul();
-      var a = default(long); cpu.ipop(&a, 0x0002); return a;
+      long a; cpu.ipop(&a, sizeof(long)); return a;
     }
     public static explicit operator Half(Float<T> value)
     { 
@@ -409,19 +409,6 @@ namespace System.Numerics.Generic
     #region private
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static int desc = CPU.fdesc(sizeof(T));
-    //static Float()
-    //{
-    //  int size = sizeof(T), sbi; if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
-    //  switch (size)
-    //  {
-    //    case 2: sbi = 5; break;
-    //    case 4: sbi = 8; break;
-    //    case 8: sbi = 11; break;
-    //    case <= 16: sbi = 15; break;
-    //    default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break;
-    //  }
-    //  desc = sizeof(T) | ((((size << 3) - sbi) - 1) << 16);
-    //}
     #endregion
 
     static bool TryConvertFrom<TOther>(TOther value, out Float<T> result, int f)
@@ -491,12 +478,12 @@ namespace System.Numerics.Generic
     int IFloatingPoint<Float<T>>.GetSignificandByteCount() => sizeof(T); // ??? like float and double // (((desc >> 16) + 1) >> 3) + 1; // 2
     int IFloatingPoint<Float<T>>.GetExponentShortestBitLength()
     {
-      int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc; //, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
+      int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc; 
       var t = this; var h = *(uint*)(((byte*)&t) + (size - 4));
-      var ExponentBias = (0xffffffff >> (32 - ec)) >> 2; //1023 127
-      var BiasedExponent = (h & 0x7fffffff) >> (32 - ec);
-      var Exponent = unchecked((int)BiasedExponent - (int)ExponentBias);
-      var bl = Exponent >= 0 ? 32 - int.LeadingZeroCount(Exponent) : 33 - int.LeadingZeroCount((int)(~Exponent));
+      var eb = (0xffffffff >> (32 - ec)) >> 2; //ExponentBias 1023 127
+      var be = (h & 0x7fffffff) >> (32 - ec); //BiasedExponent
+      var ex = unchecked((int)be - (int)eb); //Exponent
+      var bl = ex >= 0 ? 32 - int.LeadingZeroCount(ex) : 33 - int.LeadingZeroCount((int)(~ex));
       return bl;
     }
     static bool INumberBase<Float<T>>.TryConvertFromTruncating<TOther>(TOther value, out Float<T> result) => TryConvertFrom<TOther>(value, out result, 0);
