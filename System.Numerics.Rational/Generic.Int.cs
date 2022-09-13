@@ -191,14 +191,6 @@ namespace System.Numerics.Generic
       Debug.Assert(min <= max);
       return CPU.icmp(&value, &min, sizeof(T)) < 0 ? min : CPU.icmp(&value, &max, sizeof(T)) > 0 ? max : value;
     }
-    public static Int<T> RotateLeft(Int<T> value, int rotateAmount)
-    {
-      return (value << rotateAmount) | shr(value , ((sizeof(T) << 3) - rotateAmount));
-    }
-    public static Int<T> RotateRight(Int<T> value, int rotateAmount)
-    {
-      return shr(value, rotateAmount) | (value << ((sizeof(T) << 3) - rotateAmount));
-    }
 
     public static int Sign(Int<T> value)
     {
@@ -328,38 +320,34 @@ namespace System.Numerics.Generic
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
 
-    static bool TryConvertFrom<TOther>(TOther value, out Int<T> result, int f)
-    {
-      Unsafe.SkipInit(out result); return main_cpu.conv(
-        Unsafe.AsPointer(ref result), typeof(Int<T>), Unsafe.SizeOf<Int<T>>(),
-        Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
-    }
-    static bool TryConvertTo<TOther>(Int<T> value, out TOther result, int f)
-    {
-      Unsafe.SkipInit(out result); return main_cpu.conv(
-        Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
-        Unsafe.AsPointer(ref value), typeof(Int<T>), Unsafe.SizeOf<Int<T>>(), f);
-    }
-    static Int<T> shr(Int<T> value, int shiftAmount) // >>>
-    {
-      var n = sizeof(T) << 3; shiftAmount &= n - 1;
-      var cpu = main_cpu; cpu.upush(&value, sizeof(T));
-      cpu.shr(shiftAmount); cpu.upop(&value, sizeof(T)); return value;
-    }
+    //static bool TryConvertFrom<TOther>(TOther value, out Int<T> result, Conv f)
+    //{
+    //  return main_cpu.conv(value, out result, f);
+    //  //Unsafe.SkipInit(out result); return main_cpu.conv(
+    //  //  Unsafe.AsPointer(ref result), typeof(Int<T>), Unsafe.SizeOf<Int<T>>(),
+    //  //  Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
+    //}
+    //static bool TryConvertTo<TOther>(Int<T> value, out TOther result, Conv f)
+    //{
+    //  return main_cpu.conv(value, out result, f);
+    //  //Unsafe.SkipInit(out result); return main_cpu.conv(
+    //  //  Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
+    //  //  Unsafe.AsPointer(ref value), typeof(Int<T>), Unsafe.SizeOf<Int<T>>(), f);
+    //}
 #if NET6_0
     public static Int<T> CreateTruncating<TOther>(TOther value) where TOther : struct
     {
-      Int<T> a; if (TryConvertFrom(value, out a, 0)) return a;
+      Int<T> a; if (main_cpu.cast(value, out a, 0)) return a;
       throw new NotSupportedException();
     }
     public static Int<T> CreateSaturating<TOther>(TOther value) where TOther : struct
     {
-      Int<T> a; if (TryConvertFrom(value, out a, 1)) return a;
+      Int<T> a; if (main_cpu.cast(value, out a, 1)) return a;
       throw new NotSupportedException();
     }
     public static Int<T> CreateChecked<TOther>(TOther value) where TOther : struct
     {
-      Int<T> a; if (TryConvertFrom(value, out a, 2)) return a;
+      Int<T> a; if (main_cpu.cast(value, out a, 2)) return a;
       throw new NotSupportedException();
     }
 
@@ -367,17 +355,17 @@ namespace System.Numerics.Generic
 #if NET7_0
     public static Int<T> CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      Int<T> a; if (TryConvertFrom(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
+      Int<T> a; if (main_cpu.cast(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
       throw new NotSupportedException();
     }
     public static Int<T> CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      Int<T> a; if (TryConvertFrom(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
+      Int<T> a; if (main_cpu.cast(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
       throw new NotSupportedException();
     }
     public static Int<T> CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      Int<T> a; if (TryConvertFrom(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
+      Int<T> a; if (main_cpu.cast(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
       throw new NotSupportedException();
     }
 #endif  
@@ -396,8 +384,21 @@ namespace System.Numerics.Generic
       var cpu = main_cpu; cpu.ipush(&value, sizeof(T));
       Int128 a; cpu.ipop(&a, sizeof(Int128)); return a;
     }
-    public static Int<T> operator >>>(Int<T> value, int shiftAmount) => shr(value, shiftAmount);
-    
+    public static Int<T> operator >>>(Int<T> value, int shiftAmount)
+    {
+      var n = sizeof(T) << 3; shiftAmount &= n - 1;
+      var cpu = main_cpu; cpu.upush(&value, sizeof(T));
+      cpu.shr(shiftAmount); cpu.upop(&value, sizeof(T)); return value;
+    }
+    public static Int<T> RotateLeft(Int<T> value, int rotateAmount)
+    {
+      return (value << rotateAmount) | (value >>> ((sizeof(T) << 3) - rotateAmount));
+    }
+    public static Int<T> RotateRight(Int<T> value, int rotateAmount)
+    {
+      return (value >>> rotateAmount) | (value << ((sizeof(T) << 3) - rotateAmount));
+    }
+
     static int INumberBase<Int<T>>.Radix => 2;
     static Int<T> IBinaryNumber<Int<T>>.AllBitsSet => NegativeOne;
     static Int<T> IAdditiveIdentity<Int<T>, Int<T>>.AdditiveIdentity => default;
@@ -423,15 +424,9 @@ namespace System.Numerics.Generic
     static Int<T> IBinaryInteger<Int<T>>.LeadingZeroCount(Int<T> value) => LeadingZeroCount(value);
     int IBinaryInteger<Int<T>>.GetShortestBitLength()
     {
-      var value = this;
-      if (this >= 0)
-      {
-        return (sizeof(T) << 3) - LeadingZeroCount(this);
-      }
-      else
-      {
-        return (sizeof(T) << 3) + 1 - LeadingZeroCount(~this);
-      }
+      return this >= 0 ? //todo: opt.
+       (sizeof(T) << 3) - LeadingZeroCount(this) :
+       (sizeof(T) << 3) + 1 - LeadingZeroCount(~this);
     }
 
     int IBinaryInteger<Int<T>>.GetByteCount() => sizeof(T);
@@ -458,12 +453,12 @@ namespace System.Numerics.Generic
       Int<T> t; var s = new Span<byte>(&t, sizeof(Int<T>)); source.CopyTo(s); s.Reverse(); value = t; return true;
     }
 
-    static bool INumberBase<Int<T>>.TryConvertFromTruncating<TOther>(TOther value, out Int<T> result) => TryConvertFrom<TOther>(value, out result, 0);
-    static bool INumberBase<Int<T>>.TryConvertFromSaturating<TOther>(TOther value, out Int<T> result) => TryConvertFrom<TOther>(value, out result, 1);
-    static bool INumberBase<Int<T>>.TryConvertFromChecked<TOther>(TOther value, out Int<T> result) => TryConvertFrom<TOther>(value, out result, 2);
-    static bool INumberBase<Int<T>>.TryConvertToChecked<TOther>(Int<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 2);
-    static bool INumberBase<Int<T>>.TryConvertToSaturating<TOther>(Int<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 1);
-    static bool INumberBase<Int<T>>.TryConvertToTruncating<TOther>(Int<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 0);
+    static bool INumberBase<Int<T>>.TryConvertFromTruncating<TOther>(TOther value, out Int<T> result) => main_cpu.cast(value, out result, 0);
+    static bool INumberBase<Int<T>>.TryConvertFromSaturating<TOther>(TOther value, out Int<T> result) => main_cpu.cast(value, out result, 1);
+    static bool INumberBase<Int<T>>.TryConvertFromChecked<TOther>(TOther value, out Int<T> result) => main_cpu.cast(value, out result, 2);
+    static bool INumberBase<Int<T>>.TryConvertToTruncating<TOther>(Int<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 0);
+    static bool INumberBase<Int<T>>.TryConvertToSaturating<TOther>(Int<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 1);
+    static bool INumberBase<Int<T>>.TryConvertToChecked<TOther>(Int<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 2);
   }
 #endif
 

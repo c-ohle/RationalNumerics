@@ -305,49 +305,37 @@ namespace System.Numerics.Generic
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
 
-    static bool TryConvertFrom<TOther>(TOther value, out UInt<T> result, int f)
-    {
-      Unsafe.SkipInit(out result); return main_cpu.conv(
-        Unsafe.AsPointer(ref result), typeof(UInt<T>), Unsafe.SizeOf<UInt<T>>(),
-        Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
-    }
-    static bool TryConvertTo<TOther>(UInt<T> value, out TOther result, int f)
-    {
-      Unsafe.SkipInit(out result); return main_cpu.conv(
-        Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
-        Unsafe.AsPointer(ref value), typeof(UInt<T>), Unsafe.SizeOf<UInt<T>>(), f);
-    }
 #if NET6_0
     public static UInt<T> CreateTruncating<TOther>(TOther value) where TOther : struct 
     {
-      UInt<T> a; if (TryConvertFrom(value, out a, 0)) return a;
+      UInt<T> a; if (main_cpu.cast(value, out a, 0)) return a;
       throw new NotSupportedException();
     }
     public static UInt<T> CreateSaturating<TOther>(TOther value) where TOther : struct
     {
-      UInt<T> a; if (TryConvertFrom(value, out a, 1)) return a;
+      UInt<T> a; if (main_cpu.cast(value, out a, 1)) return a;
       throw new NotSupportedException();
     }
     public static UInt<T> CreateChecked<TOther>(TOther value) where TOther : struct
     {
-      UInt<T> a; if (TryConvertFrom(value, out a, 2)) return a;
+      UInt<T> a; if (main_cpu.cast(value, out a, 2)) return a;
       throw new NotSupportedException();
     }
 #endif
 #if NET7_0
     public static UInt<T> CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      UInt<T> a; if (TryConvertFrom(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
+      UInt<T> a; if (main_cpu.cast(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
       throw new NotSupportedException();
     }
     public static UInt<T> CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      UInt<T> a; if (TryConvertFrom(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
+      UInt<T> a; if (main_cpu.cast(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
       throw new NotSupportedException();
     }
     public static UInt<T> CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      UInt<T> a; if (TryConvertFrom(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
+      UInt<T> a; if (main_cpu.cast(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
       throw new NotSupportedException();
     }
 #endif
@@ -429,12 +417,12 @@ namespace System.Numerics.Generic
       UInt<T> t; var s = new Span<byte>(&t, sizeof(UInt<T>)); source.CopyTo(s); s.Reverse(); value = t; return true;
     }
 
-    static bool INumberBase<UInt<T>>.TryConvertFromTruncating<TOther>(TOther value, out UInt<T> result) => TryConvertFrom<TOther>(value, out result, 0);
-    static bool INumberBase<UInt<T>>.TryConvertFromSaturating<TOther>(TOther value, out UInt<T> result) => TryConvertFrom<TOther>(value, out result, 1);
-    static bool INumberBase<UInt<T>>.TryConvertFromChecked<TOther>(TOther value, out UInt<T> result) => TryConvertFrom<TOther>(value, out result, 2);
-    static bool INumberBase<UInt<T>>.TryConvertToTruncating<TOther>(UInt<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 0);
-    static bool INumberBase<UInt<T>>.TryConvertToSaturating<TOther>(UInt<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 1);
-    static bool INumberBase<UInt<T>>.TryConvertToChecked<TOther>(UInt<T> value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 2);
+    static bool INumberBase<UInt<T>>.TryConvertFromTruncating<TOther>(TOther value, out UInt<T> result) => main_cpu.cast(value, out result, 0);
+    static bool INumberBase<UInt<T>>.TryConvertFromSaturating<TOther>(TOther value, out UInt<T> result) => main_cpu.cast(value, out result, 1);
+    static bool INumberBase<UInt<T>>.TryConvertFromChecked<TOther>(TOther value, out UInt<T> result) => main_cpu.cast(value, out result, 2);
+    static bool INumberBase<UInt<T>>.TryConvertToTruncating<TOther>(UInt<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 0);
+    static bool INumberBase<UInt<T>>.TryConvertToSaturating<TOther>(UInt<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 1);
+    static bool INumberBase<UInt<T>>.TryConvertToChecked<TOther>(UInt<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 2);
   }
 #endif
 

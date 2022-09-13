@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -15,7 +14,6 @@ namespace System.Numerics
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly partial struct BigRational : IComparable<BigRational>, IComparable, IEquatable<BigRational>, IFormattable, ISpanFormattable
   {
-#if true
     /// <summary></summary>
     public override string ToString() { return ToString(null, null); }
     /// <summary></summary>
@@ -60,241 +58,6 @@ namespace System.Numerics
       charsWritten = 0; if (dest.Length >= 2) new Span<char>(&dig, 2).CopyTo(dest); return false; nan:
       var s = info.NaNSymbol.AsSpan(); s.CopyTo(dest); charsWritten = s.Length; return true;
     }
-#else
-    /// <summary></summary>
-    public string ToString2() { return ToString2(null, null); }
-    /// <summary></summary>
-    public string ToString2(string? format, IFormatProvider? formatProvider = null)
-    {
-      //if (format != default && format.Length == 0) formatProvider = NumberFormatInfo.InvariantInfo;
-      Span<char> sp = stackalloc char[032 + 16];
-      if (!TryFormat2(sp, out var ns, format, formatProvider))
-      {
-        int n; sp.Slice(0, 2).CopyTo(new Span<char>(&n, 2)); sp = stackalloc char[n];
-        TryFormat2(sp, out ns, format, formatProvider); Debug.Assert(ns != 0);
-      }
-      return sp.Slice(0, ns).ToString();
-    }
-    /// <summary></summary>
-    public bool TryFormat2(Span<char> dest, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-      var dbg = provider == null && format.Length == 0 && format != default;
-      var fmt = 'H'; int dig = 0, rnd = 0; var info = dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.GetInstance(provider);
-      if (format.Length != 0)
-      {
-        var f = (fmt = format[0]) & ~0x20; var d = format.Length > 1;
-        if (d) dig = int.Parse(format.Slice(1));//, NumberFormatInfo.InvariantInfo);
-        if (f == 'E') { rnd = dig; if (rnd == 0 && !d) rnd = 6; dig = rnd + 1; }
-        if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
-      }
-      if (dig == 0) dig = 032; // DecimalDigits;
-      if (dest.Length < dig + 16) { dig += 16; goto ex; }
-      var cpu = main_cpu; uint u, v;
-      if (dbg && this.p != null && (((u = this.p[0] & 0x3fffffff) == 0 || (u + 3 > this.p.Length)) || (((v = this.p[u + 1]) == 0)) || (u + v + 2 > this.p.Length)))
-        cpu.push(float.NaN); // debug safety to allow core debug
-      else cpu.push(this);
-      var n = tos(dest, cpu, fmt, dig, rnd, 0, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
-      if (n < 0) { dig = -n; goto ex; }
-      charsWritten = n; return true; ex:
-      charsWritten = 0; if (dest.Length >= 2) new Span<char>(&dig, 2).CopyTo(dest); return false;
-    }
-     
-    /// <summary>
-    /// Converts the numeric value of the current <see cref="BigRational"/> instance to its equivalent string representation.
-    /// </summary>
-    /// <remarks>
-    /// Behavior like <see cref="double.ToString()"/> 
-    /// with decimal notation in the range E-04 to E+16<br/>
-    /// Special: Maximum number of digits is by default 32.<br/>
-    /// Special: Repetions marked with apostrophe (') like 1/3 as "0.'3" instead of "0.333333…"<br/>
-    /// Special: Overflow marked with trailing dots (…) like: "1.234567…"<br/>
-    /// </remarks>
-    /// <returns>The string representation of the current <see cref="BigRational"/> value.</returns>
-    public override readonly string ToString()
-    {
-      Span<char> sp = stackalloc char[64];
-      TryFormat(sp, out var ns); return sp.Slice(0, ns).ToString();
-    }
-    /// <summary>
-    /// Formats this <see cref="BigRational"/> instance to
-    /// its string representation by using the specified format and culture-specific
-    /// format information.
-    /// </summary>
-    /// <remarks>
-    /// Supported numeric standard formats: C, D, E, F, G, N, P, R like "E10".<br/>
-    /// Custom formats supported, currently in the range +/- E-308 .. E+308 like "0.#####"<br/>
-    /// Standard formats F, E with unlimited many digits like: "F1000" for 1000 decimal digits.<br/>
-    /// Special R: behavior like <see cref="double.ToString(string?)"/> with fallback to format Q to ensure the round-trip to an identical number.<br/>
-    /// Additional: Format S for Standard (no rounding, repetion checks, overflow sign) with specific maximum overall digits count.<br/>
-    /// Additional: Format Q for Fraction notation returns "1/3" instead of "0.333333…"<br/>
-    /// Additional: Format L for Large, like F without trailing zeros: L5 returns 1.5 instead of 1.50000…<br/>
-    /// </remarks>
-    /// <param name="format">A standard or custom numeric format string.</param>
-    /// <param name="provider">An object that supplies culture-specific formatting information.</param>
-    /// <returns>The string representation of the current <see cref="BigRational"/> value as
-    /// specified by the format and provider parameters.</returns>
-    public readonly string ToString(string? format, IFormatProvider? provider = default)
-    {
-      var dbg = format != default && format.Length == 0; // DebuggerDisplay("", null);
-      if (dbg && isnan(this.p)) return NumberFormatInfo.InvariantInfo.NaNSymbol; // extra safety at debug, allows deep stack debug
-      //if (dbg) { var cpu = task_cpu; var p = cpu.sp; if (p != null) { cpu.sp = null; var t = ToString(format, provider); cpu.sp = p; return t + " [" + ((long)p - (long)&p).ToString() + "]"; } }
-      provider ??= dbg ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo;
-      Span<char> sp = stackalloc char[100]; char[]? a = null; string? s = null;
-      for (int ns, na = 1024; ;)
-      {
-        if (TryFormat(sp, out ns, format, provider)) s = sp.Slice(0, ns).ToString();
-        if (a != null) ArrayPool<char>.Shared.Return(a);
-        if (s != null) break; sp = a = ArrayPool<char>.Shared.Rent(na = Math.Max(ns, na << 1));
-      }
-    #region debug ext
-      if (dbg && p != null && (p[0] & 0x40000000) != 0) // debug nd info ₀ ₀  
-      {
-        var x = p[0] & 0x3fffffff; var i = s.Length; s += ' ' + x.ToString() + ' ' + p[x + 1].ToString();
-        fixed (char* p = s) for (int n = s.Length; i < n; i++) { var c = s[i]; if (c != ' ') p[i] = (char)('₀' + (c - '0')); }
-      }
-      static bool isnan(uint[] p) // only for extra safety at debug, to debug into the core
-      {
-        if (p == null) return false;
-        var u = p[0] & 0x3fffffff; if (u == 0 || u + 3 > p.Length) return true;
-        var v = p[u + 1]; if (v == 0 || u + v + 2 > p.Length) return true;
-        if (u != 1 && p[u] == 0) return true;
-        if (p[u + v + 1] == 0) return true;
-        return false;
-      }
-    #endregion
-      return s;
-    }
-    /// <summary>
-    /// Formats this <see cref="BigRational"/> instance into a span of characters.
-    /// </summary>
-    /// <remarks>
-    /// Supported formats see: <see cref="BigRational.ToString(string?, IFormatProvider?)"/>.
-    /// </remarks>
-    /// <param name="destination">The span of characters into which this instance will be written.</param>
-    /// <param name="charsWritten">When the method returns, contains the length of the span in number of characters.</param>
-    /// <param name="format">A read-only span of characters that specifies the format for the formatting operation.</param>
-    /// <param name="provider">An object that supplies culture-specific formatting information about value.</param>
-    /// <returns>true if the formatting operation succeeds; false otherwise.</returns>
-    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
-    {
-      int digs = 32, round = -1, emin = -4, emax = +16; char fc = '\0', tc = fc;
-      //if (format != default && format.Length == 0) digs = DefaultDigits; //todo: check makes sense for debug?
-      var info = NumberFormatInfo.GetInstance(provider);
-      if (format.Length != 0)
-      {
-        if (char.IsLetter(tc = format[0]) && (format.Length == 1 || (char.IsNumber(format[1]) && int.TryParse(format.Slice(1), out round))))
-          switch (fc = char.ToUpper(tc))
-          {
-            case 'Q': fc = 'R'; digs = 0; round = -1; goto def; // fraction form "1/3"
-            case 'R':
-            case 'S':
-              if (round == -1) goto def; digs = round; round = -1;
-              if (digs > destination.Length && destination.Length == 100) { charsWritten = digs; return false; } //hint for ToString(,)
-              goto def;
-            case 'F':
-            case 'L': // like F without trailing zeros
-              if (round == -1) round = info.NumberDecimalDigits;
-              digs = Math.Max(0, ILog10(this)) + 1 + round;
-              if (digs > destination.Length && destination.Length == 100) { charsWritten = digs; return false; } //hint for ToString(,)
-              emin = -(emax = int.MaxValue); goto def;
-            case 'E':
-              if (round == -1) round = 6; digs = 1 + round;
-              if (digs + 32 > destination.Length && destination.Length == 100) { charsWritten = digs + 32; return false; } //hint for ToString(,)
-              emax = -(emin = int.MaxValue); goto def;
-              //case 'X': throw new FormatException(nameof(format));
-          }
-        var e = ILog10(this);
-        if (e <= 28) return ((decimal)this).TryFormat(destination, out charsWritten, format, provider);
-        if (e <= 308) return ((double)this).TryFormat(destination, out charsWritten, format, provider);
-      }
-    def:
-      var pb = digs <= 0x8000 ? null : ArrayPool<char>.Shared.Rent(digs);
-      var ts = stackalloc char[pb != null ? 0 : digs];
-      var ss = pb != null ? pb.AsSpan().Slice(0, digs) : new Span<char>(ts, digs);
-      var cpu = main_cpu; cpu.push(this);
-      if (round >= 0) cpu.rnd(fc == 'E' ? Math.Max(0, round - ILog10(this)) : round);
-      cpu.tos(ss, out var ns, out var exp, out var rep, round == -1);
-      var ofl = ns == ss.Length && round == -1;
-      ss = ss.Slice(0, ns); var ws = destination;
-      if (ns == 0 && digs != 0) { aps(ref ws, info.NaNSymbol); goto ret; }
-      if (ofl && fc == 'R') { cpu.push(this); fra(ref ws, cpu); goto ret; }
-      if (Sign(this) < 0) aps(ref ws, info.NegativeSign);
-      if (emax > emin)
-      {
-        if (!ofl && rep == -1 && exp + 1 >= ns && exp <= emax) // 0, 1, 1234, 1234000
-        {
-          aps(ref ws, ss.Slice(0, ns)); apc(ref ws, '0', exp - ns + 1);
-          if (fc == 'F' && round > 0) { aps(ref ws, info.NumberDecimalSeparator); apc(ref ws, '0', round); }
-          goto ret;
-        }
-        if (exp >= 0 && exp <= emax && exp + 1 < ns && (rep == -1 || rep >= exp + 1)) // 123.456, 1.2'34
-        {
-          aps(ref ws, ss.Slice(0, exp + 1));
-          aps(ref ws, info.NumberDecimalSeparator);
-          if (rep == -1) { aps(ref ws, ss.Slice(exp + 1)); if (fc == 'F') apc(ref ws, '0', round - (ns - exp - 1)); }
-          else { aps(ref ws, ss.Slice(exp + 1, rep - exp - 1)); apc(ref ws, '\'', 1); aps(ref ws, ss.Slice(rep)); }
-          if (ofl) apc(ref ws, '…', 1); goto ret;
-        }
-        if (exp < 0 && exp >= emin) // 0.00123, 0.0012'3
-        {
-          int u = -exp - 1, v = 0; if (rep != -1) while (u - v > 0 && ss[ss.Length - 1 - v] == '0') v++; //prime reciprocals, 1/17 0,0'58..70
-          apc(ref ws, '0', 1); aps(ref ws, info.NumberDecimalSeparator); apc(ref ws, '0', u - v);
-          if (rep == -1) { aps(ref ws, ss); if (fc == 'F') apc(ref ws, '0', round - (ns - exp - 1)); }
-          else { aps(ref ws, ss.Slice(0, rep)); apc(ref ws, '\'', 1); apc(ref ws, '0', v); aps(ref ws, ss.Slice(rep, ss.Length - rep - v)); }
-          if (ofl) apc(ref ws, '…', 1); goto ret;
-        }
-      }
-      if (rep == 0)
-      {
-        apc(ref ws, '0', 1); aps(ref ws, info.NumberDecimalSeparator);
-        apc(ref ws, '\'', 1); aps(ref ws, ss); exp++;
-      }
-      else
-      {
-        aps(ref ws, ss.Slice(0, 1));
-        if (ns > 1 || fc == 'E')
-        {
-          aps(ref ws, info.NumberDecimalSeparator);
-          if (rep == -1) aps(ref ws, ss.Slice(1));
-          else { aps(ref ws, ss.Slice(1, rep - 1)); apc(ref ws, '\'', 1); aps(ref ws, ss.Slice(rep)); }
-        }
-      }
-      if (fc == 'E') apc(ref ws, '0', digs - ss.Length);
-      if (ofl) apc(ref ws, '…', 1);
-      if (exp != 0 || fc == 'E')
-      {
-        apc(ref ws, fc == tc ? 'E' : 'e', 1);
-        aps(ref ws, exp >= 0 ? info.PositiveSign : info.NegativeSign);
-        if (Math.Abs(exp).TryFormat(ws, out var nw, fc == 'E' ? "000" : "00")) ws = ws.Slice(nw); else ws = default;
-      }
-    ret:
-      if (pb != null) ArrayPool<char>.Shared.Return(pb);
-      if (ws == default) { charsWritten = 0; return false; }
-      charsWritten = destination.Length - ws.Length; return true;
-      static void aps(ref Span<char> ws, ReadOnlySpan<char> s)
-      {
-        if (s.TryCopyTo(ws)) ws = ws.Slice(s.Length); else ws = default;
-      }
-      static void apc(ref Span<char> ws, char c, int n)
-      {
-        if (n <= 0) return; if (n > ws.Length) { ws = default; return; }
-        ws.Slice(0, n).Fill(c); ws = ws.Slice(n);
-      }
-      static void fra(ref Span<char> ws, CPU cpu)
-      {
-        var s = cpu.sign(); int x = 0; cpu.mod(8);
-        for (int i = 2; ;)
-        {
-          if (x + 3 > ws.Length) { cpu.pop(i); ws = default; return; }
-          cpu.push(10u); cpu.div(); cpu.mod(); cpu.swp();
-          ws[x++] = (char)('0' + cpu.popi());
-          if (cpu.sign() != 0) continue;
-          cpu.pop(); if (--i == 0) break; ws[x++] = '/';
-        }
-        if (s < 0) ws[x++] = '-'; ws.Slice(0, x).Reverse(); ws = ws.Slice(x);
-      }
-    }
-#endif
     /// <summary>
     /// Converts the representation of a number, contained in the specified read-only 
     /// span of characters to its <see cref="BigRational"/> equivalent.
@@ -3520,7 +3283,8 @@ namespace System.Numerics
       }
       internal void upush(void* p, int size)
       {
-        uint n = unchecked((uint)size >> 2), i; Debug.Assert(size >= 4 && (size & 3) == 0); // for now
+        if (size < 4) { push(size == 1 ? (uint)*(byte*)p : (uint)*(ushort*)p); return; }
+        uint n = unchecked((uint)size >> 2), i; Debug.Assert((size & 3) == 0); // for now
         fixed (uint* v = rent(n + 3))
         {
           copy(v + 1, (uint*)p, n); for (i = n; i > 1 && v[i] == 0; i--) ;
@@ -3529,18 +3293,28 @@ namespace System.Numerics
       }
       internal void upop(void* p, int size)
       {
-        Debug.Assert(size >= 4 && (size & 3) == 0); // for now //ipop(p, 0x100 | (size >> 2));
-        var pp = (uint*)p; uint n = unchecked((uint)size) >> 2; var s = sign();
-        if (s == 0) { pop(); copy(pp, n); return; } // zero
+        var f = (size & 0xffff) >> 2;
+        if (f == 0)
+        {
+          int t; ipop(&t, 0x10000004); var m = size >> 28;
+          if ((size & 3) == 1) *(byte*)p = m == 0 ? unchecked((byte)t) : m == 1 ? unchecked((byte)(t < 0 ? 0 : t > 0xff ? 0xff : t)) : checked((byte)t);
+          else *(ushort*)p = m == 0 ? unchecked((ushort)t) : m == 1 ? unchecked((ushort)(t < 0 ? 0 : t > 0xffff ? 0xffff : t)) : checked((ushort)t);
+          return;
+        }
+        var v = (uint*)p; uint n = unchecked((uint)f); Debug.Assert((size & 3) == 0);
+        var s = sign(); if (s == 0) { pop(); copy(v, n); return; } // zero
         rnd(0, 0); uint b = msb(), c = n << 5;
-        if (b > c) { } //pop(); new Span<uint>(&p, size >> 2).Fill(0xffffffff); return; } //maxvalue
+        if ((b > c || s < 0) && (f = size >> 28) != 0)
+        {
+          pop(); if (f == 2) throw new OverflowException();
+          for (b = s > 0 ? 0xffffffff : 0, c = 0; c < n; c++) v[c] = b; return;
+        }
         fixed (uint* t = this.p[this.i - 1])
         {
-          var u = t[0] & 0x3fffffff; //if (u == 1) *pp = t[1]; else //most common case 
-          copy(pp, t + 1, n < u ? n : u);
-          if (n > u) copy(pp + u, n - u); // for (uint i = u; i < n; i++) pp[i] = 0;
+          copy(v, t + 1, n < (b = t[0] & 0x3fffffff) ? n : b);
+          if (n > b) copy(v + b, n - b);
         }
-        pop(); if (s < 0) ineg(p, size);
+        pop(); if (s < 0) ineg(p, size & 0xffff);
       }
       internal static bool ineg(void* p, int size)
       {
@@ -3571,7 +3345,8 @@ namespace System.Numerics
       }
       internal void ipush(void* p, int size)
       {
-        var f = size >> 2; Debug.Assert(size >= 4 && (size & 3) == 0);
+        if (size < 4) { push(size == 1 ? (int)*(sbyte*)p : (int)*(short*)p); return; }
+        var f = size >> 2; Debug.Assert((size & 3) == 0); // for now
         uint n = unchecked((uint)f), s = ((uint*)p)[n - 1] & 0x80000000;
         fixed (uint* v = rent(n + 3))
         {
@@ -3583,82 +3358,35 @@ namespace System.Numerics
       }
       internal void ipop(void* p, int size)
       {
-        var f = size >> 2; Debug.Assert(size >= 4 && (size & 3) == 0);
-        var pp = (uint*)p; uint n = unchecked((uint)f); var s = sign();
-        if (s == 0) { pop(); copy(pp, n); return; }
-        rnd(0, 0); uint b = msb(), c = n << 5;
-        if (b >= c)
+        var f = (size & 0xffff) >> 2;
+        if (f == 0)
         {
-          //if (!(b == c && s < 0 && ipt()))
-          //{
-          //  pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
-          //  n--; //todo: opt. small types after tests
-          //  if (s > 0) { for (c = 0; c < n; c++) pp[c] = 0xffffffff; pp[n] = 0x7fffffff; } // MaxValue
-          //  else pp[n] = 0x80000000; // MinValue
-          //  return;
-          //}
+          int m = size >> 28, t; ipop(&t, 0x10000004);
+          if ((size & 3) == 1) *(sbyte*)p = m == 0 ? unchecked((sbyte)t) : m == 1 ? unchecked((sbyte)(t < sbyte.MinValue ? sbyte.MinValue : t > sbyte.MaxValue ? sbyte.MaxValue : t)) : checked((sbyte)t);
+          else *(short*)p = m == 0 ? unchecked((short)t) : m == 1 ? unchecked((short)(t < short.MinValue ? short.MinValue : t > short.MaxValue ? short.MaxValue : t)) : checked((short)t);
+          return;
+        }
+        var v = (uint*)p; uint n = unchecked((uint)f); Debug.Assert((size & 3) == 0);
+        var s = sign(); if (s == 0) { pop(); copy(v, n); return; }
+        rnd(0, 0); uint b = msb(), c = n << 5;
+        if ((b > c || b == c && s > 0) && (f = size >> 28) != 0)
+        {
+          pop(); if (f == 2) throw new OverflowException();
+          for (b = s > 0 ? 0xffffffff : 0, n--, c = 0; c < n; c++) v[c] = b;
+          v[n] = s > 0 ? 0x7fffffff : 0x80000000; return;
         }
         fixed (uint* t = this.p[this.i - 1])
         {
-          var l = t[0] & 0x3fffffff;
-          copy(pp, t + 1, n < l ? n : l);
-          if (n > l) copy(pp + l, n - l);
-          if (s < 0) { ineg(p, size); } // pp[0] |= 0x80000000; }
+          copy(v, t + 1, n < (b = t[0] & 0x3fffffff) ? n : b);
+          if (n > b) copy(v + b, n - b);
         }
-        pop(); //if (s < 0) ineg(p, size);
+        pop(); if (s < 0) ineg(p, size & 0xffff);
       }
-      //internal void ipop(void* p, int size)
-      //{
-      //  var f = size >> 2; Debug.Assert(size >= 4 && (size & 3) == 0); //Debug.Assert((f & 0x0100) == 0);
-      //  var pp = (uint*)p; uint n = unchecked((uint)f) & 0xff; var s = sign();
-      //  if ((f & 0x0100) != 0 && s <= 0) //uint <= 0 -> 0 incl. NaN 
-      //  {
-      //    if ((f & 0x1000) != 0 && s < 0 || isnan()) { pop(); throw new OverflowException(); } //todo: message text range       
-      //    if ((f & 0x0200) == 0 || s == 0) { pop(); copy(pp, n); return; } else { }
-      //  }
-      //  rnd(0, 0); uint b = msb(), c = n << 5;
-      //  if (b >= c)
-      //  {
-      //    if ((f & 0x0100) == 0) //si
-      //    {
-      //      if (((f & 0x1000) == 0) || !(b == c && s < 0 && ipt()))
-      //      {
-      //        pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
-      //        n--; //todo: opt. small types after tests
-      //        if (s > 0) { for (c = 0; c < n; c++) pp[c] = 0xffffffff; pp[n] = 0x7fffffff; } // MaxValue
-      //        else pp[n] = 0x80000000; // MinValue
-      //        return;
-      //      }
-      //    }
-      //    else //ui
-      //    {
-      //      if (b > c)
-      //      {
-      //        pop(); if ((f & 0x1000) != 0) throw new OverflowException(); //todo: message text range
-      //        for (c = 0; c < n; c++) pp[c] = 0xffffffff; //MaxValue
-      //        return;
-      //      }
-      //    }
-      //  }
-      //  fixed (uint* t = this.p[this.i - 1])
-      //  {
-      //    var u = t[0] & 0x3fffffff;
-      //    if (u == 1) *pp = t[1]; //most common case 
-      //    else copy(pp, t + 1, n < u ? n : u);
-      //    copy(pp + u, n - u);// for (uint i = u; i < n; i++) pp[i] = 0;
-      //  }
-      //  pop(); if (s > 0) return;
-      //  for (b = 0, c = 1; b < n; b++) //todo: opt. small std types after tests
-      //  {
-      //    var x = unchecked((ulong)(pp[b] ^ 0xffffffff) + c);
-      //    pp[b] = unchecked((uint)x); c = unchecked((uint)(x >> 32));
-      //  }
-      //}
       #endregion
       #region fp support    
       internal static int fdesc(int size)
       {
-        int sbi; Debug.Assert((size & 1) == 0); //for now //if ((size & 1) != 0) throw new NotSupportedException(nameof(T));
+        int sbi; Debug.Assert((size & 1) == 0); //for now 
         switch (size)
         {
           case 2: sbi = 5; break;
@@ -3704,18 +3432,6 @@ namespace System.Numerics
           }
         return 0;
       }
-      //internal static int fcmp(void* a, void* b, int desc) //todo: remove
-      //{
-      //  int size = desc & 0xffff; //, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
-      //  var ha = (uint*)(((byte*)a) + (size - 4));
-      //  var hb = (uint*)(((byte*)b) + (size - 4));
-      //  var sa = *ha == 0 ? 0 : (*ha & 0x80000000) != 0 ? -1 : +1;
-      //  var sb = *hb == 0 ? 0 : (*hb & 0x80000000) != 0 ? -1 : +1;
-      //  if (sa != sb) return Math.Sign(sa - sb); if (sa == 0) return 0;
-      //  var cpu = main_cpu; int eb = cpu.fpush((uint*)b, desc), ea = cpu.fpush((uint*)a, desc);
-      //  if (ea != eb) { cpu.pop(2); return Math.Sign(ea - eb) * sa; }
-      //  ea = cpu.cmp(); cpu.pop(2); return ea;
-      //}
       internal static bool fequ(void* a, void* b, int desc)
       {
         uint n = unchecked((uint)desc & 0xffff), c, i = 0;
@@ -3788,8 +3504,8 @@ namespace System.Numerics
         var a = msb(); if (a == 0) { } // 0, nan
         var c = unchecked((int)a - (int)b);
         var d = (desc >> 16) + 1; // 52 + 1
-        var e = d - c; Debug.Assert(e > 0);
-        shl(e); mod(0); swp(); pop(); //todo: noshift cases //var f = msb(); if (f != d) { }
+        var e = d - c; if (e <= 0) { } //todo: opt. handle? Debug.Assert(e > 0);
+        shl(e); mod(0); swp(); pop();
         fpop(p, -e, desc);
       }
       #endregion
@@ -3814,87 +3530,62 @@ namespace System.Numerics
       ex: pop(); return default;
       }
       #endregion
-      internal bool conv(void* pd, Type td, int sd, void* ps, Type ts, int ss, int f)
+      static class tdesc<T>
       {
-        if (ts.IsPrimitive)
+        internal static readonly int desc;
+        static tdesc()
         {
-          switch (Type.GetTypeCode(ts))
+          var t = typeof(T); desc = Unsafe.SizeOf<T>(); //todo: opt. t.IsPrimitive, ...
+          if (t == typeof(int) || t == typeof(long) || t == typeof(sbyte) || t == typeof(short) || t == typeof(nint)) return;
+          if (t == typeof(uint) || t == typeof(ulong) || t == typeof(byte) || t == typeof(char) || t == typeof(ushort) || t == typeof(nuint)) { desc |= (1 << 28); return; }
+          if (t == typeof(float) | t == typeof(double) || t == typeof(Half) || t == typeof(NFloat)) { desc = fdesc(desc) | (2 << 28); return; }
+          if (t == typeof(decimal)) { desc |= (3 << 28); return; }
+          if (t == typeof(BigRational)) { desc |= (4 << 28); return; }
+          if (t == typeof(BigRational.Integer)) { desc |= (5 << 28); return; }
+          if (t == typeof(BigInteger)) { desc |= (6 << 28); return; }
+          if (t.IsGenericType)
           {
-            case TypeCode.Byte: push((uint)*(byte*)ps); break;
-            case TypeCode.Char:
-            case TypeCode.UInt16: push((uint)*(ushort*)ps); break;
-            case TypeCode.UInt32: push(*(uint*)ps); break;
-            case TypeCode.UInt64: push(*(ulong*)ps); break;
-            case TypeCode.SByte: push((int)*(sbyte*)ps); break;
-            case TypeCode.Int16: push((int)*(short*)ps); break;
-            case TypeCode.Int32: push(*(int*)ps); break;
-            case TypeCode.Int64: push(*(long*)ps); break;
-            case TypeCode.Single: push(*(float*)ps); break;
-            case TypeCode.Double: push(*(double*)ps); break;
-            //case TypeCode.Decimal: push(*(decimal*)ps); break;
-            case TypeCode.Object:
-              if (ts == typeof(nint)) { push((long)*(uint*)ps); break; }
-              if (ts == typeof(nuint)) { push((ulong)*(nuint*)ps); break; }
-              return false;
-            default: return false;
+            var g = t.GetGenericTypeDefinition();
+            if (g == typeof(Generic.Int<>)) return;
+            if (g == typeof(Generic.UInt<>)) { desc |= (1 << 28); return; }
+            if (g == typeof(Generic.Float<>)) { desc = fdesc(desc) | (2 << 28); return; }
+            if (g == typeof(Generic.Decimal<>)) { desc |= (3 << 28); return; }
           }
-        }
-        else if (ts.IsGenericType)
-        {
-          ts = ts.GetGenericTypeDefinition();
-          if (ts == typeof(Generic.Float<>)) { var e = fpush(ps, (ss >> 16) != 0 ? ss : fdesc(ss)); pow(2, e); mul(); }
-          else if (ts == typeof(Generic.UInt<>)) upush(ps, ss);
-          else if (ts == typeof(Generic.Int<>)) ipush(ps, ss);
-          else return false;
-        }
-        else
-        {
-          if (ts == typeof(BigRational)) push(Unsafe.AsRef<BigRational>(ps));
-          else if (ts == typeof(Integer)) push(Unsafe.AsRef<Integer>(ps));
-          else if (ts == typeof(decimal)) push(*(decimal*)ps);
-          else if (ts == typeof(Half)) push((float)*(Half*)ps);
-          else if (ts == typeof(BigInteger)) push(Unsafe.AsRef<BigInteger>(ps));
 #if NET7_0
-          else if (ts == typeof(Int128)) ipush(ps, ss);
-          else if (ts == typeof(UInt128)) upush(ps, ss);
-          else if (ts == typeof(NFloat)) push(Unsafe.AsRef<NFloat>(ps));
+          if (t == typeof(Int128)) return;
+          if (t == typeof(UInt128)) { desc |= (1 << 28); return; }
 #endif
-          else return false;
+          desc = 0;
         }
-        //////////////////
-        if (td.IsPrimitive)
+      }
+      internal bool cast<A, B>(A a, out B b, int f)
+      {
+        int ta = tdesc<A>.desc; var u = Unsafe.AsPointer(ref a); Unsafe.SkipInit(out b); //Debug.Assert(ta != 0 && tb != 0);
+        var tb = tdesc<B>.desc; var v = Unsafe.AsPointer(ref b);
+        switch (ta >> 28)
         {
-          switch (Type.GetTypeCode(td))
-          {
-            case TypeCode.Byte: *(byte*)pd = unchecked((byte)popi()); return true;
-            case TypeCode.Char:
-            case TypeCode.UInt16: *(ushort*)pd = unchecked((ushort)popi()); return true;
-            case TypeCode.UInt32: upop(pd, sd); return true;
-            case TypeCode.UInt64: upop(pd, sd); return true;
-            case TypeCode.SByte: *(sbyte*)pd = unchecked((sbyte)popi()); return true;
-            case TypeCode.Int16: *(short*)pd = unchecked((short)popi()); return true;
-            case TypeCode.Int32: *(int*)pd = popi(); return true;
-            case TypeCode.Int64: ipop(pd, sd); return true;
-            case TypeCode.Single: *(float*)pd = (float)popd(); return true;
-            case TypeCode.Double: *(double*)pd = popd(); return true;
-            default: return false;
-          }
+          case 0: ipush(u, ta & 0x0000ffff); break;
+          case 1: upush(u, ta & 0x0000ffff); break;
+          case 2:
+            if ((tb >> 28) == 2) { fpop(v, fpush(u, ta & 0x0fffffff), tb & 0x0fffffff); return true; }
+            pow(2, fpush(u, ta & 0x0fffffff)); mul(); break;
+          case 3: push(*(decimal*)u); break; //todo: mpush
+          case 4: push(Unsafe.AsRef<BigRational>(u)); break;
+          case 5: push(Unsafe.AsRef<BigRational.Integer>(u)); break;
+          case 6: push(Unsafe.AsRef<BigInteger>(u)); break;
+          default: return false;
         }
-        if (td.IsGenericType)
+        switch (tb >> 28)
         {
-          td = td.GetGenericTypeDefinition();
-          if (td == typeof(Generic.Float<>)) { fpop(pd, sd); return true; }
-          if (td == typeof(Generic.UInt<>)) { upop(pd, sd); return true; }
-          if (td == typeof(Generic.Int<>)) { ipop(pd, sd); return true; }
+          case 0: ipop(v, (tb & 0x0000ffff) | (f << 28)); return true;
+          case 1: upop(v, (tb & 0x0000ffff) | (f << 28)); return true;
+          case 2: fpop(v, tb & 0x0fffffff); return true;
+          case 3: Unsafe.AsRef<decimal>(v) = popm(); return true; //todo: mpop
+          case 4: Unsafe.AsRef<BigRational>(v) = popr(); return true;
+          case 5: Unsafe.AsRef<BigRational.Integer>(v) = (BigRational.Integer)popr(); return true;
+          case 6: Unsafe.AsRef<BigInteger>(v) = (BigInteger)popr(); return true;
+          default: pop(); return false;
         }
-        if (td == typeof(BigRational)) { Unsafe.AsRef<BigRational>(pd) = popr(); return true; }
-        if (td == typeof(Integer)) { Unsafe.AsRef<Integer>(pd) = (Integer)popr(); return true; }
-        if (td == typeof(decimal)) { *(decimal*)pd = popm(); return true; }
-#if NET7_0
-        if (td == typeof(Int128)) { ipop(pd, sd); return true; }
-        if (td == typeof(UInt128)) { upop(pd, sd); return true; }
-#endif
-        pop(); return false;
       }
       #endregion experimental
     }

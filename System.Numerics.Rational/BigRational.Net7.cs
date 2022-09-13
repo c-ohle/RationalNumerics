@@ -22,17 +22,17 @@ namespace System.Numerics
   {
     public static BigRational CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      BigRational a; if (TryConvertFrom(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
+      BigRational a; if (main_cpu.cast(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
       throw new NotSupportedException();
     }
     public static BigRational CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      BigRational a; if (TryConvertFrom(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
+      BigRational a; if (main_cpu.cast(value, out a, 1) || TOther.TryConvertToSaturating(value, out a)) return a;
       throw new NotSupportedException();
     }
     public static BigRational CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
-      BigRational a; if (TryConvertFrom(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
+      BigRational a; if (main_cpu.cast(value, out a, 2) || TOther.TryConvertToChecked(value, out a)) return a;
       throw new NotSupportedException();
     }
    
@@ -1029,12 +1029,12 @@ namespace System.Numerics
       return Tanh(x, MaxDigits);
     }
 
-    static bool INumberBase<BigRational>.TryConvertFromTruncating<TOther>(TOther value, out BigRational result) => TryConvertFrom<TOther>(value, out result, 0);
-    static bool INumberBase<BigRational>.TryConvertFromSaturating<TOther>(TOther value, out BigRational result) => TryConvertFrom<TOther>(value, out result, 1);
-    static bool INumberBase<BigRational>.TryConvertFromChecked<TOther>(TOther value, out BigRational result) => TryConvertFrom<TOther>(value, out result, 2);
-    static bool INumberBase<BigRational>.TryConvertToTruncating<TOther>(BigRational value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 0);
-    static bool INumberBase<BigRational>.TryConvertToSaturating<TOther>(BigRational value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 1);
-    static bool INumberBase<BigRational>.TryConvertToChecked<TOther>(BigRational value, out TOther result) where TOther : default => TryConvertTo<TOther>(value, out result, 2);
+    static bool INumberBase<BigRational>.TryConvertFromTruncating<TOther>(TOther value, out BigRational result) => main_cpu.cast(value, out result, 0);
+    static bool INumberBase<BigRational>.TryConvertFromSaturating<TOther>(TOther value, out BigRational result) => main_cpu.cast(value, out result, 1);
+    static bool INumberBase<BigRational>.TryConvertFromChecked<TOther>(TOther value, out BigRational result) => main_cpu.cast(value, out result, 2);
+    static bool INumberBase<BigRational>.TryConvertToTruncating<TOther>(BigRational value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 0);
+    static bool INumberBase<BigRational>.TryConvertToSaturating<TOther>(BigRational value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 1);
+    static bool INumberBase<BigRational>.TryConvertToChecked<TOther>(BigRational value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 2);
 
 #if false
     //INumberBase
@@ -1256,32 +1256,20 @@ namespace System.Numerics
 #if NET6_0
     public static BigRational CreateTruncating<TOther>(TOther value) where TOther : struct
     {
-      BigRational a; if (TryConvertFrom(value, out a, 0)) return a;
+      BigRational a; if (main_cpu.cast(value, out a, 0)) return a;
       throw new NotSupportedException();
     }
     public static BigRational CreateSaturating<TOther>(TOther value) where TOther : struct
     {
-      BigRational a; if (TryConvertFrom(value, out a, 1)) return a;
+      BigRational a; if (main_cpu.cast(value, out a, 1)) return a;
       throw new NotSupportedException();
     }
     public static BigRational CreateChecked<TOther>(TOther value) where TOther : struct
     {
-      BigRational a; if (TryConvertFrom(value, out a, 2)) return a;
+      BigRational a; if (main_cpu.cast(value, out a, 2)) return a;
       throw new NotSupportedException();
     }
 #endif
-    static bool TryConvertFrom<TOther>(TOther value, out BigRational result, int f)
-    {
-      Unsafe.SkipInit(out result); return main_cpu.conv(
-        Unsafe.AsPointer(ref result), typeof(BigRational), Unsafe.SizeOf<BigRational>(),
-        Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
-    }
-    static bool TryConvertTo<TOther>(BigRational value, out TOther result, int f)
-    {
-      Unsafe.SkipInit(out result); return main_cpu.conv(
-        Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
-        Unsafe.AsPointer(ref value), typeof(BigRational), Unsafe.SizeOf<BigRational>(), f);
-    }
   }
 }
 
