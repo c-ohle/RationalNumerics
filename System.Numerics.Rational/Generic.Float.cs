@@ -56,9 +56,10 @@ namespace System.Numerics.Generic
     }
     public static implicit operator Float<T>(BigRational value)
     {
-      var cpu = main_cpu; cpu.push(value); Float<T> x; cpu.fpop(&x, desc); return x;
+      var cpu = main_cpu; cpu.push(value);
+      Float<T> x; cpu.fpop(&x, desc); return x;
     }
-   
+
     public static explicit operator int(Float<T> value)
     {
       var cpu = main_cpu;
@@ -72,9 +73,9 @@ namespace System.Numerics.Generic
       long a; cpu.ipop(&a, sizeof(long)); return a;
     }
     public static explicit operator Half(Float<T> value)
-    { 
-      return (Half)(double)value; 
-    }    
+    {
+      return (Half)(double)value;
+    }
     public static explicit operator float(Float<T> value)
     {
       //todo: direct cast, now just for test
@@ -103,6 +104,14 @@ namespace System.Numerics.Generic
     {
       var cpu = main_cpu; int u = cpu.fpush(&value, desc);
       cpu.neg(); cpu.fpop(&value, u, desc); return value;
+    }
+    public static Float<T> operator ++(Float<T> value)
+    {
+      return value + 1;
+    }
+    public static Float<T> operator --(Float<T> value)
+    {
+      return value - 1;
     }
     public static Float<T> operator +(Float<T> left, Float<T> right)
     {
@@ -134,7 +143,7 @@ namespace System.Numerics.Generic
     }
     public static Float<T> operator %(Float<T> left, Float<T> right)
     {
-      return left - Truncate(left / right) * right; //todo: opt. inline
+      return left - Truncate(left / right) * right; //todo: opt. cpu
     }
 
     public static bool operator ==(Float<T> left, Float<T> right) => CPU.fequ(&left, &right, desc);
@@ -209,7 +218,7 @@ namespace System.Numerics.Generic
     }
     public static bool IsInteger(Float<T> value)
     {
-      return IsFinite(value) && value == Truncate(value); //todo: inline
+      return IsFinite(value) && value == Truncate(value); //todo: cpu
     }
     public static bool IsFinite(Float<T> value)
     {
@@ -235,19 +244,107 @@ namespace System.Numerics.Generic
     {
       var e = CPU.ftest(&value, desc); return e == 0x7ffffff2;
     }
+    public static bool IsEvenInteger(Float<T> value)
+    {
+      return IsInteger(value) && Abs(value % 2) == 0;
+    }
+    public static bool IsOddInteger(Float<T> value)
+    {
+      return IsInteger(value) && Abs(value % 2) == 1;
+    }
+    public static bool IsNormal(Float<T> value)
+    {
+      return value != default && CPU.ftest(&value, desc) < 0x7ffffff0;
+    }
+    public static bool IsSubnormal(Float<T> value)
+    {
+      return value != default && CPU.ftest(&value, desc) >= 0x7ffffff0;
+    }
+    public static bool IsPow2(Float<T> value)
+    {
+      var cpu = main_cpu; var e = cpu.fpush(&value, desc);
+      var r = e < 0x7ffffff0 && cpu.sign() > 0 && cpu.ipt(); cpu.pop(); return r;
+    }
 
     public static Float<T> Abs(Float<T> value)
     {
-      return value < 0 ? -value : value;
+      //return value < 0 ? -value : value;
+      *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4)) &= 0x7fffffff; return value;
+    }
+    public static Float<T> Min(Float<T> x, Float<T> y)
+    {
+      return CPU.fcmp(&x, &y, desc) <= 0 ? x : y;
+    }
+    public static Float<T> Max(Float<T> x, Float<T> y)
+    {
+      return CPU.fcmp(&x, &y, desc) >= 0 ? x : y;
+    }
+    public static Float<T> MinMagnitude(Float<T> x, Float<T> y)
+    { //todo: opt. cpu  
+      var ax = Abs(x); var ay = Abs(y); if (ax < ay || IsNaN(ax)) return x;
+      if (ax == ay) return IsNegative(x) ? x : y; return y;
+    }
+    public static Float<T> MaxMagnitude(Float<T> x, Float<T> y)
+    { //todo: opt. cpu  
+      var ax = Abs(x); var ay = Abs(y); if (ax > ay || IsNaN(ax)) return x;
+      if (ax == ay) return IsNegative(x) ? y : x; return y;
+    }
+    public static Float<T> MinMagnitudeNumber(Float<T> x, Float<T> y)
+    { //todo: opt. cpu  
+      var ax = Abs(x); var ay = Abs(y); if (ax < ay || IsNaN(ay)) return x;
+      if (ax == ay) return IsNegative(x) ? x : y; return y;
+    }
+    public static Float<T> MaxMagnitudeNumber(Float<T> x, Float<T> y)
+    { //todo: opt. cpu  
+      var ax = Abs(x); var ay = Abs(y);
+      if (ax > ay || IsNaN(ay)) return x;
+      if (ax == ay) return IsNegative(x) ? y : x;
+      return y;
+    }
+    public static Float<T> MaxNumber(Float<T> x, Float<T> y)
+    { //todo: opt. cpu  
+      if (x != y) { if (!IsNaN(y)) return y < x ? x : y; return x; }
+      return IsNegative(y) ? x : y;
+    }
+    public static Float<T> MinNumber(Float<T> x, Float<T> y)
+    { //todo: opt. cpu  
+      if (x != y) { if (!IsNaN(y)) return x < y ? x : y; return x; }
+      return IsNegative(x) ? x : y;
     }
     public static Float<T> Truncate(Float<T> a)
     {
       var cpu = main_cpu; var e = cpu.fpush(&a, desc);
       cpu.shl(e); cpu.fpop(&a, 0, desc); return a;
     }
-    public static Float<T> Round(Float<T> x, int digits = 0, MidpointRounding mode = MidpointRounding.ToEven)
+    public static Float<T> Ceiling(Float<T> x)
     {
-      var p = Pow10(digits); var a = Truncate(x * p) / p; return a;
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul(); //cpu.norm();
+      cpu.rnd(0, cpu.sign() < 0 ? 0 : 4); cpu.fpop(&x, desc); return x;
+    }
+    public static Float<T> Floor(Float<T> x)
+    {
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul(); //cpu.norm();
+      cpu.rnd(0, cpu.sign() >= 0 ? 0 : 4); cpu.fpop(&x, desc); return x;
+    }
+    public static Float<T> Round(Float<T> x) => Round(x, 0, MidpointRounding.ToEven);
+    public static Float<T> Round(Float<T> x, int digits) => Round(x, digits, MidpointRounding.ToEven);
+    public static Float<T> Round(Float<T> x, MidpointRounding mode) => Round(x, 0, mode);
+    public static Float<T> Round(Float<T> x, int digits, MidpointRounding mode)
+    {
+      //if (mode == MidpointRounding.ToPositiveInfinity || mode == MidpointRounding.ToNegativeInfinity) { } //todo: sign,...
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul(); //cpu.norm();
+      cpu.rnd(digits, mode == MidpointRounding.ToEven ? 2 : mode == MidpointRounding.ToZero ? 0 : 1);
+      cpu.fpop(&x, desc); return x;
+    }
+    public static Float<T> Pow(Float<T> x, Float<T> y)
+    {
+      var s = Sign(x); if (s == 0) return default; //todo: opt. cpu
+      if (s < 0) { if (IsInteger(y)) return Round(Pow(x, (int)y)); return Float<T>.NaN; }
+      return Exp(Log(x) * y);
+      // var cpu = main_cpu; var c = prec(digits);
+      // cpu.push(x); cpu.log(c);
+      // cpu.push(y); cpu.mul(); cpu.exp(c);
+      // cpu.rnd(digits); return cpu.popr();
     }
     public static Float<T> Pow10(int y)
     {
@@ -262,27 +359,56 @@ namespace System.Numerics.Generic
     }
     public static Float<T> Sqrt(Float<T> x)
     {
-      var cpu = main_cpu; cpu.push(x);
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
       cpu.sqrt(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
+    }
+    public static Float<T> Cbrt(Float<T> x)
+    {
+      return Pow(x, (Float<T>)1 / 3); //todo: opt
+    }
+    public static Float<T> RootN(Float<T> x, int n)
+    {
+      return Pow(x, (Float<T>)1 / n); //todo: opt
+    }
+    public static Float<T> Hypot(Float<T> x, Float<T> y)
+    {
+      return Sqrt(x * x + y * y); //todo: opt
+      //var cpu = main_cpu;
+      //cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul(); cpu.sqr();
+      //cpu.pow(2, cpu.fpush(&y, desc)); cpu.mul(); cpu.sqr(); cpu.add();
+      //cpu.sqrt(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
+    }
+    public static Float<T> ScaleB(Float<T> x, int n)
+    {
+      var cpu = main_cpu; var e = cpu.fpush(&x, desc); // x * 2^n
+      cpu.fpop(&x, e + n, desc); return x;
+    }
+    public static Float<T> Ieee754Remainder(Float<T> x, Float<T> y)
+    {
+      var a = x % y; if (IsNaN(a)) return NaN; //todo: opt. cpu
+      if (a == default && IsNegative(x)) return NegativeZero;
+      var b = a - Abs(y) * Sign(x);
+      if (Abs(b) == Abs(a)) { y = Round(x = x / y); return Abs(y) > Abs(x) ? b : a; }
+      return Abs(b) < Abs(a) ? b : a;
     }
     public static Float<T> Sin(Float<T> x)
     {
-      var cpu = main_cpu; cpu.push(x);
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
       cpu.sin(unchecked((uint)(desc >> 16) + 2), false); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Cos(Float<T> x)
     {
-      var cpu = main_cpu; cpu.push(x);
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
       cpu.sin(unchecked((uint)(desc >> 16) + 2), true); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Atan(Float<T> x)
     {
-      var cpu = main_cpu; cpu.push(x);
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
       cpu.atan(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Exp(Float<T> x)
     {
-      var cpu = main_cpu; cpu.push(x);
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
       cpu.exp(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Exp2(Float<T> x)
@@ -295,29 +421,28 @@ namespace System.Numerics.Generic
     }
     public static Float<T> Log(Float<T> x)
     {
-      var cpu = main_cpu; cpu.push(x);
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
       cpu.log(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
     }
     public static Float<T> Log2(Float<T> x)
     {
-      var cpu = main_cpu; cpu.push(x);
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
       cpu.log2(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
     }
-    public static Float<T> Pow(Float<T> x, Float<T> y)
+    public static Float<T> Log10(Float<T> x)
     {
-      var s = Sign(x); if (s == 0) return default;
-      if (s < 0)
-      {
-        if (IsInteger(y)) return Round(Pow(x, (int)y));
-        return Float<T>.NaN;
-      }
-      return Exp(Log(x) * y);
-      // var cpu = main_cpu; var c = prec(digits);
-      // cpu.push(x); cpu.log(c);
-      // cpu.push(y); cpu.mul(); cpu.exp(c);
-      // cpu.rnd(digits); return cpu.popr();
+      return Log2(x) / Log2(10);
     }
-  
+    public static Float<T> Log(Float<T> x, Float<T> newBase)
+    {
+      return Log(x) / Log(newBase);
+    }
+    public static int ILogB(Float<T> x)
+    {
+      var cpu = main_cpu; var e = cpu.fpush(&x, desc); var m = cpu.msb();
+      cpu.pop(); return m != 0 ? e + unchecked((int)m) - 1 : int.MinValue; //nan: MaxValue
+    }
+
     public readonly override string ToString() => ToString(null, null);
     public string ToString(string? format, IFormatProvider? formatProvider = null)
     {
@@ -385,11 +510,7 @@ namespace System.Numerics.Generic
     }
     public readonly override int GetHashCode()
     {
-      var a = this; return CPU.hash(&a, sizeof(T));      
-      //var p = (uint*)&a; uint n = unchecked((uint)sizeof(T)), h = 0;
-      //for (uint i = 0, c = n >> 2; i < c; i++) h = p[i] ^ ((h << 7) | (h >> 25));
-      //if ((n & 2) != 0) h ^= p[n >> 2] & 0xffff;
-      //return unchecked((int)h);
+      var a = this; return CPU.hash(&a, sizeof(T));
     }
     public readonly override bool Equals([NotNullWhen(true)] object? obj)
     {
@@ -399,12 +520,10 @@ namespace System.Numerics.Generic
     public readonly bool Equals(Float<T> other) { var t = this; return CPU.fequ(&t, &other, desc); }
     public readonly int CompareTo(object? obj) => obj == null ? 1 : p is Float<T> b ? this.CompareTo(b) : throw new ArgumentException();
     public readonly int CompareTo(Float<T> other) { var a = this; return CPU.fcmp(&a, &other, desc); }
-
     #region private
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static int desc = CPU.fdesc(sizeof(T));
     #endregion
-
 #if NET6_0
     public static Float<T> CreateTruncating<TOther>(TOther value) where TOther : struct
     {
@@ -460,7 +579,7 @@ namespace System.Numerics.Generic
     int IFloatingPoint<Float<T>>.GetSignificandByteCount() => sizeof(T); // ??? like float and double // (((desc >> 16) + 1) >> 3) + 1; // 2
     int IFloatingPoint<Float<T>>.GetExponentShortestBitLength()
     {
-      int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc; 
+      int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;
       var t = this; var h = *(uint*)(((byte*)&t) + (size - 4));
       var eb = (0xffffffff >> (32 - ec)) >> 2; //ExponentBias 1023 127
       var be = (h & 0x7fffffff) >> (32 - ec); //BiasedExponent
@@ -474,23 +593,37 @@ namespace System.Numerics.Generic
     static bool INumberBase<Float<T>>.TryConvertToTruncating<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 0);
     static bool INumberBase<Float<T>>.TryConvertToSaturating<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 1);
     static bool INumberBase<Float<T>>.TryConvertToChecked<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 2);
+    static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator &(Float<T> left, Float<T> right)
+    {
+      for (uint n = unchecked((uint)sizeof(T) >> 1), i = 0; i < n; i++)
+        ((ushort*)&left)[i] &= ((ushort*)&right)[i];
+      return left;
+    }
+    static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator |(Float<T> left, Float<T> right)
+    {
+      for (uint n = unchecked((uint)sizeof(T) >> 1), i = 0; i < n; i++)
+        ((ushort*)&left)[i] |= ((ushort*)&right)[i];
+      return left;
+    }
+    static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator ^(Float<T> left, Float<T> right)
+    {
+      for (uint n = unchecked((uint)sizeof(T) >> 1), i = 0; i < n; i++)
+        ((ushort*)&left)[i] ^= ((ushort*)&right)[i];
+      return left;
+    }
+    static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator ~(Float<T> value)
+    {
+      for (uint n = unchecked((uint)sizeof(T) >> 1), i = 0; i < n; i++)
+        ((ushort*)&value)[i] = (ushort)(~((ushort*)&value)[i]);
+      return value;
+    }
 
     #region todo
-    static Float<T> IDecrementOperators<Float<T>>.operator --(Float<T> value) => throw new NotImplementedException();
-    static Float<T> IIncrementOperators<Float<T>>.operator ++(Float<T> value) => throw new NotImplementedException();
-    static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator &(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator |(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator ^(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator ~(Float<T> value) => throw new NotImplementedException();
-    static Float<T> IBinaryNumber<Float<T>>.Log2(Float<T> value) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.Atan2(Float<T> y, Float<T> x) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.Atan2Pi(Float<T> y, Float<T> x) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.BitDecrement(Float<T> x) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.BitIncrement(Float<T> x) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.FusedMultiplyAdd(Float<T> left, Float<T> right, Float<T> addend) => throw new NotImplementedException();
-    static Float<T> IFloatingPointIeee754<Float<T>>.Ieee754Remainder(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    static int IFloatingPointIeee754<Float<T>>.ILogB(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IFloatingPointIeee754<Float<T>>.ScaleB(Float<T> x, int n) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteExponentBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteExponentLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     bool IFloatingPoint<Float<T>>.TryWriteSignificandBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
@@ -501,11 +634,6 @@ namespace System.Numerics.Generic
     static Float<T> IHyperbolicFunctions<Float<T>>.Cosh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Sinh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Tanh(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ILogarithmicFunctions<Float<T>>.Log(Float<T> x, Float<T> newBase) => throw new NotImplementedException();
-    static Float<T> ILogarithmicFunctions<Float<T>>.Log10(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IRootFunctions<Float<T>>.Cbrt(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IRootFunctions<Float<T>>.Hypot(Float<T> x, Float<T> y) => throw new NotImplementedException();
-    static Float<T> IRootFunctions<Float<T>>.RootN(Float<T> x, int n) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.Acos(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.AcosPi(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.Asin(Float<T> x) => throw new NotImplementedException();
@@ -517,10 +645,6 @@ namespace System.Numerics.Generic
     static Float<T> ITrigonometricFunctions<Float<T>>.SinPi(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.Tan(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.TanPi(Float<T> x) => throw new NotImplementedException();
-    static Float<T> INumberBase<Float<T>>.MaxMagnitude(Float<T> x, Float<T> y) => throw new NotImplementedException();
-    static Float<T> INumberBase<Float<T>>.MaxMagnitudeNumber(Float<T> x, Float<T> y) => throw new NotImplementedException();
-    static Float<T> INumberBase<Float<T>>.MinMagnitude(Float<T> x, Float<T> y) => throw new NotImplementedException();
-    static Float<T> INumberBase<Float<T>>.MinMagnitudeNumber(Float<T> x, Float<T> y) => throw new NotImplementedException();
     static Float<T> INumberBase<Float<T>>.Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider) => throw new NotImplementedException();
     static Float<T> INumberBase<Float<T>>.Parse(string s, NumberStyles style, IFormatProvider? provider) => throw new NotImplementedException();
     static bool INumberBase<Float<T>>.TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
@@ -528,64 +652,7 @@ namespace System.Numerics.Generic
     static bool ISpanParsable<Float<T>>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
     static Float<T> IParsable<Float<T>>.Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
     static bool IParsable<Float<T>>.TryParse(string? s, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsEvenInteger(Float<T> value) => throw new NotImplementedException(); //IsInteger(value) && (Abs(value % 2) == 0);
-    static bool INumberBase<Float<T>>.IsOddInteger(Float<T> value) => throw new NotImplementedException(); //IsInteger(value) && (Abs(value % 2) == 1);
-    static bool INumberBase<Float<T>>.IsNegativeInfinity(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsNormal(Float<T> value) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.IsSubnormal(Float<T> value) => throw new NotImplementedException();
-    static bool IBinaryNumber<Float<T>>.IsPow2(Float<T> value) => throw new NotImplementedException();
     #endregion
-
-    // static bool INumberBase<Float<T>>.IsNaN(Float<T> value) => throw new NotImplementedException();//value == value; 
-    // static bool INumberBase<Float<T>>.IsRealNumber(Float<T> value) => throw new NotImplementedException();//value == value;
-    // static bool INumberBase<Float<T>>.IsFinite(Float<T> value) => throw new NotImplementedException();
-    // static bool INumberBase<Float<T>>.IsInfinity(Float<T> value) => throw new NotImplementedException();
-    // static bool INumberBase<Float<T>>.IsNegativeInfinity(Float<T> value) => throw new NotImplementedException();
-    // static bool INumberBase<Float<T>>.IsPositiveInfinity(Float<T> value) => throw new NotImplementedException();
-    // static bool INumberBase<Float<T>>.IsInteger(Float<T> value) => throw new NotImplementedException();
-    // static bool INumberBase<Float<T>>.IsPositive(Float<T> value) => throw new NotImplementedException(); //BitConverter.DoubleToInt64Bits(value) >= 0;
-    // static bool INumberBase<Float<T>>.IsNegative(Float<T> value) => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.Epsilon => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.NaN => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.NegativeInfinity => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.NegativeZero => throw new NotImplementedException();
-    // static Float<T> IFloatingPointIeee754<Float<T>>.PositiveInfinity => throw new NotImplementedException();
-    // static Float<T> IFloatingPointConstants<Float<T>>.E => throw new NotImplementedException();
-    // static Float<T> IFloatingPointConstants<Float<T>>.Pi => throw new NotImplementedException();
-    // static Float<T> IFloatingPointConstants<Float<T>>.Tau => throw new NotImplementedException();
-    // bool IEquatable<Float<T>>.Equals(Float<T> other) => throw new NotImplementedException();
-    // bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => throw new NotImplementedException();
-    // string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => throw new NotImplementedException();
-    // static Float<T> ISpanParsable<Float<T>>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => throw new NotImplementedException();
-    // static Float<T> ITrigonometricFunctions<Float<T>>.Atan(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ITrigonometricFunctions<Float<T>>.Sin(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> INumberBase<Float<T>>.Abs(Float<T> value) => throw new NotImplementedException();
-    // static Float<T> IPowerFunctions<Float<T>>.Pow(Float<T> x, Float<T> y) => throw new NotImplementedException();
-    // static Float<T> IRootFunctions<Float<T>>.Sqrt(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ITrigonometricFunctions<Float<T>>.Cos(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ILogarithmicFunctions<Float<T>>.Log(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> ILogarithmicFunctions<Float<T>>.Log2(Float<T> x) => throw new NotImplementedException();
-    // int IComparable.CompareTo(object? obj) => throw new NotImplementedException();
-    // int IComparable<Float<T>>.CompareTo(Float<T> other) => throw new NotImplementedException();
-    // static Float<T> IExponentialFunctions<Float<T>>.Exp(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> IExponentialFunctions<Float<T>>.Exp10(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> IExponentialFunctions<Float<T>>.Exp2(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> IFloatingPoint<Float<T>>.Round(Float<T> x, int digits, MidpointRounding mode) => throw new NotImplementedException();
-    // static Float<T> IFloatingPoint<Float<T>>.Truncate(Float<T> x) => throw new NotImplementedException();
-    // static Float<T> IAdditionOperators<Float<T>, Float<T>, Float<T>>.operator +(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> ISubtractionOperators<Float<T>, Float<T>, Float<T>>.operator -(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> IMultiplyOperators<Float<T>, Float<T>, Float<T>>.operator *(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> IDivisionOperators<Float<T>, Float<T>, Float<T>>.operator /(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> IModulusOperators<Float<T>, Float<T>, Float<T>>.operator %(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IEqualityOperators<Float<T>, Float<T>, bool>.operator ==(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IEqualityOperators<Float<T>, Float<T>, bool>.operator !=(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator <=(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator >=(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator >(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static bool IComparisonOperators<Float<T>, Float<T>, bool>.operator <(Float<T> left, Float<T> right) => throw new NotImplementedException();
-    // static Float<T> IUnaryNegationOperators<Float<T>, Float<T>>.operator -(Float<T> value) => throw new NotImplementedException();
-    // static Float<T> IUnaryPlusOperators<Float<T>, Float<T>>.operator +(Float<T> value) => throw new NotImplementedException();
-
   }
 #endif
 

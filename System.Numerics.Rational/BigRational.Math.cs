@@ -131,7 +131,7 @@ namespace System.Numerics
     public static BigRational Round(BigRational a)
     {
       var cpu = main_cpu; cpu.push(a);
-      cpu.rnd(0, 1); return cpu.popr();
+      cpu.rnd(0, 2); return cpu.popr();
     }
     /// <summary>
     /// Rounds a <see cref="BigRational"/> number to a specified number of fractional
@@ -144,7 +144,7 @@ namespace System.Numerics
     {
       //var e = Pow10(digits); return Round(a * e) / e;
       var cpu = main_cpu; cpu.push(a);
-      cpu.rnd(digits); return cpu.popr();
+      cpu.rnd(digits, 2); return cpu.popr();
     }
     /// <summary>
     /// Rounds a <see cref="BigRational"/> number to a specified number of fractional digits 
@@ -163,6 +163,7 @@ namespace System.Numerics
       switch (mode)
       {
         case MidpointRounding.ToZero: f = 0; break;
+        case MidpointRounding.ToEven: f = 2; break;
         case MidpointRounding.ToPositiveInfinity: if (Sign(a) < 0) f = 0; else f = 4; break;
         case MidpointRounding.ToNegativeInfinity: if (Sign(a) > 0) f = 0; else f = 4; break;
       }

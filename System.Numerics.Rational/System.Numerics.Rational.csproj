@@ -39,37 +39,37 @@ common mathematical functions.</Description>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Deterministic>True</Deterministic>
-    <NoWarn>IDE1006</NoWarn>
+    <NoWarn>IDE1006;CS8981</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <Deterministic>True</Deterministic>
-    <NoWarn>IDE1006</NoWarn>
+    <NoWarn>IDE1006;CS8981</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Deterministic>True</Deterministic>
-    <NoWarn>IDE1006</NoWarn>
+    <NoWarn>IDE1006;CS8981</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <Deterministic>True</Deterministic>
-    <NoWarn>IDE1006</NoWarn>
+    <NoWarn>IDE1006;CS8981</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <Deterministic>True</Deterministic>
-    <NoWarn>IDE1006</NoWarn>
+    <NoWarn>IDE1006;CS8981</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Deterministic>True</Deterministic>
-    <NoWarn>IDE1006</NoWarn>
+    <NoWarn>IDE1006;CS8981</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 

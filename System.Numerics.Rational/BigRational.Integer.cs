@@ -169,7 +169,6 @@ namespace System.Numerics
       public static double Log(Integer value, double baseValue) => (double)BigRational.Log(value.p, baseValue, 17);
       public static double Log10(Integer value)
       {
-        //var a = BigRational.Log10(value.p, 17); return (double)a;
         var cpu = main_cpu; cpu.push(value.p); var s = cpu.sign();
         var d = s > 0 ? cpu.flog10(0) : s == 0 ? double.NegativeInfinity : double.NaN; cpu.pop(); return d;
       }

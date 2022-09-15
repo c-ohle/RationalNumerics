@@ -78,6 +78,8 @@ namespace Test
 
     public static Float80 operator +(Float80 value) => new Float80(+value.p);
     public static Float80 operator -(Float80 value) => new Float80(-value.p);
+    public static Float80 operator ++(Float80 value) => new Float80(value.p + 1);
+    public static Float80 operator --(Float80 value) => new Float80(value.p - 1);
     public static Float80 operator +(Float80 left, Float80 right) => new Float80(left.p + right.p);
     public static Float80 operator -(Float80 left, Float80 right) => new Float80(left.p - right.p);
     public static Float80 operator *(Float80 left, Float80 right) => new Float80(left.p * right.p);
@@ -114,11 +116,36 @@ namespace Test
     public static bool IsInfinity(Float80 value) => System.Numerics.Generic.Float<Test.SizeType80>.IsInfinity(value.p);
     public static bool IsNegativeInfinity(Float80 value) => System.Numerics.Generic.Float<Test.SizeType80>.IsNegativeInfinity(value.p);
     public static bool IsPositiveInfinity(Float80 value) => System.Numerics.Generic.Float<Test.SizeType80>.IsPositiveInfinity(value.p);
+    public static bool IsEvenInteger(Float80 value) => System.Numerics.Generic.Float<Test.SizeType80>.IsEvenInteger(value.p);
+    public static bool IsOddInteger(Float80 value) => System.Numerics.Generic.Float<Test.SizeType80>.IsOddInteger(value.p);
+    public static bool IsNormal(Float80 value) => System.Numerics.Generic.Float<Test.SizeType80>.IsNormal(value.p);
+    public static bool IsSubnormal(Float80 value) => System.Numerics.Generic.Float<Test.SizeType80>.IsSubnormal(value.p);
+    public static bool IsPow2(Float80 value) => System.Numerics.Generic.Float<Test.SizeType80>.IsPow2(value.p);
+
     public static Float80 Abs(Float80 value) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Abs(value.p));
-    public static Float80 Truncate(Float80 a) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Truncate(a.p));
-    public static Float80 Round(Float80 x, int digits = 0, System.MidpointRounding mode = System.MidpointRounding.ToEven) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Round(x.p, digits, mode));
+    public static Float80 Min(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Min(x.p, y.p));
+    public static Float80 Max(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Max(x.p, y.p));
+    public static Float80 MinMagnitude(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.MinMagnitude(x.p, y.p));
+    public static Float80 MaxMagnitude(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.MaxMagnitude(x.p, y.p));
+    public static Float80 MinMagnitudeNumber(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.MinMagnitudeNumber(x.p, y.p));
+    public static Float80 MaxMagnitudeNumber(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.MaxMagnitudeNumber(x.p, y.p));
+    public static Float80 MinNumber(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.MinNumber(x.p, y.p));
+    public static Float80 MaxNumber(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.MaxNumber(x.p, y.p));    
+    public static Float80 Truncate(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Truncate(x.p));
+    public static Float80 Ceiling(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Ceiling(x.p));
+    public static Float80 Floor(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Floor(x.p));
+    public static Float80 Round(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Round(x.p));
+    public static Float80 Round(Float80 x, int digits) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Round(x.p, digits));
+    public static Float80 Round(Float80 x, MidpointRounding mode) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Round(x.p, mode));
+    public static Float80 Round(Float80 x, int digits, System.MidpointRounding mode) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Round(x.p, digits, mode));    
+    public static Float80 Pow(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Pow(x.p, y.p));
     public static Float80 Pow10(int y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Pow10(y));
     public static Float80 Sqrt(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Sqrt(x.p));
+    public static Float80 Cbrt(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Cbrt(x.p));
+    public static Float80 Hypot(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Hypot(x.p, y.p));
+    public static Float80 RootN(Float80 x, int n) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.RootN(x.p, n));
+    public static Float80 ScaleB(Float80 x, int n) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.ScaleB(x.p, n));
+    public static Float80 Ieee754Remainder(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Ieee754Remainder(x.p, y.p));
     public static Float80 Sin(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Sin(x.p));
     public static Float80 Cos(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Cos(x.p));
     public static Float80 Atan(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Atan(x.p));
@@ -127,12 +154,14 @@ namespace Test
     public static Float80 Exp10(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Exp10(x.p));
     public static Float80 Log(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Log(x.p));
     public static Float80 Log2(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Log2(x.p));
-    public static Float80 Pow(Float80 x, Float80 y) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Pow(x.p, y.p));
-    public static Float80 Parse(string s) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Parse(s));
+    public static Float80 Log10(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Log10(x.p));
+    public static Float80 Log(Float80 x, Float80 newBase) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Log(x.p, newBase.p));
+    public static int ILogB(Float80 x) => System.Numerics.Generic.Float<Test.SizeType80>.ILogB(x.p);
 
     public override string ToString() => p.ToString();
     public string ToString(string? format, System.IFormatProvider? formatProvider = null) => p.ToString(format, formatProvider);
     public bool TryFormat(System.Span<char> dest, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider? provider) => p.TryFormat(dest, out charsWritten, format, provider);
+    public static Float80 Parse(string s) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Parse(s));
     public override int GetHashCode() => p.GetHashCode();
     public override bool Equals(System.Object? obj) => p.Equals(obj);
     public bool Equals(Float80 other) => p.Equals(other.p);
@@ -333,9 +362,6 @@ namespace Test
     }
     #endregion
     #region gets public
-    static Float80 IDecrementOperators<Float80>.operator --(Float80 value) => throw new NotImplementedException();
-    static Float80 IIncrementOperators<Float80>.operator ++(Float80 value) => throw new NotImplementedException();
-    static bool IBinaryNumber<Float80>.IsPow2(Float80 value) => throw new NotImplementedException();
     static Float80 IFloatingPointIeee754<Float80>.Atan2(Float80 y, Float80 x) => throw new NotImplementedException();
     static Float80 IFloatingPointIeee754<Float80>.Atan2Pi(Float80 y, Float80 x) => throw new NotImplementedException();
     static Float80 IFloatingPointIeee754<Float80>.FusedMultiplyAdd(Float80 left, Float80 right, Float80 addend) => throw new NotImplementedException();

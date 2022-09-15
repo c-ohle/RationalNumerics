@@ -1943,7 +1943,7 @@ namespace System.Numerics
           if ((f & (1 | 2 | 4)) != 0)
           {
             if (f == 4) f = *(ulong*)u != 1 ? 1 : 0;
-            else { shr(t, 1); var x = cms(u, t); f = f == 1 ? x : x + 1; }
+            else { shr(t, 1); var x = cms(u, t); f = x == 0 && f == 2 && (v[1] & 1) != 0 ? 1 : x; }
             if (f > 0) { var w = 0x100000001; add(v, (uint*)&w, v); }
           }
           *(ulong*)(u + u[0] + 1) = *(ulong*)(v + v[0] + 1) = 0x100000001;
@@ -3399,7 +3399,7 @@ namespace System.Numerics
       }
       internal static int ftest(void* p, int desc)
       {
-        int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;//, bi = ((1 << (ec - 2)) + bc) - 1; //2 52 12 1075
+        int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;
         var h = *(uint*)(((byte*)p) + (size - 4));
         var pin = ~(((1u << (32 - ec)) - 1) | 0x80000000); // 0x7ff00000
         if ((h & pin) == pin)
@@ -3559,9 +3559,9 @@ namespace System.Numerics
         }
       }
       internal bool cast<A, B>(A a, out B b, int f)
-      {
-        int ta = tdesc<A>.desc; var u = Unsafe.AsPointer(ref a); Unsafe.SkipInit(out b); //Debug.Assert(ta != 0 && tb != 0);
-        var tb = tdesc<B>.desc; var v = Unsafe.AsPointer(ref b);
+      { //todo: cast opt. // can be highly optimized - copy cast's by desc / f checks etc. 
+        int ta = tdesc<A>.desc; var u = Unsafe.AsPointer(ref a); Unsafe.SkipInit(out b);
+        var tb = tdesc<B>.desc; var v = Unsafe.AsPointer(ref b); //if (ta == tb) { }
         switch (ta >> 28)
         {
           case 0: ipush(u, ta & 0x0000ffff); break;

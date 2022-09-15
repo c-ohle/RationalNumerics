@@ -17,11 +17,11 @@ namespace Test
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
     }
-     
-#if false //NET7_0
 
+#if false //NET7_0
     static void test()
     {
+      test_fp();
       test_casts();
       test_int32();
       test_uint32();
@@ -187,6 +187,137 @@ namespace Test
       test128();
       test32();
       test64();
+    }
+    static void test_fp()
+    {
+      double a, c, e; __float64 b, d, f;
+
+      a = double.Ceiling(2.5); b = __float64.Ceiling(2.5);
+      a = double.Ceiling(-2.5); b = __float64.Ceiling(-2.5);
+      a = double.Ceiling(2); b = __float64.Ceiling(2);
+      a = double.Ceiling(-2); b = __float64.Ceiling(-2);
+      a = double.Ceiling(3.5); b = __float64.Ceiling(3.5);
+      a = double.Ceiling(-3.5); b = __float64.Ceiling(-3.5);
+
+
+
+      a = double.Floor(2.5); b = __float64.Floor(2.5); 
+      a = double.Floor(-2.5); b = __float64.Floor(-2.5);
+      a = double.Floor(3.5); b = __float64.Floor(3.5);
+      a = double.Floor(-3.5); b = __float64.Floor(-3.5);
+
+      a = double.Truncate(2.5); b = __float64.Truncate(2.5);
+      a = double.Truncate(-2.5); b = __float64.Truncate(-2.5);
+      
+      a = double.Round(2.5); b = __float64.Round(2.5);
+      a = double.Round(2.49999); b = __float64.Round(2.49999);
+      a = double.Round(2.51111); b = __float64.Round(2.51111);
+      a = double.Round(2.99999); b = __float64.Round(2.99999);
+      a = double.Round(-2.5); b = __float64.Round(-2.5);
+      a = double.Round(-2.49999); b = __float64.Round(-2.49999);
+      a = double.Round(-2.51111); b = __float64.Round(-2.51111);
+
+      a = double.Round(3.5); b = __float64.Round(3.5);
+      a = double.Round(3.49); b = __float64.Round(3.49);
+      a = double.Round(3.51); b = __float64.Round(3.51);
+      a = double.Round(-3.5); b = __float64.Round(-3.5);
+      a = double.Round(-3.49); b = __float64.Round(-3.49);
+      a = double.Round(-3.51); b = __float64.Round(-3.51);
+
+      a = double.Round(2.5); b = __float64.Round(2.5);
+      a = double.Round(2.49999); b = __float64.Round(2.49999);
+      a = double.Round(2.51111); b = __float64.Round(2.51111);
+      a = double.Round(-2.5); b = __float64.Round(-2.5);
+      a = double.Round(-2.49999); b = __float64.Round(-2.49999);
+      a = double.Round(-2.51111); b = __float64.Round(-2.51111);
+
+      a = double.Round(123.12345); b = __float64.Round(123.12345);
+      a = double.Round(123.124555555); b = __float64.Round(123.124555555);
+      a = double.Round(123.124499999); b = __float64.Round(123.124499999);
+      a = double.Round(123.124511111); b = __float64.Round(123.124511111);
+      a = double.Round(123.124511111, 1); b = __float64.Round(123.124511111, 1);
+      a = double.Round(123.124511111, 2); b = __float64.Round(123.124511111, 2);
+      a = double.Round(123.124511111, 3); b = __float64.Round(123.124511111, 3);
+      a = double.Round(123.124511111, 4); b = __float64.Round(123.124511111, 4);
+
+      a = double.ScaleB(123, 4); b = __float64.ScaleB(123, 4);
+      a = double.Ieee754Remainder(123, 4); b = __float64.Ieee754Remainder(123, 4);
+
+      a = double.Log10(123); b = __float64.Log10(123);
+      a = double.Log(123, 4); b = __float64.Log(123, 4);
+
+      a = double.Hypot(8, 1.234); b = __float64.Hypot(8, 1.234);
+      a = double.Cbrt(33); b = __float64.Cbrt(33);
+      a = double.RootN(33, 6); b = __float64.RootN(33, 6);
+
+      a = double.Sin(8); b = __float64.Sin(8);
+      a = double.Sin(-8); b = __float64.Sin(-8); var r = rat.Sin(-8);
+      a = double.Sin(0.4); b = __float64.Sin(0.4);
+      a = double.Sin(-0.4); b = __float64.Sin(-0.4);
+
+      a = double.ILogB(128883.45); b = __float64.ILogB(128883.45);
+      a = double.ILogB(128883.45e-10); b = __float64.ILogB(128883.45e-10);
+      a = double.ILogB(-128883.45e-100); b = __float64.ILogB(-128883.45e-100);
+      a = double.Log2(-128883.45e-100); b = __float64.Log2(-128883.45e-100);
+      a = double.ILogB(0); b = __float64.ILogB(0);
+
+      a = 3.14; a++; a--;
+      b = 3.14; b++; b--;
+
+      var rnd = new Random(13);
+      for (int j = 0; j < 1000; j++)
+      {
+        if (j < 100) { a = rnd.Next(-10, 10); c = rnd.Next(-10, 10); }
+        else { a = rnd.NextDouble(); a = (0.5 - a) * 1e30; c = rnd.NextDouble(); c = (0.5 - a) * 1e30; }
+        b = a; d = c;
+        Debug.Assert(__float64.IsEvenInteger(b) == double.IsEvenInteger(a));
+        Debug.Assert(__float64.IsFinite(b) == double.IsFinite(a));
+        Debug.Assert(__float64.IsNormal(b) == double.IsNormal(a));
+        Debug.Assert(__float64.Abs(b) == double.Abs(a));
+        Debug.Assert(__float64.IsPow2(b) == double.IsPow2(a));
+        Debug.Assert(__float64.Max(b, d) == double.Max(a, c));
+        Debug.Assert(__float64.Min(b, d) == double.Min(a, c));
+        Debug.Assert(__float64.MaxMagnitude(b, d) == double.MaxMagnitude(a, c));
+        Debug.Assert(__float64.MinMagnitude(b, d) == double.MinMagnitude(a, c));
+        Debug.Assert(__float64.MaxMagnitudeNumber(b, d) == double.MaxMagnitudeNumber(a, c));
+        Debug.Assert(__float64.MinMagnitudeNumber(b, d) == double.MinMagnitudeNumber(a, c));
+        Debug.Assert(__float64.MaxNumber(b, d) == double.MaxNumber(a, c));
+        Debug.Assert(__float64.MinNumber(b, d) == double.MinNumber(a, c));
+        Debug.Assert(__float64.Truncate(b) == double.Truncate(a));
+        Debug.Assert(__float64.Round(b) == double.Round(a));
+        Debug.Assert(__float64.ILogB(b) == double.ILogB(a));
+        f = __float64.ScaleB(b, (j % 1000) - 500); e = double.ScaleB(a, (j % 1000) - 500); Debug.Assert(near(f, e));
+        if (c != 0) { f = __float64.Ieee754Remainder(b, d); e = double.Ieee754Remainder(a, c); Debug.Assert(near(f, e)); }
+        if (a >= 0 && c >= 0) { f = __float64.Hypot(b, d); e = double.Hypot(a, c); Debug.Assert(near(f, e)); }
+        if (b > 0)
+        {
+          f = __float64.RootN(b, (j % 7) + 1); e = double.RootN(a, (j % 7) + 1); Debug.Assert(near(f, e));
+          f = __float64.Cbrt(b); e = double.Cbrt(a); Debug.Assert(near(f, e));
+          f = __float64.Log(b); e = double.Log(a); Debug.Assert(near(f, e));
+          f = __float64.Log2(b); e = double.Log2(a); Debug.Assert(near(f, e));
+          f = __float64.Sin(b); e = double.Sin(a); Debug.Assert(near(f, e));
+          f = __float64.Cos(b); e = double.Cos(a); Debug.Assert(near(f, e));
+        }
+        test_num(a, b);
+        static void test_num<A, B>(A a, B b)
+            where A : IBinaryFloatingPointIeee754<A>, IMinMaxValue<A>, IBitwiseOperators<A, A, A>
+            where B : IBinaryFloatingPointIeee754<B>, IMinMaxValue<B>, IBitwiseOperators<B, B, B>
+        {
+          Debug.Assert(double.CreateTruncating(a) == double.CreateTruncating(b));
+          Debug.Assert(double.CreateSaturating(a) == double.CreateSaturating(b));
+          Debug.Assert(double.CreateSaturating(a & a) == double.CreateSaturating(b & b));
+          Debug.Assert(double.CreateSaturating(a | a) == double.CreateSaturating(b | b));
+          Debug.Assert(double.CreateSaturating(a ^ a) == double.CreateSaturating(b ^ b));
+          //var x = ~a; var y = ~b; Debug.Assert(double.CreateSaturating(x) == double.CreateSaturating(y));
+        }
+        static bool near(__float64 a, double b)
+        {
+          var c = (double)a; if (c == b) return true;
+          if (Math.Sign(c) != Math.Sign(b)) return false;
+          var d = c / b; if (Math.Abs(1 - d) < 1e-5) return true;
+          return false;
+        }
+      }
     }
     static void test_int32()
     {
