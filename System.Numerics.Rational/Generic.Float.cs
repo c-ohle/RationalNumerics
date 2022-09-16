@@ -102,8 +102,9 @@ namespace System.Numerics.Generic
     public static Float<T> operator +(Float<T> value) => value;
     public static Float<T> operator -(Float<T> value)
     {
-      var cpu = main_cpu; int u = cpu.fpush(&value, desc);
-      cpu.neg(); cpu.fpop(&value, u, desc); return value;
+      if (value != default) ((byte*)&value)[sizeof(Float<T>) - 1] ^= 0x80; return value;
+      //var cpu = main_cpu; int u = cpu.fpush(&value, desc);
+      //cpu.neg(); cpu.fpop(&value, u, desc); return value;
     }
     public static Float<T> operator ++(Float<T> value)
     {
@@ -203,18 +204,22 @@ namespace System.Numerics.Generic
 
     public static int Sign(Float<T> value)
     {
-      var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4));
-      return h == 0 ? 0 : (h & 0x80000000) != 0 ? -1 : +1;
+      if ((((byte*)&value)[sizeof(T) - 1] & 0x80) != 0) return -1;
+      return value == default ? 0 : 1;
+      //var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4));
+      //return h == 0 ? 0 : (h & 0x80000000) != 0 ? -1 : +1;
     }
     public static bool IsPositive(Float<T> value)
     {
-      var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4));
-      return (h & 0x80000000) == 0;
+      return (((byte*)&value)[sizeof(T) - 1] & 0x80) == 0;
+      //var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4));
+      //return (h & 0x80000000) == 0;
     }
     public static bool IsNegative(Float<T> value)
     {
-      var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4));
-      return (h & 0x80000000) != 0;
+      return (((byte*)&value)[sizeof(T) - 1] & 0x80) != 0;
+      //var h = *(uint*)(((byte*)&value) + (sizeof(Float<T>) - 4));
+      //return (h & 0x80000000) != 0;
     }
     public static bool IsInteger(Float<T> value)
     {
@@ -346,7 +351,7 @@ namespace System.Numerics.Generic
       // cpu.push(y); cpu.mul(); cpu.exp(c);
       // cpu.rnd(digits); return cpu.popr();
     }
-    public static Float<T> Pow10(int y)
+    public static Float<T> Pow10(int y) //todo: opt. cpu, for now as test
     {
       Float<T> x = 1, z = 10; uint e = unchecked((uint)(y >= 0 ? y : -y));
       for (; ; e >>= 1)
@@ -442,8 +447,44 @@ namespace System.Numerics.Generic
       var cpu = main_cpu; var e = cpu.fpush(&x, desc); var m = cpu.msb();
       cpu.pop(); return m != 0 ? e + unchecked((int)m) - 1 : int.MinValue; //nan: MaxValue
     }
+    public static Float<T> FusedMultiplyAdd(Float<T> left, Float<T> right, Float<T> addend)
+    {
+      return left * right + addend; //todo: opt. cpu
+    }
+    public static Float<T> BitIncrement(Float<T> x)
+    {
+      var c = desc & 0xffff; var s = ((byte*)&x)[sizeof(T) - 1] & 0x80;
+      if (s == 0) CPU.inc(&x, c); else CPU.dec(&x, c); return x;
+      //var cpu = main_cpu; cpu.ipush(&x, desc & 0xffff);
+      //var s = cpu.sign(); cpu.push(s == 0 ? 1 : s); cpu.add();
+      //cpu.ipop(&x, desc & 0xffff); return x;
+    }
+    public static Float<T> BitDecrement(Float<T> x)
+    {
+      var c = desc & 0xffff; var s = ((byte*)&x)[c - 1] & 0x80;
+      if (s == 0 && x == default) { ((byte*)&x)[c - 1] = 0x80; ((byte*)&x)[0] = 1; return x; }
+      if (s == 0) CPU.dec(&x, c); else CPU.inc(&x, c); return x;
+      //var cpu = main_cpu; cpu.ipush(&x, desc & 0xffff);
+      //var s = cpu.sign(); cpu.push(s == 0 ? -1 : s); cpu.sub();
+      //cpu.ipop(&x, desc & 0xffff); return s == 0 ? -x : x;
+    }
+
+    public readonly override int GetHashCode()
+    {
+      var a = this; return CPU.hash(&a, sizeof(T));
+    }
+    public readonly override bool Equals([NotNullWhen(true)] object? obj)
+    {
+      if (obj is not Float<T> b) return false;
+      var a = this; return CPU.fequ(&a, &b, desc);
+    }
+    public readonly bool Equals(Float<T> other) { var t = this; return CPU.fequ(&t, &other, desc); }
+    public readonly int CompareTo(object? obj) => obj == null ? 1 : p is Float<T> b ? this.CompareTo(b) : throw new ArgumentException();
+    public readonly int CompareTo(Float<T> other) { var a = this; return CPU.fcmp(&a, &other, desc); }
 
     public readonly override string ToString() => ToString(null, null);
+    public string ToString(string? format) => ToString(format, null);
+    public string ToString(IFormatProvider? formatProvider) => ToString(null, formatProvider);
     public string ToString(string? format, IFormatProvider? formatProvider = null)
     {
       Span<char> sp = stackalloc char[MaxDigits + 32]; // (1 + 16)];
@@ -498,32 +539,36 @@ namespace System.Numerics.Generic
       charsWritten = n; return true; ex:
       charsWritten = 0; if (dest.Length >= 2) new Span<char>(&dig, 2).CopyTo(dest); return false;
     }
-    public static Float<T> Parse(string s)
-    {
-      return Parse(s.AsSpan(), null);
-    }
-    public static Float<T> Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+
+    public static Float<T> Parse(string s) => Parse(s.AsSpan(), NumberStyles.Float | NumberStyles.AllowThousands, null);
+    public static Float<T> Parse(string s, NumberStyles style) => Parse(s.AsSpan(), style, null);
+    public static Float<T> Parse(string s, IFormatProvider? provider) => Parse(s.AsSpan(), NumberStyles.Float | NumberStyles.AllowThousands, null);
+    public static Float<T> Parse(string s, NumberStyles style, IFormatProvider? provider) => Parse(s.AsSpan(), style, provider);
+    public static Float<T> Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => Parse(s, NumberStyles.Float | NumberStyles.AllowThousands, provider);
+    public static Float<T> Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
     {
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
       var cpu = main_cpu; cpu.tor(s, 10, info != null ? info.NumberDecimalSeparator[0] : default);
       Float<T> x; cpu.fpop(&x, desc); return x;
     }
-    public readonly override int GetHashCode()
+    
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Float<T> result)
     {
-      var a = this; return CPU.hash(&a, sizeof(T));
+      var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
+      var cpu = main_cpu; cpu.tor(s, 10, info != null ? info.NumberDecimalSeparator[0] : default);
+      Float<T> x; cpu.fpop(&x, desc); result = x; return true;
     }
-    public readonly override bool Equals([NotNullWhen(true)] object? obj)
-    {
-      if (obj is not Float<T> b) return false;
-      var a = this; return CPU.fequ(&a, &b, desc);
-    }
-    public readonly bool Equals(Float<T> other) { var t = this; return CPU.fequ(&t, &other, desc); }
-    public readonly int CompareTo(object? obj) => obj == null ? 1 : p is Float<T> b ? this.CompareTo(b) : throw new ArgumentException();
-    public readonly int CompareTo(Float<T> other) { var a = this; return CPU.fcmp(&a, &other, desc); }
+    public static bool TryParse(string? s, NumberStyles style, IFormatProvider? provider, out Float<T> result) => TryParse(s.AsSpan(), style, provider, out result);
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Float<T> result) => TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, provider, out result);
+    public static bool TryParse(string? s, IFormatProvider? provider, out Float<T> result) => TryParse(s.AsSpan(), NumberStyles.Float | NumberStyles.AllowThousands, provider, out result);
+    public static bool TryParse(ReadOnlySpan<char> s, out Float<T> result) => TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, null, out result);
+    public static bool TryParse([NotNullWhen(true)] string? s, out Float<T> result) => TryParse(s.AsSpan(), NumberStyles.Float | NumberStyles.AllowThousands, null, out result);
+    
     #region private
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static int desc = CPU.fdesc(sizeof(T));
     #endregion
+
 #if NET6_0
     public static Float<T> CreateTruncating<TOther>(TOther value) where TOther : struct
     {
@@ -574,25 +619,6 @@ namespace System.Numerics.Generic
     static bool INumberBase<Float<T>>.IsComplexNumber(Float<T> value) => false;
     static bool INumberBase<Float<T>>.IsImaginaryNumber(Float<T> value) => false;
     static bool INumberBase<Float<T>>.IsZero(Float<T> value) => value == default; //value == 0
-    int IFloatingPoint<Float<T>>.GetExponentByteCount() => (((desc >> 16) + 1) >> 5) + 1; //sizeof(sbyte), sizeof(short), 4;
-    int IFloatingPoint<Float<T>>.GetSignificandBitLength() => (desc >> 16) + 1; // 53
-    int IFloatingPoint<Float<T>>.GetSignificandByteCount() => sizeof(T); // ??? like float and double // (((desc >> 16) + 1) >> 3) + 1; // 2
-    int IFloatingPoint<Float<T>>.GetExponentShortestBitLength()
-    {
-      int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;
-      var t = this; var h = *(uint*)(((byte*)&t) + (size - 4));
-      var eb = (0xffffffff >> (32 - ec)) >> 2; //ExponentBias 1023 127
-      var be = (h & 0x7fffffff) >> (32 - ec); //BiasedExponent
-      var ex = unchecked((int)be - (int)eb); //Exponent
-      var bl = ex >= 0 ? 32 - int.LeadingZeroCount(ex) : 33 - int.LeadingZeroCount((int)(~ex));
-      return bl;
-    }
-    static bool INumberBase<Float<T>>.TryConvertFromTruncating<TOther>(TOther value, out Float<T> result) => main_cpu.cast(value, out result, 0);
-    static bool INumberBase<Float<T>>.TryConvertFromSaturating<TOther>(TOther value, out Float<T> result) => main_cpu.cast(value, out result, 1);
-    static bool INumberBase<Float<T>>.TryConvertFromChecked<TOther>(TOther value, out Float<T> result) => main_cpu.cast(value, out result, 2);
-    static bool INumberBase<Float<T>>.TryConvertToTruncating<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 0);
-    static bool INumberBase<Float<T>>.TryConvertToSaturating<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 1);
-    static bool INumberBase<Float<T>>.TryConvertToChecked<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 2);
     static Float<T> IBitwiseOperators<Float<T>, Float<T>, Float<T>>.operator &(Float<T> left, Float<T> right)
     {
       for (uint n = unchecked((uint)sizeof(T) >> 1), i = 0; i < n; i++)
@@ -617,17 +643,54 @@ namespace System.Numerics.Generic
         ((ushort*)&value)[i] = (ushort)(~((ushort*)&value)[i]);
       return value;
     }
+    static bool INumberBase<Float<T>>.TryConvertFromTruncating<TOther>(TOther value, out Float<T> result) => main_cpu.cast(value, out result, 0);
+    static bool INumberBase<Float<T>>.TryConvertFromSaturating<TOther>(TOther value, out Float<T> result) => main_cpu.cast(value, out result, 1);
+    static bool INumberBase<Float<T>>.TryConvertFromChecked<TOther>(TOther value, out Float<T> result) => main_cpu.cast(value, out result, 2);
+    static bool INumberBase<Float<T>>.TryConvertToTruncating<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 0);
+    static bool INumberBase<Float<T>>.TryConvertToSaturating<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 1);
+    static bool INumberBase<Float<T>>.TryConvertToChecked<TOther>(Float<T> value, out TOther result) where TOther : default => main_cpu.cast(value, out result, 2);
+    int IFloatingPoint<Float<T>>.GetExponentByteCount() => (((desc >> 16) + 1) >> 5) + 1; //sizeof(sbyte), sizeof(short), 4;
+    int IFloatingPoint<Float<T>>.GetSignificandBitLength() => (desc >> 16) + 1; // 53
+    int IFloatingPoint<Float<T>>.GetSignificandByteCount() => sizeof(T);
+    int IFloatingPoint<Float<T>>.GetExponentShortestBitLength()
+    {
+      var t = this; var e = CPU.fexpo(&t, desc);
+      return e >= 0 ? 32 - int.LeadingZeroCount(e) : 33 - int.LeadingZeroCount(~e);
+    }
+    bool IFloatingPoint<Float<T>>.TryWriteExponentLittleEndian(Span<byte> destination, out int bytesWritten)
+    {
+      var c = sizeof(T); c = c < 8 ? 1 : c < 16 ? 2 : 4; //todo: check 16
+      if (destination.Length < c) { bytesWritten = 0; return false; }
+      var t = this; var e = CPU.fexpo(&t, desc); var s = new Span<byte>(&e, c);
+      s.CopyTo(destination); bytesWritten = c; return true;
+    }
+    bool IFloatingPoint<Float<T>>.TryWriteExponentBigEndian(Span<byte> destination, out int bytesWritten)
+    {
+      var c = sizeof(T); c = c < 8 ? 1 : c < 16 ? 2 : 4; //todo: check 16
+      if (destination.Length < c) { bytesWritten = 0; return false; }
+      var t = this; var e = CPU.fexpo(&t, desc); var s = new Span<byte>(&e, c); s.Reverse();
+      s.CopyTo(destination); bytesWritten = c; return true;
+    }
+    bool IFloatingPoint<Float<T>>.TryWriteSignificandLittleEndian(Span<byte> destination, out int bytesWritten)
+    {
+      var c = sizeof(T); if (destination.Length < c) { bytesWritten = 0; return false; }
+      var d = destination.Slice(0, bytesWritten = c); if (this == default) { d.Clear(); return true; }
+      var cpu = main_cpu; var t = this; cpu.fpush(&t, desc);
+      MemoryMarshal.Cast<uint, byte>(cpu.gets(cpu.mark() - 1)).Slice(4, c).CopyTo(d); cpu.pop();
+      return true;
+    }
+    bool IFloatingPoint<Float<T>>.TryWriteSignificandBigEndian(Span<byte> destination, out int bytesWritten)
+    {
+      var c = sizeof(T); if (destination.Length < c) { bytesWritten = 0; return false; }
+      var d = destination.Slice(0, bytesWritten = c); if (this == default) { d.Clear(); return true; }
+      var cpu = main_cpu; var t = this; cpu.fpush(&t, desc);
+      MemoryMarshal.Cast<uint, byte>(cpu.gets(cpu.mark() - 1)).Slice(4, c).CopyTo(d); cpu.pop();
+      d.Reverse(); return true;
+    }
 
-    #region todo
+    #region todo 
     static Float<T> IFloatingPointIeee754<Float<T>>.Atan2(Float<T> y, Float<T> x) => throw new NotImplementedException();
     static Float<T> IFloatingPointIeee754<Float<T>>.Atan2Pi(Float<T> y, Float<T> x) => throw new NotImplementedException();
-    static Float<T> IFloatingPointIeee754<Float<T>>.BitDecrement(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IFloatingPointIeee754<Float<T>>.BitIncrement(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IFloatingPointIeee754<Float<T>>.FusedMultiplyAdd(Float<T> left, Float<T> right, Float<T> addend) => throw new NotImplementedException();
-    bool IFloatingPoint<Float<T>>.TryWriteExponentBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
-    bool IFloatingPoint<Float<T>>.TryWriteExponentLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
-    bool IFloatingPoint<Float<T>>.TryWriteSignificandBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
-    bool IFloatingPoint<Float<T>>.TryWriteSignificandLittleEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Acosh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Asinh(Float<T> x) => throw new NotImplementedException();
     static Float<T> IHyperbolicFunctions<Float<T>>.Atanh(Float<T> x) => throw new NotImplementedException();
@@ -645,13 +708,7 @@ namespace System.Numerics.Generic
     static Float<T> ITrigonometricFunctions<Float<T>>.SinPi(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.Tan(Float<T> x) => throw new NotImplementedException();
     static Float<T> ITrigonometricFunctions<Float<T>>.TanPi(Float<T> x) => throw new NotImplementedException();
-    static Float<T> INumberBase<Float<T>>.Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider) => throw new NotImplementedException();
-    static Float<T> INumberBase<Float<T>>.Parse(string s, NumberStyles style, IFormatProvider? provider) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
-    static bool INumberBase<Float<T>>.TryParse(string? s, NumberStyles style, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
-    static bool ISpanParsable<Float<T>>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
-    static Float<T> IParsable<Float<T>>.Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
-    static bool IParsable<Float<T>>.TryParse(string? s, IFormatProvider? provider, out Float<T> result) => throw new NotImplementedException();
+
     #endregion
   }
 #endif

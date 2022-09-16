@@ -190,7 +190,43 @@ namespace Test
     }
     static void test_fp()
     {
-      double a, c, e; __float64 b, d, f;
+      static void test_ffp()
+      {
+        double a; Float80 b;
+        b = a = 4; a = double.BitIncrement(a); b = Float80.BitIncrement(b);
+        b = a = 4; a = double.BitDecrement(a); b = Float80.BitDecrement(b);
+        b = a = -2; a = double.BitIncrement(a); b = Float80.BitIncrement(b);
+        b = a = -2; a = double.BitDecrement(a); b = Float80.BitDecrement(b);
+        b = a = +2.5; a = double.BitIncrement(a); b = Float80.BitIncrement(b);
+        b = a = +2.5; a = double.BitDecrement(a); b = Float80.BitDecrement(b);
+        b = a = -2.5; a = double.BitIncrement(a); b = Float80.BitIncrement(b);
+        b = a = -2.5; a = double.BitDecrement(a); b = Float80.BitDecrement(b);
+      }
+      test_ffp();
+
+      double a, c, e; __float64 b, d, f; __float80 g;
+
+      b = a = 0; a = double.BitIncrement(a); b = __float64.BitIncrement(b);
+      b = a = 0; a = double.BitDecrement(a); b = __float64.BitDecrement(b);
+
+      g = 4; g = __float80.BitIncrement(g);
+
+      b = a = 4; a = double.BitIncrement(a); b = __float64.BitIncrement(b);
+      b = a = 4; a = double.BitDecrement(a); b = __float64.BitDecrement(b);
+      b = a = -4; a = double.BitIncrement(a); b = __float64.BitIncrement(b);
+      b = a = -4; a = double.BitDecrement(a); b = __float64.BitDecrement(b);
+
+      //b = a = 0; a = double.BitDecrement(a); b = __float64.BitDecrement(b);
+      b = a = 2.5; a = double.BitDecrement(a); b = __float64.BitDecrement(b);
+      a = double.BitIncrement(a); b = __float64.BitIncrement(b);
+      b = a = -2.5; a = double.BitDecrement(a); b = __float64.BitDecrement(b);
+      a = double.BitIncrement(a); b = __float64.BitIncrement(b);
+      a = double.FusedMultiplyAdd(2.5, 2, 10); b = __float64.FusedMultiplyAdd(2.5, 2, 10);
+
+      b = __float64.Parse("123.456", NumberFormatInfo.InvariantInfo);
+      b = __float64.Parse("123.456E-12", NumberFormatInfo.InvariantInfo);
+      b = __float64.Parse("-123.456E-12", NumberFormatInfo.InvariantInfo);
+      b = __float64.Parse("123.456");
 
       a = double.Ceiling(2.5); b = __float64.Ceiling(2.5);
       a = double.Ceiling(-2.5); b = __float64.Ceiling(-2.5);
@@ -199,16 +235,14 @@ namespace Test
       a = double.Ceiling(3.5); b = __float64.Ceiling(3.5);
       a = double.Ceiling(-3.5); b = __float64.Ceiling(-3.5);
 
-
-
-      a = double.Floor(2.5); b = __float64.Floor(2.5); 
+      a = double.Floor(2.5); b = __float64.Floor(2.5);
       a = double.Floor(-2.5); b = __float64.Floor(-2.5);
       a = double.Floor(3.5); b = __float64.Floor(3.5);
       a = double.Floor(-3.5); b = __float64.Floor(-3.5);
 
       a = double.Truncate(2.5); b = __float64.Truncate(2.5);
       a = double.Truncate(-2.5); b = __float64.Truncate(-2.5);
-      
+
       a = double.Round(2.5); b = __float64.Round(2.5);
       a = double.Round(2.49999); b = __float64.Round(2.49999);
       a = double.Round(2.51111); b = __float64.Round(2.51111);
@@ -284,11 +318,17 @@ namespace Test
         Debug.Assert(__float64.MaxNumber(b, d) == double.MaxNumber(a, c));
         Debug.Assert(__float64.MinNumber(b, d) == double.MinNumber(a, c));
         Debug.Assert(__float64.Truncate(b) == double.Truncate(a));
+        Debug.Assert(__float64.Ceiling(b) == double.Ceiling(a));
+        Debug.Assert(__float64.Floor(b) == double.Floor(a));
         Debug.Assert(__float64.Round(b) == double.Round(a));
+        Debug.Assert(__float64.Round(b, 3) == double.Round(a, 3));
         Debug.Assert(__float64.ILogB(b) == double.ILogB(a));
+        Debug.Assert(a == 0 || __float64.BitIncrement(b) == double.BitIncrement(a));
+        Debug.Assert(a == 0 || __float64.BitDecrement(b) == double.BitDecrement(a));
+        Debug.Assert(__float64.FusedMultiplyAdd(b, d, j) == double.FusedMultiplyAdd(a, c, j));
         f = __float64.ScaleB(b, (j % 1000) - 500); e = double.ScaleB(a, (j % 1000) - 500); Debug.Assert(near(f, e));
         if (c != 0) { f = __float64.Ieee754Remainder(b, d); e = double.Ieee754Remainder(a, c); Debug.Assert(near(f, e)); }
-        if (a >= 0 && c >= 0) { f = __float64.Hypot(b, d); e = double.Hypot(a, c); Debug.Assert(near(f, e)); }
+        if (a >= 0 && c >= 0) { f = __float64.Hypot(b, d); e = double.Hypot(a, c); Debug.Assert(near(f, e)); } //double.Hypot bug!
         if (b > 0)
         {
           f = __float64.RootN(b, (j % 7) + 1); e = double.RootN(a, (j % 7) + 1); Debug.Assert(near(f, e));
@@ -303,12 +343,28 @@ namespace Test
             where A : IBinaryFloatingPointIeee754<A>, IMinMaxValue<A>, IBitwiseOperators<A, A, A>
             where B : IBinaryFloatingPointIeee754<B>, IMinMaxValue<B>, IBitwiseOperators<B, B, B>
         {
+          //var x = ~a; var y = ~b; Debug.Assert(double.CreateSaturating(x) == double.CreateSaturating(y));
           Debug.Assert(double.CreateTruncating(a) == double.CreateTruncating(b));
           Debug.Assert(double.CreateSaturating(a) == double.CreateSaturating(b));
           Debug.Assert(double.CreateSaturating(a & a) == double.CreateSaturating(b & b));
           Debug.Assert(double.CreateSaturating(a | a) == double.CreateSaturating(b | b));
           Debug.Assert(double.CreateSaturating(a ^ a) == double.CreateSaturating(b ^ b));
-          //var x = ~a; var y = ~b; Debug.Assert(double.CreateSaturating(x) == double.CreateSaturating(y));
+          Debug.Assert(a.GetExponentByteCount() == b.GetExponentByteCount());
+          Debug.Assert(a.GetExponentShortestBitLength() == b.GetExponentShortestBitLength());
+          Debug.Assert(a.GetSignificandBitLength() == b.GetSignificandBitLength());
+          Debug.Assert(a.GetSignificandByteCount() == b.GetSignificandByteCount());
+          Span<byte> s1 = stackalloc byte[80]; var ss1 = s1.Slice(0, a.WriteExponentBigEndian(s1));
+          Span<byte> s2 = stackalloc byte[80]; var ss2 = s2.Slice(0, b.WriteExponentBigEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteExponentLittleEndian(s1));
+          ss2 = s2.Slice(0, b.WriteExponentLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteSignificandLittleEndian(s1));
+          ss2 = s2.Slice(0, b.WriteSignificandLittleEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
+          ss1 = s1.Slice(0, a.WriteSignificandBigEndian(s1));
+          ss2 = s2.Slice(0, b.WriteSignificandBigEndian(s2));
+          Debug.Assert(ss1.SequenceEqual(ss2));
         }
         static bool near(__float64 a, double b)
         {

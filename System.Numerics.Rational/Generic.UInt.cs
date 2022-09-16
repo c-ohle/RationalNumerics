@@ -235,8 +235,29 @@ namespace System.Numerics.Generic
         c += (uint)BitOperations.PopCount(((uint*)&value)[i]);
       return c;
     }
+     
+    public int CompareTo(object? obj) { return obj == null ? 1 : p is Int<T> b ? this.CompareTo(b) : throw new ArgumentException(); }
+    public int CompareTo(UInt<T> other)
+    {
+      var a = this; return CPU.ucmp(&a, &other, sizeof(T));
+    }
+    public bool Equals(UInt<T> other)
+    {
+      var t = this; return CPU.ucmp(&t, &other, sizeof(T)) == 0;
+    }
+    public override bool Equals([NotNullWhen(true)] object? obj)
+    {
+      if (obj is not UInt<T> b) return false;
+      var a = this; return CPU.ucmp(&a, &b, sizeof(T)) == 0;
+    }
+    public override int GetHashCode()
+    {
+      var a = this; return CPU.hash(&a, sizeof(T));
+    }
 
     public readonly override string ToString() => ToString(null, null);
+    public string ToString(string? format) => ToString(format, null);
+    public string ToString(IFormatProvider? formatProvider) => ToString(null, formatProvider);
     public string ToString(string? format, IFormatProvider? formatProvider = null)
     {
       Span<char> sp = stackalloc char[100 + 32];
@@ -262,25 +283,7 @@ namespace System.Numerics.Generic
       if (dest.Length >= 2) { n = -n; new Span<char>(&n, 2).CopyTo(dest); }
       charsWritten = 0; return false;
     }
-    public int CompareTo(object? obj) { return obj == null ? 1 : p is Int<T> b ? this.CompareTo(b) : throw new ArgumentException(); }
-    public int CompareTo(UInt<T> other)
-    {
-      var a = this; return CPU.ucmp(&a, &other, sizeof(T));
-    }
-    public bool Equals(UInt<T> other)
-    {
-      var t = this; return CPU.ucmp(&t, &other, sizeof(T)) == 0;
-    }
-    public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-      if (obj is not UInt<T> b) return false;
-      var a = this; return CPU.ucmp(&a, &b, sizeof(T)) == 0;
-    }
-    public override int GetHashCode()
-    {
-      var a = this; return CPU.hash(&a, sizeof(T));
-    }
-
+    
     public static UInt<T> Parse(string s) => Parse(s.AsSpan(), NumberStyles.Integer, NumberFormatInfo.CurrentInfo);
     public static UInt<T> Parse(string s, NumberStyles style) => Parse(s.AsSpan(), style, NumberFormatInfo.CurrentInfo);
     public static UInt<T> Parse(string s, IFormatProvider? provider) => Parse(s.AsSpan(), NumberStyles.Integer, provider);

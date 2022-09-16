@@ -256,7 +256,22 @@ namespace System.Numerics.Generic
       return -value;
     }
 
+    public int CompareTo(object? obj) { return obj == null ? 1 : p is Int<T> b ? this.CompareTo(b) : throw new ArgumentException(); }
+    public int CompareTo(Int<T> other) { var t = this; return CPU.icmp(&t, &other, sizeof(T)); }
+    public bool Equals(Int<T> other) { var t = this; return CPU.icmp(&t, &other, sizeof(T)) == 0; }
+    public override bool Equals([NotNullWhen(true)] object? obj)
+    {
+      if (obj is not Int<T> b) return false;
+      var a = this; return CPU.icmp(&a, &b, sizeof(T)) == 0;
+    }
+    public override int GetHashCode()
+    {
+      var a = this; return CPU.hash(&a, sizeof(T));
+    }
+
     public readonly override string ToString() => ToString(null, null);
+    public string ToString(string? format) => ToString(format, null);
+    public string ToString(IFormatProvider? formatProvider) => ToString(null, formatProvider);
     public string ToString(string? format, IFormatProvider? formatProvider = null)
     {
       Span<char> sp = stackalloc char[100 + 32];
@@ -282,19 +297,7 @@ namespace System.Numerics.Generic
       if (dest.Length >= 2) { n = -n; new Span<char>(&n, 2).CopyTo(dest); }
       charsWritten = 0; return false;
     }
-    public int CompareTo(object? obj) { return obj == null ? 1 : p is Int<T> b ? this.CompareTo(b) : throw new ArgumentException(); }
-    public int CompareTo(Int<T> other) { var t = this; return CPU.icmp(&t, &other, sizeof(T)); }
-    public bool Equals(Int<T> other) { var t = this; return CPU.icmp(&t, &other, sizeof(T)) == 0; }
-    public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-      if (obj is not Int<T> b) return false;
-      var a = this; return CPU.icmp(&a, &b, sizeof(T)) == 0;
-    }
-    public override int GetHashCode()
-    {
-      var a = this; return CPU.hash(&a, sizeof(T));
-    }
-
+     
     public static Int<T> Parse(string s) => Parse(s.AsSpan(), NumberStyles.Integer, NumberFormatInfo.CurrentInfo);
     public static Int<T> Parse(string s, NumberStyles style) => Parse(s.AsSpan(), style, NumberFormatInfo.CurrentInfo);
     public static Int<T> Parse(string s, IFormatProvider? provider) => Parse(s.AsSpan(), NumberStyles.Integer, provider);
@@ -320,20 +323,6 @@ namespace System.Numerics.Generic
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
 
-    //static bool TryConvertFrom<TOther>(TOther value, out Int<T> result, Conv f)
-    //{
-    //  return main_cpu.conv(value, out result, f);
-    //  //Unsafe.SkipInit(out result); return main_cpu.conv(
-    //  //  Unsafe.AsPointer(ref result), typeof(Int<T>), Unsafe.SizeOf<Int<T>>(),
-    //  //  Unsafe.AsPointer(ref value), typeof(TOther), Unsafe.SizeOf<TOther>(), f);
-    //}
-    //static bool TryConvertTo<TOther>(Int<T> value, out TOther result, Conv f)
-    //{
-    //  return main_cpu.conv(value, out result, f);
-    //  //Unsafe.SkipInit(out result); return main_cpu.conv(
-    //  //  Unsafe.AsPointer(ref result), typeof(TOther), Unsafe.SizeOf<TOther>(),
-    //  //  Unsafe.AsPointer(ref value), typeof(Int<T>), Unsafe.SizeOf<Int<T>>(), f);
-    //}
 #if NET6_0
     public static Int<T> CreateTruncating<TOther>(TOther value) where TOther : struct
     {

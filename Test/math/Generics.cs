@@ -157,6 +157,9 @@ namespace Test
     public static Float80 Log10(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Log10(x.p));
     public static Float80 Log(Float80 x, Float80 newBase) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.Log(x.p, newBase.p));
     public static int ILogB(Float80 x) => System.Numerics.Generic.Float<Test.SizeType80>.ILogB(x.p);
+    public static Float80 FusedMultiplyAdd(Float80 left, Float80 right, Float80 addend) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.FusedMultiplyAdd(left.p, right.p, addend.p));
+    public static Float80 BitDecrement(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.BitDecrement(x.p));
+    public static Float80 BitIncrement(Float80 x) => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.BitIncrement(x.p));
 
     public override string ToString() => p.ToString();
     public string ToString(string? format, System.IFormatProvider? formatProvider = null) => p.ToString(format, formatProvider);
@@ -181,7 +184,7 @@ namespace Test
     public static Float80 CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther> => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateTruncating(value));
     public static Float80 CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther> => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateSaturating(value));
     public static Float80 CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther> => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateChecked(value));
-    #region keeps static 
+    #region static 
     static int INumberBase<Float80>.Radix => iwrap<System.Numerics.Generic.Float<Test.SizeType80>>(0);
     static Float80 IBinaryNumber<Float80>.AllBitsSet => new Float80(wrap<System.Numerics.Generic.Float<Test.SizeType80>>(0));
     static Float80 ISignedNumber<Float80>.NegativeOne => new Float80(wrap<System.Numerics.Generic.Float<Test.SizeType80>>(1));
@@ -197,8 +200,6 @@ namespace Test
     static Float80 IBitwiseOperators<Float80, Float80, Float80>.operator |(Float80 left, Float80 right) => new Float80(wrap(1, left.p, right.p));
     static Float80 IBitwiseOperators<Float80, Float80, Float80>.operator ^(Float80 left, Float80 right) => new Float80(wrap(2, right.p));
     static Float80 IBitwiseOperators<Float80, Float80, Float80>.operator ~(Float80 value) => new Float80(wrap(0, value.p));
-    static Float80 IFloatingPointIeee754<Float80>.BitDecrement(Float80 x) => new Float80(wrap(1, x.p));
-    static Float80 IFloatingPointIeee754<Float80>.BitIncrement(Float80 x) => new Float80(wrap(2, x.p));
     static bool INumberBase<Float80>.IsCanonical(Float80 value) => iwrap(4, value.p) != 0;
     static bool INumberBase<Float80>.IsComplexNumber(Float80 value) => iwrap(5, value.p) != 0;
     static bool INumberBase<Float80>.IsEvenInteger(Float80 value) => iwrap(6, value.p) != 0;
@@ -345,8 +346,8 @@ namespace Test
       switch (i)
       {
         case 0: return ~a;
-        case 1: return T.BitDecrement(a);
-        case 2: return T.BitIncrement(a);
+        //case 1: return T.BitDecrement(a);
+        //case 2: return T.BitIncrement(a);
       }
       return T.Zero;
     }
@@ -364,36 +365,24 @@ namespace Test
     #region gets public
     static Float80 IFloatingPointIeee754<Float80>.Atan2(Float80 y, Float80 x) => throw new NotImplementedException();
     static Float80 IFloatingPointIeee754<Float80>.Atan2Pi(Float80 y, Float80 x) => throw new NotImplementedException();
-    static Float80 IFloatingPointIeee754<Float80>.FusedMultiplyAdd(Float80 left, Float80 right, Float80 addend) => throw new NotImplementedException();
-    static Float80 IFloatingPointIeee754<Float80>.Ieee754Remainder(Float80 left, Float80 right) => throw new NotImplementedException();
-    static int IFloatingPointIeee754<Float80>.ILogB(Float80 x) => throw new NotImplementedException();
-    static Float80 IFloatingPointIeee754<Float80>.ScaleB(Float80 x, int n) => throw new NotImplementedException();
-    static Float80 IHyperbolicFunctions<Float80>.Acosh(Float80 x) => throw new NotImplementedException();
-    static Float80 IHyperbolicFunctions<Float80>.Asinh(Float80 x) => throw new NotImplementedException();
-    static Float80 IHyperbolicFunctions<Float80>.Atanh(Float80 x) => throw new NotImplementedException();
-    static Float80 IHyperbolicFunctions<Float80>.Cosh(Float80 x) => throw new NotImplementedException();
-    static Float80 IHyperbolicFunctions<Float80>.Sinh(Float80 x) => throw new NotImplementedException();
-    static Float80 IHyperbolicFunctions<Float80>.Tanh(Float80 x) => throw new NotImplementedException();
-    static Float80 ILogarithmicFunctions<Float80>.Log(Float80 x, Float80 newBase) => throw new NotImplementedException();
-    static Float80 ILogarithmicFunctions<Float80>.Log10(Float80 x) => throw new NotImplementedException();
-    static Float80 IRootFunctions<Float80>.Cbrt(Float80 x) => throw new NotImplementedException();
-    static Float80 IRootFunctions<Float80>.Hypot(Float80 x, Float80 y) => throw new NotImplementedException();
-    static Float80 IRootFunctions<Float80>.RootN(Float80 x, int n) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.Acos(Float80 x) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.AcosPi(Float80 x) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.Asin(Float80 x) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.AsinPi(Float80 x) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.AtanPi(Float80 x) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.CosPi(Float80 x) => throw new NotImplementedException();
-    static (Float80 Sin, Float80 Cos) ITrigonometricFunctions<Float80>.SinCos(Float80 x) => throw new NotImplementedException();
-    static (Float80 SinPi, Float80 CosPi) ITrigonometricFunctions<Float80>.SinCosPi(Float80 x) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.SinPi(Float80 x) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.Tan(Float80 x) => throw new NotImplementedException();
     static Float80 ITrigonometricFunctions<Float80>.TanPi(Float80 x) => throw new NotImplementedException();
-    static Float80 INumberBase<Float80>.MaxMagnitude(Float80 x, Float80 y) => throw new NotImplementedException();
-    static Float80 INumberBase<Float80>.MaxMagnitudeNumber(Float80 x, Float80 y) => throw new NotImplementedException();
-    static Float80 INumberBase<Float80>.MinMagnitude(Float80 x, Float80 y) => throw new NotImplementedException();
-    static Float80 INumberBase<Float80>.MinMagnitudeNumber(Float80 x, Float80 y) => throw new NotImplementedException();
+    static (Float80 Sin, Float80 Cos) ITrigonometricFunctions<Float80>.SinCos(Float80 x) => throw new NotImplementedException();
+    static (Float80 SinPi, Float80 CosPi) ITrigonometricFunctions<Float80>.SinCosPi(Float80 x) => throw new NotImplementedException();
+
+    static Float80 IHyperbolicFunctions<Float80>.Acosh(Float80 x) => throw new NotImplementedException();
+    static Float80 IHyperbolicFunctions<Float80>.Asinh(Float80 x) => throw new NotImplementedException();
+    static Float80 IHyperbolicFunctions<Float80>.Atanh(Float80 x) => throw new NotImplementedException();
+    static Float80 IHyperbolicFunctions<Float80>.Cosh(Float80 x) => throw new NotImplementedException();
+    static Float80 IHyperbolicFunctions<Float80>.Sinh(Float80 x) => throw new NotImplementedException();
+    static Float80 IHyperbolicFunctions<Float80>.Tanh(Float80 x) => throw new NotImplementedException();
     #endregion
 #endif
     #endregion

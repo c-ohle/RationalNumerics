@@ -2856,7 +2856,8 @@ namespace System.Numerics
       }
       bool isnan()
       {
-        fixed (uint* p = this.p[this.i - 1]) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 1;// 0x100000000;
+        fixed (uint* p = this.p[this.i - 1]) 
+          return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 1;// 0x100000000;
       }
 
       static void add(uint* a, uint* b, uint* r)
@@ -3257,6 +3258,18 @@ namespace System.Numerics
         if ((n & 2) != 0) h ^= ((uint*)p)[c] & 0xffff;
         return unchecked((int)h);
       }
+      internal static void inc(void* p, int n)
+      {
+        for (uint c = unchecked((uint)n >> 2), i = 0; i < c; i++)
+          if (++((uint*)p)[i] != 0) return; // false;
+        if ((n & 2) != 0) if (++((ushort*)p)[unchecked((uint)n >> 1) - 1] != 0) return; // false; return true;
+      }
+      internal static void dec(void* p, int n)
+      {
+        for (uint c = unchecked((uint)n >> 2), i = 0; i < c; i++)
+          if (((uint*)p)[i]-- != 0) return; // false;
+        if ((n & 2) != 0) if (((ushort*)p)[unchecked((uint)n >> 1) - 1]-- != 0) return; // false; return true;
+      }
       //for INumber to avoid another ThreadLocal static root - CPU doesn't need it
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal int maxdigits = 30; //INumber default limitation for irrational funcs 
       [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal void* sp; //debug security for visualizer and cross thread access       
@@ -3396,6 +3409,14 @@ namespace System.Numerics
           default: sbi = BitOperations.Log2(unchecked((uint)size)) * 3 + 4; break;
         }
         return size | ((((size << 3) - sbi) - 1) << 16);
+      }
+      internal static int fexpo(void* p, int desc)
+      {
+        int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;
+        var h = *(uint*)(((byte*)p) + (size - 4));
+        var eb = (0xffffffff >> (32 - ec)) >> 2; // exponent bias 1023 127
+        var be = (h & 0x7fffffff) >> (32 - ec); // biased exponent
+        return unchecked((int)be - (int)eb); // exponent
       }
       internal static int ftest(void* p, int desc)
       {
