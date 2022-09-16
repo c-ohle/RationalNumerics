@@ -396,21 +396,6 @@ namespace System.Numerics.Generic
       if (Abs(b) == Abs(a)) { y = Round(x = x / y); return Abs(y) > Abs(x) ? b : a; }
       return Abs(b) < Abs(a) ? b : a;
     }
-    public static Float<T> Sin(Float<T> x)
-    {
-      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
-      cpu.sin(unchecked((uint)(desc >> 16) + 2), false); cpu.fpop(&x, desc); return x;
-    }
-    public static Float<T> Cos(Float<T> x)
-    {
-      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
-      cpu.sin(unchecked((uint)(desc >> 16) + 2), true); cpu.fpop(&x, desc); return x;
-    }
-    public static Float<T> Atan(Float<T> x)
-    {
-      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
-      cpu.atan(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
-    }
     public static Float<T> Exp(Float<T> x)
     {
       var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
@@ -468,6 +453,103 @@ namespace System.Numerics.Generic
       //var s = cpu.sign(); cpu.push(s == 0 ? -1 : s); cpu.sub();
       //cpu.ipop(&x, desc & 0xffff); return s == 0 ? -x : x;
     }
+
+    public static Float<T> Sin(Float<T> x)
+    {
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
+      cpu.sin(unchecked((uint)(desc >> 16) + 2), false); cpu.fpop(&x, desc); return x;
+    }
+    public static Float<T> Cos(Float<T> x)
+    {
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
+      cpu.sin(unchecked((uint)(desc >> 16) + 2), true); cpu.fpop(&x, desc); return x;
+    }
+    public static Float<T> Atan(Float<T> x)
+    {
+      var cpu = main_cpu; cpu.pow(2, cpu.fpush(&x, desc)); cpu.mul();
+      cpu.atan(unchecked((uint)(desc >> 16) + 2)); cpu.fpop(&x, desc); return x;
+    }
+    #region todo cpu impl
+    public static Float<T> Acos(Float<T> x)
+    {
+      return Atan(Sqrt(1 - x * x) / x); //todo: opt. cpu
+    }
+    public static Float<T> Asin(Float<T> x)
+    {
+      return Atan(x / Sqrt(1 - x * x)); //todo: opt. cpu
+    }
+    public static Float<T> AcosPi(Float<T> x)
+    {
+      return Acos(x) / Pi;
+    }
+    public static Float<T> AsinPi(Float<T> x)
+    {
+      return Asin(x) / Pi; //todo: opt. cpu
+    }
+    public static Float<T> AtanPi(Float<T> x) 
+    {
+      return Atan(x) / Pi; //todo: opt. cpu
+    }
+    public static Float<T> CosPi(Float<T> x) 
+    {
+      return Cos(x * Pi); //todo: opt. cpu
+    }
+    public static Float<T> SinPi(Float<T> x) 
+    {
+      return Sin(x * Pi); //todo: opt. cpu
+    }
+    public static Float<T> Tan(Float<T> x) 
+    {
+      return Sin(x) / Cos(x); //todo: inline
+    }
+    public static Float<T> TanPi(Float<T> x) 
+    {
+      return Tan(x * Pi); //todo: opt. cpu
+    }
+    public static (Float<T> Sin, Float<T> Cos) SinCos(Float<T> x) 
+    {
+      return (Sin(x), Cos(x)); //todo: opt. cpu
+    }
+    public static (Float<T> SinPi, Float<T> CosPi) SinCosPi(Float<T> x) 
+    {
+      x *= Pi; return (Sin(x), Cos(x)); //todo: opt. cpu
+    }
+    public static Float<T> Atan2(Float<T> y, Float<T> x) 
+    {
+      if (x > 0) return 2 * Atan(y / (Sqrt(x * x + y * y) + x));
+      else if (y != 0) return 2 * Atan((Sqrt(x * x + y * y) - x) / y);
+      else if (x < 0 && y == 0) return Pi;
+      else return NaN;
+    }
+    public static Float<T> Atan2Pi(Float<T> y, Float<T> x) 
+    {
+      return Atan2(y, x) / Pi; //todo: opt. cpu
+    }
+    public static Float<T> Acosh(Float<T> x) 
+    {
+      return Log(x + Sqrt(x * x - 1)); //todo: opt. cpu
+    }
+    public static Float<T> Asinh(Float<T> x) 
+    {
+      return Log(x + Sqrt(x * x + 1)); //todo: opt. cpu
+    }
+    public static Float<T> Atanh(Float<T> x) 
+    {
+      return Log((1 + x) / (1 - x)) / 2; //todo: opt. cpu
+    }
+    public static Float<T> Cosh(Float<T> x) 
+    {
+      return (Exp(x) + Exp(-x)) / 2; //todo: opt. cpu
+    }
+    public static Float<T> Sinh(Float<T> x) 
+    {
+      return (Exp(x) - Exp(-x)) / 2; //todo: opt. cpu
+    }
+    public static Float<T> Tanh(Float<T> x) 
+    {
+      return 1 - 2 / (Exp(x * 2) + 1); //todo: opt. cpu
+    }
+    #endregion
 
     public readonly override int GetHashCode()
     {
@@ -551,7 +633,7 @@ namespace System.Numerics.Generic
       var cpu = main_cpu; cpu.tor(s, 10, info != null ? info.NumberDecimalSeparator[0] : default);
       Float<T> x; cpu.fpop(&x, desc); return x;
     }
-    
+
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Float<T> result)
     {
       var info = provider != null ? NumberFormatInfo.GetInstance(provider) : null;
@@ -563,7 +645,7 @@ namespace System.Numerics.Generic
     public static bool TryParse(string? s, IFormatProvider? provider, out Float<T> result) => TryParse(s.AsSpan(), NumberStyles.Float | NumberStyles.AllowThousands, provider, out result);
     public static bool TryParse(ReadOnlySpan<char> s, out Float<T> result) => TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, null, out result);
     public static bool TryParse([NotNullWhen(true)] string? s, out Float<T> result) => TryParse(s.AsSpan(), NumberStyles.Float | NumberStyles.AllowThousands, null, out result);
-    
+
     #region private
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly T p;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static int desc = CPU.fdesc(sizeof(T));
@@ -688,28 +770,6 @@ namespace System.Numerics.Generic
       d.Reverse(); return true;
     }
 
-    #region todo 
-    static Float<T> IFloatingPointIeee754<Float<T>>.Atan2(Float<T> y, Float<T> x) => throw new NotImplementedException();
-    static Float<T> IFloatingPointIeee754<Float<T>>.Atan2Pi(Float<T> y, Float<T> x) => throw new NotImplementedException();
-    static Float<T> IHyperbolicFunctions<Float<T>>.Acosh(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IHyperbolicFunctions<Float<T>>.Asinh(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IHyperbolicFunctions<Float<T>>.Atanh(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IHyperbolicFunctions<Float<T>>.Cosh(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IHyperbolicFunctions<Float<T>>.Sinh(Float<T> x) => throw new NotImplementedException();
-    static Float<T> IHyperbolicFunctions<Float<T>>.Tanh(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.Acos(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.AcosPi(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.Asin(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.AsinPi(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.AtanPi(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.CosPi(Float<T> x) => throw new NotImplementedException();
-    static (Float<T> Sin, Float<T> Cos) ITrigonometricFunctions<Float<T>>.SinCos(Float<T> x) => throw new NotImplementedException();
-    static (Float<T> SinPi, Float<T> CosPi) ITrigonometricFunctions<Float<T>>.SinCosPi(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.SinPi(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.Tan(Float<T> x) => throw new NotImplementedException();
-    static Float<T> ITrigonometricFunctions<Float<T>>.TanPi(Float<T> x) => throw new NotImplementedException();
-
-    #endregion
   }
 #endif
 

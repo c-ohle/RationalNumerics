@@ -1,5 +1,6 @@
 ﻿
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.Numerics;
 using System.Reflection;
@@ -21,6 +22,7 @@ namespace Test
 #if false //NET7_0
     static void test()
     {
+      //test_imgsin();
       test_fp();
       test_casts();
       test_int32();
@@ -190,21 +192,23 @@ namespace Test
     }
     static void test_fp()
     {
-      static void test_ffp()
-      {
-        double a; Float80 b;
-        b = a = 4; a = double.BitIncrement(a); b = Float80.BitIncrement(b);
-        b = a = 4; a = double.BitDecrement(a); b = Float80.BitDecrement(b);
-        b = a = -2; a = double.BitIncrement(a); b = Float80.BitIncrement(b);
-        b = a = -2; a = double.BitDecrement(a); b = Float80.BitDecrement(b);
-        b = a = +2.5; a = double.BitIncrement(a); b = Float80.BitIncrement(b);
-        b = a = +2.5; a = double.BitDecrement(a); b = Float80.BitDecrement(b);
-        b = a = -2.5; a = double.BitIncrement(a); b = Float80.BitIncrement(b);
-        b = a = -2.5; a = double.BitDecrement(a); b = Float80.BitDecrement(b);
-      }
-      test_ffp();
-
       double a, c, e; __float64 b, d, f; __float80 g;
+
+      b = a = +0.5; a = double.Atan(a); b = __float64.Atan(b);
+      b = a = +0.2; a = double.Atan(a); b = __float64.Atan(b);
+      b = a = -0.2; a = double.Atan(a); b = __float64.Atan(b);
+      b = a = -0.5; a = double.Atan(a); b = __float64.Atan(b);
+
+      b = a = +0.5; a = double.Asin(a); b = __float64.Asin(b);
+      b = a = +0.2; a = double.Asin(a); b = __float64.Asin(b);
+      b = a = -0.2; a = double.Asin(a); b = __float64.Asin(b);
+      b = a = -0.5; a = double.Asin(a); b = __float64.Asin(b);
+
+      b = a = +0.5; a = double.Acos(a); b = __float64.Acos(b);
+      b = a = +0.2; a = double.Acos(a); b = __float64.Acos(b);
+      b = a = -0.2; a = double.Acos(a); b = __float64.Acos(b); b = rat.Acos(-0.2);
+      b = a = -0.5; a = double.Acos(a); b = __float64.Acos(b); b = rat.Acos(-0.5);
+
 
       b = a = 0; a = double.BitIncrement(a); b = __float64.BitIncrement(b);
       b = a = 0; a = double.BitDecrement(a); b = __float64.BitDecrement(b);
@@ -337,6 +341,7 @@ namespace Test
           f = __float64.Log2(b); e = double.Log2(a); Debug.Assert(near(f, e));
           f = __float64.Sin(b); e = double.Sin(a); Debug.Assert(near(f, e));
           f = __float64.Cos(b); e = double.Cos(a); Debug.Assert(near(f, e));
+          //f = __float64.Atan(b); e = double.Atan(a); Debug.Assert(near(f, e));
         }
         test_num(a, b);
         static void test_num<A, B>(A a, B b)
@@ -1528,8 +1533,42 @@ namespace Test
       var g = num / den;
       //0.8862269254527580136490837416705725913987747280611935641069038949
     }
-
+    static void test_imgsin()
+    {
+      double a, c; __float64 b;
+      using (var bmp = new Bitmap(2048, 256, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+      {
+        using (var gr = Graphics.FromImage(bmp))
+        {
+          gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+          gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+          gr.DrawLine(Pens.Black, 0, 128, 2048, 128);
+          for (int i = 0; i < 20; i++)
+          {
+            var x = (float)((i * (Math.PI / 2)) * 1024 / 16);
+            gr.DrawLine(i == 0 ? Pens.Black : Pens.Gray, 1024 + x, 0, 1024 + x, 256);
+            gr.DrawLine(i == 0 ? Pens.Black : Pens.Gray, 1024 - x, 0, 1024 - x, 256);
+          }
+          float lxs = 0, lys = 128, lxc = 0, lyc = 128;
+          for (c = -8; c <= +8; c += 0.01)
+          {
+            a = double.Sin(c); b = __float64.Sin(c);
+            gr.DrawLine(Pens.Red, lxs, lys,
+              lxs = (float)(2048 * (c + 8) / 16),
+              lys = (float)(128 - 128 * (float)b));
+            b = __float64.Cos(c);
+            gr.DrawLine(Pens.Blue, lxc, lyc,
+              lxc = (float)(2048 * (c + 8) / 16),
+              lyc = (float)(128 - 128 * (float)b));
+          }
+        }
+        bmp.Save("""
+          C:\Users\cohle\Desktop\xxxxxx.png
+          """, ImageFormat.Png);
+      }
+    }
 #endif
 
   }
+
 }

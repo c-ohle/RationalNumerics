@@ -1282,7 +1282,7 @@ namespace System.Numerics
       /// <param name="i">Absolute index of the value to get.</param>
       public float getf(uint i)
       {
-        return (float)getd(i); //new BigRational(p[i]);
+        return (float)(double)new BigRational(p[i]); // (float)getd(i);
       }
       /// <summary>
       /// Exposes the internal data representation of the value at absolute position i on the stack.<br/>
@@ -1338,12 +1338,8 @@ namespace System.Numerics
       /// <returns>A <see cref="int"/> value.</returns>
       public int popi()
       {
-        fixed (uint* u = p[i - 1])
-        {
-          var i = unchecked((int)u[1]);
-          if ((u[0] & 0x80000000) != 0) i = -i;
-          pop(); return i;
-        }
+        var t = geti(unchecked((uint)(i - 1))); pop(); return t;
+        //fixed (uint* u = p[i - 1]) { var i = unchecked((int)u[1]); if ((u[0] & 0x80000000) != 0) i = -i; pop(); return i; }
       }
       /// <summary>
       /// Removes the value currently on top of the stack.
@@ -2625,7 +2621,7 @@ namespace System.Numerics
         var m = mark(); pi(e > c ? unchecked((uint)e) : c); shr(1); // push PI2
         if (cos) add(1, 0); // x += PI2 
         div(m - 1, m); mod(); swp(); pop(); // push divmod(x, PI2)
-        var s = this.p[this.i - 1][1]; // dup(); var s = pop_int(); // seg
+        var s = geti(m + 1); //dup(); var s = popi(); // seg                            
         mul(0, 1); neg(); add(2, 0); pop(); // x - trunc(x / PI2) * PI2
         if ((s & 1) != 0) { swp(); sub(); } else pop(); // x = PI2 - x, pop PI2
         if ((s & 2) != 0) neg(); lim(c); // x = -x, lim x
@@ -3217,6 +3213,14 @@ namespace System.Numerics
         for (; c != 0 && i < na; i++, c = d >> 32) a[i] = unchecked((uint)(d = a[i] + c));
       }
       #region experimental      
+      internal int geti(uint i)
+      {
+        fixed (uint* u = this.p[i])
+        {
+          var v = unchecked((int)u[1]); 
+          return (u[0] & 0x80000000) != 0 ? -v : v;
+        }
+      }
       internal uint msd()
       {
         fixed (uint* p = this.p[this.i - 1])
