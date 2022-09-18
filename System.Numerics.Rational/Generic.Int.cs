@@ -216,7 +216,7 @@ namespace System.Numerics.Generic
     {
       //var q = left / right; return (q, left - (q * right));
       var cpu = main_cpu; cpu.ipush(&left, sizeof(T)); cpu.ipush(&right, sizeof(T));
-      cpu.idr(); cpu.ipop(&left, sizeof(T)); cpu.ipop(&right, sizeof(T)); return (left, right);
+      cpu.divrem(); cpu.ipop(&left, sizeof(T)); cpu.ipop(&right, sizeof(T)); return (left, right);
     }
     public static bool IsPow2(Int<T> value)
     {

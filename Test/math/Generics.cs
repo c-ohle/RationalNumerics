@@ -94,7 +94,7 @@ namespace Test
     public static bool operator >(Float80 left, Float80 right) => left.p > right.p;
     public static bool operator <(Float80 left, Float80 right) => left.p < right.p;
 
-    public static int Bits => System.Numerics.Generic.Float<Test.SizeType80>.Bits;
+    public static int BitCount => System.Numerics.Generic.Float<Test.SizeType80>.BitCount;
     public static int MaxDigits => System.Numerics.Generic.Float<Test.SizeType80>.MaxDigits;
     public static Float80 MinValue => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.MinValue);
     public static Float80 MaxValue => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.MaxValue);

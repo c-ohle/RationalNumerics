@@ -191,7 +191,7 @@ namespace System.Numerics.Generic
     {
       //var q = left / right; return (q, left - (q * right));
       var cpu = main_cpu; cpu.upush(&left, sizeof(T)); cpu.upush(&right, sizeof(T));
-      cpu.idr(); cpu.upop(&left, sizeof(T)); cpu.upop(&right, sizeof(T)); return (left, right);
+      cpu.divrem(); cpu.upop(&left, sizeof(T)); cpu.upop(&right, sizeof(T)); return (left, right);
     }
     public static UInt<T> RotateLeft(UInt<T> value, int rotateAmount)
     {

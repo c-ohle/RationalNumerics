@@ -508,7 +508,7 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Asin(BigRational x, int digits)
     {
-      return Atan(x / Sqrt(1 - x * x, digits), digits); //todo: inline
+      return 0 | Atan(x / Sqrt(1 - x * x, digits), digits); //todo: inline
     }
     /// <summary>
     /// Returns the angle whose cosine is the specified number.
@@ -524,7 +524,8 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Acos(BigRational x, int digits)
     {
-      return Atan(Sqrt(1 - x * x, digits) / x, digits); //todo: inline
+      return 0 | Asin(-x, digits) + Pi(digits) / 2;
+      //return Atan(Sqrt(1 - x * x, digits) / x, digits); //todo: inline
     }
     /// <summary>
     /// Returns the angle whose tangent is the specified number.
@@ -568,12 +569,9 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Atan2(BigRational y, BigRational x, int digits)
     {
-      if (x > 0)
-        return 2 * Atan(y / (Sqrt(x * x + y * y, digits) + x), digits);
-      else if (y != 0)
-        return 2 * Atan((Sqrt(x * x + y * y, digits) - x) / y, digits);
-      else if (x < 0 && y == 0)
-        return Pi(digits);
+      if (x > 0) return 2 * Atan(y / (Sqrt(x * x + y * y, digits) + x), digits);
+      else if (y != 0) return 2 * Atan((Sqrt(x * x + y * y, digits) - x) / y, digits);
+      else if (x < 0 && y == 0) return Pi(digits);
       return default(BigRational) / 0; //NaN
     }
 
