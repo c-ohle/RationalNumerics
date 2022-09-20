@@ -2,6 +2,7 @@
 global using rat = System.Numerics.BigRational;
 global using BigInt = System.Numerics.BigRational.Integer;
 
+global using __float16 = System.Numerics.Generic.Float<Test.SizeType16>;
 global using __float32 = System.Numerics.Generic.Float<Test.SizeType32>;
 global using __float64 = System.Numerics.Generic.Float<Test.SizeType64>;
 global using __float80 = System.Numerics.Generic.Float<Test.SizeType80>;
@@ -36,6 +37,7 @@ using System.Runtime.CompilerServices;
 
 namespace Test
 {
+  [StructLayout(LayoutKind.Sequential, Size = 02)] readonly struct SizeType16 { }
   [StructLayout(LayoutKind.Sequential, Size = 04)] readonly struct SizeType32 { }
   [StructLayout(LayoutKind.Sequential, Size = 08)] readonly struct SizeType64 { }
   [StructLayout(LayoutKind.Sequential, Size = 10)] readonly struct SizeType80 { }

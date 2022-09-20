@@ -265,7 +265,6 @@ namespace System.Numerics.Generic
     }
     public static bool IsPow2(Float<T> value)
     {
-      if (value == default) return false;
       var cpu = main_cpu; cpu.fpush(&value, desc);
       var r = cpu.sign() > 0 && cpu.ipt(); cpu.pop(); return r;
     }
@@ -429,7 +428,7 @@ namespace System.Numerics.Generic
     public static int ILogB(Float<T> x)
     {
       var cpu = main_cpu; var e = cpu.fpush(&x, desc); var m = cpu.msb();
-      cpu.pop(); return m != 0 ? e + unchecked((int)m) - 1 : int.MinValue; //nan: MaxValue
+      cpu.pop(); return m != 0 ? e + unchecked((int)m) - 1 : CPU.ftest(&x, desc) != 1 ? int.MinValue : int.MaxValue; //nan: MaxValue
     }
     public static Float<T> FusedMultiplyAdd(Float<T> left, Float<T> right, Float<T> addend)
     {
