@@ -10,7 +10,6 @@ namespace System.Numerics
   /// <summary>
   /// Represents an arbitrarily large rational number.
   /// </summary>                                                    
-
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly partial struct BigRational : IComparable<BigRational>, IComparable, IEquatable<BigRational>, IFormattable, ISpanFormattable
   {
@@ -1056,13 +1055,13 @@ namespace System.Numerics
       /// <param name="v">The value to push.</param>
       public void push(int v)
       {
-        //todo: benchmarks
-        push(unchecked((uint)(v < 0 ? -v : v))); if (v < 0) this.p[this.i - 1][0] |= 0x80000000; //neg()
-        //fixed (uint* p = rent(4))
-        //{
-        //  p[0] = unchecked((uint)v & 0x80000000) | 1;
-        //  p[1] = unchecked((uint)(v < 0 ? -v : v)); *(ulong*)(p + 2) = 0x100000001;
-        //}
+        fixed (uint* p = rent(4))
+        {
+          p[0] = (unchecked((uint)v) & 0x80000000) | 1;
+          p[1] = unchecked((uint)BigRational.abs(v));
+          *(ulong*)(p + 2) = 0x100000001;
+        }
+        //push(unchecked((uint)__abs(v))); if (v < 0) this.p[this.i - 1][0] |= unchecked((uint)v) & 0x80000000;
       }
       /// <summary>
       /// Pushes n copies of the supplied <see cref="int"/> value onto the stack.
@@ -1071,8 +1070,8 @@ namespace System.Numerics
       /// <param name="n">The number of copies to push.</param>
       public void push(int v, int n)
       {
-        //for (int i = 0; i < n; i++) push(v);
-        if (n <= 0) return; push(v); for (int i = 1; i < n; i++) dup(unchecked((uint)(this.i - 1))); //todo: benchmark
+        if (n <= 0) return;
+        push(v); for (int i = 1; i < n; i++) dup(unchecked((uint)(this.i - 1)));
       }
       /// <summary>
       /// Pushes the supplied <see cref="uint"/> value onto the stack.
@@ -1088,15 +1087,8 @@ namespace System.Numerics
       /// <param name="v">The value to push.</param>
       public void push(long v)
       {
-        //todo: benchmarks recu inline
-        push(unchecked((ulong)(v < 0 ? -v : v))); if (v < 0) this.p[this.i - 1][0] |= 0x80000000; //neg()
-        //var t = unchecked((uint)v); if (t == v) { push(t); return; } // mcc
-        //var s = v < 0; var u = unchecked((ulong)(s ? -v : v)); var n = unchecked((uint)u) == u ? 1u : 2u;
-        //fixed (uint* p = rent(5))
-        //{
-        //  p[0] = (s ? 0x80000000 : 0) | n;
-        //  *(ulong*)(p + 1) = u; *(ulong*)(p + (n + 1)) = 0x100000001;
-        //}
+        push(unchecked((ulong)((v ^ (v >> 63)) - (v >> 63))));
+        this.p[this.i - 1][0] |= unchecked((uint)(v >> 32)) & 0x80000000; //neg()
       }
       /// <summary>
       /// Pushes the supplied <see cref="ulong"/> value onto the stack.
@@ -1162,7 +1154,7 @@ namespace System.Numerics
         if (v == 0) { push(); return; }
         int h = ((int*)&v)[1], e = ((h >> 20) & 0x7FF) - 1075; // Debug.Assert(!double.IsFinite(v) == (e == 0x3cc));
         if (e == 0x3cc) { pnan(); return; } // NaN 
-        fixed (uint* p = rent((unchecked((uint)(e < 0 ? -e : e)) >> 5) + 8))
+        fixed (uint* p = rent((unchecked((uint)BigRational.abs(e)) >> 5) + 8))
         {
           p[0] = 2; p[1] = *(uint*)&v; p[2] = (unchecked((uint)h) & 0x000FFFFF) | 0x100000;
           if (e == -1075) { if ((p[2] &= 0xfffff) == 0) if (p[p[0] = 1] == 0) { *(ulong*)(p + 2) = 0x100000001; return; } e++; } // denormalized
@@ -1206,7 +1198,7 @@ namespace System.Numerics
         {
           p[c] = 0; var ok = v.TryWriteBytes(new Span<byte>(p + 1, n), out _, true);
           if (p[c] == 0) c--; Debug.Assert(ok && p[c] != 0); //todo: report BigInteger bug p[c] == 0
-          p[0] = unchecked((uint)c) | (si < 0 ? 0x80000000 : 0);
+          p[0] = unchecked((uint)c) | ((uint)si & 0x80000000);
           *(ulong*)(p + c + 1) = 0x100000001;
         }
       }
@@ -1972,7 +1964,7 @@ namespace System.Numerics
       /// <param name="y">A <see cref="int"/> value that specifies a power.</param>
       public void pow(int x, int y)
       {
-        uint e = unchecked((uint)(y < 0 ? -y : y)), z; //todo: pow cache
+        uint e = unchecked((uint)BigRational.abs(y)), z; //todo: pow cache
         if (x == 10) { push(unchecked((ulong)Math.Pow(x, z = e < 19 ? e : 19))); e -= z; } //todo: opt. 1, 0, -1, -2, -4,...
         else if ((x & (x - 1)) == 0 && x >= 0) // 2, 4, 8
         {
@@ -1983,11 +1975,7 @@ namespace System.Numerics
         if (e != 0)
         {
           push(x);
-          for (; ; e >>= 1)
-          {
-            if ((e & 1) != 0) mul(1, 0);
-            if (e == 1) break; sqr();// mul(0, 0);
-          }
+          for (; ; e >>= 1) { if ((e & 1) != 0) { mul(1, 0); if (e == 1) break; } sqr(); }
           pop();
         }
         if (y < 0) inv();
@@ -2000,7 +1988,7 @@ namespace System.Numerics
       public void pow(int y)
       {
         push(1u); swp(); //todo: opt. ipt()
-        for (var e = unchecked((uint)(y < 0 ? -y : y)); ; e >>= 1)
+        for (var e = unchecked((uint)BigRational.abs(y)); ; e >>= 1)
         {
           if ((e & 1) != 0) mul(1, 0);
           if (e <= 1) break; sqr(); // mul(0, 0);
@@ -2110,7 +2098,7 @@ namespace System.Numerics
       public int cmpi(int a, int b)
       {
         //push(b); a = cmp(a + 1, 0); pop(); return a;
-        var v = stackalloc uint[] { unchecked((uint)b & 0x8000000) | 1, unchecked((uint)(b < 0 ? -b : b)), 0, 1 };
+        var v = stackalloc uint[] { unchecked((uint)b & 0x8000000) | 1, unchecked((uint)BigRational.abs(b)), 0, 1 };
         fixed (uint* u = p[this.i - 1 - a]) return cmp(u, v);
       }
       /// <summary>
@@ -2313,7 +2301,7 @@ namespace System.Numerics
           if ((p[0] & 0x40000000) == 0) return false; //if ((p[0] & 0x40000000) != 0) norm(p);
         }
         dup(); mod(); if (sign(1) != 0) { pop(2); return false; }
-        swp(0, 2); pop(2); return true; //keep normalized                   
+        swp(0, 2); pop(2); return true;
       }
       /// <summary>
       /// Finds the greatest common divisor (GCD) of the numerators<br/>
@@ -2369,7 +2357,7 @@ namespace System.Numerics
           var l = (long)sp.Length * nr; var need = unchecked((int)l);
           if (l >= (int.MaxValue >> 3)) reps = false;
           else if (l <= 0x8000) { var t = stackalloc uint[need]; rr = t; }
-          else rr = (uint*)(mem = Marshal.AllocCoTaskMem(need << 2));
+          else rr = (uint*)(mem = Marshal.AllocCoTaskMem(need << 2));//todo: rem
         }
         for (int i = 0, t; ; i++)
         {
@@ -2460,8 +2448,8 @@ namespace System.Numerics
       /// <param name="c">The desired precision.</param>
       public void sqrt(uint c)
       {
-        var e = bdi(); if (e == -int.MaxValue) return; // 0
-        e = Math.Abs(e); if (e > c) c = unchecked((uint)e);
+        var e = sign(); if (e <= 0) { if (e < 0) { pop(); pnan(); } return; }
+        e = bdi(); e = BigRational.abs(e); if (e > c) c = unchecked((uint)e);
         uint m = mark(), s; //get(m - 1, out double d); // best possible initial est: 
         //if (double.IsNormal(d)) push(Math.Sqrt(d));   // todo: enable afte checks, best possible start value
         //else
@@ -2652,7 +2640,7 @@ namespace System.Numerics
       /// <param name="c">The desired precision.</param>
       public void atan(uint c)
       {
-        var s = sign(); if (s == 0) return; // atan(0) = 0        
+        var s = sign(); if (s == 0 || isnan()) return; // atan(0) = 0        
         if (s < 0) neg(); // atan(-x) = -atan(x)        
         var td = cmpi(0, 1) > 0; if (td) inv(); // atan(1/x) = pi/2 - atan(x)
         int sh = 0; // atan(x) = atan(c) + atan((x - c) / (1 + c * x)) -> c == (x - c) / (1 + c * x) -> c <= 0.1 
@@ -2680,7 +2668,7 @@ namespace System.Numerics
         if (td) { neg(); pi(c); shr(1); add(); } // z = pi / 2 - z;
         if (s < 0) neg();
       }
-      /// <summary>
+/// <summary>
       /// Frees the current thread static instance of the <see cref="CPU"/> and associated buffers.<br/>
       /// A new <see cref="CPU"/> is then automatically created for subsequent calculations.
       /// </summary>
@@ -2770,7 +2758,8 @@ namespace System.Numerics
           var sa = u[0] & 0x80000000;
           var sb = v[0] & 0x80000000; if (neg) sb ^= 0x80000000;
           var ud = u + ((u[0] & 0x3fffffff) + 1);
-          var vd = v + ((v[0] & 0x3fffffff) + 1);
+          var vd = v + ((v[0] & 0x3fffffff) + 1); 
+          if (*(ulong*)ud == 1 || *(ulong*)vd == 1) { *(ulong*)w = *(ulong*)(w + 2) = 1; return; } //nan
           uint* s = w + (l << 1), t;
           mul(u, vd, s);
           mul(v, ud, t = s + (s[0] + 1));
@@ -2791,7 +2780,7 @@ namespace System.Numerics
         {
           var s = (v[0] & 0x3fffffff) + 1;
           var t = (u[0] & 0x3fffffff) + 1;
-          mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1 && *(ulong*)(u + t) != 1) { *(ulong*)(w + 2) = 0x100000001; return; } // 0 but keep NaN
+          mul(u + 0, inv ? v + s : v, w); if (*(ulong*)w == 1 && *(ulong*)(u + t) != 1) { *(ulong*)(w + 2) = inv && *(ulong*)(v + s) == 1 ? 1ul : 0x100000001; return; } // 0 but keep NaN
           mul(u + t, inv ? v : v + s, w + (w[0] + 1));
           w[0] |= ((u[0] ^ v[0]) & 0x80000000) | 0x40000000;
         }
@@ -3133,9 +3122,9 @@ namespace System.Numerics
         return ((ulong*)p)[0] == 1 && ((ulong*)p)[1] != 1; // && !NaN 
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      static bool isint(uint* p)
+      static bool isint(uint* p) //or nan
       {
-        return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000001;
+        return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) <= 0x100000001; //==
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static int sig(uint* p)
@@ -3214,6 +3203,19 @@ namespace System.Numerics
       }
 
       #region experimental      
+      internal void asin(uint c)
+      {
+        dup(); sqr(); push(1u); var t = cmp(); // Atan(x / Sqrt(1 - x * x));
+        if (t <= 0) { var s = sign(2); pop(3); if (t == 0) { pi(c); shr(1); if (s < 0) neg(); } else pnan(); return; }
+        swp(); sub(); sqrt(c); div(); atan(c);
+      }
+      internal void acos(uint c)
+      {
+        dup(); push(1u); swp(); sub(); // 2 * Atan(Sqrt((1 - x) / (1 + x)))
+        swp(); push(1u); add(); if (sign() == 0) { pop(2); pi(c); return; }
+        div(); if (sign() < 0) { pop(); pnan(); return; }
+        sqrt(c); atan(c); shl(1);
+      }
       internal int geti(uint i)
       {
         fixed (uint* u = this.p[i])
@@ -3252,10 +3254,16 @@ namespace System.Numerics
         //Debug.Assert(e == x);
         return e;
       }
-      //internal bool bt(int c) //BT Bit Test, BTS and Set, BTR and Reset, BTC and Complement
-      //{
-      //  return (p[i - 1][1 + (c >> 5)] & (1 << (c & 31))) != 0;
-      //}
+      internal bool bt(int c, int i = 0) //BT Bit Test, BTS and Set, BTR and Reset, BTC and Complement
+      {
+        if (c < 0) return false;
+        fixed (uint* p = this.p[this.i - 1 - i])
+        {
+          if ((c >> 5) >= (p[0] & 0x3fffffff)) return false;
+          return (p[1 + (c >> 5)] & (1u << (c & 31))) != 0;
+        }
+        //return (this.p[this.i - 1 - i][1 + (c >> 5)] & (1 << (c & 31))) != 0;
+      }
       internal static int hash(void* p, int n)
       {
         uint h = 0, c = unchecked((uint)n) >> 2;
@@ -3453,7 +3461,7 @@ namespace System.Numerics
         var be = (h & 0x7fffffff) >> (32 - ec); // biased exponent
         return unchecked((int)be - (int)eb); // exponent
       }
-      internal static void fnans<T>(void* p, int f)
+      internal static void fnan<T>(void* p, int f)
       {
         var desc = tdesc<T>.desc & 0x0fffffff;
         int size = desc & 0xffff, bc = desc >> 16, ec = (size << 3) - bc;
@@ -3500,7 +3508,7 @@ namespace System.Numerics
         }
         return e;
       }
-      internal void fpop<T>(void* p, int e)
+      internal void fpop<T>(void* p, int e, bool add = false)
       {
         fixed (uint* u = this.p[this.i - 1])
         {
@@ -3511,21 +3519,35 @@ namespace System.Numerics
           var l = unchecked((uint)((size >> 2) + ((size >> 1) & 1)));
           if (bi + e <= 0 || msb == 0) // 0, -0.0
           {
-            if (*(ulong*)(u + (n + 1)) == 1) { pop(); fnans<T>(p, 0); return; } //NaN 
+            if (*(ulong*)(u + (n + 1)) == 1) { pop(); fnan<T>(p, 0); return; } //NaN 
             pop(); copy(((uint*)p), l); if (s != 0) *(uint*)(((byte*)p) + (size - 4)) |= s; return; //-0.0
           }
-          if (bi + e >= (1 << (ec - 1)) - 1) { pop(); fnans<T>(p, s != 0 ? 1 : 2); return; } // +/- Infinity
-          if (d > 0)
+          if (bi + e >= (1 << (ec - 1)) - 1) { pop(); fnan<T>(p, s != 0 ? 1 : 2); return; } // +/- Infinity
+          if (d == 0)
           {
-            var t = d - 1; var c = (u[1 + (t >> 5)] & (1 << (t & 31))) != 0; //Debug.Assert(bt(d - 1) == y);
-            shr(u, d); if (c) { u[1]++; if (u[1] == 0) { } } // Debug.Assert(u[1] != 0); //if (c) { var o = 1u; add(u + 1, u[0], &o, 1); } 
+            if (add) { }
+          }
+          else if (d > 0)
+          {
+            if (add) { }
+            var t = d - 1; var c = (u[1 + (t >> 5)] & (1u << (t & 31))) != 0; //var u1 = u[1 + (t >> 5)];
+            shr(u, d);
+            if (c)
+            {
+              if (add) { }
+              else
+                u[1]++;
+              //if (add) { if ((u[1] & 1) == 1) u[1]++; } else u[1]++;
+            }
           }
           else if (d < 0)
           {
-            if (size >= this.p[this.i - 1].Length << 2)
+            if (add) { }
+            if (size >= this.p[this.i - 1].Length << 2) //todo: finale check this very rare case //Debug.Assert(n + ((uint)(-d) >> 5) + 1 <= this.p[this.i - 1].Length);
               fixed (uint* t = rent(l)) { copy(t, u, n + 1); fpop<T>(p, e - d); pop(); return; }
-            shl(u, -d); //Debug.Assert(n + ((uint)(-d) >> 5) + 1 <= this.p[this.i - 1].Length);
+            shl(u, -d);
           }
+
           var ps = (uint*)(((byte*)u) + size);
           *ps = s | (unchecked((uint)(bi + e)) << (32 - ec)) | (*ps & ~(1u << (32 - ec)));
           copy((uint*)p, u + 1, l); pop();
@@ -3549,10 +3571,9 @@ namespace System.Numerics
       }
       internal void fcast<A, B>(void* d, void* s)
       {
-        var x = ftest<B>(s); if (x != 0) { fnans<A>(d, x - 1); return; }
+        var x = ftest<B>(s); if (x != 0) { fnan<A>(d, x - 1); return; }
         var e = fpush<B>(s); fpop<A>(d, e);
       }
-
       #endregion
       #region dec support
       internal decimal popm()
@@ -3723,7 +3744,7 @@ namespace System.Numerics
       if (f == 'E') cpu.rnd(rnd - e);
       else if (f == 'F')
       {
-        var h = (e < 0 ? -e : e) + rnd + 16; if (h > sp.Length) { cpu.pop(); return -h; }
+        var h = abs(e) + rnd + 16; if (h > sp.Length) { cpu.pop(); return -h; }
         var d = e + rnd + 1; if (d > dig) dig = d;
         cpu.rnd(rnd);
       }
@@ -3774,6 +3795,12 @@ namespace System.Numerics
     {
       int v = 0; for (int i = 0, n = s.Length; i < n; i++) { var x = s[i] - '0'; if (x < 0 || x > 9) break; v = v * 10 + x; }
       return v;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int abs(int x)
+    {
+      var a = (x ^ (x >> 31)) - (x >> 31); //var b = x < 0 ? -x : x; Debug.Assert(a == b);
+      return a;
     }
     #endregion
   }

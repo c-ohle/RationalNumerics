@@ -50,7 +50,7 @@ namespace System.Numerics.Generic
       var cpu = main_cpu; cpu.push(value);
       Float<T> x; cpu.fpop<Float<T>>(&x); return x;
     }
-    public static implicit operator Float<T>(BigRational value)
+    public static explicit operator Float<T>(BigRational value)
     {
       var cpu = main_cpu; cpu.push(value);
       Float<T> x; cpu.fpop<Float<T>>(&x); return x;
@@ -69,7 +69,6 @@ namespace System.Numerics.Generic
     public static explicit operator Half(Float<T> value)
     {
       Half c; main_cpu.fcast<Half, Float<T>>(&c, &value); return c;
-      //return (Half)(double)value; //todo: we can push
     }
     public static explicit operator float(Float<T> value)
     {
@@ -90,8 +89,7 @@ namespace System.Numerics.Generic
     }
     public static implicit operator BigRational(Float<T> value)
     {
-      var cpu = main_cpu; cpu.fpushr<Float<T>>(&value);
-      return cpu.popr();
+      var cpu = main_cpu; cpu.fpushr<Float<T>>(&value); return cpu.popr();
     }
 
     public static Float<T> operator +(Float<T> value) => value;
@@ -114,16 +112,16 @@ namespace System.Numerics.Generic
       var cpu = main_cpu;
       int u = cpu.fpush<Float<T>>(&left);
       int v = cpu.fpush<Float<T>>(&right.p), l = u < v ? 1 : 0, e;
-      cpu.shr(l == 0 ? (e = u) - v : (e = v) - u, l); cpu.add();
-      cpu.fpop<Float<T>>(&left, e); return left;
+      cpu.shr(l == 0 ? (e = u) - v : (e = v) - u, l);
+      cpu.add(); cpu.fpop<Float<T>>(&left, e); return left;
     }
     public static Float<T> operator -(Float<T> left, Float<T> right)
     {
       var cpu = main_cpu;
       int u = cpu.fpush<Float<T>>(&left);
       int v = cpu.fpush<Float<T>>(&right), l = u < v ? 1 : 0, e;
-      cpu.shr(l == 0 ? (e = u) - v : (e = v) - u, l); cpu.sub();
-      cpu.fpop<Float<T>>(&left, e); return left;
+      cpu.shr(l == 0 ? (e = u) - v : (e = v) - u, l);
+      cpu.sub(); cpu.fpop<Float<T>>(&left, e); return left;
     }
     public static Float<T> operator *(Float<T> left, Float<T> right)
     {
@@ -135,10 +133,10 @@ namespace System.Numerics.Generic
     public static Float<T> operator /(Float<T> left, Float<T> right)
     {
       var desc = CPU.tdesc<Float<T>>.desc & 0x0fffffff;
-      var cpu = main_cpu; var mbi = desc >> 16;
-      var u = cpu.fpush<Float<T>>(&left); cpu.shl(mbi);
+      var cpu = main_cpu; var bi = (desc >> 16) + 2;
+      var u = cpu.fpush<Float<T>>(&left); cpu.shl(bi);
       var v = cpu.fpush<Float<T>>(&right); cpu.idiv();
-      cpu.fpop<Float<T>>(&left, u - v - mbi); return left;
+      cpu.fpop<Float<T>>(&left, u - v - bi); return left;
     }
     public static Float<T> operator %(Float<T> left, Float<T> right)
     {
@@ -181,15 +179,15 @@ namespace System.Numerics.Generic
     }
     public static Float<T> NaN
     {
-      get { Float<T> a; CPU.fnans<Float<T>>(&a, 0); return a; }
+      get { Float<T> a; CPU.fnan<Float<T>>(&a, 0); return a; }
     }
     public static Float<T> NegativeInfinity
     {
-      get { Float<T> a; CPU.fnans<Float<T>>(&a, 1); return a; }
+      get { Float<T> a; CPU.fnan<Float<T>>(&a, 1); return a; }
     }
     public static Float<T> PositiveInfinity
     {
-      get { Float<T> a; CPU.fnans<Float<T>>(&a, 2); return a; }
+      get { Float<T> a; CPU.fnan<Float<T>>(&a, 2); return a; }
     }
     public static Float<T> NegativeZero
     {
@@ -205,7 +203,8 @@ namespace System.Numerics.Generic
       get
       {
         var desc = CPU.tdesc<Float<T>>.desc & 0x0fffffff;
-        var cpu = main_cpu; cpu.push(1u); cpu.exp(unchecked((uint)(desc >> 16) + 2)); Float<T> x; cpu.fpop<Float<T>>(&x); return x;
+        var cpu = main_cpu; cpu.push(1u); cpu.exp(unchecked((uint)(desc >> 16) + 2));
+        Float<T> x; cpu.fpop<Float<T>>(&x); return x;
       }
     }
     public static Float<T> Pi
@@ -213,7 +212,8 @@ namespace System.Numerics.Generic
       get
       {
         var desc = CPU.tdesc<Float<T>>.desc & 0x0fffffff;
-        var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); Float<T> x; cpu.fpop<Float<T>>(&x); return x;
+        var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2));
+        Float<T> x; cpu.fpop<Float<T>>(&x); return x;
       }
     }
     public static Float<T> Tau
@@ -221,7 +221,8 @@ namespace System.Numerics.Generic
       get
       {
         var desc = CPU.tdesc<Float<T>>.desc & 0x0fffffff;
-        var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); cpu.shl(1); Float<T> x; cpu.fpop<Float<T>>(&x); return x;
+        var cpu = main_cpu; cpu.pi(unchecked((uint)(desc >> 16) + 2)); cpu.shl(1);
+        Float<T> x; cpu.fpop<Float<T>>(&x); return x;
       }
     }
 
@@ -375,7 +376,7 @@ namespace System.Numerics.Generic
       // cpu.push(y); cpu.mul(); cpu.exp(c);
       // cpu.rnd(digits); return cpu.popr();
     }
-    public static Float<T> Pow10(int y) //todo: opt. cpu, for now as test
+    public static Float<T> Pow10(int y)
     {
       Float<T> x = 1, z = 10; uint e = unchecked((uint)(y >= 0 ? y : -y));
       for (; ; e >>= 1)
@@ -505,11 +506,17 @@ namespace System.Numerics.Generic
     #region todo cpu impl after test's
     public static Float<T> Acos(Float<T> x)
     {
-      return Asin(-x) + Pi / 2;
+      var desc = CPU.tdesc<Float<T>>.desc & 0x0fffffff;
+      var cpu = main_cpu; cpu.fpushr<Float<T>>(&x);
+      cpu.acos(unchecked((uint)(desc >> 16) + 2));
+      cpu.fpop<Float<T>>(&x); return x;
     }
     public static Float<T> Asin(Float<T> x)
     {
-      return Atan(x / Sqrt(1 - x * x)); //todo: opt. cpu
+      var desc = CPU.tdesc<Float<T>>.desc & 0x0fffffff;
+      var cpu = main_cpu; cpu.fpushr<Float<T>>(&x);
+      cpu.asin(unchecked((uint)(desc >> 16) + 2));
+      cpu.fpop<Float<T>>(&x); return x;
     }
     public static Float<T> AcosPi(Float<T> x)
     {
@@ -622,39 +629,52 @@ namespace System.Numerics.Generic
         if (f == 'F') { rnd = dig; if (rnd == 0 && !d) rnd = info.NumberDecimalDigits; dig = 0; }
       }
 
-      if (dig == 0) { dig = MaxDigits; if (dbg) dig++; } //dbg like float G9, double G17         
+      if (dig == 0) { dig = MaxDigits; if (dbg) dig += 0;/* dig++ */ } //dbg like float G9, double G17         
       if (dest.Length < dig + 16) { dig += 16; goto ex; }
-      var cpu = main_cpu; var value = this;
-      var nan = CPU.ftest<Float<T>>(&value);
+      var cpu = main_cpu; var val = this;
+      var nan = CPU.ftest<Float<T>>(&val);
       if (nan != 0)
       {
         var s = nan == 1 ? info.NaNSymbol : nan == 2 ? info.NegativeInfinitySymbol : info.PositiveInfinitySymbol;
         s.CopyTo(dest); charsWritten = s.Length; return true;
       }
-      //int e = cpu.fpush(&value, desc), es = 0;
-      int e = cpu.fpush<Float<T>>(&value), es = 0;
+      int e = cpu.fpush<Float<T>>(&val), es = 0;
       if (cpu.sign() != 0)
       {
-        var desc = CPU.tdesc<Float<T>>.desc & 0x0fffffff;
-        var ep = (int)((e + (desc >> 16)) * 0.30103f); // maxd unchecked((int)(((desc >> 16) + 1) * 0.30103f) + 1);
-        var d1 = ep < 0 ? -ep : ep; var d2 = dig < 0 ? -dig : dig; var dd = d1 - d2;
-        if (dd > 10) //todo: opt. F? check
+        //var desc = CPU.tdesc<Float<T>>.desc & 0x0fffffff;
+        //if (!dbg)
+        //{
+        Debug.Assert(dbg || dig >= 0);
+        if (abs(e) >= 128)
         {
-          if (dig <= 0) { }
-          else if (ep > 0)
-          {
-            cpu.pop(); value *= Pow10(-(es = dd - 3));
-            e = cpu.fpush<Float<T>>(&value);
-          }
-          else if (ep < 0)
-          {
-            cpu.pop(); value *= Pow10(-(es = 3 - dd));
-            e = cpu.fpush<Float<T>>(&value);
-          }
-          else { }
+          var expo = (int)(CPU.fexpo<Float<T>>(&val) * 0.30103f);
+          cpu.pop(); val *= Pow10(-(es = expo - dig));
+          e = cpu.fpush<Float<T>>(&val); Debug.Assert(abs(e) < 128);
         }
+        //}
+        //else
+        //{
+        //  var ep = (int)((e + (desc >> 16)) * 0.30103f); //var d1 = ep < 0 ? -ep : ep; var d2 = dig < 0 ? -dig : dig; var dd = d1 - d2;
+        //  var d1 = __abs(ep); var d2 = __abs(dig); var dd = d1 - d2;
+        //  if (dd > 10) //todo: opt. F? check
+        //  {
+        //    if (ep == 0) { }
+        //    else if (ep > 0)
+        //    {
+        //      cpu.pop(); val *= Pow10(-(es = dd - 3));
+        //      e = cpu.fpush<Float<T>>(&val);
+        //    }
+        //    else if (ep < 0)
+        //    {
+        //      cpu.pop(); val *= Pow10(-(es = -(dd - 3)));
+        //      e = cpu.fpush<Float<T>>(&val);
+        //    }
+        //    else { }
+        //  }
+        //}
         cpu.pow(2, e); cpu.mul();
       }
+
       var n = tos(dest, cpu, fmt, dig, rnd, es, info.NumberDecimalSeparator[0] == ',' ? 0x04 : 0);
       if (n < 0) { dig = -n; goto ex; }
       charsWritten = n; return true; ex:

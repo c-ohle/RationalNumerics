@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <Platforms>AnyCPU</Platforms>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>portable</DebugType>
@@ -13,7 +13,7 @@
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Company></Company>
     <Copyright>© Christian Ohle</Copyright>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>BigRational</PackageId>
     <Authors>Christian Ohle</Authors>
     <Description>BigRational based on a stack machine to create an arbitrary-precision rational number type.
@@ -32,9 +32,10 @@ common mathematical functions.</Description>
     <PackageIcon></PackageIcon>
     <Version>1.0.0.7</Version>
     <RepositoryType></RepositoryType>
-    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageReleaseNotes></PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <AssemblyName>System.Numerics.Rational</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

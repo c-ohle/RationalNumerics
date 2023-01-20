@@ -23,9 +23,9 @@ global using __uint128 = System.Numerics.Generic.UInt<Test.SizeType128>;
 global using __uint256 = System.Numerics.Generic.UInt<Test.SizeType256>;
 global using __uint512 = System.Numerics.Generic.UInt<Test.SizeType512>;
 
-global using __decimal64 = System.Numerics.Generic.Decimal<Test.SizeType64>;
-global using __decimal256 = System.Numerics.Generic.Decimal<Test.SizeType256>;
-global using __decimal512 = System.Numerics.Generic.Decimal<Test.SizeType512>;
+//global using __decimal64 = System.Numerics.Generic.Decimal<Test.SizeType64>;
+//global using __decimal256 = System.Numerics.Generic.Decimal<Test.SizeType256>;
+//global using __decimal512 = System.Numerics.Generic.Decimal<Test.SizeType512>;
 
 using System.Globalization;
 using System.Numerics;

@@ -41,7 +41,7 @@ namespace System.Numerics
     public static bool IsNaN(BigRational a)
     {
       if (a.p == null) return false;
-      fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 0x100000000;
+      fixed (uint* p = a.p) return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) == 1;// 0x100000000;
     }
     /// <summary>
     /// Gets the absolute value of a <see cref="BigRational"/> number.
@@ -508,7 +508,9 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Asin(BigRational x, int digits)
     {
-      return 0 | Atan(x / Sqrt(1 - x * x, digits), digits); //todo: inline
+      //return 0 | Atan(x / Sqrt(1 - x * x, digits), digits);
+      var cpu = main_cpu; cpu.push(x); var c = prec(digits);
+      cpu.asin(c); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the angle whose cosine is the specified number.
@@ -524,8 +526,9 @@ namespace System.Numerics
     /// </returns>
     public static BigRational Acos(BigRational x, int digits)
     {
-      return 0 | Asin(-x, digits) + Pi(digits) / 2;
-      //return Atan(Sqrt(1 - x * x, digits) / x, digits); //todo: inline
+      //return 0 | 2 * Atan(Sqrt((1 - x) / (1 + x), digits), digits);
+      var cpu = main_cpu; cpu.push(x); var c = prec(digits);
+      cpu.acos(c); cpu.rnd(digits); return cpu.popr();
     }
     /// <summary>
     /// Returns the angle whose tangent is the specified number.
@@ -574,7 +577,6 @@ namespace System.Numerics
       else if (x < 0 && y == 0) return Pi(digits);
       return default(BigRational) / 0; //NaN
     }
-
     /// <summary>Computes the cosine of a value that has been multipled by <c>pi</c>.</summary>
     /// <remarks>
     /// This computes <c>cos(x * π)</c>.<br/>

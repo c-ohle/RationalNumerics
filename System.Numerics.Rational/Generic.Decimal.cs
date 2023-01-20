@@ -11,9 +11,13 @@ using static System.Numerics.BigRational; //todo: remove
 
 namespace System.Numerics.Generic
 {
-
+  /// <summary>
+  /// under construction
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public unsafe readonly partial struct Decimal<T> : IComparable<Decimal<T>>, IComparable, IEquatable<Decimal<T>>, IFormattable, ISpanFormattable where T : unmanaged
+  //public
+  unsafe readonly partial struct Decimal<T> : IComparable<Decimal<T>>, IComparable, IEquatable<Decimal<T>>, IFormattable, ISpanFormattable where T : unmanaged
   {
     public static implicit operator Decimal<T>(int value) => default;
 
@@ -68,7 +72,8 @@ namespace System.Numerics.Generic
   }
 
 #if NET7_0
-  public unsafe readonly partial struct Decimal<T> : IFloatingPoint<Decimal<T>>, IMinMaxValue<Decimal<T>>
+  //public 
+  unsafe readonly partial struct Decimal<T> : IFloatingPoint<Decimal<T>>, IMinMaxValue<Decimal<T>>
   {
     static Decimal<T> IFloatingPointConstants<Decimal<T>>.E => throw new NotImplementedException();
     static Decimal<T> IFloatingPointConstants<Decimal<T>>.Pi => throw new NotImplementedException();
@@ -150,4 +155,3 @@ namespace System.Numerics.Generic
 #endif
 
 }
-

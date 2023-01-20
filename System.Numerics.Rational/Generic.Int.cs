@@ -36,6 +36,11 @@ namespace System.Numerics.Generic
       var cpu = main_cpu; cpu.ipush(&value, sizeof(T));
       long a; cpu.ipop(&a, sizeof(long)); return a;
     }
+    public static implicit operator BigRational(Int<T> value)
+    {
+      var cpu = main_cpu; cpu.ipush(&value, sizeof(T)); 
+      return cpu.popr();
+    }
 
     public static Int<T> operator +(Int<T> value) => value;
     public static Int<T> operator -(Int<T> value)

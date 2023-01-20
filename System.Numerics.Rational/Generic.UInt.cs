@@ -40,7 +40,7 @@ namespace System.Numerics.Generic
       var cpu = main_cpu; cpu.push(value);
       UInt<T> v; cpu.upop(&v, sizeof(T)); return v;
     }
-
+    
     public static explicit operator uint(UInt<T> value)
     {
       var cpu = main_cpu; cpu.upush(&value.p, sizeof(T));
@@ -58,6 +58,11 @@ namespace System.Numerics.Generic
     public static explicit operator long(UInt<T> value)
     {
       return (long)(ulong)value;
+    }
+    public static implicit operator BigRational(UInt<T> value)
+    {
+      var cpu = main_cpu; cpu.upush(&value, sizeof(T));
+      return cpu.popr();
     }
 
     public static UInt<T> operator +(UInt<T> value) => value;
