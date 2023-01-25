@@ -2668,7 +2668,7 @@ namespace System.Numerics
         if (td) { neg(); pi(c); shr(1); add(); } // z = pi / 2 - z;
         if (s < 0) neg();
       }
-/// <summary>
+      /// <summary>
       /// Frees the current thread static instance of the <see cref="CPU"/> and associated buffers.<br/>
       /// A new <see cref="CPU"/> is then automatically created for subsequent calculations.
       /// </summary>
@@ -2758,7 +2758,7 @@ namespace System.Numerics
           var sa = u[0] & 0x80000000;
           var sb = v[0] & 0x80000000; if (neg) sb ^= 0x80000000;
           var ud = u + ((u[0] & 0x3fffffff) + 1);
-          var vd = v + ((v[0] & 0x3fffffff) + 1); 
+          var vd = v + ((v[0] & 0x3fffffff) + 1);
           if (*(ulong*)ud == 1 || *(ulong*)vd == 1) { *(ulong*)w = *(ulong*)(w + 2) = 1; return; } //nan
           uint* s = w + (l << 1), t;
           mul(u, vd, s);
