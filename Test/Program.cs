@@ -15,7 +15,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); test();
+      ApplicationConfiguration.Initialize(); //test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -77,21 +77,20 @@ namespace Test
       b = 0.0000000000123; s = b.ToString(null, null);
       b = 0.00000000000123; s = b.ToString(null, null);
 
-      b = 1e10; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = -1e-10; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = 1e20; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = -1e-20; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = 1e-20; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = 1e200; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = -1e-200; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = 1e300; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = -1e-300; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = 1e55; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
-      b = -1e-55; s = b.ToString(null, null); b = BigRat.Normalize(b); s = b.ToString(null, null);
+      b = 1e10; s = b.ToString(null, null); //b = BigRat.Normalize(b); s = b.ToString(null, null);
+      b = -1e-10; s = b.ToString(null, null); 
+      b = 1e20; s = b.ToString(null, null); 
+      b = -1e-20; s = b.ToString(null, null); 
+      b = 1e-20; s = b.ToString(null, null); 
+      b = 1e200; s = b.ToString(null, null); 
+      b = -1e-200; s = b.ToString(null, null); 
+      b = 1e300; s = b.ToString(null, null); 
+      b = -1e-300; s = b.ToString(null, null); 
+      b = 1e55; s = b.ToString(null, null); 
+      b = -1e-55; s = b.ToString(null, null); 
 
       b = 9.99123e20; s = b.ToString(null, null);
       b = -9.99123e-20; s = b.ToString(null, null);
-
 
       a = rat.Sqrt(123.456);
       b = BigRat.Sqrt(123.456, 10);
