@@ -5,18 +5,13 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Test
 {
-  [SkipLocalsInit, DebuggerDisplay("{ToString(),nq}")]
+  [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly struct BigRat : IEquatable<BigRat>, IComparable<BigRat>, IFormattable, ISpanFormattable
   {
-    public override string ToString()
-    {
-      if (p == null) return "0"; p[0] |= 0x40000000;
-      var cpu = rat.task_cpu; cpu.push(new ReadOnlySpan<uint>(p)); p[0] ^= 0x40000000;
-      return cpu.popr().ToString();
-    }
     public override int GetHashCode()
     {
       if (p == null) return 0;
@@ -68,27 +63,73 @@ namespace Test
       var e = unchecked((int)((*(ulong*)&value >> 52) & 0x7FF) - 1022); //Debug.Assert(!double.IsFinite(v) == (e == 0x401));
       if (e == 0x401) { throw new ArgumentException(); } // NaN 
       int p = 14 - ((e * 19728) >> 16), t = p; if (p > 308) p = 308; // v < 1E-294
-      var d = double.Abs(value) * double.Pow(10, p); // Debug.Assert(double.IsNormal(d));
-      if (t != p) { d *= double.Pow(10, t = t - p); p += t; if (d < 1e14) { d *= 10; p++; } }
-      var m = (ulong)double.Round(d);
-      this.p = (m / Pow10(p)).p; if (value < 0) this.p[0] |= 0x80000000;
+      var d = Math.Abs(value) * Math.Pow(10, p); // Debug.Assert(double.IsNormal(d));
+      if (t != p) { d *= Math.Pow(10, t = t - p); p += t; if (d < 1e14) { d *= 10; p++; } }
+      var m = (ulong)Math.Round(d);
+
+      var z = Pow10(p);
+      var u = stackalloc uint[10 + z.p.Length];
+      u[0] = (m >> 32) != 0 ? 2u : 1u; *(ulong*)(u + 1) = m;
+      *(ulong*)(u + u[0] + 1) = 0x100000001; u[0] |= ((uint*)&value)[1] & 0x80000000;
+      fixed (uint* v = z.p) this.p = div(u, v, u + 5).p;
+
+      //this.p = (m / Pow10(p)).p;
+      //if (value < 0) this.p[0] |= 0x80000000;
+    }
+    public BigRat(decimal value)
+    {
+      var b = (uint*)&value; uint f = b[0], e = (f >> 16) & 0xff; //0..28 
+      uint* p = stackalloc uint[9];
+      *(ulong*)&p[1] = *(ulong*)&b[2]; p[3] = b[1]; p[0] = p[3] != 0 ? 3u : p[2] != 0 ? 2u : 1;
+      if (*(ulong*)p == 1) { *(ulong*)(p + 2) = 0x100000001; }
+      else
+      {
+        var s = p + (p[0] + 1);
+        if (e == 0) { *(ulong*)s = 0x100000001; }
+        else
+        {
+          var t = (ulong*)(s + 1); var h = e < 19 ? e : 19;
+          t[0] = (ulong)Math.Pow(10, h);
+          t[1] = h == e ? 0 : Math.BigMul(t[0], (ulong)Math.Pow(10, e - h), out t[0]);
+          s[0] = s[3] != 0 ? 3u : s[2] != 0 ? 2u : 1;
+        }
+        p[0] |= f & 0x80000000;
+      }
+      this.p = new BigRat(p, (f = p[0] & 0x3fffffff) + p[f + 1] + 2).p;
     }
 
     public static implicit operator BigRat(int value) => new BigRat(value);
     public static implicit operator BigRat(ulong value) => new BigRat(value);
     public static implicit operator BigRat(double value) => new BigRat(value);
+    public static implicit operator BigRat(decimal value) => new BigRat(value);
 
-    public static explicit operator int(BigRat value)
+    public static explicit operator byte(BigRat value) => (byte)(double)value;
+    public static explicit operator sbyte(BigRat value) => (sbyte)(double)value;
+    public static explicit operator char(BigRat value) => (char)(double)value;
+    public static explicit operator uint(BigRat value) => (uint)(double)value;
+    public static explicit operator short(BigRat value) => (short)(double)value;
+    public static explicit operator ushort(BigRat value) => (ushort)(double)value;
+    public static explicit operator int(BigRat value) => (int)(double)value;
+    public static explicit operator long(BigRat value)
     {
       if (value.p == null) return 0;
-      fixed (uint* p = value.p)
+      fixed (uint* p = Truncate(value).p)
       {
-        uint n = p[0] & 0x3fffffff, v = p[1];
-        if (*(ulong*)(p + n + 1) != 0x100000001) return int.MinValue;
-        if (n != 1 || (v & 0x80000000) != 0) return int.MinValue;
-        return (p[0] & 0x80000000) == 0 ? (int)v : -(int)v;
+        var n = p[0] & 0x3fffffff; if (n > 2 || n == 2 && (p[2] & 0x80000000) != 0) return long.MinValue;
+        var l = n == 1 ? p[1] : *(long*)(p + 1);
+        return (p[0] & 0x80000000) != 0 ? -l : l;
       }
     }
+    public static explicit operator ulong(BigRat value)
+    {
+      if (value.p == null) return 0;
+      fixed (uint* p = Truncate(value).p)
+      {
+        var n = p[0] & 0x3fffffff; if ((p[0] & 0x80000000) != 0 || n > 2) return ulong.MaxValue;
+        return n == 1 ? p[1] : *(ulong*)(p + 1);
+      }
+    }
+    public static explicit operator Half(BigRat value) => (Half)(double)value;
     public static explicit operator float(BigRat value)
     {
       return (float)(double)value;
@@ -110,6 +151,27 @@ namespace Test
         var r = (double)(va >> 11) / (vb >> 11);
         var x = (0x3ff + e) << 52; r *= *(double*)&x; //fast r *= Math.Pow(2, e);
         return (a[0] & 0x80000000) != 0 ? -r : r;
+      }
+    }
+    public static explicit operator decimal(BigRat value)
+    {
+      if (value.p == null) return default;
+      fixed (uint* p = value.p)
+      {
+        var u = p; uint nu = u[0] & 0x3ffffff, nv = u[nu + 1]; var v = u + nu + 1;
+        var mu = unchecked((int)nu << 5) - BitOperations.LeadingZeroCount(u[nu]);
+        var mv = unchecked((int)nv << 5) - BitOperations.LeadingZeroCount(v[nv]);
+        var sh = Math.Max(mu - 96, mv - 96);
+        if (sh > 0)
+        {
+          var t = stackalloc uint[value.p.Length]; mov(t, u, (uint)value.p.Length);
+          v = (u = t) + nu + 1; shr(u, sh); shr(v, sh); nu = u[0]; nv = v[0];
+          if (*(ulong*)u == 1) return default;
+          if (*(ulong*)v == 1) throw new ArgumentOutOfRangeException();
+        }
+        var du = new decimal(((int*)u)[1], nu >= 2 ? ((int*)u)[2] : 0, nu >= 3 ? ((int*)u)[3] : 0, (value.p[0] & 0x80000000) != 0, 0);
+        var dv = new decimal(((int*)v)[1], nv >= 2 ? ((int*)v)[2] : 0, nv >= 3 ? ((int*)v)[3] : 0, false, 0);
+        var dr = du / dv; return dr;
       }
     }
     public static explicit operator BigInteger(BigRat value)
@@ -301,7 +363,14 @@ namespace Test
     }
     public static BigRat Pow10(int y)
     {
-      return Pow(10, y);
+      //return Pow(10, y);
+      lock (cache)
+      {
+        var k = 1 | (y << 8);
+        if (!cache.TryGetValue(k, out var p))
+          cache.Add(k, p = Pow(10, y));
+        return p;
+      }
     }
     public static BigRat Sqrt(BigRat x, int digits)
     {
@@ -344,27 +413,25 @@ namespace Test
       fixed (uint* p = value.p)
       {
         double a = flog10(p), b = flog10(p + (p[0] & 0x3fffffff) + 1), c = a - b;
-        int e = (int)c; if (c < 0)
+        int e = (int)c; //todo: critical region checks
+        if (c < 0)
         {
-          var aa = GetNumerator(value);
-          var bb = GetDenominator(value);
-          var cc = (BigInteger)aa;
-          var dd = (BigInteger)bb;
-          var xx = BigInteger.Log10(cc);
-          var yy = BigInteger.Log10(dd);
-
-          e--;
+          // var cc = BigInteger.Abs((BigInteger)GetNumerator(value)); var xx = BigInteger.Log10(cc);
+          // var dd = BigInteger.Abs((BigInteger)GetDenominator(value)); var yy = BigInteger.Log10(dd); var tc = xx - yy; var ee = (int)tc;          
+          if (e != c) e--;
         }
         return e;
       }
       static double flog10(uint* p)
       {
-        uint n = p[0] & 0x3fffffff; if (n == 1) return double.Log10(p[1]);
+        uint n = p[0] & 0x3fffffff; if (n == 1) return Math.Log10(p[1]);
         var c = BitOperations.LeadingZeroCount(p[n]); Debug.Assert(c != 32);
         var b = ((long)n << 5) - unchecked((uint)c);
         ulong h = p[n], m = p[n - 1], l = n > 2 ? p[n - 2] : 0;
         ulong x = (h << 32 + c) | (m << c) | (l >> 32 - c);
-        var r = double.Log10(x) + (b - 64) * 0.3010299956639811952; return r;
+        var r = Math.Log10(x) + (b - 64) * 0.3010299956639811952;
+        //var r = Math.Log(x, 10) + (b - 64) / Math.Log(10, 2); 
+        return r;
       }
     }
     public static int Sign(BigRat value)
@@ -385,31 +452,49 @@ namespace Test
       c /= t4; c = Round(c * e) / e; return c;
     }
 
-    public string ToString(string? format, IFormatProvider? formatProvider)
+    public override string ToString()
     {
-      Span<char> ss = stackalloc char[1024];
-      if (!TryFormat(ss, out var charsWritten, format, formatProvider)) { }
-      ss = ss.Slice(0, charsWritten); return ss.ToString();
+      return ToString(default, null);
+      //if (p == null) return "0"; p[0] |= 0x40000000;
+      //var cpu = rat.task_cpu; cpu.push(new ReadOnlySpan<uint>(p)); 
+      //p[0] ^= 0x40000000; return cpu.popr().ToString();
+    }
+    public string ToString(string? format, IFormatProvider? provider = null)
+    {
+      if (format == string.Empty && provider == null) provider = NumberFormatInfo.InvariantInfo;
+      Span<char> s = stackalloc char[1024];
+      if (!TryFormat(s, out var charsWritten, format, provider))
+      {
+        int n; fixed (char* p = s) n = *(int*)p;
+        s = stackalloc char[n]; TryFormat(s, out charsWritten, format, provider);
+      }
+      s = s.Slice(0, charsWritten); return s.ToString();
     }
     public bool TryFormat(Span<char> s, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-      //s.Fill(' '); //todo: rem
-      if (this.p == null) { s[0] = '0'; charsWritten = 1; return true; }
-      int e = BigRat.ILog10(this); var a = this / BigRat.Pow10(e);
-      if (a <= -10 || a >= 10) { a /= 10; e++; }
-      Debug.Assert(a >= 0 ? (a >= 1 && a < 10) : (a <= -1 && a > -10));
-      var ss = s.Slice(0, 30); var i = tos(ss, a, true, out var r);
-      if (r != -1) { s.Slice(r, i - r).CopyTo(s.Slice(r + 1)); s[r] = '\''; i++; }
-      if (r == 0) { s.Slice(0, i).CopyTo(s.Slice(1)); s[0] = '0'; i++; e++; }
-      if (i == ss.Length && r == -1) s[i++] = '…';
+      var a = this; char f = 'H', g = f; int d = 32; var info = NumberFormatInfo.GetInstance(provider);
+      if (format.Length != 0)
+      {
+        f = (char)((g = format[0]) & ~0x20); var l = format.Length;
+        if (l > 1) for (int j = 1, y = d = 0; j < l && unchecked((uint)(y = format[j] - '0')) < 10; j++, d = d * 10 + y) ;
+        else if (f == 'G') { if (d == 0) { } }
+      }
+      if (d + 16 > s.Length) { d += 16; new Span<char>(&d, 2).TryCopyTo(s); charsWritten = 0; return false; }
+      int e = ILog10(a); if (f == 'G') { a = Round(a, d - (e + 1)); }
+      if (a.p == null) { s[0] = '0'; charsWritten = 1; return true; }
+      if (e != 0) a = a / BigRat.Pow10(e); // if (a <= -10 || a >= 10) { a /= 10; e++; } Debug.Assert(a >= 0 ? (a >= 1 && a < 10) : (a <= -1 && a > -10));
+      var n = tos(s.Slice(0, d + 1), a, f == 'H', out var r);
+      if (n == d + 1) { n--; if (f == 'H') s[n++] = '…'; }
+      if (r != -1) { s.Slice(r, n - r).CopyTo(s.Slice(r + 1)); s[r] = '\''; n++; }
+      if (r == 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '0'; n++; e++; }
       var x = e + 1;
-      if ((r != -1 && e >= r) || (e <= -5 || e >= 17)) x = 1; else e = 0;
-      if (x <= 0) { var t = 1 - x; s.Slice(0, i).CopyTo(s.Slice(t)); s.Slice(0, t).Fill('0'); i += t; x += t; }
-      if (x > i) { s.Slice(i, x - i).Fill('0'); i = x; }
-      if (x > 0 && x < i) { s.Slice(x, i - x).CopyTo(s.Slice(x + 1)); s[x] = '.'; i++; }
-      if (this < 0) { s.Slice(0, i).CopyTo(s.Slice(1)); s[0] = '-'; i++; }
-      if (e != 0) { s[i++] = 'E'; s[i++] = e > 0 ? '+' : '-'; i += tos(s.Slice(i), unchecked((uint)(((e ^ (e >>= 31)) - e))), 2); }//f == 'E' ? 3 : 
-      charsWritten = i; return true;
+      if ((r != -1 && e >= r) || (e <= -5 || e >= 17) || (f == 'G' && x > d)) x = 1; else e = 0;
+      if (x <= 0) { var t = 1 - x; s.Slice(0, n).CopyTo(s.Slice(t)); s.Slice(0, t).Fill('0'); n += t; x += t; }
+      if (x > n) { s.Slice(n, x - n).Fill('0'); n = x; }
+      if (x > 0 && x < n) { s.Slice(x, n++ - x).CopyTo(s.Slice(x + 1)); s[x] = info.NumberDecimalSeparator[0]; }
+      if (this < 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '-'; n++; }
+      if (e != 0) { s[n++] = (char)('E' | (g & 0x20)); s[n++] = e > 0 ? '+' : '-'; n += tos(s.Slice(n), unchecked((uint)(((e ^ (e >>= 31)) - e))), 2); }//f == 'E' ? 3 : 
+      charsWritten = n; return true;
     }
     public static BigRat Parse(ReadOnlySpan<char> s, NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands, IFormatProvider? provider = null)
     {
@@ -430,7 +515,7 @@ namespace Test
 
     public static bool IsInteger(BigRat value)
     {
-      return Truncate(value) == value;
+      return mod(value, 4).p != null; // return Truncate(value) == value;
     }
     public static BigRat GetNumerator(BigRat value)
     {
@@ -449,6 +534,8 @@ namespace Test
     }
 
     readonly uint[] p;
+
+    static Dictionary<int, BigRat> cache = new();
 
     BigRat(uint[] p) { this.p = p; }
     BigRat(uint* p, uint n) { this.p = new uint[n]; for (uint i = 0; i < n; i++) this.p[i] = p[i]; }
@@ -501,13 +588,10 @@ namespace Test
           case 3: // Round
             {
               var t = u + n + 1; mov(t, p + n + 1, p[n + 1] + 1); //for (uint i = 0; i <= p[n + 1]; i++) t[i] = p[n + 1 + i];
-              shr(t, 1); var x = cms(u, t); if (x == 0 && (v[1] & 1) != 0) x = 1;
-              inc = x > 0;
+              shr(t, 1); var x = cms(u, t); if (x == 0 && (v[1] & 1) != 0) x = 1; inc = x > 0;
             }
             break;
-            //case 8: // IsInt
-            //  if (*(ulong*)u != 1) return default;
-            //  break;
+          case 4: return *(ulong*)u != 1 ? default : a; //IsInteger
         }
         if (inc) { var w = 1u; v[0] = add(v + 1, v[0], &w, 1, v + 1); }
         if (*(ulong*)v == 1) return default;
@@ -732,7 +816,7 @@ namespace Test
       uint* w = p + nv + 4, r = w + 4; rep = -1;
       for (int i = 0; i < s.Length; i++)
       {
-        mod(p, d, w); var c = (char)('0' + w[1]);
+        mod(p, d, w); var c = (char)('0' + w[1]); Debug.Assert(c >= '0' && c <= '9');
         if (ex != 0 && c != '0')
         {
           for (int t = 0; t < i; t++)
@@ -753,5 +837,6 @@ namespace Test
       int i = 0; for (; u != 0 || i < m; u /= 10u) s[i++] = unchecked((char)('0' + u % 10));
       s.Slice(0, i).Reverse(); return i;
     }
+
   }
 }
