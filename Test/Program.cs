@@ -15,7 +15,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); test();
+      ApplicationConfiguration.Initialize(); //test();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
