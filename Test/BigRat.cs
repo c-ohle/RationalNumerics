@@ -332,7 +332,7 @@ namespace Test
       var e = Pow10(digits);
       return Round(value * e) / e;
     }
-    public static BigRat Limit(BigRat value, uint digits)
+    public static BigRat Lim(BigRat value, uint digits)
     {
       if (value.p == null) return value;
       fixed (uint* p = value.p)
@@ -352,7 +352,7 @@ namespace Test
     }
     public static BigRat Pow(BigRat x, int y)
     {
-      BigRat r = 1u;
+      BigRat r = 1u; //todo: stack
       for (var e = unchecked((uint)(y >= 0 ? y : -y)); ; e >>= 1)
       {
         if ((e & 1) != 0) r *= x;
@@ -372,6 +372,10 @@ namespace Test
         return p;
       }
     }
+    public static BigRat Pow(BigRat x, BigRat y, int digits)
+    {
+      return Exp(y * Log(x, digits), digits);
+    }
     public static BigRat Sqrt(BigRat x, int digits)
     {
       if (x <= 0) { if (x == 0) return default; throw new ArgumentOutOfRangeException(); }
@@ -381,7 +385,7 @@ namespace Test
         a = (x / a + a) / 2;
         f = a * a - x; if (f == 0) break; // return a; // break; Normalize(a);
         g = t - ILog10(f); if (g > digits) break;
-        a = Limit(a, e.p[0] + 1);
+        a = Lim(a, e.p[0] + 1);
       }
       a = Round(a * e) / e; //if ((e = Truncate(a)) == a) { };
       return a;
@@ -395,6 +399,22 @@ namespace Test
         if (mv > 1) shr(v, unchecked((int)(mv >> 1))); var vn = v[0];
         if (un != nu) mov(u + un + 1, v, vn + 1); return new BigRat(u, 2 + un + vn);
       }
+    }
+    public static BigRat Cbrt(BigRat x, int digits)
+    {
+      return Pow(x, (BigRat)1 / 3, digits);
+    }
+    public static BigRat RootN(BigRat x, int n, int digits)
+    {
+      return Pow(x, (BigRat)1 / n, digits);
+    }
+    public static BigRat Exp(BigRat x, int digits)
+    {
+      throw new NotImplementedException();
+    }
+    public static BigRat Log(BigRat x, int digits)
+    {
+      throw new NotImplementedException();
     }
     //public static int ILog2(BigRat value)
     //{
@@ -447,7 +467,7 @@ namespace Test
         var b = t1 / (s + 1) - t2 / (s + 3) + t3 / (t + 1) - t4 / (t + 3) - t5 / (t + 5) - t5 / (t + 7) + t2 / (t + 9);
         c += a * b; // var d = c / 64;
         if (++n >= l) break; a /= -1024;
-        c = Limit(c, e.p[0] + 1);
+        c = Lim(c, e.p[0] + 1);
       }
       c /= t4; c = Round(c * e) / e; return c;
     }
@@ -472,42 +492,71 @@ namespace Test
     }
     public bool TryFormat(Span<char> s, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-      var a = this; char f = 'H', g = f; int d = 32; var info = NumberFormatInfo.GetInstance(provider);
+      var a = this; char f = 'Q', g = f; int d = 32; var info = NumberFormatInfo.GetInstance(provider);
       if (format.Length != 0)
       {
         f = (char)((g = format[0]) & ~0x20); var l = format.Length;
         if (l > 1) for (int j = 1, y = d = 0; j < l && unchecked((uint)(y = format[j] - '0')) < 10; j++, d = d * 10 + y) ;
-        else if (f == 'G') { if (d == 0) { } }
+        switch (f)
+        {
+          case 'Q': break;
+          case 'E': if (l == 1) d = 6; break;
+          case 'G': if (d == 0) d = 32; break;
+          case 'F': case 'N': if (l == 1) d = info.NumberDecimalDigits; g = f; f = 'F'; break;
+          case 'R': f = 'Q'; break;
+          //case 'P': case 'C': return ((decimal)this).TryFormat(s, out charsWritten, format, provider);
+          default: throw new FormatException();
+        }
       }
-      if (d + 16 > s.Length) { d += 16; new Span<char>(&d, 2).TryCopyTo(s); charsWritten = 0; return false; }
-      int e = ILog10(a); if (f == 'G') { a = Round(a, d - (e + 1)); }
-      if (a.p == null) { s[0] = '0'; charsWritten = 1; return true; }
-      if (e != 0) a = a / BigRat.Pow10(e); // if (a <= -10 || a >= 10) { a /= 10; e++; } Debug.Assert(a >= 0 ? (a >= 1 && a < 10) : (a <= -1 && a > -10));
-      var n = tos(s.Slice(0, d + 1), a, f == 'H', out var r);
-      if (n == d + 1) { n--; if (f == 'H') s[n++] = '…'; }
-      if (r != -1) { s.Slice(r, n - r).CopyTo(s.Slice(r + 1)); s[r] = '\''; n++; }
-      if (r == 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '0'; n++; e++; }
-      var x = e + 1;
-      if ((r != -1 && e >= r) || (e <= -5 || e >= 17) || (f == 'G' && x > d)) x = 1; else e = 0;
-      if (x <= 0) { var t = 1 - x; s.Slice(0, n).CopyTo(s.Slice(t)); s.Slice(0, t).Fill('0'); n += t; x += t; }
+      int e = ILog10(a), x = e + 1, t = 16 + d + (f == 'F' && e > 0 ? e * 3 / 2 : 0);
+      if (t > s.Length) goto err; //{ new Span<char>(&t, 2).TryCopyTo(s); charsWritten = 0; return false; }
+      if (f != 'Q') a = Round(a, f == 'G' ? d - (e + 1) : f == 'E' ? d - e : d);
+      if (a.p == null) { if (f != 'E' && f != 'F') { s[0] = '0'; charsWritten = 1; return true; } }
+      else if (e != 0) a = a / BigRat.Pow10(e); // if (a <= -10 || a >= 10) { a /= 10; e++; } Debug.Assert(a >= 0 ? (a >= 1 && a < 10) : (a <= -1 && a > -10));
+      int n = tos(s.Slice(0, f == 'F' ? Math.Max(d + e, 0) + 2 : d + 1), a, f == 'Q', out var r);
+      if (n == d + 1) { if (f != 'E' && f != 'F') n--; if (f == 'Q') { if ((g & ~0x20) == 'R') goto frac; s[n++] = '…'; } }
+      if (r != -1) { s.Slice(r, n - r).CopyTo(s.Slice(r + 1)); s[r] = '\''; n++; if (r == 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '0'; n++; e++; } }
+      if (f == 'F') { e = 0; if (a.p == null) x = 1; }
+      if ((r != -1 && e >= r) || (e <= -5 || e >= 17) || (f == 'G' && x > d) || f == 'E') x = 1; else e = 0;
+      if (x <= 0) { t = 1 - x; s.Slice(0, n).CopyTo(s.Slice(t)); s.Slice(0, t).Fill('0'); n += t; x += t; }
       if (x > n) { s.Slice(n, x - n).Fill('0'); n = x; }
+      if (f == 'E' && (t = d - n + 1) > 0) { s.Slice(n, t).Fill('0'); n += t; }
+      if (f == 'F' && (t = d - (n - x)) > 0) { s.Slice(n, t).Fill('0'); n += t; }
       if (x > 0 && x < n) { s.Slice(x, n++ - x).CopyTo(s.Slice(x + 1)); s[x] = info.NumberDecimalSeparator[0]; }
+      if (g == 'N')
+      {
+        var l = info.NumberGroupSizes[0]; var c = info.NumberGroupSeparator[0];
+        for (t = (x < n ? x : n); (t -= l) > 0;) { s.Slice(t, n - t).CopyTo(s.Slice(t + 1)); s[t] = c; n++; }
+      }
       if (this < 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '-'; n++; }
-      if (e != 0) { s[n++] = (char)('E' | (g & 0x20)); s[n++] = e > 0 ? '+' : '-'; n += tos(s.Slice(n), unchecked((uint)(((e ^ (e >>= 31)) - e))), 2); }//f == 'E' ? 3 : 
-      charsWritten = n; return true;
+      if (e != 0 || f == 'E')
+      {
+        s[n++] = (char)('E' | (g & 0x20)); s[n++] = e >= 0 ? '+' : '-';
+        n += tos(s.Slice(n), unchecked((uint)(((e ^ (e >>= 31)) - e))), f == 'E' ? 3 : 2);
+      }
+      charsWritten = n; return true; frac:
+      a = GetNumerator(this); var b = GetDenominator(this);
+      e = ILog10(a); x = ILog10(b); if ((t = e + x + 4) > s.Length) goto err;
+      n = 0; if (this < 0) s[n++] = '-';
+      r = tos(s.Slice(n), a / Pow10(e), false, out _); s.Slice(n + r, e + 1 - r).Fill('0'); n += e + 1; s[n++] = '/';
+      r = tos(s.Slice(n), b / Pow10(x), false, out _); s.Slice(n + r, x + 1 - r).Fill('0'); n += x + 1;
+      charsWritten = n; return true; err:;
+      new Span<char>(&t, 2).TryCopyTo(s); charsWritten = 0; return false;
     }
     public static BigRat Parse(ReadOnlySpan<char> s, NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands, IFormatProvider? provider = null)
     {
+      var h = provider != null ? NumberFormatInfo.GetInstance(provider).NumberDecimalSeparator[0] : default;
       BigRat a = 0, e = 1, d = 0, p = 0; char c;
       for (int i = s.Length - 1; i >= 0; i--)
         switch (c = s[i])
         {
           case >= '0' and <= '9': a += e * (c - '0'); e *= 10; break;
-          case '.' or ',': d = e; break;
+          case '.': case ',': if (h == default || h == c) d = e; break;
           case '\'': a *= e / (e - 1); break;
           case '-': a = -a; break;
           case '+': break;
           case 'e' or 'E': p = Pow10((int)a); a = 0; e = 1; break;
+          case '/': return Parse(s.Slice(0, i), style, null) / a;
         }
       if (d != 0) a /= d; if (p != 0) a *= p;
       return a;
@@ -809,11 +858,12 @@ namespace Test
 
     static int tos(Span<char> s, BigRat v, bool reps, out int rep)
     {
+      rep = -1; if (v.p == null) { s[0] = '0'; return 1; }
       uint nv = unchecked((uint)v.p.Length), np = v.p[0] & 0x3fffffff, ten = 10, nr = 0; int ex = 0;
       if (reps) { nr = v.p[np + 1] + 1; ex = unchecked((int)nr) * s.Length; if (ex > 100000) { ex = 0; } }
       uint* p = stackalloc uint[v.p.Length + 8 + ex], d = p + np + 1 + 4;
       fixed (uint* t = v.p) { mov(p, t, np + 1); mov(d, t + np + 1, t[np + 1] + 1); p[0] &= 0x3fffffff; }
-      uint* w = p + nv + 4, r = w + 4; rep = -1;
+      uint* w = p + nv + 4, r = w + 4;
       for (int i = 0; i < s.Length; i++)
       {
         mod(p, d, w); var c = (char)('0' + w[1]); Debug.Assert(c >= '0' && c <= '9');
