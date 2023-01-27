@@ -361,6 +361,13 @@ namespace Test
       if (y < 0) r = 1 / r;
       return r;
     }
+    public static BigRat Pow2(int y)
+    {
+      var z = y >= 0 ? y : -y; uint a = unchecked((uint)z) / 32 + 1, b = 1u << (z % 32);
+      var p = new uint[a + 3]; if (y >= 0) { p[0] = a; p[a] = b; p[a + 1] = p[a + 2] = 1; }
+      else { p[2] = a; p[a + 2] = b; p[0] = p[1] = 1; }
+      return new BigRat(p);
+    }
     public static BigRat Pow10(int y)
     {
       //return Pow(10, y);
@@ -410,7 +417,15 @@ namespace Test
     }
     public static BigRat Exp(BigRat x, int digits)
     {
-      throw new NotImplementedException();
+      var s = x < 0; if (s) x = -x;
+      var v = 1 + GetMsbNum(x) - GetMsbDen(x); // uint v = 0; for (; x > 1; x /= 2, v++) ;
+      if (v > 0) x = x / Pow2(v); else v = 0; // 0..0.5
+      BigRat a = x + 1, b = x, c = 1;
+      int i = 2, n = (digits) + (v << 1) + 3;//5
+      var l = (uint)(digits * (3.326f * (1f/32))) + 3; //Pow10(digits).p[0] + 2
+      for (; i < n; i++) { b *= x; c *= i; a += b / c; a = Lim(a, l); }
+      for (i = 0; i < v; i++) { a = a * a; a = Lim(a, (a.p[0] >> 1) + 1); } // a = Pow(a, 1 << v)
+      if (s) a = 1 / a; a = Round(a, digits - ILog10(a) - 1); return a;
     }
     public static BigRat Log(BigRat x, int digits)
     {
@@ -418,6 +433,7 @@ namespace Test
     }
     //public static int ILog2(BigRat value)
     //{
+    //  // GetNumMsb(x) - GetDenMsb(x)
     //  if (value.p == null) return -int.MaxValue; //infinity
     //  fixed (uint* p = value.p)
     //  {
@@ -471,6 +487,10 @@ namespace Test
       }
       c /= t4; c = Round(c * e) / e; return c;
     }
+    public static BigRat E(BigRat x, int digits)
+    {
+      return Exp(1, digits);
+    }
 
     public override string ToString()
     {
@@ -503,18 +523,18 @@ namespace Test
           case 'E': if (l == 1) d = 6; break;
           case 'G': if (d == 0) d = 32; break;
           case 'F': case 'N': if (l == 1) d = info.NumberDecimalDigits; g = f; f = 'F'; break;
-          case 'R': f = 'Q'; break;
+          case 'R': f = 'Q'; if (d == 0 && a.p != null) goto m2; break;
           //case 'P': case 'C': return ((decimal)this).TryFormat(s, out charsWritten, format, provider);
           default: throw new FormatException();
         }
       }
       int e = ILog10(a), x = e + 1, t = 16 + d + (f == 'F' && e > 0 ? e * 3 / 2 : 0);
-      if (t > s.Length) goto err; //{ new Span<char>(&t, 2).TryCopyTo(s); charsWritten = 0; return false; }
+      if (t > s.Length) goto m1; //{ new Span<char>(&t, 2).TryCopyTo(s); charsWritten = 0; return false; }
       if (f != 'Q') a = Round(a, f == 'G' ? d - (e + 1) : f == 'E' ? d - e : d);
       if (a.p == null) { if (f != 'E' && f != 'F') { s[0] = '0'; charsWritten = 1; return true; } }
       else if (e != 0) a = a / BigRat.Pow10(e); // if (a <= -10 || a >= 10) { a /= 10; e++; } Debug.Assert(a >= 0 ? (a >= 1 && a < 10) : (a <= -1 && a > -10));
       int n = tos(s.Slice(0, f == 'F' ? Math.Max(d + e, 0) + 2 : d + 1), a, f == 'Q', out var r);
-      if (n == d + 1) { if (f != 'E' && f != 'F') n--; if (f == 'Q') { if ((g & ~0x20) == 'R') goto frac; s[n++] = '…'; } }
+      if (n == d + 1) { if (f != 'E' && f != 'F') n--; if (f == 'Q') { if ((g & ~0x20) == 'R') goto m2; s[n++] = '…'; } }
       if (r != -1) { s.Slice(r, n - r).CopyTo(s.Slice(r + 1)); s[r] = '\''; n++; if (r == 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '0'; n++; e++; } }
       if (f == 'F') { e = 0; if (a.p == null) x = 1; }
       if ((r != -1 && e >= r) || (e <= -5 || e >= 17) || (f == 'G' && x > d) || f == 'E') x = 1; else e = 0;
@@ -534,13 +554,13 @@ namespace Test
         s[n++] = (char)('E' | (g & 0x20)); s[n++] = e >= 0 ? '+' : '-';
         n += tos(s.Slice(n), unchecked((uint)(((e ^ (e >>= 31)) - e))), f == 'E' ? 3 : 2);
       }
-      charsWritten = n; return true; frac:
+      charsWritten = n; return true; m2:
       a = GetNumerator(this); var b = GetDenominator(this);
-      e = ILog10(a); x = ILog10(b); if ((t = e + x + 4) > s.Length) goto err;
+      e = ILog10(a); x = ILog10(b); if ((t = e + x + 4) > s.Length) goto m1;
       n = 0; if (this < 0) s[n++] = '-';
       r = tos(s.Slice(n), a / Pow10(e), false, out _); s.Slice(n + r, e + 1 - r).Fill('0'); n += e + 1; s[n++] = '/';
       r = tos(s.Slice(n), b / Pow10(x), false, out _); s.Slice(n + r, x + 1 - r).Fill('0'); n += x + 1;
-      charsWritten = n; return true; err:;
+      charsWritten = n; return true; m1:;
       new Span<char>(&t, 2).TryCopyTo(s); charsWritten = 0; return false;
     }
     public static BigRat Parse(ReadOnlySpan<char> s, NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands, IFormatProvider? provider = null)
@@ -580,6 +600,16 @@ namespace Test
       int n = (int)(s[0] & 0x3fffffff), m = (int)s[n + 1]; var a = new uint[m + 3];
       new ReadOnlySpan<uint>(value.p).Slice(n + 1, m + 1).CopyTo(a); a[m + 1] = a[m + 2] = 1;
       return new BigRat(a);
+    }
+    public static int GetMsbNum(BigRat value)
+    {
+      var p = value.p; if (p == null) return 0; var n = p[0] & 0x3fffffff;
+      return unchecked((int)(n << 5)) - BitOperations.LeadingZeroCount(p[n]);
+    }
+    public static int GetMsbDen(BigRat value)
+    {
+      var p = value.p; if (p == null) return 1; var n = p[0] & 0x3fffffff; var m = p[n + 1];
+      return unchecked((int)(m << 5)) - BitOperations.LeadingZeroCount(p[n + m + 1]);
     }
 
     readonly uint[] p;
