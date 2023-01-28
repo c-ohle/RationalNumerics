@@ -727,7 +727,7 @@ namespace System.Numerics.Generic
       throw new NotSupportedException();
     }
 #endif
-#if NET7_0
+#if NET7_0_OR_GREATER
     public static Float<T> CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
       Float<T> a; if (main_cpu.cast(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
@@ -746,7 +746,7 @@ namespace System.Numerics.Generic
 #endif
   }
 
-#if NET7_0
+#if NET7_0_OR_GREATER
   public unsafe readonly partial struct Float<T> : IBinaryFloatingPointIeee754<Float<T>>, IMinMaxValue<Float<T>>
   {
     static int INumberBase<Float<T>>.Radix => 2;

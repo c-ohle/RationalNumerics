@@ -13,8 +13,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Numerics
 {
-#if NET7_0
- 
+#if NET7_0_OR_GREATER
+
   unsafe partial struct BigRational :
     INumber<BigRational>, ISignedNumber<BigRational>, ISpanParsable<BigRational>,
     IPowerFunctions<BigRational>, IRootFunctions<BigRational>, IExponentialFunctions<BigRational>,

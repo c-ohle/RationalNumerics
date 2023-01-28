@@ -30,6 +30,22 @@ namespace Test
       static void test_log()
       {
         double a; BigRat b; rat r; //, c, d, z; string s;
+  #if NET7_0_OR_GREATER
+        b = (Int128)0;
+        b = (Int128)1234;
+        b = (Int128)(-1234);
+        b = Int128.MaxValue;
+        b = Int128.MinValue;
+        b = (UInt128)0;
+        b = (UInt128)1234;
+        b = UInt128.MaxValue;
+        b = UInt128.MinValue;
+#endif
+
+        a = Math.Pow(2, 0.5);
+        b = BigRat.Pow(2, 0.5, 20);
+        a = Math.Pow(2, 12.34);
+        b = BigRat.Pow(2, 12.34, 20);
 
         r = rat.Log2(1.234, 20);
         b = BigRat.Log2(1.234, 20);// BigRat.Normalize(1.234), 20);

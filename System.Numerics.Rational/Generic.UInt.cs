@@ -330,7 +330,7 @@ namespace System.Numerics.Generic
       throw new NotSupportedException();
     }
 #endif
-#if NET7_0
+#if NET7_0_OR_GREATER
     public static UInt<T> CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
       UInt<T> a; if (main_cpu.cast(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
@@ -349,7 +349,7 @@ namespace System.Numerics.Generic
 #endif
   }
 
-#if NET7_0
+#if NET7_0_OR_GREATER
   public unsafe readonly partial struct UInt<T> : IBinaryInteger<UInt<T>>, IMinMaxValue<UInt<T>>, IUnsignedNumber<UInt<T>>
   {
     public static implicit operator UInt<T>(UInt128 value)

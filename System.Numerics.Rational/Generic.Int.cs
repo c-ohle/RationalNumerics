@@ -346,7 +346,7 @@ namespace System.Numerics.Generic
     }
 
 #endif
-#if NET7_0
+#if NET7_0_OR_GREATER
     public static Int<T> CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
     {
       Int<T> a; if (main_cpu.cast(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
@@ -365,7 +365,7 @@ namespace System.Numerics.Generic
 #endif  
   }
 
-#if NET7_0
+#if NET7_0_OR_GREATER
   public unsafe readonly partial struct Int<T> : IBinaryInteger<Int<T>>, IMinMaxValue<Int<T>>, ISignedNumber<Int<T>>
   {
     public static implicit operator Int<T>(Int128 value)

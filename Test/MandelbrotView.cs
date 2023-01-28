@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using System.Numerics;
 using System.Numerics.Rational;
+using System.Runtime.InteropServices;
 
 namespace Test
 {
@@ -113,6 +114,11 @@ namespace Test
     System.Windows.Forms.Timer timer = new() { Interval = 100 };
     BigRational mx = -0.7, my = 0, scale = 1.2; int imax = 32, lim = 64;
 
+    static BigRat conv(BigRational value)
+    {
+      return new BigRat(MemoryMarshal.Cast<uint, byte>((ReadOnlySpan<uint>)value));
+    }
+
     void mandel_double()
     {
       calcmap(); if (map == null) return;
@@ -183,6 +189,35 @@ namespace Test
       }
       t2 = Environment.TickCount;
 
+    }
+    void mandel_BigInteger_() // BigRat
+    {
+      calcmap(); if (map == null) return;
+      var x1 = conv(mx - scale * dx / dy);
+      var y1 = conv(my - scale);
+      var fi = conv(2 * scale / dy); var qmax = (BigRat)4;
+      t1 = t2 = Environment.TickCount; //var digits = Math.Max(8, 10 * lim / 64); // actually about 15 * lim / 64
+      var l = ((uint)lim >> 5);// + 1;
+      Parallel.For(0, dy, (py, po) =>
+      {
+        if (cancel) { po.Break(); return; }
+        var p = scan + py * (stride >> 2);
+        var y = y1 + py * fi; y = BigRat.Lim(y, l);
+        for (int px = 0; px < dx && !cancel; px++)
+        {
+          var x = x1 + px * fi; x = BigRat.Lim(x, l);
+          int i = 0; var a = x; var b = y;
+          for (; i < imax; i++)
+          {
+            var u = a * a - b * b + x; u = BigRat.Lim(u, l);
+            var v = a * b * 2 + y; v = BigRat.Lim(v, l);
+            if (u * u + v * v > qmax) break;
+            a = u; b = v;
+          }
+          p[px] = i < imax ? map[i] : 0;
+        }
+      });
+      t2 = Environment.TickCount;
     }
     void mandel_BigRational()
     {

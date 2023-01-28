@@ -52,7 +52,7 @@ namespace Test
   [Serializable, DebuggerDisplay("{ToString(\"\"),nq}")]
   public readonly struct Float80 :
     IComparable<Float80>, IEquatable<Float80>, IComparable, IFormattable, ISpanFormattable
-#if NET7_0
+#if NET7_0_OR_GREATER
     , IBinaryFloatingPointIeee754<Float80>, IMinMaxValue<Float80>
 #endif
   {
@@ -220,7 +220,7 @@ namespace Test
     public static Float80 CreateSaturating<TOther>(TOther value) where TOther : struct => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateSaturating(value));
     public static Float80 CreateChecked<TOther>(TOther value) where TOther : struct => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateChecked(value));
 #endif
-#if NET7_0
+#if NET7_0_OR_GREATER
     public static Float80 CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther> => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateTruncating(value));
     public static Float80 CreateSaturating<TOther>(TOther value) where TOther : INumberBase<TOther> => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateSaturating(value));
     public static Float80 CreateChecked<TOther>(TOther value) where TOther : INumberBase<TOther> => new Float80(System.Numerics.Generic.Float<Test.SizeType80>.CreateChecked(value));

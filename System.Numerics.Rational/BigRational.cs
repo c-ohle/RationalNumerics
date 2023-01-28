@@ -3618,7 +3618,7 @@ namespace System.Numerics
             if (g == typeof(Generic.Float<>)) { desc = fdesc(desc) | (2 << 28); return; }
             if (g == typeof(Generic.Decimal<>)) { desc |= (3 << 28); return; }
           }
-#if NET7_0
+#if NET7_0_OR_GREATER
           if (t == typeof(Int128)) return;
           if (t == typeof(UInt128)) { desc |= (1 << 28); return; }
 #endif

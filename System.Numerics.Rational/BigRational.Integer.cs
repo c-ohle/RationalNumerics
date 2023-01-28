@@ -293,7 +293,7 @@ namespace System.Numerics
         throw new NotSupportedException();
       }
 #endif
-#if NET7_0
+#if NET7_0_OR_GREATER
       public static Integer CreateTruncating<TOther>(TOther value) where TOther : INumberBase<TOther>
       {
         Integer a; if (main_cpu.cast(value, out a, 0) || TOther.TryConvertToTruncating(value, out a)) return a;
@@ -312,7 +312,7 @@ namespace System.Numerics
 #endif
     }
 
-#if NET7_0
+#if NET7_0_OR_GREATER
     public readonly partial struct Integer : ISpanFormattable, IBinaryInteger<Integer>, ISignedNumber<Integer>
     { 
       public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out Integer result) => TryParse(s.AsSpan(), style, provider, out result);

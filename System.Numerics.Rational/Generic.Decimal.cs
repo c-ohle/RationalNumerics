@@ -71,7 +71,7 @@ namespace System.Numerics.Generic
     public bool Equals(Decimal<T> other) => throw new NotImplementedException();
   }
 
-#if NET7_0
+#if NET7_0_OR_GREATER
   //public 
   unsafe readonly partial struct Decimal<T> : IFloatingPoint<Decimal<T>>, IMinMaxValue<Decimal<T>>
   {
