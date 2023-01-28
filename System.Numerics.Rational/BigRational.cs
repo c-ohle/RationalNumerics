@@ -3124,7 +3124,7 @@ namespace System.Numerics
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static bool isint(uint* p) //or nan
       {
-        return *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)) <= 0x100000001; //==
+        var t = *(ulong*)(p + ((p[0] & 0x3fffffff) + 1)); return t == 0x100000001 || t == 1;
       }
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       static int sig(uint* p)
@@ -3765,8 +3765,8 @@ namespace System.Numerics
       else if (f == 'D') { x = e + 1; e = 0; }
       else if (f == 'H')
       {
+        if (ns == dig && r == -1) sp[ns++] = '…'; //else if (x >= 0 && x <= dig) e = 0;
         if ((r != -1 && e >= r) || (e <= -5 || e >= 17)) x = 1; else e = 0;
-        if (ns == dig && r == -1) sp[ns++] = '…';
       }
       else if (e <= -5 || e >= 17) x = 1;
       else { var h = dig - e - 1; if (h < 0) x = 1; else e = 0; } // 'G'
