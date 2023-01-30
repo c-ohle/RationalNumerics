@@ -108,7 +108,7 @@ namespace System.Numerics
     /// <param name="y">The value to compare with <paramref name="x" />.</param>
     /// <returns><paramref name="x" /> if it is greater than <paramref name="y" />; otherwise, <paramref name="y" />.</returns>
     public static BigRational MaxMagnitude(BigRational x, BigRational y)
-    {
+    {    
       return IsNaN(x) ? x : IsNaN(y) ? y : cmpa(x, y) <= 0 ? x : y;
     }
     /// <summary>Compares two values to compute which has the greater magnitude and returning the other value if an input is <c>NaN</c>.</summary>

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
 
 namespace Test
 {
@@ -32,12 +33,12 @@ namespace Test
     public static implicit operator BigRat(int value)
     {
       return new BigRat(value != 0 ? new uint[4] {
-        unchecked((uint)value & 0x80000000) | 1,
+        unchecked((uint)value & 0x80000000)|(1 | 0x40000000),
         unchecked((uint)((value ^ (value >>= 31)) - value)), 1, 1 } : null);
     }
     public static implicit operator BigRat(uint value)
     {
-      return new BigRat(value != 0 ? new uint[4] { 1, value, 1, 1 } : null);
+      return new BigRat(value != 0 ? new uint[4] { 1 | 0x40000000, value, 1, 1 } : null);
     }
     public static implicit operator BigRat(long value)
     {
@@ -47,8 +48,8 @@ namespace Test
     public static implicit operator BigRat(ulong value)
     {
       return (value >> 32) == 0 ? (uint)value :
-        new BigRat(new uint[] { 2, (uint)value, (uint)(value >> 32), 1, 1 });
-    }   
+        new BigRat(new uint[] { 2 | 0x40000000, (uint)value, (uint)(value >> 32), 1, 1 });
+    }
     public static implicit operator BigRat(Half value)
     {
       return (double)value;
@@ -91,11 +92,11 @@ namespace Test
           var t = (ulong*)(s + 1); var h = e < 19 ? e : 19;
           t[0] = (ulong)Math.Pow(10, h);
           t[1] = h == e ? 0 : Math.BigMul(t[0], (ulong)Math.Pow(10, e - h), out t[0]);
-          s[0] = s[3] != 0 ? 3u : s[2] != 0 ? 2u : 1;
+          s[0] = s[3] != 0 ? 3u : s[2] != 0 ? 2u : 1; p[0] |= 0x40000000;
         }
         p[0] |= f & 0x80000000;
       }
-      return new BigRat(p, (f = p[0] & 0x3fffffff) + p[f + 1] + 2);
+      return new BigRat(p, 2 + (f = p[0] & 0x3fffffff) + p[f + 1]);
     }
     public static implicit operator BigRat(BigInteger value)
     {
@@ -110,14 +111,12 @@ namespace Test
 #if NET7_0_OR_GREATER
     public static implicit operator BigRat(Int128 value)
     {
-      var p = (uint*)&value; var s = (p[3] & 0x80000000) != 0;
-      if (s) for (uint i = 0, c = 1; i < 4; i++) { var x = (ulong)(p[i] ^ 0xffffffff) + c; p[i] = (uint)x; c = (uint)(x >> 32); }
+      var p = (uint*)&value; var s = (p[3] & 0x80000000) != 0; if (s) value = -value;
       var a = (BigRat)(*(UInt128*)p); if (s) a.p![0] |= 0x80000000; return a;
     }
     public static implicit operator BigRat(UInt128 value)
     {
-      var p = (ulong*)&value;
-      return p[1] == 0 ? p[0] : p[0] + p[1] * Pow2(64);
+      var p = (ulong*)&value; return p[1] == 0 ? p[0] : p[0] + p[1] * Pow2(64);
     }
 #endif
 
@@ -199,6 +198,20 @@ namespace Test
       var a = System.Runtime.InteropServices.MemoryMarshal.Cast<uint, byte>(s.Slice(1, unchecked((int)(s[0] & 0x3fffffff))));
       var r = new BigInteger(a, true, false); if (value < 0) r = -r; return r;
     }
+#if NET7_0_OR_GREATER
+    public static explicit operator Int128(BigRat value)
+    {
+      var s = Sign(value) < 0; var a = (UInt128)(s ? -value : value);
+      if ((((uint*)&a)[3] & 0x80000000) != 0 && *(Int128*)&a != Int128.MinValue) throw new OverflowException();
+      var b = (Int128)a; if (s) b = -b; return b;
+    }
+    public static explicit operator UInt128(BigRat value)
+    {
+      var p = Truncate(value).p; if (p == null) return default;
+      var n = p[0] & 0x3fffffff; if (n > 4 || (p[0] & 0x80000000) != 0) throw new OverflowException();
+      return new UInt128((n > 2 ? p[3] : 0) | (n > 3 ? (ulong)p[4] << 32 : 0), p[1] | (n > 1 ? (ulong)p[2] << 32 : 0));
+    }
+#endif
 
     public static BigRat operator +(BigRat a)
     {
@@ -207,7 +220,7 @@ namespace Test
     public static BigRat operator -(BigRat a)
     {
       if (a.p == null) return default;
-      fixed (uint* p = a.p) { a = new BigRat(p, unchecked((uint)a.p.Length)); }
+      fixed (uint* p = a.p) a = new BigRat(p, unchecked((uint)a.p.Length));
       a.p![0] ^= 0x80000000; return a;
     }
     public static BigRat operator +(BigRat a, BigRat b)
@@ -321,7 +334,6 @@ namespace Test
     }
     public static int ILog2(BigRat value)
     {
-      // GetNumMsb(x) - GetDenMsb(x)
       if (value.p == null) return -int.MaxValue; //infinity
       fixed (uint* p = value.p)
       {
@@ -363,26 +375,44 @@ namespace Test
     {
       return Sign(a) >= 0 ? a : -a;
     }
-    public static BigRat Min(BigRat a, BigRat b)
+    public static BigRat Min(BigRat x, BigRat y)
     {
-      return a.CompareTo(b) <= 0 ? a : b;
+      return x.CompareTo(y) <= 0 ? x : y;
     }
-    public static BigRat Max(BigRat a, BigRat b)
+    public static BigRat Max(BigRat x, BigRat y)
     {
-      return a.CompareTo(b) >= 0 ? a : b;
+      return x.CompareTo(y) >= 0 ? x : y;
     }
-    public static BigRat Normalize(BigRat a)
+    public static BigRat MaxMagnitude(BigRat x, BigRat y)
     {
-      if (a.p == null) return a;
-      fixed (uint* p = a.p)
+      return x.CompareTo(y) <= 0 ? x : y;
+    }
+    public static BigRat MinMagnitude(BigRat x, BigRat y)
+    {
+      return x.CompareTo(y) >= 0 ? x : y;
+    }
+    public static BigRat MaxMagnitudeNumber(BigRat x, BigRat y)
+    {
+      return x.CompareTo(y) <= 0 ? x : y; // IEEE 754:2019 does not propagate NaN inputs back 
+    }
+    public static BigRat MinMagnitudeNumber(BigRat x, BigRat y)
+    {
+      return x.CompareTo(y) >= 0 ? x : y; // IEEE 754:2019 does not propagate NaN inputs back 
+    }
+    public static BigRat Normalize(BigRat value)
+    {
+      if (value.p == null) return value;
+      fixed (uint* p = value.p)
       {
-        var d = p + (p[0] & 0x3fffffff) + 1; if (*(ulong*)d == 0x100000001) return a;
-        var l = a.p.Length; var s = stackalloc uint[l * 3]; uint x;
-        for (int i = 0; i < l; i++) s[i] = p[i]; s[0] &= 0x3fffffff;
-        var e = gcd(s, s + s[0] + 1); if (*(ulong*)e == 0x100000001) return a;
-        var t = s + l; for (int i = 0; i < l; i++) t[i] = p[i]; t[0] &= 0x3fffffff;
-        var r = t + l; d = t + t[0] + 1; mod(t, e, r); mod(d, e, r + r[0] + 1); r[0] |= p[0] & 0x80000000;
-        return new BigRat(r, r[(x = (r[0] & 0x3fffffff)) + 1] + x + 2);
+        if ((p[0] & 0x40000000) != 0) return value;
+        var d = p + (p[0] & 0x3fffffff) + 1; if (*(ulong*)d == 0x100000001) return value;
+        var l = value.p.Length; var s = stackalloc uint[l * 3]; uint x;
+        mov(s, p, unchecked((uint)l)); s[0] &= 0x3fffffff;
+        var e = gcd(s, s + s[0] + 1); if (*(ulong*)e == 0x100000001) return value;
+        var t = s + l; mov(t, p, unchecked((uint)l)); t[0] &= 0x3fffffff;
+        var r = t + l; d = t + t[0] + 1; mod(t, e, r); mod(d, e, r + r[0] + 1);
+        x = r[0]; r[0] |= (p[0] & 0x80000000) | 0x40000000;
+        return new BigRat(r, 2 + x + r[x + 1]);
       }
     }
     public static BigRat Truncate(BigRat value) => mod(value, 0);
@@ -394,20 +424,20 @@ namespace Test
       var e = Pow10(digits);
       return Round(value * e) / e;
     }
-    public static BigRat Lim(BigRat value, uint digits)
+    public static BigRat Lim(BigRat x, int digits)
     {
-      if (value.p == null) return value;
-      fixed (uint* p = value.p)
+      if (x.p == null) return x;
+      fixed (uint* p = x.p)
       {
-        uint na = value.p[0] & 0x3fffffff, nb = p[na + 1];
-        uint nc = na < nb ? na : nb; if (nc <= digits) return value;
-        uint d = nc - digits, nu = na - d, nv = nb - d;
+        uint na = x.p[0] & 0x3fffffff, nb = p[na + 1];
+        uint nc = na < nb ? na : nb; if (nc <= digits) return x;
+        uint d = nc - unchecked((uint)digits), nu = na - d, nv = nb - d;
         var w = new uint[2 + nu + nv];
         fixed (uint* v = w)
         {
           v[0] = nu | (p[0] & 0x80000000); v[nu + 1] = nv;
-          for (uint i = 1; i <= nu; i++) v[i] = p[i + d];
-          for (uint i = 1; i <= nv;) v[nu + ++i] = p[na + i + d];
+          mov(v + 1, p + 1 + d, nu); // for (uint i = 1; i <= nu; i++) v[i] = p[i + d];
+          mov(v + nu + 2, p + na + 2 + d, nv); // for (uint i = 1; i <= nv;) v[nu + ++i] = p[na + i + d];
         }
         return new BigRat(w);
       }
@@ -426,24 +456,24 @@ namespace Test
     public static BigRat Pow2(int y)
     {
       var z = y >= 0 ? y : -y; uint a = unchecked((uint)z) / 32 + 1, b = 1u << (z % 32);
-      var p = new uint[a + 3]; if (y >= 0) { p[0] = a; p[a] = b; p[a + 1] = p[a + 2] = 1; }
-      else { p[2] = a; p[a + 2] = b; p[0] = p[1] = 1; }
+      var p = new uint[a + 3]; if (y >= 0) { p[0] = a | 0x40000000; p[a] = b; p[a + 1] = p[a + 2] = 1; }
+      else { p[2] = a; p[a + 2] = b; p[0] = 1 | 0x40000000; p[1] = 1; }
       return new BigRat(p);
     }
     public static BigRat Pow10(int y)
     {
-      //return Pow(10, y);
-      lock (cache)
-      {
-        var k = 1 | (y << 8);
-        if (!cache.TryGetValue(k, out var p))
-          cache.Add(k, p = Pow(10, y));
-        return p;
-      }
+      return Pow(10, y);
+      //lock (cache)
+      //{
+      //  var k = 1 | (y << 8);
+      //  if (!cache.TryGetValue(k, out var p))
+      //    cache.Add(k, p = Pow(10, y));
+      //  return p;
+      //}
     }
     public static BigRat Pow(BigRat x, BigRat y, int digits)
     {
-      var p = prec(digits); return Round(exp(y * log(x, p), p), digits);
+      var p = b2(digits); return Round(exp(y * log(x, p), p), digits);
       //return Exp(y * Log(x, digits), digits);
     }
     public static BigRat Sqrt(BigRat x, int digits)
@@ -455,7 +485,7 @@ namespace Test
         a = (x / a + a) / 2;
         f = a * a - x; if (f == 0) break; // return a; // break; Normalize(a);
         g = t - ILog10(f); if (g > digits) break;
-        a = Lim(a, e.p![0] + 1);
+        a = Lim(a, unchecked((int)e.p![0]) + 1);
       }
       a = Round(a * e) / e; //if ((e = Truncate(a)) == a) { };
       return a;
@@ -478,40 +508,58 @@ namespace Test
     {
       return Pow(x, (BigRat)1 / n, digits);
     }
+    public static BigRat Hypot(BigRat x, BigRat y, int digits)
+    {
+      return Sqrt(x * x + y * y, digits);
+    }
     public static BigRat Exp(BigRat x, int digits)
     {
-      x = exp(x, prec(digits));
+      x = exp(x, b2(digits));
       x = Round(x, digits - ILog10(x) - 1); return x;
     }
     public static BigRat Log(BigRat x, int digits)
     {
-      return Round(log(x, prec(digits)), digits);
+      return Round(log(x, b2(digits)), digits);
     }
     public static BigRat Log2(BigRat x, int digits)
     {
-      return log2(x, prec(digits));
+      return log2(x, b2(digits));
     }
     public static BigRat Pi(int digits)
     {
-      BigRat c = 0, t1 = -32, t2 = 1, t3 = 256, t4 = 64, t5 = 4, a = 1, e = Pow10(digits);
-      for (int n = 0, l = 1 + digits / 3; ;)
-      {
-        int t = 10 * n, s = n << 2;
-        var b = t1 / (s + 1) - t2 / (s + 3) + t3 / (t + 1) - t4 / (t + 3) - t5 / (t + 5) - t5 / (t + 7) + t2 / (t + 9);
-        c += a * b; // var d = c / 64;
-        if (++n >= l) break; a /= -1024;
-        c = Lim(c, e.p![0] + 1);
-      }
-      c /= t4; c = Round(c * e) / e; return c;
+      return Round(pi(b2(digits)), digits);
     }
     public static BigRat E(BigRat x, int digits)
     {
       return Exp(1, digits);
     }
+    public static BigRat Sin(BigRat x, int digits)
+    {
+      return Round(sin(x, false, b2(digits)), digits);
+    }
+    public static BigRat Cos(BigRat x, int digits)
+    {
+      return Round(sin(x, true, b2(digits)), digits);
+    }
 
+    public static bool IsNormalized(BigRat value)
+    {
+      return Normalize(value).p == value.p;
+    }
     public static bool IsInteger(BigRat value)
     {
       return mod(value, 4).p != null; // return Truncate(value) == value;
+    }
+    public static bool IsEvenInteger(BigRat value)
+    {
+      //return value.p == null || IsInteger(value) && (Normalize(value).p![1] & 1) == 0;
+      if (value.p == null) return true;
+      var a = mod(value, 5); return a.p != null ? (a.p[1] & 1) == 0 : false;
+    }
+    public static bool IsOddInteger(BigRat value)
+    {
+      //return value.p != null && IsInteger(value) && (Normalize(value).p![1] & 1) == 1;
+      var a = mod(value, 5); return a.p != null ? (a.p[1] & 1) != 0 : false;
     }
     public static BigRat GetNumerator(BigRat value)
     {
@@ -665,6 +713,7 @@ namespace Test
           TryCopyTo(destination)) return true;
       bytesWritten = 0; return false;
     }
+    //public ReadOnlySpan<uint> AsSpan() => p;
     public byte[] ToByteArray()
     {
       var a = new byte[GetByteCount()]; TryWriteBytes(a, out _); return a;
@@ -681,17 +730,26 @@ namespace Test
 
     readonly uint[]? p;
 
-    static Dictionary<int, BigRat> cache = new();
+    //static Dictionary<int, BigRat> cache = new();
 
     BigRat(uint[]? p) { this.p = p; }
     BigRat(uint* p, uint n) { this.p = new uint[n]; for (uint i = 0; i < n; i++) this.p[i] = p[i]; }
 
     static BigRat mul(uint* u, uint* v, uint* w)
     {
+      if (u == v) return sqr(u, w);
       uint nu = u[0] & 0x3fffffff, nv = v[0] & 0x3fffffff;
       uint na = mul(u + 1, nu, v + 1, nv, w + 1);
       uint nb = mul(u + nu + 2, u[nu + 1], v + nv + 2, v[nv + 1], w + 2 + na);
       w[0] = (u[0] ^ v[0]) & 0x80000000 | na; w[na + 1] = nb;
+      return new BigRat(w, na + nb + 2);
+    }
+    static BigRat sqr(uint* u, uint* w)
+    {
+      uint nu = u[0] & 0x3fffffff;
+      uint na = sqr(u + 1, nu, w + 1);
+      uint nb = sqr(u + nu + 2, u[nu + 1], w + 2 + na);
+      w[0] = na; w[na + 1] = nb;
       return new BigRat(w, na + nb + 2);
     }
     static BigRat div(uint* u, uint* v, uint* w)
@@ -737,13 +795,107 @@ namespace Test
               shr(t, 1); var x = cms(u, t); if (x == 0 && (v[1] & 1) != 0) x = 1; inc = x > 0;
             }
             break;
-          case 4: return *(ulong*)u != 1 ? default : a; //IsInteger
+          case 4: return *(ulong*)u != 1 ? default : a; // IsInteger
+          case 5: if (*(ulong*)u != 1) return default; break; // int only 
         }
         if (inc) { var w = 1u; v[0] = add(v + 1, v[0], &w, 1, v + 1); }
         if (*(ulong*)v == 1) return default;
-        var l = v[0]; v[0] |= p[0] & 0x80000000; *(ulong*)(v + l + 1) = 0x100000001;
+        var l = v[0]; v[0] |= (p[0] & 0x80000000) | 0x40000000; *(ulong*)(v + l + 1) = 0x100000001;
         return new BigRat(v, l + 3);
       }
+    }
+
+    static int b2(int digits)
+    {
+      return (int)Math.Ceiling(digits * 3.321928094887362);
+    }
+    static BigRat log2(BigRat x, int prec)
+    {
+      if (x <= 0) throw new ArgumentException();
+      var l = (prec >> 5) + 1; x = Lim(x, l);
+      var a = ILog2(x); if (a != 0) x /= Pow2(a);
+      var e = x.CompareTo(1); if (e == 0) return a; if (e < 0) { x *= 2; a--; }
+      var b = default(BigRat); Debug.Assert(x > 1 && x < 2);
+      for (int i = 1; i <= prec; i++)
+      {
+        x = x * x; x = Lim(x, l); if (x <= 2) continue;
+        x = x / 2; b += Pow2(-i); b = Lim(b, l);
+      }
+      return a + b;
+    }
+    static BigRat log(BigRat x, int prec)
+    {
+      return log2(x, prec + 8) / log2(exp(1, prec), prec + 8);
+    }
+    static BigRat exp(BigRat x, int prec)
+    {
+      var s = x < 0; if (s) x = -x;
+      int p = ILog2(x) + 1; if (p > 0) x = x / Pow2(p); else p = 0; // 0..0.5
+      BigRat a = x + 1, b = x, c = 1, d;
+      int i = 2, e = -(prec + BigRat.b2(p)), l = (-e >> 5) + 3; // (uint)(digits * (3.326f * (1f / 32))) + 5; // 3;
+      for (; ; i++) { b *= x; c *= i; a += d = b / c; if (ILog2(d) < e) break; a = Lim(a, l); }
+      for (i = 0; i < p; i++) { a = a * a; a = Lim(a, (unchecked((int)a.p![0]) >> 1) + 1); } // a = Pow(a, 1 << v)
+      if (s) a = 1 / a; return a; // a = Round(a, digits - ILog10(a) - 1);
+    }
+    static BigRat pi(int bits)
+    {
+      bits += 16;
+      BigRat c = 0, t1 = -32, t2 = 1, t3 = 256, t4 = 64, t5 = 4, a = 1;
+      for (int n = 0, l = ((bits - 1) >> 5) + 2; ; n++)
+      {
+        int t = 10 * n, s = n << 2;
+        var b = t1 / (s + 1) - t2 / (s + 3) + t3 / (t + 1) - t4 / (t + 3) - t5 / (t + 5) - t5 / (t + 7) + t2 / (t + 9);
+        var d = a * b; var i = -ILog2(d); if (i > bits) break;
+        c += d; c = Lim(c, l); a /= -1024;
+      }
+      c /= t4; return c;
+    }
+    static BigRat sin(BigRat x, bool cos, int bits)
+    {
+      bits += 16; int l = ((bits - 1) >> 5) + 2, e = ILog2(x);
+      var pih = pi(bits + Math.Max(0, e)); pih /= 2; if (cos) x += pih;
+      var u = Truncate(x / pih);
+      var s = u.p != null ? unchecked((int)u.p[1]) : 0; if (u < 0) s = -s;
+      if (s != 0) { x -= u * pih; if ((s & 1) != 0) x = pih - x; if ((s & 2) != 0) x = -x; }
+      BigRat f = 6, a = x, b = x * x, d; b = Lim(b, l);
+      for (int i = 1, k = 4; ; i++, k += 2)
+      {
+        a *= b; a = Lim(a, l); d = a / f; var t = -ILog2(d); if (t > bits) break;
+        if ((i & 1) != 1) x += d; else x -= d; f *= k * (k + 1); x = Lim(x, l);
+      }
+      return x;
+    }
+
+    static int tos(Span<char> s, BigRat v, bool reps, out int rep)
+    {
+      rep = -1; if (v.p == null) { s[0] = '0'; return 1; }
+      uint nv = unchecked((uint)v.p.Length), np = v.p[0] & 0x3fffffff, ten = 10, nr = 0; int ex = 0;
+      if (reps) { nr = v.p[np + 1] + 1; ex = unchecked((int)nr) * s.Length; if (ex > 100000) { ex = 0; } }
+      uint* p = stackalloc uint[v.p.Length + 8 + ex], d = p + np + 1 + 4;
+      fixed (uint* t = v.p) { mov(p, t, np + 1); mov(d, t + np + 1, t[np + 1] + 1); p[0] &= 0x3fffffff; }
+      uint* w = p + nv + 4, r = w + 4;
+      for (int i = 0; i < s.Length; i++)
+      {
+        mod(p, d, w); var c = (char)('0' + w[1]); Debug.Assert(c >= '0' && c <= '9');
+        if (ex != 0 && c != '0')
+        {
+          for (int t = 0; t < i; t++)
+          {
+            if (s[t] != c || cms(p, r + t * nr) != 0) continue;
+            for (; t != 0 && s[i - 1] == '0' && s[t - 1] == '0'; i--, t--) ;
+            rep = t; return i;
+          }
+          mov(r + i * nr, p, p[0] + 1); Debug.Assert(p[0] < nr);
+        }
+        s[i] = c; if (*(ulong*)p == 1) return i + 1;
+        p[0] = mul(p + 1, p[0], &ten, 1, p + 1);
+      }
+      return s.Length;
+    }
+    static int tos(Span<char> s, uint u, int m)
+    {
+      int i = 0; for (; u != 0 || i < m; u /= 10u) s[i++] = unchecked((char)('0' + u % 10));
+      s.Slice(0, i).Reverse(); return i;
     }
 
     static int cms(uint* a, uint* b)
@@ -779,6 +931,9 @@ namespace Test
     static uint mul(uint* a, uint na, uint* b, uint nb, uint* r)
     {
       //if ((na < nb ? na : nb) >= 32 && na + nb < 25000) { kmu(a, na, b, nb, r); if (r[(na = na + nb) - 1] == 0) na--; return na; }
+      //if (na < nb) { var u = na; na = nb; nb = u; var v = a; a = b; b = v; }
+      //if (na == 1) { *(ulong*)r = (ulong)a[0] * b[0]; goto ret; }
+      //if (na == 2 && Bmi2.X64.IsSupported) { *(ulong*)(r + 2) = Bmi2.X64.MultiplyNoFlags(*(ulong*)a, nb == 2 ? *(ulong*)b: b[0], (ulong*)r); goto ret; } 
       ulong c = 0, d;
       for (uint k = 0; k < na; k++, c = d >> 32)
         r[k] = unchecked((uint)(d = c + (ulong)a[k] * b[0]));
@@ -788,9 +943,31 @@ namespace Test
         for (k = 0, c = 0; k < na; k++, c = d >> 32)
           r[i + k] = unchecked((uint)(d = r[i + k] + c + (ulong)a[k] * b[i]));
         r[i + na] = (uint)c;
+      } //ret:
+      if (r[(na = na + nb) - 1] == 0) na--; return na;
+    }
+    static uint sqr(uint* a, uint n, uint* r)
+    {
+      if (n <= 2)
+      {
+        if (n < 2) { *(ulong*)r = (ulong)a[0] * a[0]; goto m1; }
+        if (Bmi2.X64.IsSupported) { ((ulong*)r)[1] = Bmi2.X64.MultiplyNoFlags(*(ulong*)a, *(ulong*)a, ((ulong*)r)); goto m1; }
+        var t1 = (ulong)a[0] * a[0];
+        var t2 = (ulong)a[0] * a[1];
+        var t3 = (ulong)a[1] * a[1];
+        var t4 = t2 + (t1 >> 32);
+        var t5 = t2 + (uint)t4;
+        ((ulong*)r)[0] = t5 << 32 | (uint)t1;
+        ((ulong*)r)[1] = t3 + (t4 >> 32) + (t5 >> 32); goto m1;
       }
-      if (r[(na = na + nb) - 1] == 0) na--;
-      return na;
+      for (uint i = 0; i < n; i++)
+      {
+        ulong c = 0, e, f;
+        for (uint j = 0; j < i; j++, c = (f + (e >> 1)) >> 31)
+          r[i + j] = unchecked((uint)((e = r[i + j] + c) + ((f = (ulong)a[j] * a[i]) << 1)));
+        *(ulong*)(r + (i << 1)) = (ulong)a[i] * a[i] + c;
+      }
+    m1: if (r[(n = n << 1) - 1] == 0) n--; Debug.Assert(r[n - 1] != 0); return n;
     }
     static uint add(uint* a, uint na, uint* b, uint nb, uint* r)
     {
@@ -806,7 +983,6 @@ namespace Test
       for (; i < nb; i++) { var u = a[i] + c - b[i]; r[i] = unchecked((uint)u); c = u >> 32; }
       for (; i < na; i++) { var u = a[i] + c; /*  */ r[i] = unchecked((uint)u); c = u >> 32; }
       for (; i > 1 && r[i - 1] == 0; i--) ; Debug.Assert(c == 0); return i;
-
     }
     static void mod(uint* a, uint* b, uint* r)
     {
@@ -951,67 +1127,6 @@ namespace Test
         *(ulong*)(u + 1) = x; u[0] = u[2] != 0 ? 2u : 1u; m1:;
       }
       return u;
-    }
-
-    static int tos(Span<char> s, BigRat v, bool reps, out int rep)
-    {
-      rep = -1; if (v.p == null) { s[0] = '0'; return 1; }
-      uint nv = unchecked((uint)v.p.Length), np = v.p[0] & 0x3fffffff, ten = 10, nr = 0; int ex = 0;
-      if (reps) { nr = v.p[np + 1] + 1; ex = unchecked((int)nr) * s.Length; if (ex > 100000) { ex = 0; } }
-      uint* p = stackalloc uint[v.p.Length + 8 + ex], d = p + np + 1 + 4;
-      fixed (uint* t = v.p) { mov(p, t, np + 1); mov(d, t + np + 1, t[np + 1] + 1); p[0] &= 0x3fffffff; }
-      uint* w = p + nv + 4, r = w + 4;
-      for (int i = 0; i < s.Length; i++)
-      {
-        mod(p, d, w); var c = (char)('0' + w[1]); Debug.Assert(c >= '0' && c <= '9');
-        if (ex != 0 && c != '0')
-        {
-          for (int t = 0; t < i; t++)
-          {
-            if (s[t] != c || cms(p, r + t * nr) != 0) continue;
-            for (; t != 0 && s[i - 1] == '0' && s[t - 1] == '0'; i--, t--) ;
-            rep = t; return i;
-          }
-          mov(r + i * nr, p, p[0] + 1); Debug.Assert(p[0] < nr);
-        }
-        s[i] = c; if (*(ulong*)p == 1) return i + 1;
-        p[0] = mul(p + 1, p[0], &ten, 1, p + 1);
-      }
-      return s.Length;
-    }
-    static int tos(Span<char> s, uint u, int m)
-    {
-      int i = 0; for (; u != 0 || i < m; u /= 10u) s[i++] = unchecked((char)('0' + u % 10));
-      s.Slice(0, i).Reverse(); return i;
-    }
-    static int prec(int digits) => (int)Math.Ceiling(digits * 3.321928094887362);
-    static BigRat log2(BigRat x, int prec)
-    {
-      if (x <= 0) throw new ArgumentException();
-      var l = ((uint)prec >> 5) + 1; x = Lim(x, l);
-      var a = ILog2(x); if (a != 0) x /= Pow2(a);
-      var e = x.CompareTo(1); if (e == 0) return a; if (e < 0) { x *= 2; a--; }
-      var b = default(BigRat); Debug.Assert(x > 1 && x < 2);
-      for (int i = 1; i <= prec; i++)
-      {
-        x = x * x; x = Lim(x, l); if (x <= 2) continue;
-        x = x / 2; b += Pow2(-i); b = Lim(b, l);
-      }
-      return a + b;
-    }
-    static BigRat log(BigRat x, int prec)
-    {
-      return log2(x, prec + 8) / log2(exp(1, prec), prec + 8);
-    }
-    static BigRat exp(BigRat x, int prec)
-    {
-      var s = x < 0; if (s) x = -x;
-      int p = ILog2(x) + 1; if (p > 0) x = x / Pow2(p); else p = 0; // 0..0.5
-      BigRat a = x + 1, b = x, c = 1, d;
-      int i = 2, e = -(prec + BigRat.prec(p)); uint l = ((uint)-e >> 5) + 3; // (uint)(digits * (3.326f * (1f / 32))) + 5; // 3;
-      for (; ; i++) { b *= x; c *= i; a += d = b / c; if (ILog2(d) < e) break; a = Lim(a, l); }
-      for (i = 0; i < p; i++) { a = a * a; a = Lim(a, (a.p![0] >> 1) + 1); } // a = Pow(a, 1 << v)
-      if (s) a = 1 / a; return a; // a = Round(a, digits - ILog10(a) - 1);
     }
   }
 }

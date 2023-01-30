@@ -197,7 +197,7 @@ namespace Test
       var y1 = conv(my - scale);
       var fi = conv(2 * scale / dy); var qmax = (BigRat)4;
       t1 = t2 = Environment.TickCount; //var digits = Math.Max(8, 10 * lim / 64); // actually about 15 * lim / 64
-      var l = ((uint)lim >> 5);// + 1;
+      var l = (lim >> 5);// + 1;
       Parallel.For(0, dy, (py, po) =>
       {
         if (cancel) { po.Break(); return; }
