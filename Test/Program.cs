@@ -33,39 +33,27 @@ namespace Test
       return;
       static void test_sin()
       {
-        //test(int.MaxValue);
+        test(+1.0e-10);
+        test(BigRat.Pi(300) / 2);
+        test(BigRat.Pi(300));
+    
         test(0.2); test(-0.2); test(Math.PI / 4 + 0.2); test(Math.PI / 2 + 0.2);
         test(Math.PI / 2 + 0.2); test(Math.PI * 3 / 4 + 0.2); test(-(Math.PI * 3 / 4 + 0.2));
         test(Math.PI + 0.2); test(Math.PI * 5 / 4 + 0.2);
         test(Math.PI * 3 / 3 + 0.2); test(Math.PI * 7 / 4 + 0.2);
-        test(1); test(2); test(3); test(0);
-        test(short.MaxValue);
-        test(int.MaxValue);
-        test(-short.MaxValue);
-        test(-int.MaxValue);
-        test(1.0 / short.MaxValue);
-        test(1.0 / int.MaxValue);
-
-        test(1.0e+10);
-        test(-1.0e+10);
-        test(1.0e-10);
-        test(-1.0e-10);
-
-        test(1.0e+100);
-        test(-1.0e+100);
-        test(1.567e-100); //1.0! 1.1
-        test(-1.567e-100);
+        test(1); test(2); test(3); test(0); test(short.MaxValue); test(int.MaxValue);
+        test(-short.MaxValue); test(-int.MaxValue); test(1.0 / short.MaxValue); test(1.0 / int.MaxValue);
+        test(+1.0e+10); test(+1.0e-10); test(+1.0e+100); test(+1.1e-100);
+        test(-1.0e+100); test(-1.0e+10); test(-1.0e-10); test(-1.1e-100); //1.0! 1.1        
         test(BigRat.Parse("1e1000"));
         return;
-
         static void test(BigRat z)
         {
-          double x; BigRat a, b, c, d, e;
-          int l = 100 + Math.Max(0, BigRat.ILog10(z)); c = BigRat.Pi(l) * 2; c = z % c;
-          x = Math.Cos((double)c);
-          e = BigRat.Cos(z, 300); Debug.Assert(e.ToString("G14") == x.ToString("G14"));          
-          x = Math.Sin((double)c);
-          a = BigRat.Sin(z, 300); Debug.Assert(a.ToString("G14") == x.ToString("G14"));         
+          double x; BigRat a, b, c, d, e, pi, pi2, pih, fs, fc;
+          int l = 300 + Math.Max(0, BigRat.ILog10(z)); pi = BigRat.Pi(l); pi2 = pi * 2; pih = pi / 2;
+          fs = z % pi2; fc = (z + pih) % pi2 - pih;// (z + pih) - pih;          
+          e = BigRat.Cos(z, 300); x = Math.Cos((double)fc); d = BigRat.Round(e, 14); x = Math.Round(x, 14); Debug.Assert(d == x); 
+          a = BigRat.Sin(z, 300); x = Math.Sin((double)fs); d = BigRat.Round(a, 14); x = Math.Round(x, 14); Debug.Assert(d == x); 
           for (int i = 0; i < 200; i++)
           {
             b = BigRat.Round(a, i); c = BigRat.Sin(z, i); Debug.Assert((d = b - c) == 0);
