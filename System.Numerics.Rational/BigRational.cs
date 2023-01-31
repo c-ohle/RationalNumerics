@@ -3677,8 +3677,11 @@ namespace System.Numerics
     }
     static void copy(uint* d, uint* s, uint n)
     {
-      //new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; // 10 % slower
-      //if (n > 16) { new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; } // 5% slower 
+      //for (uint i = 0; i < n; i++) d[i] = s[i];
+
+      //Unsafe.CopyBlock(d, s, n << 2);
+      //   //new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; // 10 % slower
+      //   //if (n > 16) { new ReadOnlySpan<uint>(s, unchecked((int)n)).CopyTo(new Span<uint>(d, unchecked((int)n))); return; } // 5% slower 
       uint i = 0, c;
       for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = *(decimal*)&((byte*)s)[i << 2]; // RyuJIT vmovdqu
       for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = *(ulong*)&((byte*)s)[i << 2];

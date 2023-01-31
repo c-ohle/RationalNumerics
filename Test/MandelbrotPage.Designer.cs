@@ -28,398 +28,377 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
+      components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MandelbrotPage));
-      this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-      this.label4 = new System.Windows.Forms.Label();
-      this.mandelbrotView1 = new Test.MandelbrotView();
-      this.label3 = new System.Windows.Forms.Label();
-      this.labelState1 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.checkBoxActive2 = new System.Windows.Forms.CheckBox();
-      this.mandelbrotView2 = new Test.MandelbrotView();
-      this.labelState2 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.textBoxScaling = new System.Windows.Forms.TextBox();
-      this.labelRelation = new System.Windows.Forms.Label();
-      this.textBoxCenterX = new System.Windows.Forms.TextBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label9 = new System.Windows.Forms.Label();
-      this.textBoxCenterY = new System.Windows.Forms.TextBox();
-      this.numericUpDownIter = new System.Windows.Forms.NumericUpDown();
-      this.buttonReset = new System.Windows.Forms.Button();
-      this.numericUpDownRound = new System.Windows.Forms.NumericUpDown();
-      this.label10 = new System.Windows.Forms.Label();
-      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-      this.splitContainer1.Panel1.SuspendLayout();
-      this.splitContainer1.Panel2.SuspendLayout();
-      this.splitContainer1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIter)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRound)).BeginInit();
-      this.SuspendLayout();
+      splitContainer1 = new SplitContainer();
+      label4 = new Label();
+      mandelbrotView1 = new MandelbrotView();
+      label3 = new Label();
+      labelState1 = new Label();
+      label1 = new Label();
+      label6 = new Label();
+      checkBoxActive2 = new CheckBox();
+      mandelbrotView2 = new MandelbrotView();
+      labelState2 = new Label();
+      label2 = new Label();
+      textBoxScaling = new TextBox();
+      labelRelation = new Label();
+      textBoxCenterX = new TextBox();
+      label5 = new Label();
+      label7 = new Label();
+      label8 = new Label();
+      label9 = new Label();
+      textBoxCenterY = new TextBox();
+      numericUpDownIter = new NumericUpDown();
+      buttonReset = new Button();
+      numericUpDownRound = new NumericUpDown();
+      label10 = new Label();
+      toolTip1 = new ToolTip(components);
+      cbBigRat = new CheckBox();
+      ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+      splitContainer1.Panel1.SuspendLayout();
+      splitContainer1.Panel2.SuspendLayout();
+      splitContainer1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)numericUpDownIter).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)numericUpDownRound).BeginInit();
+      SuspendLayout();
       // 
       // splitContainer1
       // 
-      this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.splitContainer1.IsSplitterFixed = true;
-      this.splitContainer1.Location = new System.Drawing.Point(0, 3);
-      this.splitContainer1.Name = "splitContainer1";
+      splitContainer1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      splitContainer1.IsSplitterFixed = true;
+      splitContainer1.Location = new Point(0, 3);
+      splitContainer1.Name = "splitContainer1";
       // 
       // splitContainer1.Panel1
       // 
-      this.splitContainer1.Panel1.Controls.Add(this.label4);
-      this.splitContainer1.Panel1.Controls.Add(this.mandelbrotView1);
-      this.splitContainer1.Panel1.Controls.Add(this.label3);
-      this.splitContainer1.Panel1.Controls.Add(this.labelState1);
-      this.splitContainer1.Panel1.Controls.Add(this.label1);
-      this.splitContainer1.Panel1.Padding = new System.Windows.Forms.Padding(8, 0, 4, 8);
+      splitContainer1.Panel1.Controls.Add(label4);
+      splitContainer1.Panel1.Controls.Add(mandelbrotView1);
+      splitContainer1.Panel1.Controls.Add(label3);
+      splitContainer1.Panel1.Controls.Add(labelState1);
+      splitContainer1.Panel1.Controls.Add(label1);
+      splitContainer1.Panel1.Padding = new Padding(8, 0, 4, 8);
       // 
       // splitContainer1.Panel2
       // 
-      this.splitContainer1.Panel2.Controls.Add(this.label6);
-      this.splitContainer1.Panel2.Controls.Add(this.checkBoxActive2);
-      this.splitContainer1.Panel2.Controls.Add(this.mandelbrotView2);
-      this.splitContainer1.Panel2.Controls.Add(this.labelState2);
-      this.splitContainer1.Panel2.Controls.Add(this.label2);
-      this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(4, 0, 8, 8);
-      this.splitContainer1.Size = new System.Drawing.Size(975, 474);
-      this.splitContainer1.SplitterDistance = 486;
-      this.splitContainer1.SplitterWidth = 5;
-      this.splitContainer1.TabIndex = 0;
-      this.splitContainer1.TabStop = false;
+      splitContainer1.Panel2.Controls.Add(label6);
+      splitContainer1.Panel2.Controls.Add(checkBoxActive2);
+      splitContainer1.Panel2.Controls.Add(mandelbrotView2);
+      splitContainer1.Panel2.Controls.Add(labelState2);
+      splitContainer1.Panel2.Controls.Add(label2);
+      splitContainer1.Panel2.Padding = new Padding(4, 0, 8, 8);
+      splitContainer1.Size = new Size(975, 474);
+      splitContainer1.SplitterDistance = 486;
+      splitContainer1.SplitterWidth = 5;
+      splitContainer1.TabIndex = 0;
+      splitContainer1.TabStop = false;
       // 
       // label4
       // 
-      this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label4.Location = new System.Drawing.Point(232, 14);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(240, 20);
-      this.label4.TabIndex = 7;
-      this.label4.Text = "Numeric based on BigRational";
-      this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      label4.Location = new Point(232, 14);
+      label4.Name = "label4";
+      label4.Size = new Size(240, 20);
+      label4.TabIndex = 7;
+      label4.Text = "Numeric based on BigRational";
+      label4.TextAlign = ContentAlignment.TopRight;
       // 
       // mandelbrotView1
       // 
-      this.mandelbrotView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mandelbrotView1.CenterX = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView1.CenterX")));
-      this.mandelbrotView1.CenterY = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView1.CenterY")));
-      this.mandelbrotView1.Driver = Test.MandelbrotView.MandelDriver.BigRational;
-      this.mandelbrotView1.Iterations = 32;
-      this.mandelbrotView1.Lim = 64;
-      this.mandelbrotView1.Location = new System.Drawing.Point(11, 45);
-      this.mandelbrotView1.Manual = false;
-      this.mandelbrotView1.Name = "mandelbrotView1";
-      this.mandelbrotView1.PropChanged = null;
-      this.mandelbrotView1.Scaling = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView1.Scaling")));
-      this.mandelbrotView1.Size = new System.Drawing.Size(468, 391);
-      this.mandelbrotView1.StateChanged = null;
-      this.mandelbrotView1.TabIndex = 3;
-      this.mandelbrotView1.TabStop = false;
+      mandelbrotView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      mandelbrotView1.CenterX = (rat)resources.GetObject("mandelbrotView1.CenterX");
+      mandelbrotView1.CenterY = (rat)resources.GetObject("mandelbrotView1.CenterY");
+      mandelbrotView1.Driver = MandelbrotView.MandelDriver.BigRational;
+      mandelbrotView1.Iterations = 32;
+      mandelbrotView1.Lim = 64;
+      mandelbrotView1.Location = new Point(11, 45);
+      mandelbrotView1.Manual = false;
+      mandelbrotView1.Name = "mandelbrotView1";
+      mandelbrotView1.PropChanged = null;
+      mandelbrotView1.Scaling = (rat)resources.GetObject("mandelbrotView1.Scaling");
+      mandelbrotView1.Size = new Size(468, 391);
+      mandelbrotView1.StateChanged = null;
+      mandelbrotView1.TabIndex = 3;
+      mandelbrotView1.TabStop = false;
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Location = new System.Drawing.Point(232, 438);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(247, 23);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "(Wheel to zoom, click to move)";
-      this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      label3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+      label3.Location = new Point(232, 438);
+      label3.Name = "label3";
+      label3.Size = new Size(247, 23);
+      label3.TabIndex = 2;
+      label3.Text = "(Wheel to zoom, click to move)";
+      label3.TextAlign = ContentAlignment.TopRight;
       // 
       // labelState1
       // 
-      this.labelState1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.labelState1.Location = new System.Drawing.Point(11, 438);
-      this.labelState1.Name = "labelState1";
-      this.labelState1.Size = new System.Drawing.Size(240, 28);
-      this.labelState1.TabIndex = 2;
-      this.labelState1.Text = "status";
-      this.toolTip1.SetToolTip(this.labelState1, "Calculation tíme in milliseconds\r\nGC memory allocs (including System allocs)\r\nIma" +
-        "ge size in pixel");
+      labelState1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      labelState1.Location = new Point(11, 438);
+      labelState1.Name = "labelState1";
+      labelState1.Size = new Size(240, 28);
+      labelState1.TabIndex = 2;
+      labelState1.Text = "status";
+      toolTip1.SetToolTip(labelState1, "Calculation tíme in milliseconds\r\nGC memory allocs (including System allocs)\r\nImage size in pixel");
       // 
       // label1
       // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-      this.label1.Location = new System.Drawing.Point(11, 0);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(169, 38);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "BigRational";
+      label1.AutoSize = true;
+      label1.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point);
+      label1.Location = new Point(11, 0);
+      label1.Name = "label1";
+      label1.Size = new Size(169, 38);
+      label1.TabIndex = 1;
+      label1.Text = "BigRational";
       // 
       // label6
       // 
-      this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label6.Location = new System.Drawing.Point(152, 14);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(304, 24);
-      this.label6.TabIndex = 7;
-      this.label6.Text = "Numeric based on BigInteger";
-      this.label6.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.toolTip1.SetToolTip(this.label6, "Calculation based on a conventional BigRational implementation\r\nusing one BigInte" +
-        "ger each for the numerator and denominator.");
+      label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      label6.Location = new Point(147, 14);
+      label6.Name = "label6";
+      label6.Size = new Size(304, 24);
+      label6.TabIndex = 7;
+      label6.Text = "Numeric based on BigInteger";
+      label6.TextAlign = ContentAlignment.TopRight;
+      toolTip1.SetToolTip(label6, "Calculation based on a conventional BigRational implementation\r\nusing one BigInteger each for the numerator and denominator.");
       // 
       // checkBoxActive2
       // 
-      this.checkBoxActive2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.checkBoxActive2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.checkBoxActive2.Checked = true;
-      this.checkBoxActive2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxActive2.Location = new System.Drawing.Point(231, 437);
-      this.checkBoxActive2.Name = "checkBoxActive2";
-      this.checkBoxActive2.Size = new System.Drawing.Size(225, 24);
-      this.checkBoxActive2.TabIndex = 7;
-      this.checkBoxActive2.Text = "on/off";
-      this.checkBoxActive2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.checkBoxActive2.UseVisualStyleBackColor = true;
-      this.checkBoxActive2.CheckedChanged += new System.EventHandler(this.checkBoxActive2_CheckedChanged);
+      checkBoxActive2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+      checkBoxActive2.CheckAlign = ContentAlignment.MiddleRight;
+      checkBoxActive2.Checked = true;
+      checkBoxActive2.CheckState = CheckState.Checked;
+      checkBoxActive2.Location = new Point(226, 437);
+      checkBoxActive2.Name = "checkBoxActive2";
+      checkBoxActive2.Size = new Size(225, 24);
+      checkBoxActive2.TabIndex = 7;
+      checkBoxActive2.Text = "on/off";
+      checkBoxActive2.TextAlign = ContentAlignment.MiddleRight;
+      checkBoxActive2.UseVisualStyleBackColor = true;
+      checkBoxActive2.CheckedChanged += checkBoxActive2_CheckedChanged;
       // 
       // mandelbrotView2
       // 
-      this.mandelbrotView2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mandelbrotView2.CenterX = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.CenterX")));
-      this.mandelbrotView2.CenterY = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.CenterY")));
-      this.mandelbrotView2.Driver = Test.MandelbrotView.MandelDriver.BigInteger;
-      this.mandelbrotView2.Enabled = false;
-      this.mandelbrotView2.Iterations = 32;
-      this.mandelbrotView2.Lim = 64;
-      this.mandelbrotView2.Location = new System.Drawing.Point(7, 45);
-      this.mandelbrotView2.Manual = true;
-      this.mandelbrotView2.Name = "mandelbrotView2";
-      this.mandelbrotView2.PropChanged = null;
-      this.mandelbrotView2.Scaling = ((System.Numerics.BigRational)(resources.GetObject("mandelbrotView2.Scaling")));
-      this.mandelbrotView2.Size = new System.Drawing.Size(451, 391);
-      this.mandelbrotView2.StateChanged = null;
-      this.mandelbrotView2.TabIndex = 3;
-      this.mandelbrotView2.TabStop = false;
+      mandelbrotView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      mandelbrotView2.CenterX = (rat)resources.GetObject("mandelbrotView2.CenterX");
+      mandelbrotView2.CenterY = (rat)resources.GetObject("mandelbrotView2.CenterY");
+      mandelbrotView2.Driver = MandelbrotView.MandelDriver.BigInteger;
+      mandelbrotView2.Enabled = false;
+      mandelbrotView2.Iterations = 32;
+      mandelbrotView2.Lim = 64;
+      mandelbrotView2.Location = new Point(7, 45);
+      mandelbrotView2.Manual = true;
+      mandelbrotView2.Name = "mandelbrotView2";
+      mandelbrotView2.PropChanged = null;
+      mandelbrotView2.Scaling = (rat)resources.GetObject("mandelbrotView2.Scaling");
+      mandelbrotView2.Size = new Size(446, 391);
+      mandelbrotView2.StateChanged = null;
+      mandelbrotView2.TabIndex = 3;
+      mandelbrotView2.TabStop = false;
       // 
       // labelState2
       // 
-      this.labelState2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.labelState2.Location = new System.Drawing.Point(7, 439);
-      this.labelState2.Name = "labelState2";
-      this.labelState2.Size = new System.Drawing.Size(346, 27);
-      this.labelState2.TabIndex = 2;
-      this.labelState2.Text = "status";
-      this.toolTip1.SetToolTip(this.labelState2, "Calculation tíme in milliseconds\r\nGC memory allocs (including System allocs)\r\nIma" +
-        "ge size in pixel");
+      labelState2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      labelState2.Location = new Point(7, 439);
+      labelState2.Name = "labelState2";
+      labelState2.Size = new Size(346, 27);
+      labelState2.TabIndex = 2;
+      labelState2.Text = "status";
+      toolTip1.SetToolTip(labelState2, "Calculation tíme in milliseconds\r\nGC memory allocs (including System allocs)\r\nImage size in pixel");
       // 
       // label2
       // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-      this.label2.Location = new System.Drawing.Point(7, 0);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(155, 38);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "BigInteger";
+      label2.AutoSize = true;
+      label2.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point);
+      label2.Location = new Point(7, 0);
+      label2.Name = "label2";
+      label2.Size = new Size(155, 38);
+      label2.TabIndex = 1;
+      label2.Text = "BigInteger";
       // 
       // textBoxScaling
       // 
-      this.textBoxScaling.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.textBoxScaling.CausesValidation = false;
-      this.textBoxScaling.Location = new System.Drawing.Point(412, 528);
-      this.textBoxScaling.Name = "textBoxScaling";
-      this.textBoxScaling.ShortcutsEnabled = false;
-      this.textBoxScaling.Size = new System.Drawing.Size(196, 27);
-      this.textBoxScaling.TabIndex = 3;
-      this.textBoxScaling.WordWrap = false;
-      this.textBoxScaling.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
-      this.textBoxScaling.Leave += new System.EventHandler(this.textBox_Leave);
+      textBoxScaling.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      textBoxScaling.CausesValidation = false;
+      textBoxScaling.Location = new Point(412, 528);
+      textBoxScaling.Name = "textBoxScaling";
+      textBoxScaling.ShortcutsEnabled = false;
+      textBoxScaling.Size = new Size(196, 27);
+      textBoxScaling.TabIndex = 3;
+      textBoxScaling.WordWrap = false;
+      textBoxScaling.KeyPress += textBox_KeyPress;
+      textBoxScaling.Leave += textBox_Leave;
       // 
       // labelRelation
       // 
-      this.labelRelation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelRelation.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-      this.labelRelation.Location = new System.Drawing.Point(322, 462);
-      this.labelRelation.Name = "labelRelation";
-      this.labelRelation.Size = new System.Drawing.Size(335, 40);
-      this.labelRelation.TabIndex = 2;
-      this.labelRelation.Text = "___ : ___";
-      this.labelRelation.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      this.toolTip1.SetToolTip(this.labelRelation, "Performance ratio");
+      labelRelation.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      labelRelation.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point);
+      labelRelation.Location = new Point(322, 462);
+      labelRelation.Name = "labelRelation";
+      labelRelation.Size = new Size(335, 40);
+      labelRelation.TabIndex = 2;
+      labelRelation.Text = "___ : ___";
+      labelRelation.TextAlign = ContentAlignment.TopCenter;
+      toolTip1.SetToolTip(labelRelation, "Performance ratio");
       // 
       // textBoxCenterX
       // 
-      this.textBoxCenterX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.textBoxCenterX.CausesValidation = false;
-      this.textBoxCenterX.Location = new System.Drawing.Point(87, 528);
-      this.textBoxCenterX.Name = "textBoxCenterX";
-      this.textBoxCenterX.ShortcutsEnabled = false;
-      this.textBoxCenterX.Size = new System.Drawing.Size(225, 27);
-      this.textBoxCenterX.TabIndex = 1;
-      this.textBoxCenterX.WordWrap = false;
-      this.textBoxCenterX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
-      this.textBoxCenterX.Leave += new System.EventHandler(this.textBox_Leave);
+      textBoxCenterX.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      textBoxCenterX.CausesValidation = false;
+      textBoxCenterX.Location = new Point(87, 528);
+      textBoxCenterX.Name = "textBoxCenterX";
+      textBoxCenterX.ShortcutsEnabled = false;
+      textBoxCenterX.Size = new Size(225, 27);
+      textBoxCenterX.TabIndex = 1;
+      textBoxCenterX.WordWrap = false;
+      textBoxCenterX.KeyPress += textBox_KeyPress;
+      textBoxCenterX.Leave += textBox_Leave;
       // 
       // label5
       // 
-      this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label5.Location = new System.Drawing.Point(3, 531);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(78, 20);
-      this.label5.TabIndex = 4;
-      this.label5.Text = "Center X:";
-      this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      label5.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      label5.Location = new Point(3, 531);
+      label5.Name = "label5";
+      label5.Size = new Size(78, 20);
+      label5.TabIndex = 4;
+      label5.Text = "Center X:";
+      label5.TextAlign = ContentAlignment.TopRight;
       // 
       // label7
       // 
-      this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label7.Location = new System.Drawing.Point(318, 531);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(88, 24);
-      this.label7.TabIndex = 4;
-      this.label7.Text = "Scaling:";
-      this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      label7.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      label7.Location = new Point(318, 531);
+      label7.Name = "label7";
+      label7.Size = new Size(88, 24);
+      label7.TabIndex = 4;
+      label7.Text = "Scaling:";
+      label7.TextAlign = ContentAlignment.TopRight;
       // 
       // label8
       // 
-      this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label8.Location = new System.Drawing.Point(318, 563);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(88, 20);
-      this.label8.TabIndex = 4;
-      this.label8.Text = "Iterations:";
-      this.label8.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      label8.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      label8.Location = new Point(318, 563);
+      label8.Name = "label8";
+      label8.Size = new Size(88, 20);
+      label8.TabIndex = 4;
+      label8.Text = "Iterations:";
+      label8.TextAlign = ContentAlignment.TopRight;
       // 
       // label9
       // 
-      this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label9.Location = new System.Drawing.Point(3, 563);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(77, 20);
-      this.label9.TabIndex = 4;
-      this.label9.Text = "Center Y:";
-      this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      label9.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      label9.Location = new Point(3, 563);
+      label9.Name = "label9";
+      label9.Size = new Size(77, 20);
+      label9.TabIndex = 4;
+      label9.Text = "Center Y:";
+      label9.TextAlign = ContentAlignment.TopRight;
       // 
       // textBoxCenterY
       // 
-      this.textBoxCenterY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.textBoxCenterY.CausesValidation = false;
-      this.textBoxCenterY.Location = new System.Drawing.Point(87, 560);
-      this.textBoxCenterY.Name = "textBoxCenterY";
-      this.textBoxCenterY.ShortcutsEnabled = false;
-      this.textBoxCenterY.Size = new System.Drawing.Size(225, 27);
-      this.textBoxCenterY.TabIndex = 2;
-      this.textBoxCenterY.WordWrap = false;
-      this.textBoxCenterY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
-      this.textBoxCenterY.Leave += new System.EventHandler(this.textBox_Leave);
+      textBoxCenterY.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      textBoxCenterY.CausesValidation = false;
+      textBoxCenterY.Location = new Point(87, 560);
+      textBoxCenterY.Name = "textBoxCenterY";
+      textBoxCenterY.ShortcutsEnabled = false;
+      textBoxCenterY.Size = new Size(225, 27);
+      textBoxCenterY.TabIndex = 2;
+      textBoxCenterY.WordWrap = false;
+      textBoxCenterY.KeyPress += textBox_KeyPress;
+      textBoxCenterY.Leave += textBox_Leave;
       // 
       // numericUpDownIter
       // 
-      this.numericUpDownIter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.numericUpDownIter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.numericUpDownIter.Location = new System.Drawing.Point(412, 561);
-      this.numericUpDownIter.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-      this.numericUpDownIter.Minimum = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-      this.numericUpDownIter.Name = "numericUpDownIter";
-      this.numericUpDownIter.Size = new System.Drawing.Size(92, 27);
-      this.numericUpDownIter.TabIndex = 4;
-      this.numericUpDownIter.Value = new decimal(new int[] {
-            32,
-            0,
-            0,
-            0});
-      this.numericUpDownIter.ValueChanged += new System.EventHandler(this.itervaluechanged);
-      this.numericUpDownIter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.numericUpDownIter_KeyDown);
+      numericUpDownIter.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      numericUpDownIter.BorderStyle = BorderStyle.FixedSingle;
+      numericUpDownIter.Location = new Point(412, 561);
+      numericUpDownIter.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+      numericUpDownIter.Minimum = new decimal(new int[] { 16, 0, 0, 0 });
+      numericUpDownIter.Name = "numericUpDownIter";
+      numericUpDownIter.Size = new Size(92, 27);
+      numericUpDownIter.TabIndex = 4;
+      numericUpDownIter.Value = new decimal(new int[] { 32, 0, 0, 0 });
+      numericUpDownIter.ValueChanged += itervaluechanged;
+      numericUpDownIter.KeyDown += numericUpDownIter_KeyDown;
       // 
       // buttonReset
       // 
-      this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonReset.Location = new System.Drawing.Point(872, 563);
-      this.buttonReset.Name = "buttonReset";
-      this.buttonReset.Size = new System.Drawing.Size(94, 29);
-      this.buttonReset.TabIndex = 6;
-      this.buttonReset.Text = "Reset";
-      this.buttonReset.UseVisualStyleBackColor = true;
-      this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+      buttonReset.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+      buttonReset.Location = new Point(872, 563);
+      buttonReset.Name = "buttonReset";
+      buttonReset.Size = new Size(94, 29);
+      buttonReset.TabIndex = 6;
+      buttonReset.Text = "Reset";
+      buttonReset.UseVisualStyleBackColor = true;
+      buttonReset.Click += buttonReset_Click;
       // 
       // numericUpDownRound
       // 
-      this.numericUpDownRound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.numericUpDownRound.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.numericUpDownRound.Location = new System.Drawing.Point(550, 561);
-      this.numericUpDownRound.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-      this.numericUpDownRound.Minimum = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-      this.numericUpDownRound.Name = "numericUpDownRound";
-      this.numericUpDownRound.Size = new System.Drawing.Size(56, 27);
-      this.numericUpDownRound.TabIndex = 5;
-      this.toolTip1.SetToolTip(this.numericUpDownRound, "Precision limitation.\r\nRoughly equivalent to an imaginary floating-point type\r\nwi" +
-        "th such mantissa bit count.");
-      this.numericUpDownRound.Value = new decimal(new int[] {
-            32,
-            0,
-            0,
-            0});
-      this.numericUpDownRound.ValueChanged += new System.EventHandler(this.itervaluechanged);
-      this.numericUpDownRound.KeyDown += new System.Windows.Forms.KeyEventHandler(this.numericUpDownIter_KeyDown);
+      numericUpDownRound.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      numericUpDownRound.BorderStyle = BorderStyle.FixedSingle;
+      numericUpDownRound.Location = new Point(550, 561);
+      numericUpDownRound.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+      numericUpDownRound.Minimum = new decimal(new int[] { 8, 0, 0, 0 });
+      numericUpDownRound.Name = "numericUpDownRound";
+      numericUpDownRound.Size = new Size(56, 27);
+      numericUpDownRound.TabIndex = 5;
+      toolTip1.SetToolTip(numericUpDownRound, "Precision limitation.\r\nRoughly equivalent to an imaginary floating-point type\r\nwith such mantissa bit count.");
+      numericUpDownRound.Value = new decimal(new int[] { 32, 0, 0, 0 });
+      numericUpDownRound.ValueChanged += itervaluechanged;
+      numericUpDownRound.KeyDown += numericUpDownIter_KeyDown;
       // 
       // label10
       // 
-      this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label10.Location = new System.Drawing.Point(514, 563);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(35, 21);
-      this.label10.TabIndex = 4;
-      this.label10.Text = "lim:";
-      this.label10.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      label10.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      label10.Location = new Point(514, 563);
+      label10.Name = "label10";
+      label10.Size = new Size(35, 21);
+      label10.TabIndex = 4;
+      label10.Text = "lim:";
+      label10.TextAlign = ContentAlignment.TopRight;
+      // 
+      // cbBigRat
+      // 
+      cbBigRat.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      cbBigRat.AutoSize = true;
+      cbBigRat.Location = new Point(11, 483);
+      cbBigRat.Name = "cbBigRat";
+      cbBigRat.Size = new Size(176, 24);
+      cbBigRat.TabIndex = 7;
+      cbBigRat.Text = "BigRat (Experimental)";
+      toolTip1.SetToolTip(cbBigRat, "If enabled, BigRat is used instead of BigRational in the left view.");
+      cbBigRat.UseVisualStyleBackColor = true;
+      cbBigRat.CheckedChanged += cbBigRat_CheckedChanged;
       // 
       // MandelbrotPage
       // 
-      this.Controls.Add(this.buttonReset);
-      this.Controls.Add(this.numericUpDownRound);
-      this.Controls.Add(this.numericUpDownIter);
-      this.Controls.Add(this.textBoxCenterY);
-      this.Controls.Add(this.textBoxCenterX);
-      this.Controls.Add(this.label10);
-      this.Controls.Add(this.label8);
-      this.Controls.Add(this.label9);
-      this.Controls.Add(this.label7);
-      this.Controls.Add(this.label5);
-      this.Controls.Add(this.textBoxScaling);
-      this.Controls.Add(this.labelRelation);
-      this.Controls.Add(this.splitContainer1);
-      this.Name = "MandelbrotPage";
-      this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
-      this.Size = new System.Drawing.Size(975, 598);
-      this.splitContainer1.Panel1.ResumeLayout(false);
-      this.splitContainer1.Panel1.PerformLayout();
-      this.splitContainer1.Panel2.ResumeLayout(false);
-      this.splitContainer1.Panel2.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-      this.splitContainer1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIter)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRound)).EndInit();
-      this.ResumeLayout(false);
-      this.PerformLayout();
-
+      Controls.Add(cbBigRat);
+      Controls.Add(buttonReset);
+      Controls.Add(numericUpDownRound);
+      Controls.Add(numericUpDownIter);
+      Controls.Add(textBoxCenterY);
+      Controls.Add(textBoxCenterX);
+      Controls.Add(label10);
+      Controls.Add(label8);
+      Controls.Add(label9);
+      Controls.Add(label7);
+      Controls.Add(label5);
+      Controls.Add(textBoxScaling);
+      Controls.Add(labelRelation);
+      Controls.Add(splitContainer1);
+      Name = "MandelbrotPage";
+      Padding = new Padding(0, 0, 0, 10);
+      Size = new Size(975, 598);
+      splitContainer1.Panel1.ResumeLayout(false);
+      splitContainer1.Panel1.PerformLayout();
+      splitContainer1.Panel2.ResumeLayout(false);
+      splitContainer1.Panel2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+      splitContainer1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)numericUpDownIter).EndInit();
+      ((System.ComponentModel.ISupportInitialize)numericUpDownRound).EndInit();
+      ResumeLayout(false);
+      PerformLayout();
     }
 
     #endregion
@@ -448,5 +427,6 @@
     private NumericUpDown numericUpDownRound;
     private Label label10;
     private ToolTip toolTip1;
+    private CheckBox cbBigRat;
   }
 }

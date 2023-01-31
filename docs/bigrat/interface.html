@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>BigRat Interface </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="BigRat Interface ">
+    <meta name="generator" content="docfx 2.59.1.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc">
+    <meta property="docfx:tocrel" content="../toc">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+                
+                <ul class="nav level1 navbar-nav">
+                      <li>
+                          <a href="../../api/System.Numerics.html" title="Api Documentation">Api Documentation</a>
+                      </li>
+                </ul>    </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h2 id="bigrat-interface">BigRat Interface</h2>
+
+<pre><code class="lang-csharp"> 
+  [Serializable, SkipLocalsInit, DebuggerDisplay(&quot;{ToString(\&quot;\&quot;),nq}&quot;)]
+  public unsafe readonly struct BigRat : IEquatable&lt;BigRat&gt;, IComparable&lt;BigRat&gt;, IFormattable, ISpanFormattable
+  {
+    public static implicit operator BigRat(byte value)
+    public static implicit operator BigRat(sbyte value)
+    public static implicit operator BigRat(char value)
+    public static implicit operator BigRat(ushort value)
+    public static implicit operator BigRat(short value)
+    public static implicit operator BigRat(int value)
+    public static implicit operator BigRat(uint value)
+    public static implicit operator BigRat(long value)
+    public static implicit operator BigRat(ulong value)
+    public static implicit operator BigRat(Half value)
+    public static implicit operator BigRat(float value)
+    public static implicit operator BigRat(double value)
+    public static implicit operator BigRat(decimal value)
+    public static implicit operator BigRat(BigInteger value)
+#if NET7_0_OR_GREATER
+    public static implicit operator BigRat(Int128 value)
+    public static implicit operator BigRat(UInt128 value)
+#endif
+
+    public static explicit operator byte(BigRat value)
+    public static explicit operator sbyte(BigRat value)
+    public static explicit operator char(BigRat value)
+    public static explicit operator uint(BigRat value)
+    public static explicit operator short(BigRat value)
+    public static explicit operator ushort(BigRat value)
+    public static explicit operator int(BigRat value)
+    public static explicit operator long(BigRat value)
+    public static explicit operator ulong(BigRat value)
+    public static explicit operator Half(BigRat value)
+    public static explicit operator float(BigRat value)
+    public static explicit operator double(BigRat value)
+    public static explicit operator decimal(BigRat value)
+    public static explicit operator BigInteger(BigRat value)
+#if NET7_0_OR_GREATER
+    public static explicit operator Int128(BigRat value)
+    public static explicit operator UInt128(BigRat value)
+#endif
+
+    public static BigRat operator +(BigRat a)
+    public static BigRat operator -(BigRat a)
+    public static BigRat operator +(BigRat a, BigRat b)
+    public static BigRat operator -(BigRat a, BigRat b)
+    public static BigRat operator *(BigRat a, BigRat b)
+    public static BigRat operator /(BigRat a, BigRat b)
+    public static BigRat operator %(BigRat a, BigRat b)
+    public static BigRat operator +(BigRat a, int b)
+    public static BigRat operator -(BigRat a, int b)
+    public static BigRat operator *(BigRat a, int b)
+    public static BigRat operator /(BigRat a, int b)
+    public static BigRat operator +(int a, BigRat b)
+    public static BigRat operator -(int a, BigRat b)
+    public static BigRat operator *(int a, BigRat b)
+    public static BigRat operator /(int a, BigRat b)
+    public static BigRat operator ++(BigRat a)
+    public static BigRat operator --(BigRat a)
+
+    public static bool operator ==(BigRat a, BigRat b) =&gt; a.CompareTo(b) == 0;
+    public static bool operator !=(BigRat a, BigRat b) =&gt; a.CompareTo(b) != 0;
+    public static bool operator &lt;=(BigRat a, BigRat b) =&gt; a.CompareTo(b) &lt;= 0;
+    public static bool operator &gt;=(BigRat a, BigRat b) =&gt; a.CompareTo(b) &gt;= 0;
+    public static bool operator &lt;(BigRat a, BigRat b) =&gt; a.CompareTo(b) &lt; 0;
+    public static bool operator &gt;(BigRat a, BigRat b) =&gt; a.CompareTo(b) &gt; 0;
+
+    public static bool operator ==(BigRat a, int b) =&gt; a.CompareTo(b) == 0;
+    public static bool operator !=(BigRat a, int b) =&gt; a.CompareTo(b) != 0;
+    public static bool operator &lt;=(BigRat a, int b) =&gt; a.CompareTo(b) &lt;= 0;
+    public static bool operator &gt;=(BigRat a, int b) =&gt; a.CompareTo(b) &gt;= 0;
+    public static bool operator &lt;(BigRat a, int b) =&gt; a.CompareTo(b) &lt; 0;
+    public static bool operator &gt;(BigRat a, int b) =&gt; a.CompareTo(b) &gt; 0;
+
+    public static bool operator ==(int a, BigRat b) =&gt; b.CompareTo(a) == 0;
+    public static bool operator !=(int a, BigRat b) =&gt; b.CompareTo(a) != 0;
+    public static bool operator &lt;=(int a, BigRat b) =&gt; b.CompareTo(a) &gt;= 0;
+    public static bool operator &gt;=(int a, BigRat b) =&gt; b.CompareTo(a) &lt;= 0;
+    public static bool operator &lt;(int a, BigRat b) =&gt; b.CompareTo(a) &gt; 0;
+    public static bool operator &gt;(int a, BigRat b) =&gt; b.CompareTo(a) &lt; 0;
+
+    public static int Sign(BigRat value)
+    public static int ILogB(BigRat value)
+    public static int ILog10(BigRat value)
+
+    public static BigRat Abs(BigRat a)
+    public static BigRat Min(BigRat x, BigRat y)
+    public static BigRat Max(BigRat x, BigRat y)
+    public static BigRat MaxMagnitude(BigRat x, BigRat y)
+    public static BigRat MinMagnitude(BigRat x, BigRat y)
+    public static BigRat MaxMagnitudeNumber(BigRat x, BigRat y)
+    public static BigRat MinMagnitudeNumber(BigRat x, BigRat y)
+    public static BigRat Normalize(BigRat value)
+    public static BigRat Truncate(BigRat value)
+    public static BigRat Floor(BigRat value)
+    public static BigRat Ceiling(BigRat value)
+    public static BigRat Round(BigRat value)
+    public static BigRat Round(BigRat value, int digits)
+    public static BigRat Round(BigRat value, int digits, MidpointRounding mode)
+    public static BigRat Round(BigRat value, MidpointRounding mode)
+    public static BigRat Round(BigRat value, uint bits)
+    public static BigRat Pow(BigRat x, int y)
+    public static BigRat Pow2(int y)
+    public static BigRat Pow10(int y)
+    public static BigRat Pow(BigRat x, BigRat y, int digits)
+    public static BigRat Sqrt(BigRat x, int digits)
+    public static BigRat Cbrt(BigRat x, int digits)
+    public static BigRat RootN(BigRat x, int n, int digits)
+    public static BigRat Hypot(BigRat x, BigRat y, int digits)
+    public static BigRat Exp(BigRat x, int digits)
+    public static BigRat Log(BigRat x, int digits)
+    public static BigRat Log(BigRat x, BigRat newBase, int digits)
+    public static BigRat Log(BigRat x)
+    public static BigRat Log(BigRat x, BigRat newBase)
+    public static BigRat Log2(BigRat x, int digits)
+    public static BigRat Pi(int digits)
+    public static BigRat Tau(int digits)
+    public static BigRat E(int digits)
+    public static BigRat Sin(BigRat x, int digits)
+    public static BigRat Cos(BigRat x, int digits)
+    public static bool IsNormalized(BigRat value)
+    public static bool IsInteger(BigRat value)
+    public static bool IsEvenInteger(BigRat value)
+    public static bool IsOddInteger(BigRat value)
+    public static BigRat GetNumerator(BigRat value)
+    public static BigRat GetDenominator(BigRat value)
+
+    public override int GetHashCode()
+    public override bool Equals(object? obj)
+    public bool Equals(BigRat value)
+    public int CompareTo(BigRat value)
+    public int CompareTo(int value)
+    public override string ToString()
+    public string ToString(string? format, IFormatProvider? provider = null)
+    public bool TryFormat(Span&lt;char&gt; s, out int charsWritten, ReadOnlySpan&lt;char&gt; format, IFormatProvider? provider)
+    public static BigRat Parse(ReadOnlySpan&lt;char&gt; s, NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands, IFormatProvider? provider = null)
+    public int GetByteCount() { return (p != null ? p.Length : 1) &lt;&lt; 2; }
+    public bool TryWriteBytes(Span&lt;byte&gt; destination, out int bytesWritten)
+    public byte[] ToByteArray()
+    public BigRat(byte[] s)
+    public BigRat(ReadOnlySpan&lt;byte&gt; s)
+  }
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

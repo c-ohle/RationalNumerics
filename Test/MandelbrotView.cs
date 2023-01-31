@@ -32,7 +32,7 @@ namespace Test
       get => manual;
       set { if (manual == value) return; stop(); manual = value; delaystart(); }
     }
-    public enum MandelDriver { BigRational = 2, BigInteger = 1, Double = 0 }
+    public enum MandelDriver { BigRat = 3, BigRational = 2, BigInteger = 1, Double = 0 }
     public MandelDriver Driver
     {
       get => (MandelDriver)driver;
@@ -190,7 +190,7 @@ namespace Test
       t2 = Environment.TickCount;
 
     }
-    void mandel_BigInteger_() // BigRat
+    void mandel_BigRat()
     {
       calcmap(); if (map == null) return;
       var x1 = conv(mx - scale * dx / dy);
@@ -276,7 +276,7 @@ namespace Test
         scan = (uint*)lb.Scan0.ToPointer(); stride = lb.Stride; bmp.UnlockBits(lb);
       }
       t1 = t2 = 0;
-      task = new Task(driver == 0 ? mandel_double : driver == 1 ? mandel_BigInteger : mandel_BigRational);
+      task = new Task(driver == 0 ? mandel_double : driver == 1 ? mandel_BigInteger : driver == 2 ? mandel_BigRational : mandel_BigRat);
       cancel = dostart = false; task.Start(); timer.Start(); gcount(true); StateChanged?.Invoke(this, EventArgs.Empty);
     }
 

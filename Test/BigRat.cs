@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Buffers;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -8,7 +10,7 @@ using System.Runtime.Intrinsics.X86;
 namespace Test
 {
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
-  public unsafe readonly struct BigRat : IEquatable<BigRat>, IComparable<BigRat>, IFormattable, ISpanFormattable
+  public unsafe readonly struct BigRat : IEquatable<BigRat>, IComparable<BigRat>, IFormattable, ISpanFormattable, ISpanParsable<BigRat>
   {
     public static implicit operator BigRat(byte value)
     {
@@ -205,7 +207,7 @@ namespace Test
         var sh = Math.Max(mu - 96, mv - 96);
         if (sh > 0)
         {
-          var t = stackalloc uint[value.p.Length]; Unsafe.CopyBlock(t, u, unchecked((uint)value.p.Length << 2));
+          var t = stackalloc uint[value.p.Length]; mov(t, u, unchecked((uint)value.p.Length));
           v = (u = t) + nu + 1; shr(u, sh); shr(v, sh); nu = u[0]; nv = v[0];
           if (*(ulong*)u == 1) return default;
           if (*(ulong*)v == 1) throw new ArgumentOutOfRangeException();
@@ -363,9 +365,9 @@ namespace Test
     {
       return value.p == null ? 0 : (value.p[0] & 0x80000000) != 0 ? -1 : +1;
     }
-    public static int ILog2(BigRat value)
+    public static int ILogB(BigRat value)
     {
-      if (value.p == null) return -int.MaxValue; //infinity
+      if (value.p == null) return -2147483648; //infinity
       fixed (uint* p = value.p)
       {
         var h = p[0]; var a = h & 0x3fffffff; var q = p + a + 1; var b = q[0];
@@ -383,8 +385,6 @@ namespace Test
         int e = (int)c; //todo: critical region checks
         if (c < 0)
         {
-          // var cc = BigInteger.Abs((BigInteger)GetNumerator(value)); var xx = BigInteger.Log10(cc);
-          // var dd = BigInteger.Abs((BigInteger)GetDenominator(value)); var yy = BigInteger.Log10(dd); var tc = xx - yy; var ee = (int)tc;          
           if (e != c) e--;
         }
         return e;
@@ -430,6 +430,16 @@ namespace Test
     {
       return x.CompareTo(y) >= 0 ? x : y; // IEEE 754:2019 does not propagate NaN inputs back 
     }
+    public static BigRat CopySign(BigRat value, BigRat sign)
+    {
+      int a, b; return (a = Sign(value)) != 0 && (b = Sign(sign) < 0 ? -1 : +1) != 0 && a != b ? -value : value;
+    }
+    public static BigRat Clamp(BigRat value, BigRat min, BigRat max)
+    {
+      if (min > max) throw new ArgumentException();// $"{nameof(min)} {nameof(max)}");
+      if (value < min) return min;
+      if (value > max) return max; return value;
+    }
     public static BigRat Normalize(BigRat value)
     {
       if (value.p == null) return value;
@@ -438,9 +448,9 @@ namespace Test
         if ((p[0] & 0x40000000) != 0) return value;
         var d = p + (p[0] & 0x3fffffff) + 1; if (*(ulong*)d == 0x100000001) return value;
         var l = value.p.Length; var s = stackalloc uint[l * 3]; uint x;
-        Unsafe.CopyBlock(s, p, unchecked((uint)l << 2)); s[0] &= 0x3fffffff;
+        mov(s, p, unchecked((uint)l)); s[0] &= 0x3fffffff;
         var e = gcd(s, s + s[0] + 1); if (*(ulong*)e == 0x100000001) return value;
-        var t = s + l; Unsafe.CopyBlock(t, p, unchecked((uint)l << 2)); t[0] &= 0x3fffffff;
+        var t = s + l; mov(t, p, unchecked((uint)l)); t[0] &= 0x3fffffff;
         var r = t + l; d = t + t[0] + 1; mod(t, e, r); mod(d, e, r + r[0] + 1);
         x = r[0]; r[0] |= (p[0] & 0x80000000) | 0x40000000;
         return new BigRat(r, 2 + x + r[x + 1]);
@@ -502,8 +512,8 @@ namespace Test
           fixed (uint* v = w)
           {
             v[0] = nu | (p[0] & 0x80000000); v[nu + 1] = nv;
-            Unsafe.CopyBlock(v + 1, p + 1 + d, nu << 2);
-            Unsafe.CopyBlock(v + nu + 2, p + a + 2 + d, nv << 2);
+            mov(v + 1, p + 1 + d, nu);
+            mov(v + nu + 2, p + a + 2 + d, nv);
           }
           return new BigRat(w);
         }
@@ -512,9 +522,9 @@ namespace Test
           var u = (a << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[a]));
           var v = (b << 5) - unchecked((uint)BitOperations.LeadingZeroCount(q[b]));
           if (u > v) u = v; if (u <= bits) return value;
-          var o = stackalloc uint[value.p.Length]; Unsafe.CopyBlock(o, p, unchecked((uint)value.p.Length << 2));
+          var o = stackalloc uint[value.p.Length]; mov(o, p, unchecked((uint)value.p.Length));
           var t = (int)(u - bits); shr(o, t); shr(q = o + a + 1, t);
-          if (o[0] != a) Unsafe.CopyBlock(o + o[0] + 1, q, (q[0] + 1) << 2);
+          if (o[0] != a) mov(o + o[0] + 1, q, q[0] + 1);
           var l = 2 + o[0] + o[o[0] + 1]; o[0] |= h & 0x80000000;
           return new BigRat(o, l);
         }
@@ -548,6 +558,7 @@ namespace Test
       //    cache.Add(k, p = Pow(10, y));
       //  return p;
       //}
+      //static Dictionary<int, BigRat> cache = new();
     }
     public static BigRat Pow(BigRat x, BigRat y, int digits)
     {
@@ -569,13 +580,13 @@ namespace Test
       return a;
       static BigRat est(BigRat x)
       {
-        var u = stackalloc uint[x.p!.Length]; fixed (uint* t = x.p) Unsafe.CopyBlock(u, t, unchecked((uint)x.p.Length << 2));
+        var u = stackalloc uint[x.p!.Length]; fixed (uint* t = x.p) mov(u, t, unchecked((uint)x.p.Length));
         uint nu = u[0], nv = u[nu + 1]; var v = u + nu + 1;
         var mu = (nu << 5) - unchecked((uint)BitOperations.LeadingZeroCount(u[nu]));
         var mv = (nv << 5) - unchecked((uint)BitOperations.LeadingZeroCount(v[nv]));
         if (mu > 1) shr(u, unchecked((int)(mu >> 1))); var un = u[0];
         if (mv > 1) shr(v, unchecked((int)(mv >> 1))); var vn = v[0];
-        if (un != nu) Unsafe.CopyBlock(u + un + 1, v, (vn + 1) << 2); return new BigRat(u, 2 + un + vn);
+        if (un != nu) mov(u + un + 1, v, vn + 1); return new BigRat(u, 2 + un + vn);
       }
     }
     public static BigRat Cbrt(BigRat x, int digits)
@@ -614,6 +625,10 @@ namespace Test
     public static BigRat Log2(BigRat x, int digits)
     {
       return log2(x, base2(digits));
+    }
+    public static BigRat Log2(BigRat x)
+    {
+      return Log2(x, 32);
     }
     public static BigRat Pi(int digits)
     {
@@ -698,37 +713,23 @@ namespace Test
       var v = stackalloc uint[4]; mov(v, value);
       fixed (uint* u = this.p) return cmp(u, v);
     }
-    public override string ToString()
-    {
-      return ToString(default, null);
-    }
-    public string ToString(string? format, IFormatProvider? provider = null)
-    {
-      if (format == string.Empty && provider == null) provider = NumberFormatInfo.InvariantInfo;
-      Span<char> s = stackalloc char[1024];
-      if (!TryFormat(s, out var charsWritten, format, provider))
-      {
-        int n; fixed (char* p = s) n = *(int*)p;
-        s = stackalloc char[n]; TryFormat(s, out charsWritten, format, provider);
-      }
-      s = s.Slice(0, charsWritten); return s.ToString();
-    }
+
     public bool TryFormat(Span<char> s, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
       var a = this; char f = 'Q', g = f; int d = 32; var info = NumberFormatInfo.GetInstance(provider);
       if (format.Length != 0)
       {
-        f = (char)((g = format[0]) & ~0x20); var l = format.Length;
-        if (l > 1) for (int j = 1, y = d = 0; j < l && unchecked((uint)(y = format[j] - '0')) < 10; j++, d = d * 10 + y) ;
+        f = (char)((g = format[0]) & ~0x20); var l = format.Length; if (l > 10) throw new FormatException(nameof(format));
+        if (l > 1) for (int j = 1, y = d = 0; j < l; d = d * 10 + (y = format[j++] - '0')) if ((uint)y > 9) throw new FormatException(nameof(format));
         switch (f)
         {
-          case 'Q': break;
+          case 'Q': if (d == 0 && a.p != null) goto fmq; break;
           case 'E': if (l == 1) d = 6; break;
           case 'G': if (d == 0) d = 32; break;
           case 'F': case 'N': if (l == 1) d = info.NumberDecimalDigits; g = f; f = 'F'; break;
           case 'R': f = 'Q'; if (d == 0 && a.p != null) goto fmq; break;
-          //case 'P': case 'C': return ((decimal)this).TryFormat(s, out charsWritten, format, provider);
-          default: throw new FormatException();
+          //todo: case 'P': case 'C':  
+          default: throw new FormatException(nameof(format));
         }
       }
       int e = ILog10(a), x = e + 1, t = 16 + d + (f == 'F' && e > 0 ? e * 3 / 2 : 0);
@@ -762,29 +763,106 @@ namespace Test
       a = GetNumerator(this); var b = GetDenominator(this); //todo: "123/1E+100", "123/1" -> "123" ...
       e = ILog10(a); x = ILog10(b); if ((t = e + x + 4) > s.Length) goto err;
       n = 0; if (this < 0) s[n++] = '-';
-      r = tos(s.Slice(n), a / Pow10(e), false, out _); s.Slice(n + r, e + 1 - r).Fill('0'); n += e + 1; s[n++] = '/';
-      r = tos(s.Slice(n), b / Pow10(x), false, out _); s.Slice(n + r, x + 1 - r).Fill('0'); n += x + 1;
+      r = tos(s.Slice(n), a / Pow10(e), false, out _); s.Slice(n + r, e + 1 - r).Fill('0'); n += e + 1; if (b == 1) goto ifm; s[n++] = '/';
+      r = tos(s.Slice(n), b / Pow10(x), false, out _); s.Slice(n + r, x + 1 - r).Fill('0'); n += x + 1; ifm:
       charsWritten = n; return true; err:
       new Span<char>(&t, 2).TryCopyTo(s); charsWritten = 0; return false;
     }
-    public static BigRat Parse(ReadOnlySpan<char> s, NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands, IFormatProvider? provider = null)
+    public string ToString(string? format, IFormatProvider? provider = null)
     {
+      if (format == string.Empty && provider == null) provider = NumberFormatInfo.InvariantInfo;
+      Span<char> s = stackalloc char[1024];
+      if (TryFormat(s, out var charsWritten, format, provider)) return s.Slice(0, charsWritten).ToString();
+      int need; fixed (char* p = s) need = *(int*)p; IntPtr hg = default;
+      try
+      {
+        char* p; if (need < (250000 >> 1)) { var t = stackalloc char[need]; p = t; }
+        else p = (char*)(hg = Marshal.AllocHGlobal(need << 1));
+        var ok = TryFormat(s = new Span<char>(p, need), out charsWritten, format, provider); Debug.Assert(ok);
+        return s.Slice(0, charsWritten).ToString();
+      }
+      finally { if (hg != default) Marshal.FreeHGlobal(hg); }
+    }
+    public string ToString(string? format)
+    {
+      return ToString(format, default(IFormatProvider));
+    }
+    public string ToString(IFormatProvider? provider)
+    {
+      return ToString(default(string), provider);
+    }
+    public override string ToString()
+    {
+      return ToString(default(string), default(IFormatProvider));
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out BigRat result)
+    {
+      if ((style & NumberStyles.AllowHexSpecifier) != 0) throw new ArgumentException(nameof(style));
       var h = provider != null ? NumberFormatInfo.GetInstance(provider).NumberDecimalSeparator[0] : default;
       BigRat a = 0, e = 1, d = 0, p = 0; char c;
       for (int i = s.Length - 1; i >= 0; i--)
         switch (c = s[i])
         {
-          case >= '0' and <= '9': a += e * (c - '0'); e *= 10; break;
-          case '.': case ',': if (h == default || h == c) d = e; break;
-          case '\'': a *= e / (e - 1); break;
-          case '-': a = -a; break;
-          case '+': break;
-          case 'e' or 'E': p = Pow10((int)a); a = 0; e = 1; break;
-          case '/': return Parse(s.Slice(0, i), style, null) / a;
+          case >= '0' and <= '9': a += e * (c - '0'); e *= 10; continue;
+          case '.': case ',': if (h == default || h == c) d = e; continue;
+          case '\'': a *= e / (e - 1); continue;
+          case '-': a = -a; continue;
+          case '+' or '_' or '_': continue;
+          case 'e' or 'E': p = Pow10((int)a); a = 0; e = 1; continue;
+          case '/': if (!TryParse(s.Slice(0, i), style, provider, out d)) goto err; result = d / a; return true;
         }
       if (d != 0) a /= d; if (p != 0) a *= p;
-      return a;
+      result = a; return true; err:
+      if (((int)style & 0x300000) == 0x300000) throw new ArgumentException();
+      result = default; return false;
     }
+    public static bool TryParse([NotNullWhen(true)] string? s, out BigRat result)
+    {
+      return TryParse(s.AsSpan(), NumberStyles.Float, null, out result);
+    }
+    public static bool TryParse(ReadOnlySpan<char> s, out BigRat result)
+    {
+      return TryParse(s, NumberStyles.Float, null, out result);
+    }
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out BigRat result)
+    {
+      return TryParse(s.AsSpan(), style, provider, out result);
+    }
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out BigRat result)
+    {
+      return TryParse(s, NumberStyles.Float, provider, out result);
+    }
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out BigRat result)
+    {
+      return TryParse(s.AsSpan(), NumberStyles.Float, provider, out result);
+    }
+
+    public static BigRat Parse(string s)
+    {
+      TryParse(s.AsSpan(), NumberStyles.Float | (NumberStyles)0x300000, null, out var result); return result;
+    }
+    public static BigRat Parse(string s, NumberStyles style)
+    {
+      TryParse(s.AsSpan(), style | (NumberStyles)0x300000, null, out var result); return result;
+    }
+    public static BigRat Parse(ReadOnlySpan<char> s, IFormatProvider? provider = null)
+    {
+      TryParse(s, NumberStyles.Float | (NumberStyles)0x300000, provider, out var result); return result;
+    }
+    public static BigRat Parse(string s, NumberStyles style, IFormatProvider? provider = null)
+    {
+      TryParse(s.AsSpan(), style | (NumberStyles)0x300000, provider, out var result); return result;
+    }
+    public static BigRat Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
+    {
+      TryParse(s, style | (NumberStyles)0x300000, provider, out var result); return result;
+    }
+    public static BigRat Parse(string s, IFormatProvider? provider)
+    {
+      TryParse(s.AsSpan(), NumberStyles.Float | (NumberStyles)0x300000, provider, out var result); return result;
+    }
+
     public int GetByteCount() { return (p != null ? p.Length : 1) << 2; }
     public bool TryWriteBytes(Span<byte> destination, out int bytesWritten)
     {
@@ -797,6 +875,7 @@ namespace Test
     {
       var a = new byte[GetByteCount()]; TryWriteBytes(a, out _); return a;
     }
+
     public BigRat(byte[] s)
     {
       p = new BigRat(new ReadOnlySpan<byte>(s)).p;
@@ -807,9 +886,8 @@ namespace Test
       b.CopyTo(p = new uint[b.Length]); p[0] &= ~0x40000000u;
     }
 
+    #region private
     readonly uint[]? p;
-
-    //static Dictionary<int, BigRat> cache = new();
 
     BigRat(uint[]? p)
     {
@@ -817,8 +895,7 @@ namespace Test
     }
     BigRat(uint* p, uint n)
     {
-      fixed (uint* t = this.p = new uint[n]) Unsafe.CopyBlock(t, p, n << 2);
-      //fixed (uint* t = this.p = new uint[n]) mov(t, p, n);
+      fixed (uint* t = this.p = new uint[n]) mov(t, p, n);
       //this.p = new uint[n]; for (uint i = 0; i < n; i++) this.p[i] = p[i];
     }
 
@@ -871,14 +948,14 @@ namespace Test
       {
         var n = p[0] & 0x3fffffff; if (*(ulong*)(p + n + 1) == 0x100000001) return a;
         var u = stackalloc uint[a.p.Length << 1]; var v = u + a.p.Length; // n + 1;
-        Unsafe.CopyBlock(u, p, (n + 1) << 2); u[0] = n; mod(u, p + n + 1, v); var inc = false;
+        mov(u, p, n + 1); u[0] = n; mod(u, p + n + 1, v); var inc = false;
         switch (f)
         {
           case 1: inc = (p[0] & 0x80000000) != 0 && *(ulong*)u != 1; break; // Floor 
           case 2: inc = (p[0] & 0x80000000) == 0 && *(ulong*)u != 1; break; // Ceiling
           case 3: // Round
             {
-              var t = u + n + 1; Unsafe.CopyBlock(t, p + n + 1, (p[n + 1] + 1) << 2); //for (uint i = 0; i <= p[n + 1]; i++) t[i] = p[n + 1 + i];
+              var t = u + n + 1; mov(t, p + n + 1, p[n + 1] + 1); //for (uint i = 0; i <= p[n + 1]; i++) t[i] = p[n + 1 + i];
               shr(t, 1); var x = cms(u, t); if (x == 0 && (v[1] & 1) != 0) x = 1; inc = x > 0;
             }
             break;
@@ -897,19 +974,15 @@ namespace Test
     {
       return (int)Math.Ceiling(digits * 3.321928094887362);
     }
-    static int base10(int bits)
-    {
-      return (int)(bits / 3.321928094887362);
-    }
     static BigRat lim(BigRat x, int digits)
     {
-      return Round(x, unchecked((uint)digits) << 5);
+      return Round(x, unchecked((uint)digits) << 5); //todo: inline
     }
     static BigRat log2(BigRat x, int prec)
     {
       if (x <= 0) throw new ArgumentException();
       var l = (prec >> 5) + 1; x = lim(x, l);
-      var a = ILog2(x); if (a != 0) x /= Pow2(a);
+      var a = ILogB(x); if (a != 0) x /= Pow2(a);
       var e = x.CompareTo(1); if (e == 0) return a; if (e < 0) { x *= 2; a--; }
       var b = default(BigRat); Debug.Assert(x > 1 && x < 2);
       for (int i = 1; i <= prec; i++)
@@ -926,10 +999,10 @@ namespace Test
     static BigRat exp(BigRat x, int prec)
     {
       var s = x < 0; if (s) x = -x;
-      int p = ILog2(x) + 1; if (p > 0) x = x / Pow2(p); else p = 0; // 0..0.5
+      int p = ILogB(x) + 1; if (p > 0) x = x / Pow2(p); else p = 0; // 0..0.5
       BigRat a = x + 1, b = x, c = 1, d;
       int i = 2, e = -(prec + BigRat.base2(p)), l = (-e >> 5) + 3; // (uint)(digits * (3.326f * (1f / 32))) + 5; // 3;
-      for (; ; i++) { b *= x; c *= i; a += d = b / c; if (ILog2(d) < e) break; a = lim(a, l); }
+      for (; ; i++) { b *= x; c *= i; a += d = b / c; if (ILogB(d) < e) break; a = lim(a, l); }
       for (i = 0; i < p; i++) { a = a * a; a = lim(a, (unchecked((int)a.p![0]) >> 1) + 1); } // a = Pow(a, 1 << v)
       if (s) a = 1 / a; return a; // a = Round(a, digits - ILog10(a) - 1);
     }
@@ -941,23 +1014,23 @@ namespace Test
       {
         int t = 10 * n, s = n << 2;
         var b = t1 / (s + 1) - t2 / (s + 3) + t3 / (t + 1) - t4 / (t + 3) - t5 / (t + 5) - t5 / (t + 7) + t2 / (t + 9);
-        var d = a * b; var i = -ILog2(d); if (i > bits) break;
+        var d = a * b; var i = -ILogB(d); if (i > bits) break;
         c += d; c = lim(c, l); a /= -1024;
       }
       c /= t4; return c;
     }
     static BigRat sin(BigRat x, int bits, bool cos)
     {
-      var c = bits + 16; int l = ((c - 1) >> 5) + 2, e = ILog2(x); //var ss = (1/x).ToString("Q1000"); ss = (x).ToString("Q1000");
+      var c = bits + 16; int l = ((c - 1) >> 5) + 2, e = ILogB(x); //var ss = (1/x).ToString("Q1000"); ss = (x).ToString("Q1000");
       var pih = pi(c + Math.Max(0, e)); pih /= 2; if (cos) x += pih;
       var u = Truncate(x / pih); var s = u.p != null ? unchecked((int)u.p[1]) : 0; if (u < 0) s = -s;
       if (s != 0) { x -= u * pih; if ((s & 1) != 0) x = pih - x; if ((s & 2) != 0) x = -x; }
       if (x.p == null) return default;
-      if ((e = ILog2(u = x < 0 ? pih + x : pih - x)) < -27) { if (e < -bits) return Sign(x); c += 64; l += 2; } // < 1e-8 near 90°
+      if ((e = ILogB(u = x < 0 ? pih + x : pih - x)) < -27) { if (e < -bits) return Sign(x); c += 64; l += 2; } // < 1e-8 near 90°
       BigRat f = 6, a = x, b = x * x, d; b = lim(b, l);
       for (int i = 1, k = 4; ; i++, k += 2)
       {
-        a *= b; a = lim(a, l); d = a / f; var t = -ILog2(d); if (t > c) break;
+        a *= b; a = lim(a, l); d = a / f; var t = -ILogB(d); if (t > c) break;
         if ((i & 1) != 1) x += d; else x -= d; f *= k * (k + 1); x = lim(x, l);
       }
       return x;
@@ -967,26 +1040,33 @@ namespace Test
     {
       rep = -1; if (v.p == null) { s[0] = '0'; return 1; }
       uint nv = unchecked((uint)v.p.Length), np = v.p[0] & 0x3fffffff, ten = 10, nr = 0; int ex = 0;
-      if (reps) { nr = v.p[np + 1] + 1; ex = unchecked((int)nr) * s.Length; if (ex > 100000) { ex = 0; } }
-      uint* p = stackalloc uint[v.p.Length + 8 + ex], d = p + np + 1 + 4;
-      fixed (uint* t = v.p) { Unsafe.CopyBlock(p, t, (np + 1) << 2); Unsafe.CopyBlock(d, t + np + 1, (t[np + 1] + 1) << 2); p[0] &= 0x3fffffff; }
-      uint* w = p + nv + 4, r = w + 4;
-      for (int i = 0; i < s.Length; i++)
+      if (reps) { nr = v.p[np + 1] + 1; var uex = (ulong)nr * (uint)s.Length; if (uex > (500000 >> 2)) uex = 0; ex = unchecked((int)uex); }
+      var need = checked(v.p.Length + 8 + ex); IntPtr hg = default;
+      try
       {
-        mod(p, d, w); var c = (char)('0' + w[1]); Debug.Assert(c >= '0' && c <= '9');
-        if (ex != 0 && c != '0')
+        uint* p; if (need < (500000 >> 2)) { var t = stackalloc uint[need]; p = t; }
+        else p = (uint*)(hg = Marshal.AllocHGlobal(need << 2));
+        uint* d = p + np + 1 + 4;
+        fixed (uint* t = v.p) { mov(p, t, np + 1); mov(d, t + np + 1, t[np + 1] + 1); p[0] &= 0x3fffffff; }
+        uint* w = p + nv + 4, r = w + 4;
+        for (int i = 0; i < s.Length; i++)
         {
-          for (int t = 0; t < i; t++)
+          mod(p, d, w); var c = (char)('0' + w[1]); Debug.Assert(c >= '0' && c <= '9');
+          if (ex != 0 && c != '0')
           {
-            if (s[t] != c || cms(p, r + t * nr) != 0) continue;
-            for (; t != 0 && s[i - 1] == '0' && s[t - 1] == '0'; i--, t--) ;
-            rep = t; return i;
+            for (int t = 0; t < i; t++)
+            {
+              if (s[t] != c || cms(p, r + t * nr) != 0) continue;
+              for (; t != 0 && s[i - 1] == '0' && s[t - 1] == '0'; i--, t--) ;
+              rep = t; return i;
+            }
+            mov(r + i * nr, p, p[0] + 1); Debug.Assert(p[0] < nr);
           }
-          Unsafe.CopyBlock(r + i * nr, p, (p[0] + 1)<<2); Debug.Assert(p[0] < nr);
+          s[i] = c; if (*(ulong*)p == 1) return i + 1;
+          p[0] = mul(p + 1, p[0], &ten, 1, p + 1);
         }
-        s[i] = c; if (*(ulong*)p == 1) return i + 1;
-        p[0] = mul(p + 1, p[0], &ten, 1, p + 1);
       }
+      finally { if (hg != default) Marshal.FreeHGlobal(hg); }
       return s.Length;
     }
     static int tos(Span<char> s, uint u, int m)
@@ -995,6 +1075,22 @@ namespace Test
       s.Slice(0, i).Reverse(); return i;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static void mov(uint* d, uint* s, uint n)
+    {
+      //for (uint i = 0; i < n; i++) d[i] = s[i];
+      Unsafe.CopyBlock(d, s, n << 2);
+      //uint i = 0, c;
+      //for (c = n & ~3u; i < c; i += 4) *(decimal*)&((byte*)d)[i << 2] = *(decimal*)&((byte*)s)[i << 2]; // RyuJIT vmovdqu
+      //for (c = n & ~1u; i < c; i += 2) *(ulong*)&((byte*)d)[i << 2] = *(ulong*)&((byte*)s)[i << 2];
+      //if (i != n) d[i] = s[i]; //if ?
+    }
+    static void mov(uint* a, int b)
+    {
+      a[0] = unchecked((uint)b & 0x80000000) | 1;
+      a[1] = unchecked((uint)((b ^ (b >>= 31)) - b));
+      ((ulong*)a)[1] = 0x100000001;
+    }
     static int cms(uint* a, uint* b)
     {
       uint na = a[0], nb = b[0]; if (na != nb) return na > nb ? +1 : -1;
@@ -1014,12 +1110,6 @@ namespace Test
       if (cu != cv) return cu > cv ? su : -su;
       for (uint i = cu; i != 0;) if (w[--i] != p[i]) return w[i] > p[i] ? su : -su;
       return 0;
-    }
-    static void mov(uint* a, int b)
-    {
-      a[0] = unchecked((uint)b & 0x80000000) | 1;
-      a[1] = unchecked((uint)((b ^ (b >>= 31)) - b));
-      ((ulong*)a)[1] = 0x100000001;
     }
     static uint mul(uint* a, uint na, uint* b, uint nb, uint* r)
     {
@@ -1221,5 +1311,6 @@ namespace Test
       }
       return u;
     }
+    #endregion //private
   }
 }

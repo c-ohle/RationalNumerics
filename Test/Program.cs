@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 
 namespace Test
@@ -15,22 +16,60 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //test_bigrat();
+      ApplicationConfiguration.Initialize(); bigrat_tests();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
     }
 
-    static void test_bigrat()
+    static void bigrat_tests()
     {
+      try
+      {
+        var a = BigRat.Pi(100); string s;
+        a = BigRat.Pi(1000);
+
+        try {
+          s = a.ToString("Q100");
+          s = a.ToString("Q1000");
+          s = a.ToString("Q10000"); //rep of
+          s = a.ToString("Q100000");
+          s = a.ToString("Q200000");
+          s = a.ToString("Q300000");
+          s = a.ToString("Q400000"); //stackalloc of
+          s = a.ToString("Q500000");
+          s = a.ToString("Q600000");
+          s = a.ToString("Q700000");
+          s = a.ToString("Q800000");
+          s = a.ToString("Q900000");
+          s = a.ToString("Q1000000");
+          s = a.ToString("Q10000000"); //
+          s = a.ToString("Q100000000"); //
+          s = a.ToString("Q123456789"); //
+          s = a.ToString("Q214748000"); //
+          s = a.ToString("Q999999999"); //
+          //s = a.ToString("Q21a748000"); // ex a
+          //s = a.ToString("Q1000000000"); // ex 1G 
+          //s = a.ToString("Q2147483647"); // ex
+        }
+        catch (Exception e) { Debug.WriteLine(e.Message); }
+        //a = BigRat.Pi(10000);
+        s = a.ToString("q20000");
+        var b = BigRat.Parse(s); Debug.Assert(a == b);
+        //a = BigRat.Pi(100000);
+        //a = BigRat.Pi(1000000);
+      }
+      catch (Exception ex) { Debug.WriteLine(ex.Message); Debug.Assert(false); }
+
+      test_tostring();
       test_sin();
       test_pi();
       test_log();
       test_exp(); //4.8
       test_rounds();
-      test_tos();
       test_conv();
       return;
+
       static void test_sin()
       {
         test(0.2); test(-0.2); test(Math.PI / 4 + 0.2); test(Math.PI / 2 + 0.2);
@@ -147,19 +186,19 @@ namespace Test
           x = Math.Floor(t); b = BigRat.Floor(a); Debug.Assert(x == b);
           x = Math.Ceiling(t); b = BigRat.Ceiling(a); Debug.Assert(x == b);
           x = Math.Round(t); b = BigRat.Round(a); Debug.Assert(x == b);
-          x = Math.Round(t, MidpointRounding.AwayFromZero); 
+          x = Math.Round(t, MidpointRounding.AwayFromZero);
           b = BigRat.Round(a, MidpointRounding.AwayFromZero); Debug.Assert(x == b);
           for (int d = 0; d < 10; d++)
           {
             x = Math.Round(t, d);
             b = BigRat.Round(a, d); Debug.Assert(x == b);
-            x = Math.Round(t, d, MidpointRounding.AwayFromZero); 
+            x = Math.Round(t, d, MidpointRounding.AwayFromZero);
             b = BigRat.Round(a, d, MidpointRounding.AwayFromZero); Debug.Assert(x == b);
           }
         }
       }
 
-      static void test_tos()
+      static void test_tostring()
       {
         double a; BigRat b; string sa, sb;
         a = Math.PI;
@@ -281,10 +320,20 @@ namespace Test
 
         sb = ((BigRat)1613 / 72048).ToString("Q1000"); //t = BigRat.Parse(sb); Debug.Assert(((BigRat)0) == t);
         t = BigRat.Parse(sb); Debug.Assert((BigRat)1613 / 72048 == t);
+        Debug.Assert(BigRat.Parse("-0") == 0);
 
+        b = Int64.MaxValue;
+        sb = b.ToString("R0"); Debug.Assert(BigRat.Parse("-0") == 0);
+        sb = (b / 2).ToString("R0");
+        sb = b.ToString("Q0");
+        sb = (b / 2).ToString("Q0");
+        
       }
       static void test_conv()
       {
+        Debug.Assert((BigRat)double.NegativeZero == 0);
+        Debug.Assert((BigRat)float.NegativeZero == 0);
+        Debug.Assert((BigRat)Half.NegativeZero == 0);
 #if NET7_0_OR_GREATER
         BigRat b, c; bool d;
         b = 0;

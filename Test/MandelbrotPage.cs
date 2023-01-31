@@ -117,6 +117,15 @@ namespace Test
     {
       e.SuppressKeyPress = e.KeyCode == Keys.Enter;
     }
+    void cbBigRat_CheckedChanged(object sender, EventArgs e)
+    {
+      mandelbrotView1.Driver = cbBigRat.Checked ?
+        MandelbrotView.MandelDriver.BigRat :
+        MandelbrotView.MandelDriver.BigRational;
+      label1.Text = cbBigRat.Checked ? "BigRat" : "BigRational";
+      label4.Text = cbBigRat.Checked ? "Numeric based on BigRat" : "Numeric based on BigRational";
+    }
+
   }
 }
 
