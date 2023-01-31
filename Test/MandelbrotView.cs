@@ -197,22 +197,21 @@ namespace Test
       var y1 = conv(my - scale);
       var fi = conv(2 * scale / dy); var qmax = (BigRat)4;
       t1 = t2 = Environment.TickCount; //var digits = Math.Max(8, 10 * lim / 64); // actually about 15 * lim / 64
-      var l = (lim >> 5);// + 1;
+      var ul = (uint)lim; //var l = (lim >> 5);// + 1;
       Parallel.For(0, dy, (py, po) =>
       {
         if (cancel) { po.Break(); return; }
         var p = scan + py * (stride >> 2);
-        var y = y1 + py * fi; y = BigRat.Lim(y, l);
+        var y = BigRat.Normalize(y1 + py * fi);
         for (int px = 0; px < dx && !cancel; px++)
         {
-          var x = x1 + px * fi; x = BigRat.Lim(x, l);
+          var x = BigRat.Normalize(x1 + px * fi);
           int i = 0; var a = x; var b = y;
           for (; i < imax; i++)
           {
-            var u = a * a - b * b + x; u = BigRat.Lim(u, l);
-            var v = a * b * 2 + y; v = BigRat.Lim(v, l);
-            if (u * u + v * v > qmax) break;
-            a = u; b = v;
+            var u = BigRat.Round(a * a - b * b + x, ul);
+            var v = BigRat.Round(a * b * 2 + y, ul);
+            if (u * u + v * v > qmax) break; a = u; b = v;
           }
           p[px] = i < imax ? map[i] : 0;
         }

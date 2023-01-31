@@ -205,7 +205,7 @@ namespace Test
         var sh = Math.Max(mu - 96, mv - 96);
         if (sh > 0)
         {
-          var t = stackalloc uint[value.p.Length]; mov(t, u, (uint)value.p.Length);
+          var t = stackalloc uint[value.p.Length]; Unsafe.CopyBlock(t, u, unchecked((uint)value.p.Length << 2));
           v = (u = t) + nu + 1; shr(u, sh); shr(v, sh); nu = u[0]; nv = v[0];
           if (*(ulong*)u == 1) return default;
           if (*(ulong*)v == 1) throw new ArgumentOutOfRangeException();
@@ -351,7 +351,7 @@ namespace Test
     public static bool operator >=(BigRat a, int b) => a.CompareTo(b) >= 0;
     public static bool operator <(BigRat a, int b) => a.CompareTo(b) < 0;
     public static bool operator >(BigRat a, int b) => a.CompareTo(b) > 0;
-    
+
     public static bool operator ==(int a, BigRat b) => b.CompareTo(a) == 0;
     public static bool operator !=(int a, BigRat b) => b.CompareTo(a) != 0;
     public static bool operator <=(int a, BigRat b) => b.CompareTo(a) >= 0;
@@ -438,39 +438,86 @@ namespace Test
         if ((p[0] & 0x40000000) != 0) return value;
         var d = p + (p[0] & 0x3fffffff) + 1; if (*(ulong*)d == 0x100000001) return value;
         var l = value.p.Length; var s = stackalloc uint[l * 3]; uint x;
-        mov(s, p, unchecked((uint)l)); s[0] &= 0x3fffffff;
+        Unsafe.CopyBlock(s, p, unchecked((uint)l << 2)); s[0] &= 0x3fffffff;
         var e = gcd(s, s + s[0] + 1); if (*(ulong*)e == 0x100000001) return value;
-        var t = s + l; mov(t, p, unchecked((uint)l)); t[0] &= 0x3fffffff;
+        var t = s + l; Unsafe.CopyBlock(t, p, unchecked((uint)l << 2)); t[0] &= 0x3fffffff;
         var r = t + l; d = t + t[0] + 1; mod(t, e, r); mod(d, e, r + r[0] + 1);
         x = r[0]; r[0] |= (p[0] & 0x80000000) | 0x40000000;
         return new BigRat(r, 2 + x + r[x + 1]);
       }
     }
-    public static BigRat Truncate(BigRat value) => mod(value, 0);
-    public static BigRat Floor(BigRat value) => mod(value, 1);
-    public static BigRat Ceiling(BigRat value) => mod(value, 2);
-    public static BigRat Round(BigRat value) => mod(value, 3);
+    public static BigRat Truncate(BigRat value)
+    {
+      return mod(value, 0);
+    }
+    public static BigRat Floor(BigRat value)
+    {
+      return mod(value, 1);
+    }
+    public static BigRat Ceiling(BigRat value)
+    {
+      return mod(value, 2);
+    }
+    public static BigRat Round(BigRat value)
+    {
+      return mod(value, 3);
+    }
     public static BigRat Round(BigRat value, int digits)
     {
+      //if (digits >= 0 && (digits & 0x40000000) != 0) { var bits = digits ^ 0x40000000; return Lim(value, ((bits - 1) >> 5) + 1); }
       var e = Pow10(digits);
       return Round(value * e) / e;
     }
-    public static BigRat Lim(BigRat x, int digits)
+    public static BigRat Round(BigRat value, int digits, MidpointRounding mode)
     {
-      if (x.p == null) return x;
-      fixed (uint* p = x.p)
+      var p = Pow10(digits); value *= p;
+      switch (mode)
       {
-        uint na = x.p[0] & 0x3fffffff, nb = p[na + 1];
-        uint nc = na < nb ? na : nb; if (nc <= digits) return x;
-        uint d = nc - unchecked((uint)digits), nu = na - d, nv = nb - d;
-        var w = new uint[2 + nu + nv];
-        fixed (uint* v = w)
+        case MidpointRounding.ToEven: value = Round(value); break;
+        case MidpointRounding.ToZero: value = Truncate(value); break;
+        case MidpointRounding.ToNegativeInfinity: value = Floor(value); break;
+        case MidpointRounding.ToPositiveInfinity: value = Ceiling(value); break;
+        case MidpointRounding.AwayFromZero:
+          var u = Truncate(value); var v = value - u;
+          if (Abs(v) >= 0.5) u += Sign(v); value = u;
+          break;
+      }
+      value /= p; return value;
+    }
+    public static BigRat Round(BigRat value, MidpointRounding mode)
+    {
+      return Round(value, 0, mode);
+    }
+    public static BigRat Round(BigRat value, uint bits)
+    {
+      if (value.p == null) return default;
+      fixed (uint* p = value.p)
+      {
+        var h = p[0]; var a = h & 0x3fffffff; var q = p + a + 1; var b = q[0];
+        if ((bits & 31) == 0)
         {
-          v[0] = nu | (p[0] & 0x80000000); v[nu + 1] = nv;
-          mov(v + 1, p + 1 + d, nu); // for (uint i = 1; i <= nu; i++) v[i] = p[i + d];
-          mov(v + nu + 2, p + na + 2 + d, nv); // for (uint i = 1; i <= nv;) v[nu + ++i] = p[na + i + d];
+          uint n = bits >> 5, c = a < b ? a : b; if (c <= n) return value;
+          uint d = c - n, nu = a - d, nv = b - d;
+          var w = new uint[2 + nu + nv];
+          fixed (uint* v = w)
+          {
+            v[0] = nu | (p[0] & 0x80000000); v[nu + 1] = nv;
+            Unsafe.CopyBlock(v + 1, p + 1 + d, nu << 2);
+            Unsafe.CopyBlock(v + nu + 2, p + a + 2 + d, nv << 2);
+          }
+          return new BigRat(w);
         }
-        return new BigRat(w);
+        else
+        {
+          var u = (a << 5) - unchecked((uint)BitOperations.LeadingZeroCount(p[a]));
+          var v = (b << 5) - unchecked((uint)BitOperations.LeadingZeroCount(q[b]));
+          if (u > v) u = v; if (u <= bits) return value;
+          var o = stackalloc uint[value.p.Length]; Unsafe.CopyBlock(o, p, unchecked((uint)value.p.Length << 2));
+          var t = (int)(u - bits); shr(o, t); shr(q = o + a + 1, t);
+          if (o[0] != a) Unsafe.CopyBlock(o + o[0] + 1, q, (q[0] + 1) << 2);
+          var l = 2 + o[0] + o[o[0] + 1]; o[0] |= h & 0x80000000;
+          return new BigRat(o, l);
+        }
       }
     }
     public static BigRat Pow(BigRat x, int y)
@@ -504,8 +551,8 @@ namespace Test
     }
     public static BigRat Pow(BigRat x, BigRat y, int digits)
     {
-      var p = base2(digits); return Round(exp(y * log(x, p), p), digits);
       //return Exp(y * Log(x, digits), digits);
+      var p = base2(digits); return Round(exp(y * log(x, p), p), digits);
     }
     public static BigRat Sqrt(BigRat x, int digits)
     {
@@ -516,19 +563,19 @@ namespace Test
         a = (x / a + a) / 2;
         f = a * a - x; if (f == 0) break; // return a; // break; Normalize(a);
         g = t - ILog10(f); if (g > digits) break;
-        a = Lim(a, unchecked((int)e.p![0]) + 1);
+        a = lim(a, unchecked((int)e.p![0]) + 1);
       }
       a = Round(a * e) / e; //if ((e = Truncate(a)) == a) { };
       return a;
       static BigRat est(BigRat x)
       {
-        var u = stackalloc uint[x.p!.Length]; fixed (uint* t = x.p) mov(u, t, (uint)x.p.Length);
+        var u = stackalloc uint[x.p!.Length]; fixed (uint* t = x.p) Unsafe.CopyBlock(u, t, unchecked((uint)x.p.Length << 2));
         uint nu = u[0], nv = u[nu + 1]; var v = u + nu + 1;
         var mu = (nu << 5) - unchecked((uint)BitOperations.LeadingZeroCount(u[nu]));
         var mv = (nv << 5) - unchecked((uint)BitOperations.LeadingZeroCount(v[nv]));
         if (mu > 1) shr(u, unchecked((int)(mu >> 1))); var un = u[0];
         if (mv > 1) shr(v, unchecked((int)(mv >> 1))); var vn = v[0];
-        if (un != nu) mov(u + un + 1, v, vn + 1); return new BigRat(u, 2 + un + vn);
+        if (un != nu) Unsafe.CopyBlock(u + un + 1, v, (vn + 1) << 2); return new BigRat(u, 2 + un + vn);
       }
     }
     public static BigRat Cbrt(BigRat x, int digits)
@@ -577,7 +624,7 @@ namespace Test
       return Pi(digits) * 2;
     }
     public static BigRat E(int digits)
-    {           
+    {
       return Exp(1, digits);
     }
     public static BigRat Sin(BigRat x, int digits)
@@ -588,7 +635,6 @@ namespace Test
     {
       var b = base2(digits); return Round(sin(x, b, true), digits);
     }
-                            
     public static bool IsNormalized(BigRat value)
     {
       return Normalize(value).p == value.p;
@@ -623,16 +669,6 @@ namespace Test
       new ReadOnlySpan<uint>(value.p).Slice(n + 1, m + 1).CopyTo(a); a[m + 1] = a[m + 2] = 1;
       return new BigRat(a);
     }
-    //public static int GetMsbNum(BigRat value)
-    //{
-    //  var p = value.p; if (p == null) return 0; var n = p[0] & 0x3fffffff;
-    //  return unchecked((int)(n << 5)) - BitOperations.LeadingZeroCount(p[n]);
-    //}
-    //public static int GetMsbDen(BigRat value)
-    //{
-    //  var p = value.p; if (p == null) return 1; var n = p[0] & 0x3fffffff; var m = p[n + 1];
-    //  return unchecked((int)(m << 5)) - BitOperations.LeadingZeroCount(p[n + m + 1]);
-    //}
 
     public override int GetHashCode()
     {
@@ -665,9 +701,6 @@ namespace Test
     public override string ToString()
     {
       return ToString(default, null);
-      //if (p == null) return "0"; p[0] |= 0x40000000;
-      //var cpu = rat.task_cpu; cpu.push(new ReadOnlySpan<uint>(p)); 
-      //p[0] ^= 0x40000000; return cpu.popr().ToString();
     }
     public string ToString(string? format, IFormatProvider? provider = null)
     {
@@ -760,7 +793,6 @@ namespace Test
           TryCopyTo(destination)) return true;
       bytesWritten = 0; return false;
     }
-    //public ReadOnlySpan<uint> AsSpan() => p; //todo: ???
     public byte[] ToByteArray()
     {
       var a = new byte[GetByteCount()]; TryWriteBytes(a, out _); return a;
@@ -779,9 +811,16 @@ namespace Test
 
     //static Dictionary<int, BigRat> cache = new();
 
-    BigRat(uint[]? p) { this.p = p; }
-    BigRat(uint* p, uint n) { fixed (uint* t = this.p = new uint[n]) mov(t, p, n); }
-    //BigRat(uint* p, uint n) { this.p = new uint[n]; for (uint i = 0; i < n; i++) this.p[i] = p[i]; }
+    BigRat(uint[]? p)
+    {
+      this.p = p;
+    }
+    BigRat(uint* p, uint n)
+    {
+      fixed (uint* t = this.p = new uint[n]) Unsafe.CopyBlock(t, p, n << 2);
+      //fixed (uint* t = this.p = new uint[n]) mov(t, p, n);
+      //this.p = new uint[n]; for (uint i = 0; i < n; i++) this.p[i] = p[i];
+    }
 
     static BigRat mul(uint* u, uint* v, uint* w)
     {
@@ -832,19 +871,20 @@ namespace Test
       {
         var n = p[0] & 0x3fffffff; if (*(ulong*)(p + n + 1) == 0x100000001) return a;
         var u = stackalloc uint[a.p.Length << 1]; var v = u + a.p.Length; // n + 1;
-        mov(u, p, n + 1); u[0] = n; mod(u, p + n + 1, v); var inc = false;
+        Unsafe.CopyBlock(u, p, (n + 1) << 2); u[0] = n; mod(u, p + n + 1, v); var inc = false;
         switch (f)
         {
           case 1: inc = (p[0] & 0x80000000) != 0 && *(ulong*)u != 1; break; // Floor 
           case 2: inc = (p[0] & 0x80000000) == 0 && *(ulong*)u != 1; break; // Ceiling
           case 3: // Round
             {
-              var t = u + n + 1; mov(t, p + n + 1, p[n + 1] + 1); //for (uint i = 0; i <= p[n + 1]; i++) t[i] = p[n + 1 + i];
+              var t = u + n + 1; Unsafe.CopyBlock(t, p + n + 1, (p[n + 1] + 1) << 2); //for (uint i = 0; i <= p[n + 1]; i++) t[i] = p[n + 1 + i];
               shr(t, 1); var x = cms(u, t); if (x == 0 && (v[1] & 1) != 0) x = 1; inc = x > 0;
             }
             break;
           case 4: return *(ulong*)u != 1 ? default : a; // IsInteger
-          case 5: if (*(ulong*)u != 1) return default; break; // int only 
+          case 5: if (*(ulong*)u != 1) return default; break; // int only
+                                                              //case 6: v = u; break; 
         }
         if (inc) { var w = 1u; v[0] = add(v + 1, v[0], &w, 1, v + 1); }
         if (*(ulong*)v == 1) return default;
@@ -861,17 +901,21 @@ namespace Test
     {
       return (int)(bits / 3.321928094887362);
     }
+    static BigRat lim(BigRat x, int digits)
+    {
+      return Round(x, unchecked((uint)digits) << 5);
+    }
     static BigRat log2(BigRat x, int prec)
     {
       if (x <= 0) throw new ArgumentException();
-      var l = (prec >> 5) + 1; x = Lim(x, l);
+      var l = (prec >> 5) + 1; x = lim(x, l);
       var a = ILog2(x); if (a != 0) x /= Pow2(a);
       var e = x.CompareTo(1); if (e == 0) return a; if (e < 0) { x *= 2; a--; }
       var b = default(BigRat); Debug.Assert(x > 1 && x < 2);
       for (int i = 1; i <= prec; i++)
       {
-        x = x * x; x = Lim(x, l); if (x <= 2) continue;
-        x = x / 2; b += Pow2(-i); b = Lim(b, l);
+        x = x * x; x = lim(x, l); if (x <= 2) continue;
+        x = x / 2; b += Pow2(-i); b = lim(b, l);
       }
       return a + b;
     }
@@ -885,8 +929,8 @@ namespace Test
       int p = ILog2(x) + 1; if (p > 0) x = x / Pow2(p); else p = 0; // 0..0.5
       BigRat a = x + 1, b = x, c = 1, d;
       int i = 2, e = -(prec + BigRat.base2(p)), l = (-e >> 5) + 3; // (uint)(digits * (3.326f * (1f / 32))) + 5; // 3;
-      for (; ; i++) { b *= x; c *= i; a += d = b / c; if (ILog2(d) < e) break; a = Lim(a, l); }
-      for (i = 0; i < p; i++) { a = a * a; a = Lim(a, (unchecked((int)a.p![0]) >> 1) + 1); } // a = Pow(a, 1 << v)
+      for (; ; i++) { b *= x; c *= i; a += d = b / c; if (ILog2(d) < e) break; a = lim(a, l); }
+      for (i = 0; i < p; i++) { a = a * a; a = lim(a, (unchecked((int)a.p![0]) >> 1) + 1); } // a = Pow(a, 1 << v)
       if (s) a = 1 / a; return a; // a = Round(a, digits - ILog10(a) - 1);
     }
     static BigRat pi(int bits)
@@ -898,26 +942,23 @@ namespace Test
         int t = 10 * n, s = n << 2;
         var b = t1 / (s + 1) - t2 / (s + 3) + t3 / (t + 1) - t4 / (t + 3) - t5 / (t + 5) - t5 / (t + 7) + t2 / (t + 9);
         var d = a * b; var i = -ILog2(d); if (i > bits) break;
-        c += d; c = Lim(c, l); a /= -1024;
+        c += d; c = lim(c, l); a /= -1024;
       }
       c /= t4; return c;
     }
     static BigRat sin(BigRat x, int bits, bool cos)
     {
-      bits += 16; int l = ((bits - 1) >> 5) + 2, e = ILog2(x); //var ss = (1/x).ToString("Q1000"); ss = (x).ToString("Q1000");
-      var pih = pi(bits + Math.Max(0, e)); pih /= 2; if (cos) x += pih;
-      var u = Truncate(x / pih);
-      var s = u.p != null ? unchecked((int)u.p[1]) : 0; if (u < 0) s = -s;
+      var c = bits + 16; int l = ((c - 1) >> 5) + 2, e = ILog2(x); //var ss = (1/x).ToString("Q1000"); ss = (x).ToString("Q1000");
+      var pih = pi(c + Math.Max(0, e)); pih /= 2; if (cos) x += pih;
+      var u = Truncate(x / pih); var s = u.p != null ? unchecked((int)u.p[1]) : 0; if (u < 0) s = -s;
       if (s != 0) { x -= u * pih; if ((s & 1) != 0) x = pih - x; if ((s & 2) != 0) x = -x; }
-
-      var tx = pih - BigRat.Abs(x); var tl = ILog2(tx); //xx = ; bb = -27;// ILog2(1e-8); 
-      if (tl < -27) { bits += 64; l += 2; } // < 1e-8 near 90° -2147483647==0
-
-      BigRat f = 6, a = x, b = x * x, d; b = Lim(b, l);
+      if (x.p == null) return default;
+      if ((e = ILog2(u = x < 0 ? pih + x : pih - x)) < -27) { if (e < -bits) return Sign(x); c += 64; l += 2; } // < 1e-8 near 90°
+      BigRat f = 6, a = x, b = x * x, d; b = lim(b, l);
       for (int i = 1, k = 4; ; i++, k += 2)
       {
-        a *= b; a = Lim(a, l); d = a / f; var t = -ILog2(d); if (t > bits) break;
-        if ((i & 1) != 1) x += d; else x -= d; f *= k * (k + 1); x = Lim(x, l);
+        a *= b; a = lim(a, l); d = a / f; var t = -ILog2(d); if (t > c) break;
+        if ((i & 1) != 1) x += d; else x -= d; f *= k * (k + 1); x = lim(x, l);
       }
       return x;
     }
@@ -928,7 +969,7 @@ namespace Test
       uint nv = unchecked((uint)v.p.Length), np = v.p[0] & 0x3fffffff, ten = 10, nr = 0; int ex = 0;
       if (reps) { nr = v.p[np + 1] + 1; ex = unchecked((int)nr) * s.Length; if (ex > 100000) { ex = 0; } }
       uint* p = stackalloc uint[v.p.Length + 8 + ex], d = p + np + 1 + 4;
-      fixed (uint* t = v.p) { mov(p, t, np + 1); mov(d, t + np + 1, t[np + 1] + 1); p[0] &= 0x3fffffff; }
+      fixed (uint* t = v.p) { Unsafe.CopyBlock(p, t, (np + 1) << 2); Unsafe.CopyBlock(d, t + np + 1, (t[np + 1] + 1) << 2); p[0] &= 0x3fffffff; }
       uint* w = p + nv + 4, r = w + 4;
       for (int i = 0; i < s.Length; i++)
       {
@@ -941,7 +982,7 @@ namespace Test
             for (; t != 0 && s[i - 1] == '0' && s[t - 1] == '0'; i--, t--) ;
             rep = t; return i;
           }
-          mov(r + i * nr, p, p[0] + 1); Debug.Assert(p[0] < nr);
+          Unsafe.CopyBlock(r + i * nr, p, (p[0] + 1)<<2); Debug.Assert(p[0] < nr);
         }
         s[i] = c; if (*(ulong*)p == 1) return i + 1;
         p[0] = mul(p + 1, p[0], &ten, 1, p + 1);
@@ -973,10 +1014,6 @@ namespace Test
       if (cu != cv) return cu > cv ? su : -su;
       for (uint i = cu; i != 0;) if (w[--i] != p[i]) return w[i] > p[i] ? su : -su;
       return 0;
-    }
-    static void mov(uint* a, uint* b, uint n)
-    {
-      for (uint i = 0; i < n; i++) a[i] = b[i];
     }
     static void mov(uint* a, int b)
     {

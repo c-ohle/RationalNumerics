@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>BigRat </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="BigRat ">
+    <meta name="generator" content="docfx 2.59.1.0">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc">
+    <meta property="docfx:tocrel" content="toc">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+                
+                <ul class="nav level1 navbar-nav">
+                      <li>
+                          <a href="api/System.Numerics.html" title="Api Documentation">Api Documentation</a>
+                      </li>
+                </ul>    </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h2 id="bigrat">BigRat</h2>
+
+<pre><code class="lang-csharp">readonly struct BigRat
+{
+  private readonly uint[]? p; 
+  //...
+}
+</code></pre>
+<h3 id="in-short">In short</h3>
+<ul>
+<li>Interface system-conform and should fulfill the C# API requirements.</li>
+<li>No stackmachine (VM).</li>
+<li>No static or thread-local members.</li>
+<li>No nested classes.</li>
+<li>No caches or use of <code>ArrayPool&lt;&gt;.Shared</code> memory.</li>
+<li>No bad tricks or hacks.</li>
+<li>16 Kbyte in assembly size only.</li>
+<li>Performance 30% less than <code>BigRational</code> but up to 20 times faster than
+a <code>BigInteger</code> based implemenation.</li>
+</ul>
+<h3 id="new-concept">New concept</h3>
+<ul>
+<li><h4 id="using-the-processor-stack">Using the processor stack</h4>
+<p>Uses <code>stackalloc</code> instead of stackmachine's managed buffers what limits
+the calculationconly by the C# GC maximum array size.<br>
+This is due to the observation that long before the available heap size
+is reached the performance of the calculations is
+such as slow that it makes no more parctical sense.<br>
+This is because of the exponential relation between calculation speed and memory size of the fractions.</p>
+</li>
+<li><h4 id="no-normalization-by-default">No normalization by default.</h4>
+<p>This is due to the observation that normalization often reduces the bitcount but rarely the effective uint array size,
+which would speed up subsequent operations.<br>
+But of course an explicit normalization via <code>BigRat.Normalize(BigRat value)</code>
+is always possible, which enables efficient fine-tuning.<br>
+Normalization is perormance critical especially for big fractions and
+to automate is this difficult especially for C# where we have no
+custom assign operators.</p>
+</li>
+<li><h4 id="exceptions-instead-of-nan-or-infinity-values">Exceptions instead of NaN or Infinity values</h4>
+<p>...</p>
+</li>
+</ul>
+<h3 id="interface">Interface</h3>
+<ul>
+<li>So far compatible to the interface of System.double</li>
+<li>Additional<br>
+- <code>BigRat Normalize(BigRat value)</code><br>
+- <code>BigRat GetNumerator(BigRat value)</code><br>
+- <code>BigRat GetDenominator(BigRat value)</code><br>
+- <code>BigRat Round(BigRat value, uint bits)</code> fast binary rounding</li>
+<li>Differences<br>
+- <code>BigRat Pi(int digits)</code> &lt;-&gt; <code>double.Pi</code><br>
+- <code>BigRat E(int digits)</code> &lt;-&gt; <code>double.E</code></li>
+<li>No equivalent:<br>
+- <code>double.MinValue</code> -&gt; undefined<br>
+- <code>double.MaxValue</code> -&gt; undefined<br>
+- <code>double.Epsilon</code> -&gt; 0<br>
+- <code>double.NaN</code> -&gt; exeptions<br>
+- <code>double.NegativeZero</code> -&gt; undefined<br>
+- <code>double.PositiveInfinty</code> -&gt; undefined<br>
+- <code>double.NegativeInfinty</code> -&gt; undefined</li>
+</ul>
+<h3 id="interface-1">Interface</h3>
+<p>docs/images/</p>
+<p><img src="images/rat_p_struct.png" alt="image"></p>
+<!-- 
+### Source
+[On GitHub BigRat.cs](https://github.com/c-ohle/RationalNumerics/blob/master/Test/BigRat.cs
+[GitHub BigRat.md](https://github.com/c-ohle/RationalNumerics/blob/master/Test/templ/BigRat.md)
+[GitHub-Pages](https://c-ohle.github.io/RationalNumerics/)
+-->
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>
