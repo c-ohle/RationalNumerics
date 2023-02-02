@@ -194,10 +194,9 @@ namespace Test
     {
       calcmap(); if (map == null) return;
       var x1 = conv(mx - scale * dx / dy);
-      var y1 = conv(my - scale);
+      var y1 = conv(my - scale); var lim = this.lim;
       var fi = conv(2 * scale / dy); var qmax = (BigRat)4;
       t1 = t2 = Environment.TickCount; //var digits = Math.Max(8, 10 * lim / 64); // actually about 15 * lim / 64
-      var ul = (uint)lim; //var l = (lim >> 5);// + 1;
       Parallel.For(0, dy, (py, po) =>
       {
         if (cancel) { po.Break(); return; }
@@ -209,8 +208,8 @@ namespace Test
           int i = 0; var a = x; var b = y;
           for (; i < imax; i++)
           {
-            var u = BigRat.Round(a * a - b * b + x, ul);
-            var v = BigRat.Round(a * b * 2 + y, ul);
+            var u = BigRat.RoundB(a * a - b * b + x, lim);
+            var v = BigRat.RoundB(a * b * 2 + y, lim);
             if (u * u + v * v > qmax) break; a = u; b = v;
           }
           p[px] = i < imax ? map[i] : 0;

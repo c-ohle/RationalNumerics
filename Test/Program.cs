@@ -16,7 +16,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); bigrat_tests();
+      ApplicationConfiguration.Initialize(); // bigrat_tests();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -24,52 +24,42 @@ namespace Test
 
     static void bigrat_tests()
     {
-      try
-      {
-        var a = BigRat.Pi(100); string s;
-        a = BigRat.Pi(1000);
-
-        try {
-          s = a.ToString("Q100");
-          s = a.ToString("Q1000");
-          s = a.ToString("Q10000"); //rep of
-          s = a.ToString("Q100000");
-          s = a.ToString("Q200000");
-          s = a.ToString("Q300000");
-          s = a.ToString("Q400000"); //stackalloc of
-          s = a.ToString("Q500000");
-          s = a.ToString("Q600000");
-          s = a.ToString("Q700000");
-          s = a.ToString("Q800000");
-          s = a.ToString("Q900000");
-          s = a.ToString("Q1000000");
-          s = a.ToString("Q10000000"); //
-          s = a.ToString("Q100000000"); //
-          s = a.ToString("Q123456789"); //
-          s = a.ToString("Q214748000"); //
-          s = a.ToString("Q999999999"); //
-          //s = a.ToString("Q21a748000"); // ex a
-          //s = a.ToString("Q1000000000"); // ex 1G 
-          //s = a.ToString("Q2147483647"); // ex
-        }
-        catch (Exception e) { Debug.WriteLine(e.Message); }
-        //a = BigRat.Pi(10000);
-        s = a.ToString("q20000");
-        var b = BigRat.Parse(s); Debug.Assert(a == b);
-        //a = BigRat.Pi(100000);
-        //a = BigRat.Pi(1000000);
-      }
-      catch (Exception ex) { Debug.WriteLine(ex.Message); Debug.Assert(false); }
-
-      test_tostring();
+      test_atan();
+      test_pow();
+      test_sqrt();
       test_sin();
       test_pi();
       test_log();
       test_exp(); //4.8
       test_rounds();
       test_conv();
+      test_tostring();
       return;
+      static void test_atan()
+      {
+        double x, y; BigRat a, b, c, d; //rat r; r = rat.Atan(0.52, 100);
+        x = Math.Atan(0.52);
+        a = BigRat.Parse("0.4795192919925961654230970412954361042093499740232560651067716031446394831965044433555948919651396337087634489781292287670121725920728885377833098357039294474757192434955907042403553972520719769582350382379814137575982177110523829516399740643675863411530954031906787563635085891746166705989289808799461991459810915958132154246802728877428129585283360748934926994613977022962102736087713299014925908481911977361875121887371083787751537486610167271955015110958567335000054186483277518501311406975078877255129012619325846");
+        for (int i = 1; i < 80; i++)
+        {
+          b = BigRat.Atan(0.52, i);
+          c = BigRat.Round(b, i);
+          d = BigRat.Round(b, -BigRat.ILog10(a - b));
+        }
 
+        var rnd = new Random(1);
+        for (int i = 0; i < 200; i++)
+        {
+          var v = rnd.NextDouble() * 10 - 5; x = Math.Atan(v); y = Math.Round(x, 10);
+          a = BigRat.Atan(v, 100); var o = BigRat.Round(a, 10); Debug.Assert(y == o);
+          for (int e = 0; e < 50; e++)
+          {
+            b = BigRat.Atan(v, e); c = BigRat.Round(b, e);
+            d = BigRat.Round(b, -BigRat.ILog10(a - b));
+            var t = BigRat.Round(a, e); Debug.Assert(t == c);
+          }
+        }
+      }
       static void test_sin()
       {
         test(0.2); test(-0.2); test(Math.PI / 4 + 0.2); test(Math.PI / 2 + 0.2);
@@ -172,6 +162,25 @@ namespace Test
           //d = BigRat.Pi(i); Debug.Assert(d == c);
         }
       }
+      static void test_sqrt()
+      {
+        double x, y; BigRat a, b, c;
+        a = BigRat.Sqrt(0); Debug.Assert(a == 0);
+        a = BigRat.Sqrt(4); Debug.Assert(a == 2);
+        a = BigRat.Sqrt(9); Debug.Assert(a == 3);
+        a = BigRat.Sqrt(16); Debug.Assert(a == 4);
+        var rnd = new Random(1);
+        for (int i = 0; i < 200; i++)
+        {
+          var v = rnd.NextDouble() * 1000; x = Math.Sqrt(v); y = Math.Round(x, 10);
+          a = BigRat.Sqrt(v, 400); var o = BigRat.Round(a, 10); Debug.Assert(y == o);
+          for (int d = 0; d < 200; d++)
+          {
+            b = BigRat.Sqrt(v, d);
+            c = BigRat.Round(a, d); Debug.Assert(b == c);
+          }
+        }
+      }
       static void test_rounds()
       {
         double t, x; BigRat b, a;
@@ -197,7 +206,6 @@ namespace Test
           }
         }
       }
-
       static void test_tostring()
       {
         double a; BigRat b; string sa, sb;
@@ -327,7 +335,6 @@ namespace Test
         sb = (b / 2).ToString("R0");
         sb = b.ToString("Q0");
         sb = (b / 2).ToString("Q0");
-        
       }
       static void test_conv()
       {
@@ -389,6 +396,16 @@ namespace Test
         //b = UInt128.MaxValue; b++; c = (Int128)b; // exception
         //b = UInt128.MaxValue; b++; b = -b; c = (Int128)b;
 #endif
+      }
+      static void test_pow()
+      {
+        BigRat a;
+        for (int i = 0; i <= 1000; i++)
+        {
+          a = BigRat.Pow10(+i); Debug.Assert(a == BigRat.Pow(10, +i));
+          a = BigRat.Pow10(-i); Debug.Assert(a == BigRat.Pow(10, -i));
+          a = BigRat.Pow2(i); Debug.Assert(a == BigRat.Pow(2, i));
+        }
       }
     }
 
