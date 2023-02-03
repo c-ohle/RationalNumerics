@@ -16,7 +16,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); //bigrat_tests();
+      ApplicationConfiguration.Initialize(); // bigrat_tests();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -24,10 +24,11 @@ namespace Test
 
     static void bigrat_tests()
     {
-      test_sin();
+      test_asin();
       test_log();
       test_log2();
       test_exp();
+      test_sin();
       test_atan();
       test_pow();
       test_sqrt();
@@ -37,51 +38,40 @@ namespace Test
       test_tostring();
       return;
 
-      static void test_sin()
+      static void test_asin()
       {
         double x, y; BigRat a, b, c, d, u, v, w;
-        Debug.Assert((a = BigRat.Sin(0)) == 0);
-        Debug.Assert((a = BigRat.Cos(0)) == 1);
-        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35) / 2)) == 1);
-        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35) / 2)) == 0);
-        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35) * 3 / 2)) == -1);
-        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35) * 3 / 2)) == 0);
-        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35))) == 0);
-        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35))) == -1);
-
+        //a = BigRat.Pi(32); a = BigRat.Asin(0.5); a = BigRat.Acos(0.5); a--;
+        x = Math.Asin(+0); a = BigRat.Asin(+0); Debug.Assert(a == 0); w = BigRat.Pi(32);
+        x = Math.Asin(+1); a = BigRat.Asin(+1); c = a - w / 2; Debug.Assert(c == 0);
+        x = Math.Asin(-1); a = BigRat.Asin(-1); c = a + w / 2; Debug.Assert(c == 0);
+        x = Math.Acos(+0); a = BigRat.Acos(+0); c = a - w / 2; Debug.Assert(c == 0);
+        x = Math.Acos(+1); a = BigRat.Acos(+1); Debug.Assert(a == 0);
+        x = Math.Acos(-1); a = BigRat.Acos(-1); c = a - w; Debug.Assert(c == 0);
+        //x = Math.Asin(+1.1); a = BigRat.Asin(+1.1);
+        //x = Math.Asin(-1.1); a = BigRat.Asin(-1.1);
+        //x = Math.Acos(+1.1); a = BigRat.Acos(+1.1);
+        //x = Math.Acos(-1.1); a = BigRat.Acos(-1.1);
         var rnd = new Random(1);
-        for (int i = 0; i < 200; i++)
+        for (int i = 0; i < 20; i++)
         {
-          var f = rnd.NextDouble() * 10 - 5; x = Math.Sin(f); y = Math.Round(x, 10); u = f;
-          a = BigRat.Sin(u, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
-          for (int e = 0; e < 100; e++)
+          var f = rnd.NextDouble() * 2 - 1; x = Math.Asin(f); y = Math.Round(x, 10); u = f;
+          a = BigRat.Asin(u, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 20; e++)
           {
-            b = BigRat.Sin(u, -e); c = e != 0 ? BigRat.Round(b, e) : b;
+            b = BigRat.Asin(u, -e); c = e != 0 ? BigRat.Round(b, e) : b;
             d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = BigRat.Round(a, e); Debug.Assert(v == c);
           }
         }
-
-        test(0.2); test(-0.2); test(Math.PI / 4 + 0.2); test(Math.PI / 2 + 0.2);
-        test(Math.PI / 2 + 0.2); test(Math.PI * 3 / 4 + 0.2); test(-(Math.PI * 3 / 4 + 0.2));
-        test(Math.PI + 0.2); test(Math.PI * 5 / 4 + 0.2);
-        test(Math.PI * 3 / 3 + 0.2); test(Math.PI * 7 / 4 + 0.2);
-        test(+1.0e+10); test(+1.0e-10); test(+1.0e+100); test(+1.1e-100);
-        test(-1.0e+100); test(-1.0e+10); test(-1.0e-10); test(-1.1e-100); //1.0! 1.1        
-        test(BigRat.Pi(300) / 2);
-        test(BigRat.Pi(300));
-        test(2 * BigRat.Pi(300)); //test(BigRat.Parse("1e1000"));//todo: check speed
-        return;
-        static void test(BigRat z)
+        rnd = new Random(1);
+        for (int i = 0; i < 20; i++)
         {
-          double x; BigRat a, b, c, d, e, pi, pi2, pih, fs, fc;
-          int l = 300 + Math.Max(0, BigRat.ILog10(z)); pi = BigRat.Pi(l); pi2 = pi * 2; pih = pi / 2;
-          fs = z % pi2; fc = (z + pih) % pi2 - pih;// (z + pih) - pih;          
-          e = BigRat.Cos(z, 300); x = Math.Cos((double)fc); d = BigRat.Round(e, 14); x = Math.Round(x, 14); Debug.Assert(d == x);
-          a = BigRat.Sin(z, 300); x = Math.Sin((double)fs); d = BigRat.Round(a, 14); x = Math.Round(x, 14); Debug.Assert(d == x);
-          for (int i = 0; i < 200; i++)
+          var f = rnd.NextDouble() * 2 - 1; x = Math.Acos(f); y = Math.Round(x, 10); u = f;
+          a = BigRat.Acos(u, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 20; e++)
           {
-            b = BigRat.Round(a, i); c = BigRat.Sin(z, i); Debug.Assert((d = b - c) == 0);
-            b = BigRat.Round(e, i); c = BigRat.Cos(z, i); Debug.Assert((d = b - c) == 0);
+            b = BigRat.Acos(u, -e); c = e != 0 ? BigRat.Round(b, e) : b;
+            d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = BigRat.Round(a, e); Debug.Assert(v == c);
           }
         }
       }
@@ -99,6 +89,15 @@ namespace Test
             d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = BigRat.Round(a, e); Debug.Assert(v == c);
           }
         }
+        //log(x, base)
+        //x = Math.Log(123, 2); try { a = BigRat.Log(123, 2, 32); } catch (Exception e) { }
+        //x = Math.Log(-123, 2); try { a = BigRat.Log(-123, 2, 32); } catch (Exception e) { }
+        //x = Math.Log(3, 0.5); try { a = BigRat.Log(3, 0.5, 32); } catch (Exception e) { }
+        //x = Math.Log(3, 1); try { a = BigRat.Log(3, 1, 32); } catch (Exception e) { }
+        //x = Math.Log(0, 1); try { a = BigRat.Log(0, 1, 32); } catch (Exception e) { }
+        //x = Math.Log(0, 1); try { a = BigRat.Log(0, 1, 32); } catch (Exception e) { }
+        //x = Math.Log(0, 1.1); try { a = BigRat.Log(0, 1.1, 32); } catch (Exception e) { }
+        //x = Math.Log(1, 0); a = BigRat.Log(1, 0, 32);
       }
       static void test_log2()
       {
@@ -156,6 +155,54 @@ namespace Test
           for (int e = 0; e < 100; e++) { b = BigRat.Exp(u, e); v = round(a, e); Debug.Assert(v == b); }
         }
         static BigRat round(BigRat a, int digits) { return BigRat.Round(a, digits - BigRat.ILog10(a)); }
+      }
+      static void test_sin()
+      {
+        double x, y; BigRat a, b, c, d, u, v, w;
+        Debug.Assert((a = BigRat.Sin(0)) == 0);
+        Debug.Assert((a = BigRat.Cos(0)) == 1);
+        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35) / 2)) == 1);
+        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35) / 2)) == 0);
+        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35) * 3 / 2)) == -1);
+        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35) * 3 / 2)) == 0);
+        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35))) == 0);
+        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35))) == -1);
+
+        var rnd = new Random(1);
+        for (int i = 0; i < 200; i++)
+        {
+          var f = rnd.NextDouble() * 10 - 5; x = Math.Sin(f); y = Math.Round(x, 10); u = f;
+          a = BigRat.Sin(u, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 100; e++)
+          {
+            b = BigRat.Sin(u, -e); c = e != 0 ? BigRat.Round(b, e) : b;
+            d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = BigRat.Round(a, e); Debug.Assert(v == c);
+          }
+        }
+
+        test(0.2); test(-0.2); test(Math.PI / 4 + 0.2); test(Math.PI / 2 + 0.2);
+        test(Math.PI / 2 + 0.2); test(Math.PI * 3 / 4 + 0.2); test(-(Math.PI * 3 / 4 + 0.2));
+        test(Math.PI + 0.2); test(Math.PI * 5 / 4 + 0.2);
+        test(Math.PI * 3 / 3 + 0.2); test(Math.PI * 7 / 4 + 0.2);
+        test(+1.0e+10); test(+1.0e-10); test(+1.0e+100); test(+1.1e-100);
+        test(-1.0e+100); test(-1.0e+10); test(-1.0e-10); test(-1.1e-100); //1.0! 1.1        
+        test(BigRat.Pi(300) / 2);
+        test(BigRat.Pi(300));
+        test(2 * BigRat.Pi(300)); //test(BigRat.Parse("1e1000"));//todo: check speed
+        return;
+        static void test(BigRat z)
+        {
+          double x; BigRat a, b, c, d, e, pi, pi2, pih, fs, fc;
+          int l = 300 + Math.Max(0, BigRat.ILog10(z)); pi = BigRat.Pi(l); pi2 = pi * 2; pih = pi / 2;
+          fs = z % pi2; fc = (z + pih) % pi2 - pih;// (z + pih) - pih;          
+          e = BigRat.Cos(z, 300); x = Math.Cos((double)fc); d = BigRat.Round(e, 14); x = Math.Round(x, 14); Debug.Assert(d == x);
+          a = BigRat.Sin(z, 300); x = Math.Sin((double)fs); d = BigRat.Round(a, 14); x = Math.Round(x, 14); Debug.Assert(d == x);
+          for (int i = 0; i < 200; i++)
+          {
+            b = BigRat.Round(a, i); c = BigRat.Sin(z, i); Debug.Assert((d = b - c) == 0);
+            b = BigRat.Round(e, i); c = BigRat.Cos(z, i); Debug.Assert((d = b - c) == 0);
+          }
+        }
       }
       static void test_atan()
       {
@@ -376,6 +423,16 @@ namespace Test
         sb = b.ToString("Q0");
         sb = (b / 2).ToString("Q0");
       }
+      static void test_pow()
+      {
+        BigRat a;
+        for (int i = 0; i <= 1000; i++)
+        {
+          a = BigRat.Pow10(+i); Debug.Assert(a == BigRat.Pow(10, +i));
+          a = BigRat.Pow10(-i); Debug.Assert(a == BigRat.Pow(10, -i));
+          a = BigRat.Pow2(i); Debug.Assert(a == BigRat.Pow(2, i));
+        }
+      }
       static void test_conv()
       {
         Debug.Assert((BigRat)double.NegativeZero == 0);
@@ -436,16 +493,6 @@ namespace Test
         //b = UInt128.MaxValue; b++; c = (Int128)b; // exception
         //b = UInt128.MaxValue; b++; b = -b; c = (Int128)b;
 #endif
-      }
-      static void test_pow()
-      {
-        BigRat a;
-        for (int i = 0; i <= 1000; i++)
-        {
-          a = BigRat.Pow10(+i); Debug.Assert(a == BigRat.Pow(10, +i));
-          a = BigRat.Pow10(-i); Debug.Assert(a == BigRat.Pow(10, -i));
-          a = BigRat.Pow2(i); Debug.Assert(a == BigRat.Pow(2, i));
-        }
       }
     }
 
