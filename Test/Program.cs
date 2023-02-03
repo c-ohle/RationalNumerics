@@ -16,7 +16,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // bigrat_tests();
+      ApplicationConfiguration.Initialize(); //bigrat_tests();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -24,17 +24,139 @@ namespace Test
 
     static void bigrat_tests()
     {
+      test_sin();
+      test_log();
+      test_log2();
+      test_exp();
       test_atan();
       test_pow();
       test_sqrt();
-      test_sin();
       test_pi();
-      test_log();
-      test_exp(); //4.8
       test_rounds();
       test_conv();
       test_tostring();
       return;
+
+      static void test_sin()
+      {
+        double x, y; BigRat a, b, c, d, u, v, w;
+        Debug.Assert((a = BigRat.Sin(0)) == 0);
+        Debug.Assert((a = BigRat.Cos(0)) == 1);
+        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35) / 2)) == 1);
+        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35) / 2)) == 0);
+        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35) * 3 / 2)) == -1);
+        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35) * 3 / 2)) == 0);
+        Debug.Assert((a = BigRat.Sin(BigRat.Pi(35))) == 0);
+        Debug.Assert((a = BigRat.Cos(BigRat.Pi(35))) == -1);
+
+        var rnd = new Random(1);
+        for (int i = 0; i < 200; i++)
+        {
+          var f = rnd.NextDouble() * 10 - 5; x = Math.Sin(f); y = Math.Round(x, 10); u = f;
+          a = BigRat.Sin(u, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 100; e++)
+          {
+            b = BigRat.Sin(u, -e); c = e != 0 ? BigRat.Round(b, e) : b;
+            d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = BigRat.Round(a, e); Debug.Assert(v == c);
+          }
+        }
+
+        test(0.2); test(-0.2); test(Math.PI / 4 + 0.2); test(Math.PI / 2 + 0.2);
+        test(Math.PI / 2 + 0.2); test(Math.PI * 3 / 4 + 0.2); test(-(Math.PI * 3 / 4 + 0.2));
+        test(Math.PI + 0.2); test(Math.PI * 5 / 4 + 0.2);
+        test(Math.PI * 3 / 3 + 0.2); test(Math.PI * 7 / 4 + 0.2);
+        test(+1.0e+10); test(+1.0e-10); test(+1.0e+100); test(+1.1e-100);
+        test(-1.0e+100); test(-1.0e+10); test(-1.0e-10); test(-1.1e-100); //1.0! 1.1        
+        test(BigRat.Pi(300) / 2);
+        test(BigRat.Pi(300));
+        test(2 * BigRat.Pi(300)); //test(BigRat.Parse("1e1000"));//todo: check speed
+        return;
+        static void test(BigRat z)
+        {
+          double x; BigRat a, b, c, d, e, pi, pi2, pih, fs, fc;
+          int l = 300 + Math.Max(0, BigRat.ILog10(z)); pi = BigRat.Pi(l); pi2 = pi * 2; pih = pi / 2;
+          fs = z % pi2; fc = (z + pih) % pi2 - pih;// (z + pih) - pih;          
+          e = BigRat.Cos(z, 300); x = Math.Cos((double)fc); d = BigRat.Round(e, 14); x = Math.Round(x, 14); Debug.Assert(d == x);
+          a = BigRat.Sin(z, 300); x = Math.Sin((double)fs); d = BigRat.Round(a, 14); x = Math.Round(x, 14); Debug.Assert(d == x);
+          for (int i = 0; i < 200; i++)
+          {
+            b = BigRat.Round(a, i); c = BigRat.Sin(z, i); Debug.Assert((d = b - c) == 0);
+            b = BigRat.Round(e, i); c = BigRat.Cos(z, i); Debug.Assert((d = b - c) == 0);
+          }
+        }
+      }
+      static void test_log()
+      {
+        double x, y; BigRat a, b, c, d, u, v, w;
+        var rnd = new Random(1);
+        for (int i = 0; i < 200; i++)
+        {
+          var f = rnd.NextDouble() * 10; x = Math.Log(f); y = Math.Round(x, 10); u = f;
+          a = BigRat.Log(u, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 100; e++)
+          {
+            b = BigRat.Log(u, -e); c = BigRat.Round(b, e);
+            d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = BigRat.Round(a, e); Debug.Assert(v == c);
+          }
+        }
+      }
+      static void test_log2()
+      {
+        double x, y; BigRat a, b, c, d, u, v, w;
+        a = BigRat.Log2(0.25, 32); Debug.Assert(a == -2);
+        a = BigRat.Log2(0.5, 32); Debug.Assert(a == -1);
+        a = BigRat.Log2(1, 32); Debug.Assert(a == 0);
+        a = BigRat.Log2(2, 32); Debug.Assert(a == 1);
+        a = BigRat.Log2(4, 32); Debug.Assert(a == 2);
+        a = BigRat.Log2(8, 32); Debug.Assert(a == 3);
+        a = BigRat.Log2(1ul << 63, 32); Debug.Assert(a == 63);
+        var rnd = new Random(1);
+        for (int i = 0; i < 200; i++)
+        {
+          var f = rnd.NextDouble() * 100; x = Math.Log2(f); y = Math.Round(x, 10); u = f;
+          a = BigRat.Log2(u, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 100; e++)
+          {
+            b = BigRat.Log2(u, -e); c = BigRat.Round(b, e);
+            d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = BigRat.Round(a, e); Debug.Assert(v == c);
+          }
+        }
+      }
+      static void test_exp()
+      {
+        double x, y; BigRat a, b, c, d, u, v, w; x = Math.Exp(1); string s;
+
+        a = BigRat.Exp(+100, 10); b = BigRat.Exp(+100, 2); c = BigRat.Exp(+100, 1); d = BigRat.Exp(+100, 0);
+        a = BigRat.Exp(-100, 10); b = BigRat.Exp(-100, 2); c = BigRat.Exp(-100, 1); d = BigRat.Exp(-100, 0);
+        a = BigRat.Exp(0.01, 10); b = BigRat.Exp(0.01, 2); c = BigRat.Exp(0.01, 1); d = BigRat.Exp(0.01, 0);
+
+        //s = " 2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274274663919320030599218174135966290435729003342952605956307381323286279434907632338298807531952510190115738341879307021540891499348841675092447614606680822648001684774118537423454424371075390777449920695517027618386062613313845830007520449338265602976067371132007093287091274437470472306969772093101416928368190255151086574637721112523897844250569536967707854499699679468644549059879316368892300987931277361782154249992295763514822082698951936680331825288693984964651058209392398294887933203625094431173012381970684161403970198376793206832823764648042953118023287825098194558153017567173613320698112509961818815930416903515988885193458072738667385894228792284998920868058257492796104841984443634632449684875602336248270419786232090021609902353043699418491463140934317381436405462531520961836908887070167683964243781405927145635490613031072085103837505101157477041718986106873969655212671546889570350354021234078498193343210681701210056278802351930332247450158539047304199577770935036604169973297250886876966403555707162268447162560798826517871341951246652010305921236677194325278675398558944896970964097545918569563802363701621120477427228364896134225164450781824423529486363721417402388934412479635743702637552944483379980161254922785092577825620926226483262779333865664816277251640191059004916449982893150566047258027786318641551956532442586982946959308019152987211725563475463964479101459040905862984967912874068705048958586717479854667757573205681288459205413340539220001137863009455606881667400169842055804033637953764520304024322566135278369511778838638744396625322498506549958862342818997077332761717839280349465014345588970719425863987727547109629537415211151368350627526023264847287039207643100595841166120545297030236472549296669381151373227536450988890313602057248176585118063036442812314965507047510254465011727211555194866850800368532281831521960037356252794495158284188294787610852639813955990067376482922443752871846245780361929819713991475644882626039033814418232 ";
+        s = "2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274274663919320030599218174";
+        a = BigRat.Parse(s); u = 1;
+        for (int e = 0; e < s.Length - 5; e++)
+        {
+          b = BigRat.Exp(u, -e); c = e != 0 ? round(b, e) : b;
+          d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = round(a, e); Debug.Assert(v == c);
+        }
+        var rnd = new Random(1);
+        for (int i = 0; i < 200; i++)
+        {
+          var f = rnd.NextDouble() * 10 - 5; x = Math.Exp(f); y = Math.Round(x, 10);
+          a = BigRat.Exp(u = f, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 100; e++)
+          {
+            b = BigRat.Exp(u, -e); c = e != 0 ? round(b, e) : b;
+            d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = round(a, e); Debug.Assert(v == c);
+          }
+        }
+        for (int i = 0; i < 200; i++)
+        {
+          var f = rnd.NextDouble() * 10 - 5; x = Math.Exp(f); y = Math.Round(x, 10);
+          a = BigRat.Exp(u = f, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 100; e++) { b = BigRat.Exp(u, e); v = round(a, e); Debug.Assert(v == b); }
+        }
+        static BigRat round(BigRat a, int digits) { return BigRat.Round(a, digits - BigRat.ILog10(a)); }
+      }
       static void test_atan()
       {
         double x, y; BigRat a, b, c, d; //rat r; r = rat.Atan(0.52, 100);
@@ -57,88 +179,6 @@ namespace Test
             b = BigRat.Atan(v, e); c = BigRat.Round(b, e);
             d = BigRat.Round(b, -BigRat.ILog10(a - b));
             var t = BigRat.Round(a, e); Debug.Assert(t == c);
-          }
-        }
-      }
-      static void test_sin()
-      {
-        test(0.2); test(-0.2); test(Math.PI / 4 + 0.2); test(Math.PI / 2 + 0.2);
-        test(Math.PI / 2 + 0.2); test(Math.PI * 3 / 4 + 0.2); test(-(Math.PI * 3 / 4 + 0.2));
-        test(Math.PI + 0.2); test(Math.PI * 5 / 4 + 0.2);
-        test(Math.PI * 3 / 3 + 0.2); test(Math.PI * 7 / 4 + 0.2);
-        test(1); test(2); test(3); test(0); test(short.MaxValue); test(int.MaxValue);
-        test(-short.MaxValue); test(-int.MaxValue); test(1.0 / short.MaxValue); test(1.0 / int.MaxValue);
-        test(+1.0e+10); test(+1.0e-10); test(+1.0e+100); test(+1.1e-100);
-        test(-1.0e+100); test(-1.0e+10); test(-1.0e-10); test(-1.1e-100); //1.0! 1.1        
-        test(BigRat.Pi(300) / 2);
-        test(BigRat.Pi(300));
-        test(2 * BigRat.Pi(300));
-        test(BigRat.Parse("1e1000"));//todo: check speed
-        return;
-        static void test(BigRat z)
-        {
-          double x; BigRat a, b, c, d, e, pi, pi2, pih, fs, fc;
-          int l = 300 + Math.Max(0, BigRat.ILog10(z)); pi = BigRat.Pi(l); pi2 = pi * 2; pih = pi / 2;
-          fs = z % pi2; fc = (z + pih) % pi2 - pih;// (z + pih) - pih;          
-          e = BigRat.Cos(z, 300); x = Math.Cos((double)fc); d = BigRat.Round(e, 14); x = Math.Round(x, 14); Debug.Assert(d == x);
-          a = BigRat.Sin(z, 300); x = Math.Sin((double)fs); d = BigRat.Round(a, 14); x = Math.Round(x, 14); Debug.Assert(d == x);
-          for (int i = 0; i < 200; i++)
-          {
-            b = BigRat.Round(a, i); c = BigRat.Sin(z, i); Debug.Assert((d = b - c) == 0);
-            b = BigRat.Round(e, i); c = BigRat.Cos(z, i); Debug.Assert((d = b - c) == 0);
-          }
-        }
-      }
-      static void test_log()
-      {
-        Debug.Assert(BigRat.Log(1, 20) == 0);
-        test(0.5); test(2); test(1.5); //todo:...
-        static void test(double z)
-        {
-          var a = Math.Log(z); BigRat b, c, d, x = z; //rat r;
-          b = BigRat.Log(x, 200); if (double.IsFinite(a)) Debug.Assert(a.ToString("G15") == b.ToString("G15"));
-          for (int i = 4; i < 150; i++)
-          {
-            c = BigRat.Log(x, i);
-            d = BigRat.Round(b, i);// Debug.Assert(c == d);
-          }
-        }
-
-        double a; BigRat b; rat r; //, c, d, z; string s;
-        a = Math.Pow(2, 0.5);
-        b = BigRat.Pow(2, 0.5, 20);
-        a = Math.Pow(2, 12.34);
-        b = BigRat.Pow(2, 12.34, 20);
-
-        r = rat.Log2(1.234, 20);
-        b = BigRat.Log2(1.234, 20);// BigRat.Normalize(1.234), 20);
-        r = rat.Log2(Math.E, 20);
-        b = BigRat.Log2(Math.E, 20);
-
-        a = Math.Log(1.234);
-        r = rat.Log(1.234, 20);
-        b = BigRat.Log(1.234, 20);
-        b = BigRat.Log(1.234, 500);
-        var s = b.ToString("Q1000");
-        //0.21026092548319607136082943601527476998663058511279952672610238831073031555349357511057494302632237237330031845848044124246550057062593110062548373496664892064094190787271590207840143550597519300643847685017807312653528239040163649841602031594149790436352051125536486811504352777856803787667477787672280193777016870566736501271702897533470750414519643876916995004759095858391002479556171146857789765457662493308574590100659465114950016333030550031421612643834686312425877379845181240384200203389926002196400295742956569673318525362673493792713956854402325159454534796274807613490827052286966473879978811023635119017984412193569903357628109766912273071186675999374962308300370651872311481878489457601336261759885496186194965297509530177389517756613080376920444275468234008328303942380145313460000897712485653170563406801131031436122142091815979374896332334213666273620966723997881289454922849027321285484826153366455411859013315801930617126946207975997341946444367357110636374846023930261735383653262280690447364023597482563503322957261338...
-        //0,21026092548319607136082943601527476998663058511279952672610238831073031555349357511057494302632237237330031845848044124246550057062593110062548373496664892064094190787271590207840143550597519300643847685017807312653528239040163649841602031594149790436352051125536486811504352777856803787667477787672280193777016870566736501271702897533470750414519643876916995004759095858391002479556171146857789765457662493308574590100659465114950016333030550031421612643834686312425877379845181240384200203389926002
-        //0,21026092548319607136082943601527476998663058511279952672610238831073031555349357511057494302632237237330031845848044124246550057062593110062548373496664892064094190787271590207840143550597519300643847685017807312653528239040163649841602031594149790436352051125536486811504352777856803787667477787672280193777016870566736501271702897533470750414519643876916995004759095858391002479556171146857789765457662493308574590100659465114950016333030550031421612643834686312425877379845181240384200203389926002
-
-      }
-      static void test_exp()
-      {
-        test(1); test(100); test(1000); test(0.01);
-        test(0.00000123); test(-9.8765432); test(-123.456789);
-        test(-0.0123456); test(-0.000001234567);
-        static void test(BigRat z)
-        {
-          //z = BigRat.Normalize(z);
-          var a = Math.Exp((double)z); BigRat b, c, d; //rat r;
-          b = BigRat.Exp(z, 500); if (double.IsFinite(a)) Debug.Assert(a.ToString("G15") == b.ToString("G15"));
-          for (int i = 0; i < 300; i++)
-          {
-            c = BigRat.Exp(z, i);
-            d = BigRat.Round(b, i - BigRat.ILog10(b) - 1); Debug.Assert(c == d);
           }
         }
       }
