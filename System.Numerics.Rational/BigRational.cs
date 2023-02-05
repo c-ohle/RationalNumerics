@@ -543,12 +543,12 @@ namespace System.Numerics
         var va = ((ulong)a[na] << 32 + ca) | (na < 2 ? 0 : ((ulong)a[na - 1] << ca) | (na < 3 ? 0 : (ulong)a[na - 2] >> 32 - ca));
         var vb = ((ulong)b[nb] << 32 + cb) | (nb < 2 ? 0 : ((ulong)b[nb - 1] << cb) | (nb < 3 ? 0 : (ulong)b[nb - 2] >> 32 - cb));
         if (vb == 0) return double.NaN;
-        var e = ((na << 5) - ca) - ((nb << 5) - cb);
-        if (e < -1021) return double.NegativeInfinity;
-        if (e > +1023) return double.PositiveInfinity; //todo: opt. extended over ctor
+        var e = ((na << 5) - ca) - ((nb << 5) - cb); var s = (a[0] & 0x80000000) != 0;
+        if (e < -1021) return s ? -0.0 : 0.0; // double.NegativeInfinity;
+        if (e > +1023) return s ? double.NegativeInfinity : double.PositiveInfinity;
         var r = (double)(va >> 11) / (vb >> 11);
         var x = (0x3ff + e) << 52; r *= *(double*)&x; //fast r *= Math.Pow(2, e);
-        if ((a[0] & 0x80000000) != 0) r = -r; return r;
+        if (s) r = -r; return r;
       }
     }
     /// <summary>

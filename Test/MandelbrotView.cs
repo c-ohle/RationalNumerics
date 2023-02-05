@@ -112,13 +112,7 @@ namespace Test
     Bitmap? bmp; uint* scan; int dx, dy, stride, driver = 2;
     Task? task; bool cancel, dostart, restart, manual; long t1, t2;
     System.Windows.Forms.Timer timer = new() { Interval = 100 };
-    BigRational mx = -0.7, my = 0, scale = 1.2; int imax = 32, lim = 64;
-
-    static BigRat conv(BigRational value)
-    {
-      return new BigRat(MemoryMarshal.Cast<uint, byte>((ReadOnlySpan<uint>)value));
-    }
-
+    BigRational mx = -0.7, my = 0, scale = 1.2; int imax = 32, lim = 64;     
     void mandel_double()
     {
       calcmap(); if (map == null) return;
@@ -193,6 +187,7 @@ namespace Test
     void mandel_BigRat()
     {
       calcmap(); if (map == null) return;
+      static BigRat conv(BigRational value) => (BigRat)(ReadOnlySpan<uint>)value;
       var x1 = conv(mx - scale * dx / dy);
       var y1 = conv(my - scale); var lim = this.lim;
       var fi = conv(2 * scale / dy); var qmax = (BigRat)4;

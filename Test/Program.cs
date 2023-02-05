@@ -22,8 +22,18 @@ namespace Test
       Debug.Assert(rat.task_cpu.mark() == 0);
     }
 
+    [Conditional("DEBUG")]
     static void bigrat_tests()
     {
+      double d; BigRat r;
+
+      d = 12345.67; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
+      d = 0.5; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
+      d = 0.1; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
+      d = double.MaxValue; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
+      d = double.MinValue; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
+
+      test_atan2();
       test_asin();
       test_log();
       test_log2();
@@ -34,10 +44,27 @@ namespace Test
       test_sqrt();
       test_pi();
       test_rounds();
-      test_conv();
       test_tostring();
+      test_conv();
       return;
 
+      static void test_atan2()
+      {
+        double x, y; BigRat a, b, c, d, u, v, w, q;
+        var rnd = new Random(1);
+        for (int i = 0; i < 20; i++)
+        {
+          var f = rnd.NextDouble() * 10 - 5; var g = rnd.NextDouble() * 10 - 5;
+          x = Math.Atan2(f, g); y = Math.Round(x, 10); u = f; q = g;
+          a = BigRat.Atan2(u, q, 200); w = BigRat.Round(a, 10); Debug.Assert(y == w);
+          for (int e = 0; e < 20; e++)
+          {
+            b = BigRat.Atan2(u, q, -e); c = e != 0 ? BigRat.Round(b, e) : b;
+            d = BigRat.Round(b, -BigRat.ILog10(a - b)); v = BigRat.Round(a, e); Debug.Assert(v == c);
+            //var sp = (ReadOnlySpan<uint>)b; var t = (BigRat)sp; Debug.Assert(t == b);
+          }
+        }
+      }
       static void test_asin()
       {
         double x, y; BigRat a, b, c, d, u, v, w;
@@ -435,10 +462,96 @@ namespace Test
       }
       static void test_conv()
       {
+#if NET7_0_OR_GREATER
+        test_inumber();
+        static void test_inumber()
+        {
+          double d; float f; BigRat r; short s, ss; long l, ll; ulong ul, ull; decimal c; //ushort us; 
+
+          r = +123456.78; c = (decimal)r; Debug.Assert(c == r);
+          c = decimal.CreateTruncating(r); Debug.Assert(c == r);
+          c = decimal.CreateSaturating(r); Debug.Assert(c == r);
+          c = decimal.CreateChecked(r); Debug.Assert(c == r);
+          c = decimal.CreateChecked((double)r); Debug.Assert(c == r);
+
+          r = +123456.78e50;
+          c = decimal.CreateTruncating((double)r); Debug.Assert(c == decimal.MaxValue);
+          c = decimal.CreateTruncating(r); Debug.Assert(c == decimal.MaxValue);
+          c = decimal.CreateSaturating(r); Debug.Assert(c == decimal.MaxValue);
+          c = decimal.CreateSaturating(-r); Debug.Assert(c == decimal.MinValue);
+          //try { c = decimal.CreateChecked(r); Debug.Assert(false); } catch { }
+
+          r = +123456.78; d = (double)r; Debug.Assert(r == d);
+          r = -123456.78; d = (double)r; Debug.Assert(r == d);
+          r = float.MaxValue; d = (double)r; Debug.Assert(r == d);
+          r = float.MaxValue; f = (float)r; Debug.Assert(f == r);
+
+          r = float.MaxValue; r *= 1.0001; f = (float)r; Debug.Assert(f == float.PositiveInfinity && f == (float)(double)r);
+          f = float.CreateTruncating(r); Debug.Assert(f == float.CreateTruncating((double)r));
+          f = float.CreateSaturating(r); Debug.Assert(f == float.CreateSaturating((double)r));
+          f = float.CreateChecked(r); Debug.Assert(f == float.CreateChecked((double)r));
+          f = checked((float)r); Debug.Assert(f == checked((float)(double)r));
+
+          r = float.MinValue; r *= 1.0001; f = (float)r; Debug.Assert(f == float.NegativeInfinity && f == (float)(double)r);
+          f = float.CreateTruncating(r); Debug.Assert(f == float.CreateTruncating((double)r));
+          f = float.CreateSaturating(r); Debug.Assert(f == float.CreateSaturating((double)r));
+          f = float.CreateChecked(r); Debug.Assert(f == float.CreateChecked((double)r));
+
+          //
+          r = +123456; l = (long)r; Debug.Assert(r == l);
+          r = -123456; l = (long)r; Debug.Assert(r == l);
+          r = long.MaxValue; l = (long)r; Debug.Assert(r == l);
+          r = long.MinValue; l = (long)r; Debug.Assert(r == l);
+          r = long.MaxValue; r++; l = (long)r; Debug.Assert(l == long.MinValue);
+          r = long.MinValue; r--; l = (long)r; Debug.Assert(l == long.MinValue);
+          r = long.MinValue; l = long.CreateChecked(r); Debug.Assert(r == l);
+          r = long.MaxValue; l = long.CreateChecked(r); Debug.Assert(r == l);
+
+          r = +123456; ul = (ulong)r; Debug.Assert(ul == r);
+          r = -123456; ul = (ulong)r; Debug.Assert(ul == (ulong)(Int128)r);
+          r = ulong.MaxValue; ul = (ulong)r; Debug.Assert(ul == r);
+          r = ulong.MaxValue; r++; ul = (ulong)r; Debug.Assert(ul == unchecked((ulong)((double)ulong.MaxValue + (double)ulong.MaxValue)));
+
+          r = BigRat.Parse("+1e1000"); d = double.MaxValue;
+          s = (short)r; Debug.Assert(s == (ss = (short)d)); // 0
+          s = short.CreateTruncating(r); Debug.Assert(s == (ss = short.CreateTruncating(d))); //32767
+          s = short.CreateSaturating(r); Debug.Assert(s == (ss = short.CreateSaturating(d)));
+          //try { s = short.CreateChecked(r); Debug.Assert(false); } catch { }
+
+          r = BigRat.Parse("-1e1000"); d = double.MinValue;
+          s = (short)r; Debug.Assert(s == (ss = (short)d));
+          s = short.CreateTruncating(r); Debug.Assert(s == (ss = short.CreateTruncating(d)));
+          s = short.CreateSaturating(r); Debug.Assert(s == (ss = short.CreateSaturating(d)));
+          //try { s = short.CreateChecked(r); Debug.Assert(false); } catch { }
+
+          r = BigRat.Parse("+1e1000"); d = double.MaxValue;
+          l = (long)r; Debug.Assert(l == (ll = (long)d));
+          l = long.CreateTruncating(r); Debug.Assert(l == (ll = long.CreateTruncating(d)));
+          l = long.CreateSaturating(r); Debug.Assert(l == (ll = long.CreateSaturating(d)));
+          //try { l = long.CreateChecked(r); Debug.Assert(false); } catch { }
+
+          r = BigRat.Parse("-1e1000"); d = double.MinValue;
+          l = (long)r; Debug.Assert(l == (ll = (long)d));
+          l = long.CreateTruncating(r); Debug.Assert(l == (ll = long.CreateTruncating(d)));
+          l = long.CreateSaturating(r); Debug.Assert(l == (ll = long.CreateSaturating(d)));
+          //try { l = long.CreateChecked(r); Debug.Assert(false); } catch { }
+
+          r = BigRat.Parse("+1e1000"); d = double.MaxValue;
+          ul = (ulong)r; Debug.Assert(ul == (ull = (ulong)d));
+          ul = ulong.CreateTruncating(r); Debug.Assert(ul == (ull = ulong.CreateTruncating(d)));
+          ul = ulong.CreateSaturating(r); Debug.Assert(ul == (ull = ulong.CreateSaturating(d)));
+          //try { ul = ulong.CreateChecked(r); Debug.Assert(false); } catch { }
+
+          r = BigRat.Parse("-1e1000"); d = double.MinValue;
+          ul = (ulong)r; Debug.Assert(ul == unchecked((ulong)(double.MinValue)));
+          ul = ulong.CreateTruncating(r); Debug.Assert(ul == (ull = ulong.CreateTruncating(d)));
+          ul = ulong.CreateSaturating(r); Debug.Assert(ul == (ull = ulong.CreateSaturating(d)));
+          //try { ul = ulong.CreateChecked(r); Debug.Assert(false); } catch { }
+        }
+
         Debug.Assert((BigRat)double.NegativeZero == 0);
         Debug.Assert((BigRat)float.NegativeZero == 0);
         Debug.Assert((BigRat)Half.NegativeZero == 0);
-#if NET7_0_OR_GREATER
         BigRat b, c; bool d;
         b = 0;
         Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
