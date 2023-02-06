@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
@@ -183,36 +182,17 @@ namespace Test
         var cb = BitOperations.LeadingZeroCount(b[nb]);
         var va = ((ulong)a[na] << 32 + ca) | (na < 2 ? 0 : ((ulong)a[na - 1] << ca) | (na < 3 ? 0 : (ulong)a[na - 2] >> 32 - ca));
         var vb = ((ulong)b[nb] << 32 + cb) | (nb < 2 ? 0 : ((ulong)b[nb - 1] << cb) | (nb < 3 ? 0 : (ulong)b[nb - 2] >> 32 - cb));
-        if (vb == 0) return double.NaN;
-        var e = ((na << 5) - ca) - ((nb << 5) - cb); var s = (a[0] & 0x80000000) != 0;
-        if (e < -1021) return s ? -0.0 : 0.0; //double.NegativeInfinity;
-        if (e > +1023) return s ? double.NegativeInfinity : double.PositiveInfinity;
+        var e = ((na << 5) - ca) - ((nb << 5) - cb); Debug.Assert(vb != 0);
         var r = (double)(va >> 11) / (vb >> 11);
-        var x = (0x3ff + e) << 52; r *= *(double*)&x; //fast r *= Math.Pow(2, e);
-        return s ? -r : r;
+        if (e < -1021) { if (e < -1074) r = 0; else *(ulong*)&r = (ulong)(r * (1 << ((int)e + 1074))); }
+        else if (e > +1023) r = double.PositiveInfinity; // return s ? double.NegativeInfinity : double.PositiveInfinity;
+        else { var p = (0x3ff + e) << 52; r *= *(double*)&p; }
+        ((uint*)&r)[1] |= a[0] & 0x80000000; return r;
       }
     }
     public static explicit operator decimal(BigRat value)
     {
       return tom(value, false);
-      //if (value.p == null) return default;
-      //fixed (uint* p = value.p)
-      //{
-      //  var u = p; uint nu = u[0] & 0x3ffffff, nv = u[nu + 1]; var v = u + nu + 1;
-      //  var mu = unchecked((int)nu << 5) - BitOperations.LeadingZeroCount(u[nu]);
-      //  var mv = unchecked((int)nv << 5) - BitOperations.LeadingZeroCount(v[nv]);
-      //  var sh = Math.Max(mu - 96, mv - 96);
-      //  if (sh > 0)
-      //  {
-      //    var t = stackalloc uint[value.p.Length]; mov(t, u, unchecked((uint)value.p.Length));
-      //    v = (u = t) + nu + 1; shr(u, sh); shr(v, sh); nu = u[0]; nv = v[0];
-      //    if (*(ulong*)u == 1) return default;
-      //    if (*(ulong*)v == 1) { throw new ArgumentException(); }
-      //  }
-      //  var du = new decimal(((int*)u)[1], nu >= 2 ? ((int*)u)[2] : 0, nu >= 3 ? ((int*)u)[3] : 0, (value.p[0] & 0x80000000) != 0, 0);
-      //  var dv = new decimal(((int*)v)[1], nv >= 2 ? ((int*)v)[2] : 0, nv >= 3 ? ((int*)v)[3] : 0, false, 0);
-      //  var dr = du / dv; return dr;
-      //}
     }
     public static explicit operator BigInteger(BigRat value)
     {
@@ -998,7 +978,7 @@ namespace Test
     }
     public static bool IsNormal(BigRat value)
     {
-      return value.p != null; // && !nan... 
+      return value.p != null;
     }
     public static bool IsPositive(BigRat value)
     {
@@ -1234,7 +1214,7 @@ namespace Test
     {
       if (value == 0) return default; int h = ((int*)&value)[1], e = ((h >> 20) & 0x7FF) - 1075;
       if (e == 0x3cc) throw new OverflowException(nameof(value)); // NaN 
-      var p = stackalloc uint[(abs(e) >> 5) + 8]; //max 58
+      var p = stackalloc uint[64]; Debug.Assert((abs(e) >> 5) + 8 <= 41);
       p[0] = 2; p[1] = *(uint*)&value; p[2] = (unchecked((uint)h) & 0x000FFFFF) | 0x100000;
       if (e == -1075) { if ((p[2] &= 0xfffff) == 0 && p[p[0] = 1] == 0) { *(ulong*)(p + 2) = 0x100000001; goto m1; } e++; } // denormalized
       if (e > 0) shl(p, e); var q = p + (p[0] + 1); *(ulong*)q = 0x100000001; if (e < 0) shl(q, -e); m1:
@@ -1255,7 +1235,7 @@ namespace Test
         var a = new BigRat(p, n); a.p![0] &= ~0x40000000u; return a;
       }
     }
-    
+
     readonly uint[]? p;
 
     BigRat(uint[]? p)
@@ -1625,7 +1605,7 @@ namespace Test
       if (na < nb) return;
       if (na == 1)
       {
-        if (b[1] == 0) return; // keep NaN
+        if (b[1] == 0) return;
         uint q = a[1] / b[1], m = a[1] - q * b[1];
         a[a[0] = 1] = m; if (r != null) r[1] = q; return;
       }

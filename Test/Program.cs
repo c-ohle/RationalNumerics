@@ -16,7 +16,7 @@ namespace Test
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); // bigrat_tests();
+      ApplicationConfiguration.Initialize(); bigrat_tests();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
@@ -25,14 +25,6 @@ namespace Test
     [Conditional("DEBUG")]
     static void bigrat_tests()
     {
-      double d; BigRat r;
-
-      d = 12345.67; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
-      d = 0.5; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
-      d = 0.1; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
-      d = double.MaxValue; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
-      d = double.MinValue; r = BigRat.CreatePrecise(d); Debug.Assert(d == r);
-
       test_atan2();
       test_asin();
       test_log();
@@ -462,9 +454,19 @@ namespace Test
       }
       static void test_conv()
       {
+        {
+          double d, c; BigRat r;
+          d = 12345.67; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = -0.5; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = 0.1; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = double.MaxValue; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = double.MinValue; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = double.Epsilon; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = -double.Epsilon; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = double.Epsilon * 10; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = double.Epsilon * 1000; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+        }
 #if NET7_0_OR_GREATER
-        test_inumber();
-        static void test_inumber()
         {
           double d; float f; BigRat r; short s, ss; long l, ll; ulong ul, ull; decimal c; //ushort us; 
 
@@ -548,63 +550,64 @@ namespace Test
           ul = ulong.CreateSaturating(r); Debug.Assert(ul == (ull = ulong.CreateSaturating(d)));
           //try { ul = ulong.CreateChecked(r); Debug.Assert(false); } catch { }
         }
+        {
+          Debug.Assert((BigRat)double.NegativeZero == 0);
+          Debug.Assert((BigRat)float.NegativeZero == 0);
+          Debug.Assert((BigRat)Half.NegativeZero == 0);
+          BigRat b, c; bool d;
+          b = 0;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
+          b = -5;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
+          b = 5;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
+          b *= 128;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
+          b /= 128;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
+          b++;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
+          b = 1.5;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == double.IsEvenInteger((double)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == double.IsOddInteger((double)b));
+          b = -1.5;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == double.IsEvenInteger((double)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == double.IsOddInteger((double)b));
+          b = Int128.MaxValue;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == Int128.IsEvenInteger((Int128)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == Int128.IsOddInteger((Int128)b));
+          b = ulong.MaxValue; b += 123;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == Int128.IsEvenInteger((Int128)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == Int128.IsOddInteger((Int128)b));
+          b /= 2923820290820; b *= 2923820290820;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == Int128.IsEvenInteger((Int128)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == Int128.IsOddInteger((Int128)b));
+          b = -b;
+          Debug.Assert((d = BigRat.IsEvenInteger(b)) == Int128.IsEvenInteger((Int128)b));
+          Debug.Assert((d = BigRat.IsOddInteger(b)) == Int128.IsOddInteger((Int128)b));
+          b = BigRat.Normalize(b);
+          b = BigRat.Normalize(b);
 
-        Debug.Assert((BigRat)double.NegativeZero == 0);
-        Debug.Assert((BigRat)float.NegativeZero == 0);
-        Debug.Assert((BigRat)Half.NegativeZero == 0);
-        BigRat b, c; bool d;
-        b = 0;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
-        b = -5;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
-        b = 5;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
-        b *= 128;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
-        b /= 128;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
-        b++;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == int.IsEvenInteger((int)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == int.IsOddInteger((int)b));
-        b = 1.5;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == double.IsEvenInteger((double)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == double.IsOddInteger((double)b));
-        b = -1.5;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == double.IsEvenInteger((double)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == double.IsOddInteger((double)b));
-        b = Int128.MaxValue;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == Int128.IsEvenInteger((Int128)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == Int128.IsOddInteger((Int128)b));
-        b = ulong.MaxValue; b += 123;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == Int128.IsEvenInteger((Int128)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == Int128.IsOddInteger((Int128)b));
-        b /= 2923820290820; b *= 2923820290820;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == Int128.IsEvenInteger((Int128)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == Int128.IsOddInteger((Int128)b));
-        b = -b;
-        Debug.Assert((d = BigRat.IsEvenInteger(b)) == Int128.IsEvenInteger((Int128)b));
-        Debug.Assert((d = BigRat.IsOddInteger(b)) == Int128.IsOddInteger((Int128)b));
-        b = BigRat.Normalize(b);
-        b = BigRat.Normalize(b);
-
-        b = (Int128)0; c = (Int128)b; Debug.Assert(b == c);
-        b = (Int128)1234; c = (Int128)b; Debug.Assert(b == c);
-        b = (Int128)(-1234); c = (Int128)b; Debug.Assert(b == c);
-        b = (Int128)(long.MinValue); c = (Int128)b; Debug.Assert(b == c);
-        b = Int128.MaxValue; c = (Int128)b; Debug.Assert(b == c);
-        b = Int128.MinValue; c = (Int128)b; Debug.Assert(b == c);
-        b = (UInt128)0; c = (UInt128)b; Debug.Assert(b == c);
-        b = (UInt128)1234; c = (UInt128)b; Debug.Assert(b == c);
-        b = UInt128.MaxValue; c = (UInt128)b; Debug.Assert(b == c);
-        //b = UInt128.MaxValue; c = (Int128)b; // exception                                                           
-        //b = UInt128.MaxValue; b = -b; c = (Int128)b; // exception
-        //b = UInt128.MaxValue; b++; c = (Int128)b; // exception
-        //b = UInt128.MaxValue; b++; b = -b; c = (Int128)b;
+          b = (Int128)0; c = (Int128)b; Debug.Assert(b == c);
+          b = (Int128)1234; c = (Int128)b; Debug.Assert(b == c);
+          b = (Int128)(-1234); c = (Int128)b; Debug.Assert(b == c);
+          b = (Int128)(long.MinValue); c = (Int128)b; Debug.Assert(b == c);
+          b = Int128.MaxValue; c = (Int128)b; Debug.Assert(b == c);
+          b = Int128.MinValue; c = (Int128)b; Debug.Assert(b == c);
+          b = (UInt128)0; c = (UInt128)b; Debug.Assert(b == c);
+          b = (UInt128)1234; c = (UInt128)b; Debug.Assert(b == c);
+          b = UInt128.MaxValue; c = (UInt128)b; Debug.Assert(b == c);
+          //b = UInt128.MaxValue; c = (Int128)b; // exception                                                           
+          //b = UInt128.MaxValue; b = -b; c = (Int128)b; // exception
+          //b = UInt128.MaxValue; b++; c = (Int128)b; // exception
+          //b = UInt128.MaxValue; b++; b = -b; c = (Int128)b;
+        }
 #endif
       }
     }
