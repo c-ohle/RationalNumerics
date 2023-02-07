@@ -25,21 +25,33 @@ namespace Test
     [Conditional("DEBUG")]
     static void bigrat_tests()
     {
-      test_atan2();
-      test_asin();
-      test_log();
-      test_log2();
-      test_exp();
-      test_sin();
-      test_atan();
-      test_pow();
-      test_sqrt();
-      test_pi();
-      test_rounds();
-      test_tostring();
-      test_conv();
+      test_xxx();
+      test_atan2(); test_asin(); test_log(); test_log2(); test_exp(); test_sin(); 
+      test_atan(); test_pow(); test_sqrt(); test_pi(); test_rounds(); test_tostring(); test_conv();
       return;
+      static void test_xxx()
+      {
+        double d; BigRat r, s; //string ss;
 
+        d = double.MaxValue; r = d;
+        d = double.MinValue; r = d;
+        d = double.Epsilon; r = d;
+        d = double.Epsilon * 10; r = d;
+        d = double.Epsilon * 100; r = d;
+        d = double.Epsilon * 1000; r = d;
+
+        r = (BigRat)Math.Pow(10, 3); var e = BigRat.ILog10(r); //ss = r.ToString();
+        s = BigRat.Normalize(r); e = BigRat.ILog10(r);
+
+        r = 1e10; r = 1e100; r = 1e200; r = 1e300;
+        var aa = Enumerable.Range(0, 309).
+          Select(i => (a: (BigRat)Math.Pow(10, i), b: (BigRat)Math.Pow(10, -i))).ToArray();
+        var bb = Enumerable.Range(0, 309).
+          Select(i => (a: new BigRat(Math.Pow(10, i)), b: new BigRat(Math.Pow(10, -i)))).ToArray();
+        var cc = aa.Zip(bb, (a, b) => (a: a.a - b.a, b: a.b - b.b)).ToArray();
+        var dd = cc.Select(p => BigRat.Abs(p.a)).Max();
+        var ee = cc.Select(p => BigRat.Abs(p.b)).Max();
+      }
       static void test_atan2()
       {
         double x, y; BigRat a, b, c, d, u, v, w, q;
@@ -456,15 +468,15 @@ namespace Test
       {
         {
           double d, c; BigRat r;
-          d = 12345.67; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
-          d = -0.5; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
-          d = 0.1; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
-          d = double.MaxValue; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
-          d = double.MinValue; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
-          d = double.Epsilon; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
-          d = -double.Epsilon; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
-          d = double.Epsilon * 10; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
-          d = double.Epsilon * 1000; r = BigRat.CreatePrecise(d); c = (double)r; Debug.Assert(c == d);
+          d = 12345.67; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
+          d = -0.5; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
+          d = 0.1; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
+          d = double.MaxValue; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
+          d = double.MinValue; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
+          d = double.Epsilon; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
+          d = -double.Epsilon; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
+          d = double.Epsilon * 10; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
+          d = double.Epsilon * 1000; r = new BigRat(d); c = (double)r; Debug.Assert(c == d);
         }
 #if NET7_0_OR_GREATER
         {
