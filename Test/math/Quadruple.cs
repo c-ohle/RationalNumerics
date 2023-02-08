@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 namespace NewNumeric
 {
   // Float128 type, under construction
+  // https://en.wikipedia.org/wiki/Quadruple-precision_floating-point_format
+
   [Serializable, SkipLocalsInit, StructLayout(LayoutKind.Sequential), DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly struct Quadruple
   {

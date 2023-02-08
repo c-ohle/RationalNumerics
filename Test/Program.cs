@@ -8,23 +8,24 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+
 using NewNumeric;
 
 namespace Test
 {
-  
+
   internal unsafe static class Program
   {
     [STAThread]
     static void Main()
     {
-      ApplicationConfiguration.Initialize(); bigrat_tests();
+      ApplicationConfiguration.Initialize(); //bigrat_tests();
       Debug.Assert(rat.task_cpu.mark() == 0);
       Application.Run(new MainFrame());
       Debug.Assert(rat.task_cpu.mark() == 0);
     }
-    
-[Conditional("DEBUG")]
+
+    [Conditional("DEBUG")]
     static void bigrat_tests()
     {
       static void test_xxx()
