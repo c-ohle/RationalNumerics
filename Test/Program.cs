@@ -25,32 +25,87 @@ namespace Test
     [Conditional("DEBUG")]
     static void bigrat_tests()
     {
-      test_xxx();
-      test_atan2(); test_asin(); test_log(); test_log2(); test_exp(); test_sin(); 
-      test_atan(); test_pow(); test_sqrt(); test_pi(); test_rounds(); test_tostring(); test_conv();
-      return;
       static void test_xxx()
       {
-        double d; BigRat r, s; //string ss;
+        BigRat r; //, s; //int i, j, k; //double d; string ss;
+        var aa = Enumerable.Range(-309, 309 << 1).Select(i => (i, (BigRat)Math.Pow(10, i))).ToArray();
+        var bb = aa.Where(p => BigRat.ILog10(p.Item2) != p.Item1).ToArray();
+        aa = aa.Select(p => (p.Item1, BigRat.Normalize(p.Item2))).ToArray();
+        bb = aa.Where(p => BigRat.ILog10(p.Item2) != p.Item1).ToArray();
+        aa = Enumerable.Range(-1000, 1000 << 1).Select(i => (i, BigRat.Pow10(i))).ToArray();
+        bb = aa.Where(p => BigRat.ILog10(p.Item2) != p.Item1).ToArray();
+        r = BigRat.Pi(1000);
+        var uu = r.ToSpan().ToArray(); r = new BigRat(uu);
+        var bt = MemoryMarshal.Cast<uint, byte>(r.ToSpan());
+        r = 0; uu = r.ToSpan().ToArray(); r = new BigRat(uu);
+      }      
+      test_xxx();
+      test_ilog10(); test_atan2(); test_asin(); test_log(); test_log2(); test_exp(); test_sin();
+      test_atan(); test_pow(); test_sqrt(); test_pi(); test_rounds(); test_tostring(); test_conv();
+      return;
+      static void test_ilog10()
+      {
+        double d; BigRat r, s; int i, j, k; //string ss;
+        r = BigRat.Parse("9.9"); k = 0;
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("9.99999999"); 
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("9.9999999999999"); 
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("9.9999999999999999999999999999999999999999999999999999"); 
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
 
-        d = double.MaxValue; r = d;
-        d = double.MinValue; r = d;
-        d = double.Epsilon; r = d;
-        d = double.Epsilon * 10; r = d;
-        d = double.Epsilon * 100; r = d;
-        d = double.Epsilon * 1000; r = d;
+        r = BigRat.Parse("999999999999.9"); k = 11;
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("999999999999.99999999");
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("999999999999.9999999999999");
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("999999999999.9999999999999999999999999999999999999999999999999999");
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
 
-        r = (BigRat)Math.Pow(10, 3); var e = BigRat.ILog10(r); //ss = r.ToString();
-        s = BigRat.Normalize(r); e = BigRat.ILog10(r);
+        r = BigRat.Parse("0.000999999"); k = -4;
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("0.0009999999999999999999");
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("0.0009999999999999999999999999999999");
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("0.0009999999999999999999999999999999999999999999999999"); 
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
 
-        r = 1e10; r = 1e100; r = 1e200; r = 1e300;
-        var aa = Enumerable.Range(0, 309).
-          Select(i => (a: (BigRat)Math.Pow(10, i), b: (BigRat)Math.Pow(10, -i))).ToArray();
-        var bb = Enumerable.Range(0, 309).
-          Select(i => (a: new BigRat(Math.Pow(10, i)), b: new BigRat(Math.Pow(10, -i)))).ToArray();
-        var cc = aa.Zip(bb, (a, b) => (a: a.a - b.a, b: a.b - b.b)).ToArray();
-        var dd = cc.Select(p => BigRat.Abs(p.a)).Max();
-        var ee = cc.Select(p => BigRat.Abs(p.b)).Max();
+        r = BigRat.Parse("-0.000999999"); k = -4;
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("-0.0009999999999999999999");
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("-0.0009999999999999999999999999999999");
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+        r = BigRat.Parse("-0.0009999999999999999999999999999999999999999999999999");
+        i = BigRat.ILog10(r); Debug.Assert(i == k);
+
+        var rnd = new Random(1);
+        for (j = 0; j < 100000; j++)
+        {
+          d = Math.Pow(10, k = rnd.Next(-308, +308));
+          r = d; i = BigRat.ILog10(r); Debug.Assert(i == k);
+          s = BigRat.Normalize(r); i = BigRat.ILog10(s); Debug.Assert(i == k);
+
+          d = Math.Pow(10, rnd.Next(-308, +308)) * rnd.NextDouble();
+          k = (int)Math.Floor(Math.Log10(d));
+          r = d; i = BigRat.ILog10(r); Debug.Assert(i == k);
+          s = BigRat.Normalize(r); i = BigRat.ILog10(s); Debug.Assert(i == k);
+        }
+        for (j = 300; j < 2000; j++)
+        {
+          r = BigRat.Pow10(j); i = BigRat.ILog10(r); Debug.Assert(i == j);
+          s = BigRat.Pow10(j) + BigRat.Pow10(j - 1) * rnd.NextDouble(); i = BigRat.ILog10(s); Debug.Assert(i == j);
+        }
+       
+        d = double.MaxValue; r = d; i = BigRat.ILog10(r); Debug.Assert(i==+308); 
+        d = double.MinValue; r = d; i = BigRat.ILog10(r); Debug.Assert(i == +308); 
+        d = double.Epsilon; r = d; i = BigRat.ILog10(r); Debug.Assert(i == -324); 
+        d = double.Epsilon * 10; r = d; i = BigRat.ILog10(r); Debug.Assert(i == -323); 
+        d = double.Epsilon * 100; r = d; i = BigRat.ILog10(r); Debug.Assert(i == -322); 
+        d = double.Epsilon * 1000; r = d; i = BigRat.ILog10(r); Debug.Assert(i == -321); 
       }
       static void test_atan2()
       {

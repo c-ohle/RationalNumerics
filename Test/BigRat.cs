@@ -74,14 +74,14 @@ namespace Test
     }
     public static implicit operator BigRat(double value)
     {
-      if (value == 0) return default;
+      if (value == 0) return default; // if (value == (float)value) { }
       var e = unchecked((int)((*(ulong*)&value >> 52) & 0x7FF) - 1022); //Debug.Assert(!double.IsFinite(v) == (e == 0x401));
-      if (e == 0x401) throw new OverflowException(nameof(value)); // NaN 
+      if (e == 0x401) throw new OverflowException(nameof(value)); // NaN, +/-Inifinity 
       int p = 14 - ((e * 19728) >> 16), t = p; if (p > 308) p = 308; // v < 1E-294
       var d = Math.Abs(value) * Math.Pow(10, p); //Debug.Assert(double.IsNormal(d));
       t = t - p; if (d < 1e14) { t++; if (e == -1022) t += 14 - (int)Math.Log10(*(ulong*)&value & ~(1ul << 63)); }
       if (t != 0) { d *= Math.Pow(10, t); p += t; }
-      var m = (ulong)Math.Round(d); //var a = m / Pow10(p); if (value < 0) a.p![0] |= 0x80000000; return a;
+      var m = (ulong)Math.Round(d); // var a = m / Pow10(p); if (value < 0) a.p![0] |= 0x80000000; return a;
       var u = stackalloc uint[5 + ((e = abs(p)) >> 3)];
       u[0] = (m >> 32) != 0 ? 2u : 1u; *(ulong*)(u + 1) = m;
       var v = u + u[0] + 1; pow10(v, unchecked((uint)e));
@@ -451,27 +451,55 @@ namespace Test
     }
     public static int ILog10(BigRat value)
     {
-      if (value.p == null) return 0; // -int.MaxValue; //-infinity
+      if (value.p == null) return 0;
       fixed (uint* p = value.p)
       {
-        double a = flog10(p), b = flog10(p + (p[0] & 0x3fffffff) + 1), c = a - b;
-        int e = (int)c; //todo: critical region checks
-        if (c < 0) { if (e != c) e--; }
-        return e;
-      }
-      static double flog10(uint* p)
-      {
-        uint n = p[0] & 0x3fffffff; if (n == 1) return Math.Log10(p[1]);
-        var c = BitOperations.LeadingZeroCount(p[n]); Debug.Assert(c != 32);
-        var b = ((long)n << 5) - unchecked((uint)c);
-        ulong h = p[n], m = p[n - 1], l = n > 2 ? p[n - 2] : 0;
-        ulong x = (h << 32 + c) | (m << c) | (l >> 32 - c);
-        var r = Math.Log10(x) + (b - 64) * 0.3010299956639811952;
-        //var r = Math.Log(x, 10) + (b - 64) / Math.Log(10, 2); 
-        return r;
+        var np = p[0] & 0x3fffffff; var nq = p[np + 1]; var q = p + np + 1; // est log(2) / log(10)
+        var mp = ((((long)np << 5) - BitOperations.LeadingZeroCount(p[np])) * 1292913986) >> 32;
+        var mq = ((((long)nq << 5) - BitOperations.LeadingZeroCount(q[nq])) * 1292913986) >> 32;
+        var ex = unchecked((int)(mp - mq)); var ne = 5 + (abs(ex) >> 3);
+        uint* u = stackalloc uint[ne + (value.p.Length + ne) + value.p.Length], w = u + ne, z;
+        for (; ; )
+        {
+          pow10(u, uabs(ex));
+          if (ex < 0) { w[0] = mul(p + 1, np, u + 1, u[0], w + 1); mod(w, q, u); }
+          else { w[0] = mul(q + 1, nq, u + 1, u[0], w + 1); copy(z = w + w[0] + 1, p, np + 1); z[0] &= 0x3fffffff; mod(z, w, u); }
+          Debug.Assert(u[0] == 1);
+          if (u[1] == 00) { ex--; continue; }
+          if (u[1] >= 10) { ex++; continue; }
+          return ex;
+        }
       }
     }
-
+    //public static int _ILog10(BigRat value)
+    //{
+    //  if (value.p == null) return 0;
+    //  fixed (uint* p = value.p)
+    //  {             
+    //    double a = flog10(p), b = flog10(p + (p[0] & 0x3fffffff) + 1);
+    //    double c = a - b, f = Math.Floor(c), d = c - f;
+    //    int e = (int)f;
+    //    if (d > 0.99999999999999) { e++; }
+    //    for (; ; )
+    //    {
+    //      var v = Abs(Truncate(value / Pow10(e)));
+    //      if (v <= 0) { e--; continue; }
+    //      if (v >= 10) { e++; continue; }
+    //      break;
+    //    }
+    //    return e;
+    //  }
+    //  static double flog10(uint* p)
+    //  {
+    //    uint n = p[0] & 0x3fffffff; if (n == 1) return Math.Log10(p[1]);
+    //    var c = BitOperations.LeadingZeroCount(p[n]);
+    //    var b = unchecked(((long)n << 5) - (uint)c);
+    //    ulong h = p[n], m = p[n - 1], l = n > 2 ? p[n - 2] : 0;
+    //    ulong x = (h << 32 + c) | (m << c) | (l >> 32 - c);
+    //    var r = Math.Log(x, 10) + (b - 64) * 0.3010299956639811952; // Math.Log(2, 10)
+    //    return r;
+    //  }
+    //}
     public static BigRat Abs(BigRat a)
     {
       return Sign(a) >= 0 ? a : -a;
@@ -583,9 +611,9 @@ namespace Test
     }
     public static BigRat Pow(BigRat x, int y)
     {
-      BigRat r = 1u; //todo: stack
+      var r = (BigRat)1u;
       for (var e = uabs(y); ; e >>= 1) { if ((e & 1) != 0) r *= x; if (e <= 1) break; x *= x; }
-      if (y < 0) fixed (uint* p = r.p) inv(p); //if (y < 0) r = 1 / r;
+      if (y < 0) fixed (uint* p = r.p) inv(p); // if (y < 0) r = 1 / r;
       return r;
     }
     public static BigRat Pow(BigRat x, BigRat y, int digits)
@@ -1194,7 +1222,7 @@ namespace Test
       return Parse(s.AsSpan(), NumberStyles.Float, provider);
     }
 
-    public BigRat(double value) //bit precise
+    public BigRat(double value) // fast bit precise conversion
     {
       if (value == 0) return; int h = ((int*)&value)[1], e = ((h >> 20) & 0x7FF) - 1075;
       if (e == 0x3cc) throw new OverflowException(nameof(value)); // NaN 
@@ -1205,18 +1233,19 @@ namespace Test
       var n = p[0]; p[0] |= unchecked((uint)h) & 0x80000000; this.p = new BigRat(p, 2 + n + p[n + 1]).p;
     }
 
-    public static implicit operator ReadOnlySpan<uint>(BigRat value)
+    public ReadOnlySpan<uint> ToSpan()
     {
-      return value.p;
+      return p;
     }
-    public static explicit operator BigRat(ReadOnlySpan<uint> value)
+    public BigRat(ReadOnlySpan<uint> value)
     {
-      uint n = unchecked((uint)value.Length), u, v; if (n == 0) return default;
+      uint n = unchecked((uint)value.Length), u, v; if (n == 0) return;
       fixed (uint* p = value)
       {
-        if ((((u = p[0] & 0x3fffffff) == 0 || (u + 3 > n)) || (((v = p[u + 1]) == 0)) || (u + v + 2 > n)))
+        if ((u = p[0] & 0x7fffffff) == 0 || u + 3 > n || u != 1 && p[u] == 0 || // invalid num
+            (v = p[u + 1]) == 0 || u + v + 2 > n || p[u + v + 1] == 0) // invalid den
           throw new ArgumentException(nameof(value));
-        var a = new BigRat(p, n); a.p![0] &= ~0x40000000u; return a;
+        this.p = p[0] != 0 ? value.ToArray() : null;
       }
     }
 

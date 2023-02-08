@@ -187,7 +187,7 @@ namespace Test
     void mandel_BigRat()
     {
       calcmap(); if (map == null) return;
-      static BigRat conv(BigRational value) => (BigRat)(ReadOnlySpan<uint>)value;
+      static BigRat conv(BigRational value) => new BigRat((ReadOnlySpan<uint>)value);
       var x1 = conv(mx - scale * dx / dy);
       var y1 = conv(my - scale); var lim = this.lim;
       var fi = conv(2 * scale / dy); var qmax = (BigRat)4;
