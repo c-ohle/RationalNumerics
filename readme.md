@@ -1,5 +1,12 @@
 # BigRational - a novel rational number class.
 
+> A new implementation is under development:   
+[BigRat.cs](https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/BigRat.cs)
+(as single file solution, just copy and try)  
+New basics, smaller, more performance on operator level,
+[description in short](https://c-ohle.github.io/RationalNumerics/api/bigrat/bigrat.html).  
+Maybe already the better choice.
+
 BigRational is a rational number class for arbitrary-precision arithmetic.  
 There are no practical limits to the precision except the ones implied by the available memory.  
 In difference to the usual implementations of such a class, the new system offers 
@@ -44,7 +51,7 @@ BigInteger in NET 7 will use Spans more stack allocs and shared buffers.
 The benchmarks made with NET 7 preview versions are showing that this reduces a little bit the memory pressure  
 but further degreads the performance especialliy for big numbers.
 
-![banch1](docs/images/benchmarks1.png)
+![banch1](docs/images/benchmarks2.png)
 
 More detailed benchmarks coming soon. 
 

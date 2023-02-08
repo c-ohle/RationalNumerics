@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using System.Numerics;
 using System.Numerics.Rational;
 using System.Runtime.InteropServices;
+using NewNumeric;
 
 namespace Test
 {

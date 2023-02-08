@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 
-namespace Test
+namespace NewNumeric
 {
   [Serializable, SkipLocalsInit, DebuggerDisplay("{ToString(\"\"),nq}")]
   public unsafe readonly struct BigRat :
@@ -458,7 +458,7 @@ namespace Test
         var mp = ((((long)np << 5) - BitOperations.LeadingZeroCount(p[np])) * 1292913986) >> 32;
         var mq = ((((long)nq << 5) - BitOperations.LeadingZeroCount(q[nq])) * 1292913986) >> 32;
         var ex = unchecked((int)(mp - mq)); var ne = 5 + (abs(ex) >> 3);
-        uint* u = stackalloc uint[ne + (value.p.Length + ne) + value.p.Length], w = u + ne, z;
+        uint* u = stackalloc uint[(ne + value.p.Length) << 1], w = u + ne, z;
         for (; ; )
         {
           pow10(u, uabs(ex));
@@ -471,35 +471,6 @@ namespace Test
         }
       }
     }
-    //public static int _ILog10(BigRat value)
-    //{
-    //  if (value.p == null) return 0;
-    //  fixed (uint* p = value.p)
-    //  {             
-    //    double a = flog10(p), b = flog10(p + (p[0] & 0x3fffffff) + 1);
-    //    double c = a - b, f = Math.Floor(c), d = c - f;
-    //    int e = (int)f;
-    //    if (d > 0.99999999999999) { e++; }
-    //    for (; ; )
-    //    {
-    //      var v = Abs(Truncate(value / Pow10(e)));
-    //      if (v <= 0) { e--; continue; }
-    //      if (v >= 10) { e++; continue; }
-    //      break;
-    //    }
-    //    return e;
-    //  }
-    //  static double flog10(uint* p)
-    //  {
-    //    uint n = p[0] & 0x3fffffff; if (n == 1) return Math.Log10(p[1]);
-    //    var c = BitOperations.LeadingZeroCount(p[n]);
-    //    var b = unchecked(((long)n << 5) - (uint)c);
-    //    ulong h = p[n], m = p[n - 1], l = n > 2 ? p[n - 2] : 0;
-    //    ulong x = (h << 32 + c) | (m << c) | (l >> 32 - c);
-    //    var r = Math.Log(x, 10) + (b - 64) * 0.3010299956639811952; // Math.Log(2, 10)
-    //    return r;
-    //  }
-    //}
     public static BigRat Abs(BigRat a)
     {
       return Sign(a) >= 0 ? a : -a;
@@ -1571,6 +1542,7 @@ namespace Test
     }
     static uint mul(uint* a, uint na, uint* b, uint nb, uint* r)
     {
+      //todo: enable optis
       //if ((na < nb ? na : nb) >= 32 && na + nb < 25000) { kmu(a, na, b, nb, r); if (r[(na = na + nb) - 1] == 0) na--; return na; }
       //if (na < nb) { var u = na; na = nb; nb = u; var v = a; a = b; b = v; }
       //if (na == 1) { *(ulong*)r = (ulong)a[0] * b[0]; goto ret; }

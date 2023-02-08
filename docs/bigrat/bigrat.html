@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>BigRat </title>
+    <title>A new BigRational class - in short: </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="BigRat ">
+    <meta name="title" content="A new BigRational class - in short: ">
     <meta name="generator" content="docfx 2.59.1.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
@@ -65,89 +65,30 @@
         <div class="article row grid">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-<h2 id="bigrat">BigRat</h2>
+<h2 id="a-new-bigrational-class---in-short">A new BigRational class - in short:</h2>
 
-<blockquote>
-<p>Available as single file solution <a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/BigRat.cs">GitHub BigRat.cs</a>
-it is possible to get a always latest version from there for now by copy the content.</p>
-</blockquote>
-<h3 id="general-in-short">General in short</h3>
+<p><a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/BigRat.cs">BigRat.cs</a> (single file solution, just copy and try)</p>
 <ul>
-<li>Interface system-conform and should fulfill the C# API
-requirements.<br></li>
-<li>No stackmachine (VM).<br></li>
-<li>No static or thread-local members.<br></li>
-<li>No nested classes.<br></li>
-<li>No caches or use of <code>ArrayPool&lt;&gt;.Shared</code> memory.<br></li>
-<li>No bad tricks or hacks.<br></li>
-<li>24 KB the class only requires in a assembly.<br></li>
-<li>30% less performance than BigRational,
-but up to 20x faster than a BigInteger-based implementation.<br></li>
-<li>NET6, .NET7, .NET8 alpha</li>
+<li>No stack-machine, no nested classes.</li>
+<li>No static members, no shared buffers, no cache.</li>
+<li>No bad tricks, no hacks.</li>
+<li>Conforms to the .NET Framework Design Guidelines.</li>
+<li>Performance 30-50% less compared to stack-machine (only - currently).</li>
+<li>In assembly size ~28 KB.</li>
+<li>Tested for .NET 6, 7, 8 alpha, (ARM without INumber interfaces)</li>
 </ul>
-<h3 id="new-concept">New concept</h3>
+<p><strong>New approach:</strong></p>
 <ul>
-<li><h4 id="using-the-processor-stack">Using the processor stack</h4>
-<p>Uses <code>stackalloc</code> instead of managed buffers (stackmachine).<br>
-This is due to the observation that long before critical stackalloc's,
-say more than half of the available stacksize, the calculations becomes
-such as slow that it makes no more sense to work with.</br>
-This is because of the exponential relation between
-calculation speed and memory size of the fractions.<br>
-Only a few critical functions remain to protect,
-such as <code>ToString()</code> or <code>Parse()</code>, with a threshold and fallback to
-managed memory.</p>
-</li>
-<li><h4 id="no-normalization-by-default">No normalization by default.</h4>
-<p>This is due to the observation that normalization often reduces the bitcount but rarely the effective uint array size,
-which would speed up subsequent operations.<br>
-But of course an explicit normalization via <code>BigRat.Normalize(BigRat value)</code>
-is always possible, which enables efficient fine-tuning.</br>
-Normalization is perormance critical especially for big fractions and
-to automate is this difficult especially for C# where we have no
-custom assign operators.</p>
-</li>
-<li><h4 id="exceptions-instead-of-nan-or-infinity-values">Exceptions instead of NaN or Infinity values</h4>
-<p>This is due to the observation that for precisission-number-types
-like <code>System.Decimal</code> too it makes not much sense to emulate the floating-point
-behavior regarding Infinitys, NaN or NegativZero values.<br>
-Rational number-types can not calculate to Infinity because
-MinValue, MaxValue and Epsilon is not defined.</p>
-</li>
+<li>Using processor stack <code>stackalloc</code> instead of a stack-machine.<br>
+<em>(This due to the observation that the performance breaks down to an unusable level long before stackalloc becomes critical.)</em></li>
+<li>Normalization only on user request.<br>
+<em>(This due to the observation that normalization often reduces the size less but cost performance)</em></li>
+<li>Exceptions instead of <code>NaN</code> or <code>Infinity</code>.
+<em>(Makes not much sense to emulate floating-point behavior)</em></li>
 </ul>
-<h3 id="interface">Interface</h3>
-<ul>
-<li>As preview on <a href="interface.html">GitHup Interface.htm</a></li>
-<li>So far compatible to the interface of System.double</li>
-<li>Additional<br>
-- <code>BigRat Normalize(BigRat value)</code> necessary</br>
-- <code>BigRat GetNumerator(BigRat value)</code> self explaining<br>
-- <code>BigRat GetDenominator(BigRat value)</code> self explaining</br>
-- <code>BigRat Round(BigRat value, uint bits)</code> fast binary rounding<br>
-- <code>int ILog10(BigRat value)</code> fast Log10 without GC allocs</br></li>
-<li>Differences<br>
-- <code>BigRat Pi(int digits)</code> &lt;-&gt; <code>double.Pi</code></br>
-- <code>BigRat E(int digits)</code> &lt;-&gt; <code>double.E</code><br></li>
-<li>No equivalent:<br>
-- <code>double.MinValue</code> -&gt; undefined</br>
-- <code>double.MaxValue</code> -&gt; undefined<br>
-- <code>double.Epsilon</code> -&gt; 0</br>
-- <code>double.NaN</code> -&gt; exeptions<br>
-- <code>double.NegativeZero</code> -&gt; undefined</br>
-- <code>double.PositiveInfinty</code> -&gt; undefined<br>
-- <code>double.NegativeInfinty</code> -&gt; undefined</br></li>
-</ul>
-<h3 id="data-structure">Data Structure</h3>
-<pre><code class="lang-csharp">readonly struct BigRat
-{
-  private readonly uint[]? p; 
-  //...
-}
-</code></pre>
-<p><img src="rat_p_struct.png" alt="image1"></p>
-<h3 id="source-on-github">Source on GitHub</h3>
-<p><a href="https://github.com/c-ohle/RationalNumerics/blob/master/Test/BigRat.cs">BigRat.cs</a></p>
-<p>-</p>
+<p>This as a first reference version.
+Major improvements/optimizations are possible.
+Of course, the stackallocs will be secured.</p>
 </article>
           </div>
           
