@@ -4,7 +4,7 @@
 [BigRat.cs](https://github.com/c-ohle/RationalNumerics/blob/master/Test/math/BigRat.cs)
 (as single file solution, just copy and try)  
 New basics, smaller, more performance on operator level,
-[description in short](https://c-ohle.github.io/RationalNumerics/api/bigrat/bigrat.html).  
+[description in short](https://c-ohle.github.io/RationalNumerics/bigrat/bigrat.html).  
 Maybe already the better choice.
 
 BigRational is a rational number class for arbitrary-precision arithmetic.  
