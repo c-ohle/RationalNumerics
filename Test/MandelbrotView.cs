@@ -197,10 +197,10 @@ namespace Test
       {
         if (cancel) { po.Break(); return; }
         var p = scan + py * (stride >> 2);
-        var y = BigRat.Normalize(y1 + py * fi);
+        var y = (y1 + py * fi).Normalize();
         for (int px = 0; px < dx && !cancel; px++)
         {
-          var x = BigRat.Normalize(x1 + px * fi);
+          var x = (x1 + px * fi).Normalize();
           int i = 0; var a = x; var b = y;
           for (; i < imax; i++)
           {

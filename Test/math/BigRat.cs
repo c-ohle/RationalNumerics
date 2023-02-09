@@ -185,7 +185,7 @@ namespace NewNumeric
         var vb = ((ulong)b[nb] << 32 + cb) | (nb < 2 ? 0 : ((ulong)b[nb - 1] << cb) | (nb < 3 ? 0 : (ulong)b[nb - 2] >> 32 - cb));
         var e = ((na << 5) - ca) - ((nb << 5) - cb); Debug.Assert(vb != 0);
         var r = (double)(va >> 11) / (vb >> 11);
-        if (e < -1021) { if (e < -1074) r = 0; else *(ulong*)&r = (ulong)(r * (1 << ((int)e + 1074))); }
+        if (e < -1021) { if (e >= -1074) *(ulong*)&r = (ulong)(r * (1L << ((int)e + 1074))) + (((*(ulong*)&r >> 52) & 1) ^ 1); else r = 0; }
         else if (e > +1023) r = double.PositiveInfinity;
         else { var p = (0x3ff + e) << 52; r *= *(double*)&p; }
         ((uint*)&r)[1] |= a[0] & 0x80000000; return r;
@@ -199,7 +199,7 @@ namespace NewNumeric
     {
       if (value.p == null) return default;
       var s = new ReadOnlySpan<uint>(Truncate(value).p);
-      var a = System.Runtime.InteropServices.MemoryMarshal.Cast<uint, byte>(s.Slice(1, unchecked((int)(s[0] & 0x3fffffff))));
+      var a = MemoryMarshal.Cast<uint, byte>(s.Slice(1, unchecked((int)(s[0] & 0x3fffffff))));
       var r = new BigInteger(a, true, false); if (value < 0) r = -r; return r;
     }
 
@@ -485,19 +485,19 @@ namespace NewNumeric
     }
     public static BigRat MaxMagnitude(BigRat x, BigRat y)
     {
-      return x.CompareTo(y) <= 0 ? x : y;
+      return Abs(x).CompareTo(Abs(y)) >= 0 ? x : y; //todo: acmp
     }
     public static BigRat MinMagnitude(BigRat x, BigRat y)
     {
-      return x.CompareTo(y) >= 0 ? x : y;
+      return Abs(x).CompareTo(Abs(y)) <= 0 ? x : y; //todo: acmp
     }
     public static BigRat MaxMagnitudeNumber(BigRat x, BigRat y)
     {
-      return x.CompareTo(y) <= 0 ? x : y; // IEEE 754:2019 does not propagate NaN inputs back 
+      return MaxMagnitude(x, y); // IEEE 754:2019 does not propagate NaN inputs back 
     }
     public static BigRat MinMagnitudeNumber(BigRat x, BigRat y)
     {
-      return x.CompareTo(y) >= 0 ? x : y; // IEEE 754:2019 does not propagate NaN inputs back 
+      return MinMagnitude(x, y); // IEEE 754:2019 does not propagate NaN inputs back 
     }
     public static BigRat CopySign(BigRat value, BigRat sign)
     {
@@ -507,21 +507,6 @@ namespace NewNumeric
     {
       if (min > max) throw new ArgumentException($"{nameof(min)} {nameof(max)}");
       return value < min ? min : value > max ? max : value;
-    }
-    public static BigRat Normalize(BigRat value)
-    {
-      if (value.p == null) return value;
-      fixed (uint* p = value.p)
-      {
-        var d = p + (p[0] & 0x3fffffff) + 1; if (*(ulong*)d == 0x100000001) return value;
-        var l = value.p.Length; var s = stackalloc uint[l * 3]; uint x;
-        copy(s, p, unchecked((uint)l)); s[0] &= 0x3fffffff;
-        var e = gcd(s, s + s[0] + 1); if (*(ulong*)e == 0x100000001) return value;
-        var t = s + l; copy(t, p, unchecked((uint)l)); t[0] &= 0x3fffffff;
-        var r = t + l; d = t + t[0] + 1; mod(t, e, r); mod(d, e, r + r[0] + 1);
-        x = r[0]; r[0] |= p[0] & 0x80000000;
-        return new BigRat(r, 2 + x + r[x + 1]);
-      }
     }
     public static BigRat Truncate(BigRat value)
     {
@@ -541,8 +526,13 @@ namespace NewNumeric
     }
     public static BigRat Round(BigRat value, int digits)
     {
+      //todo: inline see BigRat(double value)
       // if (value.p == null) return value; if(digits == 0) return Truncate(value);
       var e = Pow10(digits); value = Round(value * e) / e; return value;
+    }
+    public static BigRat Round(BigRat value, MidpointRounding mode)
+    {
+      return Round(value, 0, mode);
     }
     public static BigRat Round(BigRat value, int digits, MidpointRounding mode)
     {
@@ -555,14 +545,10 @@ namespace NewNumeric
         case MidpointRounding.ToPositiveInfinity: value = Ceiling(value); break;
         case MidpointRounding.AwayFromZero:
           var u = Truncate(value); var v = value - u;
-          if (Abs(v) >= 0.5) u += Sign(v); value = u;
+          if (Abs(v) >= new BigRat(1, 2)) u += Sign(v); value = u; // >= 0.5
           break;
       }
       value /= p; return value;
-    }
-    public static BigRat Round(BigRat value, MidpointRounding mode)
-    {
-      return Round(value, 0, mode);
     }
     public static BigRat RoundB(BigRat value, int bits)
     {
@@ -609,68 +595,76 @@ namespace NewNumeric
       pow10(v = y >= 0 ? u : u + 2, e); *(ulong*)(u + (y >= 0 ? u[0] + 1 : 0)) = 0x100000001;
       return new BigRat(u, 3 + v[0]);
     }
+    public static BigRat Sqrt(BigRat x)
+    {
+      return Sqrt(x, 032);
+    }
     public static BigRat Sqrt(BigRat x, int digits)
     {
       if (x <= 0) { if (x == 0) return default; throw new ArgumentException(nameof(x)); }
       x = sqrt(x, base2(abs(digits))); return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Sqrt(BigRat x)
+    public static BigRat Cbrt(BigRat x)
     {
-      return Sqrt(x, 032);
+      return Cbrt(x, 032);
     }
     public static BigRat Cbrt(BigRat x, int digits)
     {
       return Pow(x, new BigRat(1, 3), digits);
     }
-    public static BigRat Cbrt(BigRat x)
+    public static BigRat RootN(BigRat x, int n)
     {
-      return Cbrt(x, 032);
+      return RootN(x, n, 032);
     }
     public static BigRat RootN(BigRat x, int n, int digits)
     {
       return Pow(x, new BigRat(1, n), digits);
     }
-    public static BigRat RootN(BigRat x, int n)
+    public static BigRat Hypot(BigRat x, BigRat y)
     {
-      return RootN(x, n, 032);
+      return Hypot(x, y, 032);
     }
     public static BigRat Hypot(BigRat x, BigRat y, int digits)
     {
       return Sqrt(x * x + y * y, digits);
     }
-    public static BigRat Hypot(BigRat x, BigRat y)
+    public static BigRat Exp(BigRat x)
     {
-      return Hypot(x, y, 032);
+      return Exp(x, 032);
     }
     public static BigRat Exp(BigRat x, int digits)
     {
       x = exp(x, base2(abs(digits)));
       return digits >= 0 ? Round(x, digits - ILog10(x)) : x;
     }
-    public static BigRat Exp(BigRat x)
+    public static BigRat Exp10(BigRat x)
     {
-      return Exp(x, 032);
+      return Exp10(x, 032);
     }
     public static BigRat Exp10(BigRat x, int digits)
     {
       return Pow(10, x, digits); //todo: test
     }
-    public static BigRat Exp10(BigRat x)
+    public static BigRat Exp2(BigRat x)
     {
-      return Exp10(x, 032);
+      return Exp2(x, 032);
     }
     public static BigRat Exp2(BigRat x, int digits)
     {
       return Pow(2, x, digits); //todo: test
     }
-    public static BigRat Exp2(BigRat x)
+    public static BigRat Log(BigRat x)
     {
-      return Exp2(x, 032);
+      return Log(x, 032);
     }
     public static BigRat Log(BigRat x, int digits)
     {
       if (x <= 0) throw new ArgumentException(nameof(x));
       x = log(x, base2(abs(digits))); return digits >= 0 ? Round(x, digits) : x;
+    }
+    public static BigRat Log(BigRat x, BigRat newBase)
+    {
+      return Log(x, newBase, 032);
     }
     public static BigRat Log(BigRat x, BigRat newBase, int digits)
     {
@@ -680,13 +674,9 @@ namespace NewNumeric
       var p = base2(abs(digits)); x = log(x, p) / log(newBase, p);
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Log(BigRat x)
+    public static BigRat Log2(BigRat x)
     {
-      return Log(x, 032);
-    }
-    public static BigRat Log(BigRat x, BigRat newBase)
-    {
-      return Log(x, newBase, 032);
+      return Log2(x, 032);
     }
     public static BigRat Log2(BigRat x, int digits)
     {
@@ -694,9 +684,9 @@ namespace NewNumeric
       x = log2(x, base2(abs(digits)));
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Log2(BigRat x)
+    public static BigRat Log10(BigRat x)
     {
-      return Log2(x, 032);
+      return Log10(x, 032);
     }
     public static BigRat Log10(BigRat x, int digits)
     {
@@ -704,51 +694,63 @@ namespace NewNumeric
       var b = base2(abs(digits)); x = log2(x, b) / log2(10, b); //todo: test 
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Log10(BigRat x)
+    public static BigRat Pi()
     {
-      return Log10(x, 032);
+      return Pi(032);
     }
     public static BigRat Pi(int digits)
     {
       var x = pi(base2(abs(digits)));
       return digits >= 0 ? Round(x, digits) : x;
     }
+    public static BigRat Tau()
+    {
+      return Tau(032);
+    }
     public static BigRat Tau(int digits)
     {
       var x = pi(base2(abs(digits))) * 2;
       return digits >= 0 ? Round(x, digits) : x;
+    }
+    public static BigRat E()
+    {
+      return E(32);
     }
     public static BigRat E(int digits)
     {
       var x = exp(1, base2(abs(digits)));
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Sin(BigRat x, int digits)
-    {
-      x = sin(x, base2(abs(digits)), false);
-      return digits >= 0 ? Round(x, digits) : x;
-    }
     public static BigRat Sin(BigRat x)
     {
       return Sin(x, 032);
     }
-    public static BigRat Cos(BigRat x, int digits)
+    public static BigRat Sin(BigRat x, int digits)
     {
-      x = sin(x, base2(abs(digits)), true);
+      x = sin(x, base2(abs(digits)), false);
       return digits >= 0 ? Round(x, digits) : x;
     }
     public static BigRat Cos(BigRat x)
     {
       return Cos(x, 032);
     }
-    public static BigRat Tan(BigRat x, int digits)
+    public static BigRat Cos(BigRat x, int digits)
     {
-      var d = -abs(digits); x = Sin(x, d) / Cos(x, d); //todo: test alg 
+      x = sin(x, base2(abs(digits)), true);
       return digits >= 0 ? Round(x, digits) : x;
     }
     public static BigRat Tan(BigRat x)
     {
       return Tan(x, 032);
+    }
+    public static BigRat Tan(BigRat x, int digits)
+    {
+      var d = -abs(digits); x = Sin(x, d) / Cos(x, d); //todo: test alg 
+      return digits >= 0 ? Round(x, digits) : x;
+    }
+    public static BigRat Asin(BigRat x)
+    {
+      return Asin(x, 032);
     }
     public static BigRat Asin(BigRat x, int digits)
     {
@@ -758,9 +760,9 @@ namespace NewNumeric
       else throw new ArgumentException(nameof(x));
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Asin(BigRat x)
+    public static BigRat Acos(BigRat x)
     {
-      return Asin(x, 032);
+      return Acos(x, 032);
     }
     public static BigRat Acos(BigRat x, int digits)
     {
@@ -769,18 +771,18 @@ namespace NewNumeric
       if (b > 0) x = 2 * atan(sqrt(a / b, t), t); else x = pi(t);
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Acos(BigRat x)
+    public static BigRat Atan(BigRat x)
     {
-      return Acos(x, 032);
+      return Atan(x, 032);
     }
     public static BigRat Atan(BigRat x, int digits)
     {
       x = atan(x, base2(abs(digits)));
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Atan(BigRat x)
+    public static BigRat Atan2(BigRat y, BigRat x)
     {
-      return Atan(x, 032);
+      return Atan2(y, x, 032);
     }
     public static BigRat Atan2(BigRat y, BigRat x, int digits)
     {
@@ -794,45 +796,41 @@ namespace NewNumeric
         else throw new ArgumentException(); //x == y == 0
       }
     }
-    public static BigRat Atan2(BigRat y, BigRat x)
+    public static BigRat Acosh(BigRat x)
     {
-      return Atan2(y, x, 032);
+      return Acosh(x, 032);
     }
     public static BigRat Acosh(BigRat x, int digits)
     {
       var d = -abs(digits); x = Log(x + Sqrt(x * x - 1, d), d); //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Acosh(BigRat x)
+    public static BigRat Asinh(BigRat x)
     {
-      return Acosh(x, 032);
+      return Asinh(x, 032);
     }
     public static BigRat Asinh(BigRat x, int digits)
     {
       var d = -abs(digits); x = Log(x + Sqrt(x * x + 1, d), d); //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Asinh(BigRat x)
+    public static BigRat Atanh(BigRat x)
     {
-      return Asinh(x, 032);
+      return Atanh(x, 032);
     }
     public static BigRat Atanh(BigRat x, int digits)
     {
       var d = -abs(digits); x = Log((1 + x) / (1 - x), d) / 2; //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
-    public static BigRat Atanh(BigRat x)
+    public static BigRat Cosh(BigRat x)
     {
-      return Atanh(x, 032);
+      return Cosh(x, 032);
     }
     public static BigRat Cosh(BigRat x, int digits)
     {
       var d = -abs(digits); x = (Exp(x, d) + Exp(-x, d)) / 2; //todo: test
       return digits >= 0 ? Round(x, digits) : x;
-    }
-    public static BigRat Cosh(BigRat x)
-    {
-      return Cosh(x, 032);
     }
     public static BigRat Sinh(BigRat x, int digits)
     {
@@ -843,93 +841,102 @@ namespace NewNumeric
     {
       return Sinh(x, 032);
     }
-    public static BigRat Tanh(BigRat x, int digits)
-    {
-      var d = -abs(digits); x = 1 - 2 / (Exp(x * 2, d) + 1); //todo: test
-      return digits >= 0 ? Round(x, digits) : x;
-    }
     public static BigRat Tanh(BigRat x)
     {
       return Tanh(x, 032);
     }
-    public static BigRat AcosPi(BigRat x, int digits)
+    public static BigRat Tanh(BigRat x, int digits)
     {
-      var d = -abs(digits); x = Acos(x, d) / Pi(d); //todo: test
+      var d = -abs(digits); x = 1 - 2 / (Exp(x * 2, d) + 1); //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
     public static BigRat AcosPi(BigRat x)
     {
       return AcosPi(x, 032);
     }
-    public static BigRat AsinPi(BigRat x, int digits)
+    public static BigRat AcosPi(BigRat x, int digits)
     {
-      var d = -abs(digits); x = Asin(x, d) / Pi(d); //todo: test
+      var d = -abs(digits); x = Acos(x, d) / Pi(d); //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
     public static BigRat AsinPi(BigRat x)
     {
       return AsinPi(x, 032);
     }
-    public static BigRat AtanPi(BigRat x, int digits)
+    public static BigRat AsinPi(BigRat x, int digits)
     {
-      var d = -abs(digits); x = Atan(x, d) / Pi(d); //todo: test
+      var d = -abs(digits); x = Asin(x, d) / Pi(d); //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
     public static BigRat AtanPi(BigRat x)
     {
       return AtanPi(x, 032);
     }
-    public static BigRat CosPi(BigRat x, int digits)
+    public static BigRat AtanPi(BigRat x, int digits)
     {
-      var d = -abs(digits); x = Cos(x * Pi(d), d); //todo: test
+      var d = -abs(digits); x = Atan(x, d) / Pi(d); //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
     public static BigRat CosPi(BigRat x)
     {
       return CosPi(x, 032);
     }
-    public static BigRat SinPi(BigRat x, int digits)
+    public static BigRat CosPi(BigRat x, int digits)
     {
-      var d = -abs(digits); x = Sin(x * Pi(d), d); //todo: test
+      var d = -abs(digits); x = Cos(x * Pi(d), d); //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
     public static BigRat SinPi(BigRat x)
     {
       return SinPi(x, 032);
     }
-    public static BigRat TanPi(BigRat x, int digits)
+    public static BigRat SinPi(BigRat x, int digits)
     {
-      var d = -abs(digits); x = Tan(x * Pi(d), d); //todo: test
+      var d = -abs(digits); x = Sin(x * Pi(d), d); //todo: test
       return digits >= 0 ? Round(x, digits) : x;
     }
     public static BigRat TanPi(BigRat x)
     {
       return TanPi(x, 032);
     }
-    public static (BigRat Sin, BigRat Cos) SinCos(BigRat x, int digits)
+    public static BigRat TanPi(BigRat x, int digits)
     {
-      return (Sin(x, digits), Cos(x, digits));
+      var d = -abs(digits); x = Tan(x * Pi(d), d); //todo: test
+      return digits >= 0 ? Round(x, digits) : x;
     }
     public static (BigRat Sin, BigRat Cos) SinCos(BigRat x)
     {
       return SinCos(x, 032);
     }
-    public static (BigRat SinPi, BigRat CosPi) SinCosPi(BigRat x, int digits)
+    public static (BigRat Sin, BigRat Cos) SinCos(BigRat x, int digits)
     {
-      return (SinPi(x, digits), CosPi(x, digits));
+      return (Sin(x, digits), Cos(x, digits));
     }
     public static (BigRat SinPi, BigRat CosPi) SinCosPi(BigRat x)
     {
       return SinCosPi(x, 032);
     }
-
-    public static bool IsNormalized(BigRat value)
+    public static (BigRat SinPi, BigRat CosPi) SinCosPi(BigRat x, int digits)
     {
-      return Normalize(value).p == value.p;
+      return (SinPi(x, digits), CosPi(x, digits));
+    }
+
+    public static bool IsZero(BigRat value)
+    {
+      return value.p == null;
+    }
+    public static bool IsNegative(BigRat value)
+    {
+      return value.p != null && (value.p[0] & 0x80000000) != 0;
+    }
+    public static bool IsPositive(BigRat value)
+    {
+      return value.p == null || (value.p[0] & 0x80000000) == 0;
     }
     public static bool IsInteger(BigRat value)
     {
-      return mod(value, 4).p != null; // return Truncate(value) == value;
+      // return Truncate(value) == value;
+      return mod(value, 4).p != null;
     }
     public static bool IsEvenInteger(BigRat value)
     {
@@ -942,65 +949,40 @@ namespace NewNumeric
       //return value.p != null && IsInteger(value) && (Normalize(value).p![1] & 1) == 1;
       var a = mod(value, 5); return a.p != null ? (a.p[1] & 1) != 0 : false;
     }
-    public static bool IsFinite(BigRat value)
+    public static bool IsNormalized(BigRat value)
     {
-      return true;
-    }
-    public static bool IsInfinity(BigRat value)
-    {
-      return false;
-    }
-    public static bool IsNaN(BigRat value)
-    {
-      return false;
-    }
-    public static bool IsNegative(BigRat value)
-    {
-      return value.p != null && (value.p[0] & 0x80000000) != 0;
-    }
-    public static bool IsNegativeInfinity(BigRat value)
-    {
-      return false;
-    }
-    public static bool IsNormal(BigRat value)
-    {
-      return value.p != null;
-    }
-    public static bool IsPositive(BigRat value)
-    {
-      return value.p == null || (value.p[0] & 0x80000000) == 0;
-    }
-    public static bool IsPositiveInfinity(BigRat value)
-    {
-      return false;
-    }
-    public static bool IsRealNumber(BigRat value)
-    {
-      return true;
-    }
-    public static bool IsSubnormal(BigRat value)
-    {
-      return false;
-    }
-    public static bool IsZero(BigRat value)
-    {
-      return value.p == null;
+      return value.Normalize().p == value.p;
     }
 
-    public static BigRat GetNumerator(BigRat value)
+    public BigRat Normalize()
     {
-      if (value.p == null) return default;
-      var s = new ReadOnlySpan<uint>(value.p);
+      if (this.p == null) return this;
+      fixed (uint* p = this.p)
+      {
+        var d = p + (p[0] & 0x3fffffff) + 1; if (*(ulong*)d == 0x100000001) return this;
+        var l = this.p.Length; var s = stackalloc uint[l * 3]; uint x;
+        copy(s, p, unchecked((uint)l)); s[0] &= 0x3fffffff;
+        var e = gcd(s, s + s[0] + 1); if (*(ulong*)e == 0x100000001) return this;
+        var t = s + l; copy(t, p, unchecked((uint)l)); t[0] &= 0x3fffffff;
+        var r = t + l; d = t + t[0] + 1; mod(t, e, r); mod(d, e, r + r[0] + 1);
+        x = r[0]; r[0] |= p[0] & 0x80000000;
+        return new BigRat(r, 2 + x + r[x + 1]);
+      }
+    }
+    public BigRat Numerator()
+    {
+      if (this.p == null) return default;
+      var s = new ReadOnlySpan<uint>(this.p);
       var n = (int)(s[0] & 0x3fffffff); var a = new uint[n + 3];
       s.Slice(0, n + 1).CopyTo(a); a[n + 1] = a[n + 2] = 1;
       return new BigRat(a);
     }
-    public static BigRat GetDenominator(BigRat value)
+    public BigRat Denominator()
     {
-      if (value.p == null) return 1;
-      var s = new ReadOnlySpan<uint>(value.p);
+      if (this.p == null) return 1;
+      var s = new ReadOnlySpan<uint>(this.p);
       int n = (int)(s[0] & 0x3fffffff), m = (int)s[n + 1]; var a = new uint[m + 3];
-      new ReadOnlySpan<uint>(value.p).Slice(n + 1, m + 1).CopyTo(a); a[m + 1] = a[m + 2] = 1;
+      new ReadOnlySpan<uint>(this.p).Slice(n + 1, m + 1).CopyTo(a); a[m + 1] = a[m + 2] = 1;
       return new BigRat(a);
     }
 
@@ -1009,7 +991,7 @@ namespace NewNumeric
       if (p == null) return 0;
       fixed (uint* p = this.p)
       {
-        uint h = 0, n; n = p[(n = p[0] & 0x3fffffff) + 1] + n + 2;
+        uint h = 0, n = unchecked((uint)this.p.Length); // n = p[(n = p[0] & 0x3fffffff) + 1] + n + 2;
         for (uint i = 0; i < n; i++) h = ((h << 7) | (h >> 25)) ^ p[i];
         return unchecked((int)h);
       }
@@ -1065,8 +1047,8 @@ namespace NewNumeric
       else if (e != 0) a = a / BigRat.Pow10(e);
       int n = tos(s.Slice(0, f == 'F' ? Math.Max(d + e, 0) + 2 : d + 1), a, f == 'Q', out var r);
       if (n == d + 1) { if (f != 'E' && f != 'F') n--; if (f == 'Q') { if ((g & ~0x20) == 'R') goto fmq; s[n++] = '…'; } }
-      else if (f == 'Q' && abs(x) < d) e = 0; //f == 'Q' && x >= 0 && x <= d
-      if (r != -1) { s.Slice(r, n - r).CopyTo(s.Slice(r + 1)); s[r] = '\''; n++; if (r == 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '0'; n++; e++; } }
+      //else if (f == 'Q' && abs(x) < d) { e = 0; }
+      if (r != -1) { s.Slice(r, n - r).CopyTo(s.Slice(r + 1)); s[r] = '\''; n++; if (r == 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '0'; n++; e++; x++; } }
       if (f == 'F') { e = 0; if (a.p == null) x = 1; }
       if ((e <= -5 || e >= 17) || (f == 'G' && x > d) || f == 'E' || (r != -1 && e >= r)) x = 1; else e = 0;
       if (x <= 0) { t = 1 - x; s.Slice(0, n).CopyTo(s.Slice(t)); s.Slice(0, t).Fill('0'); n += t; x += t; }
@@ -1086,7 +1068,7 @@ namespace NewNumeric
         n += tos(s.Slice(n), unchecked((uint)(((e ^ (e >>= 31)) - e))), f == 'E' ? 3 : 2);
       }
       charsWritten = n; return true; fmq:
-      a = GetNumerator(this); var b = GetDenominator(this); //todo: "123/1E+100", "123/1" -> "123" ...
+      a = this.Numerator(); var b = this.Denominator(); //todo: "123/1E+100", "123/1" -> "123" ...
       e = ILog10(a); x = ILog10(b); if ((t = e + x + 4) > s.Length) goto err;
       n = 0; if (this < 0) s[n++] = '-';
       r = tos(s.Slice(n), a / Pow10(e), false, out _); s.Slice(n + r, e + 1 - r).Fill('0'); n += e + 1; if (b == 1) goto ifm; s[n++] = '/';
@@ -1099,15 +1081,15 @@ namespace NewNumeric
       if (format == string.Empty && provider == null) provider = NumberFormatInfo.InvariantInfo;
       Span<char> s = stackalloc char[1024];
       if (TryFormat(s, out var charsWritten, format, provider)) return s.Slice(0, charsWritten).ToString();
-      int need; fixed (char* p = s) need = *(int*)p; IntPtr hg = default;
+      int need; fixed (char* p = s) need = *(int*)p; char* pa = null;
       try
       {
         char* p; if (need < (250000 >> 1)) { var t = stackalloc char[need]; p = t; }
-        else p = (char*)(hg = Marshal.AllocHGlobal(need << 1));
+        else p = pa = (char*)alloc(need << 1);
         var ok = TryFormat(s = new Span<char>(p, need), out charsWritten, format, provider); Debug.Assert(ok);
         return s.Slice(0, charsWritten).ToString();
       }
-      finally { if (hg != default) Marshal.FreeHGlobal(hg); }
+      finally { free(pa); }
     }
     public string ToString(string? format)
     {
@@ -1193,7 +1175,8 @@ namespace NewNumeric
       return Parse(s.AsSpan(), NumberStyles.Float, provider);
     }
 
-    public BigRat(double value) // fast bit precise conversion
+    // fast bit precise conversion
+    public BigRat(double value)
     {
       if (value == 0) return; int h = ((int*)&value)[1], e = ((h >> 20) & 0x7FF) - 1075;
       if (e == 0x3cc) throw new OverflowException(nameof(value)); // NaN 
@@ -1204,19 +1187,18 @@ namespace NewNumeric
       var n = p[0]; p[0] |= unchecked((uint)h) & 0x80000000; this.p = new BigRat(p, 2 + n + p[n + 1]).p;
     }
 
-    public ReadOnlySpan<uint> ToSpan()
+    public ReadOnlySpan<uint> AsSpan()
     {
       return p;
     }
     public BigRat(ReadOnlySpan<uint> value)
     {
-      uint n = unchecked((uint)value.Length), u, v; if (n == 0) return;
+      uint n = unchecked((uint)value.Length), u, v, l; if (n == 0) return;
       fixed (uint* p = value)
       {
-        if ((u = p[0] & 0x7fffffff) == 0 || u + 3 > n || u != 1 && p[u] == 0 || // invalid num
-            (v = p[u + 1]) == 0 || u + v + 2 > n || p[u + v + 1] == 0) // invalid den
-          throw new ArgumentException(nameof(value));
-        this.p = p[0] != 0 ? value.ToArray() : null;
+        if ((u = p[0] & 0x7fffffff) == 0 || u + 3 > n || u != 1 && p[u] == 0) throw new ArgumentException($"{nameof(value)} {"numerator"}");
+        if ((v = p[u + 1]) == 0 || (l = u + v + 2) > n || p[u + v + 1] == 0) throw new ArgumentException($"{nameof(value)} {"denominator"}");
+        this.p = p[u] != 0 ? value.Slice(0, unchecked((int)l)).ToArray() : null;
       }
     }
 
@@ -1417,11 +1399,11 @@ namespace NewNumeric
       rep = -1; if (v.p == null) { s[0] = '0'; return 1; }
       uint nv = unchecked((uint)v.p.Length), np = v.p[0] & 0x3fffffff, ten = 10, nr = 0; int ex = 0;
       if (reps) { nr = v.p[np + 1] + 1; var uex = (ulong)nr * (uint)s.Length; if (uex > (500000 >> 2)) uex = 0; ex = unchecked((int)uex); }
-      var need = checked(v.p.Length + 8 + ex); IntPtr hg = default;
+      var need = checked(v.p.Length + 8 + ex); uint* pa = default;
       try
       {
         uint* p; if (need < (500000 >> 2)) { var t = stackalloc uint[need]; p = t; }
-        else p = (uint*)(hg = Marshal.AllocHGlobal(need << 2));
+        else p = pa = (uint*)alloc(need << 2);
         uint* d = p + np + 1 + 4;
         fixed (uint* t = v.p) { copy(p, t, np + 1); copy(d, t + np + 1, t[np + 1] + 1); p[0] &= 0x3fffffff; }
         uint* w = p + nv + 4, r = w + 4;
@@ -1442,7 +1424,7 @@ namespace NewNumeric
           p[0] = mul(p + 1, p[0], &ten, 1, p + 1);
         }
       }
-      finally { if (hg != default) Marshal.FreeHGlobal(hg); }
+      finally { free(pa); }
       return s.Length;
     }
     static int tos(Span<char> s, uint u, int m)
@@ -1789,8 +1771,18 @@ namespace NewNumeric
       d[0] = unchecked((uint)v & 0x80000000) | 1;
       d[1] = uabs(v); ((ulong*)d)[1] = 0x100000001;
     }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static void* alloc(int n)
+    {
+      return Marshal.AllocCoTaskMem(n).ToPointer();
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static void free(void* p)
+    {
+      if (p != null) Marshal.FreeCoTaskMem((IntPtr)p);
+    }
 
-#if NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER 
     public static implicit operator BigRat(Int128 value)
     {
       var p = (uint*)&value; var s = (p[3] & 0x80000000) != 0; if (s) value = -value;
@@ -1815,6 +1807,39 @@ namespace NewNumeric
     public static explicit operator checked UInt128(BigRat value)
     {
       UInt128 t; toi(value, (uint*)&t, 4 | 0x10000 | 0x80000); return t;
+    }
+
+    public static bool IsNaN(BigRat value)
+    {
+      return false;
+    }
+    public static bool IsNormal(BigRat value)
+    {
+      return value.p != null;
+    }
+    public static bool IsFinite(BigRat value)
+    {
+      return true;
+    }
+    public static bool IsInfinity(BigRat value)
+    {
+      return false;
+    }
+    public static bool IsNegativeInfinity(BigRat value)
+    {
+      return false;
+    }
+    public static bool IsPositiveInfinity(BigRat value)
+    {
+      return false;
+    }
+    public static bool IsRealNumber(BigRat value)
+    {
+      return true;
+    }
+    public static bool IsSubnormal(BigRat value)
+    {
+      return false;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1916,6 +1941,19 @@ namespace NewNumeric
       else { result = default; return false; }
     }
 
+    static bool INumberBase<BigRat>.IsCanonical(BigRat value)
+    {
+      return true;
+    }
+    static bool INumberBase<BigRat>.IsComplexNumber(BigRat value)
+    {
+      return false;
+    }
+    static bool INumberBase<BigRat>.IsImaginaryNumber(BigRat value)
+    {
+      return false;
+    }
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     static int INumberBase<BigRat>.Radix
     {
@@ -1960,19 +1998,6 @@ namespace NewNumeric
     static BigRat IFloatingPointConstants<BigRat>.Tau
     {
       get { return Tau(032); }
-    }
-
-    static bool INumberBase<BigRat>.IsCanonical(BigRat value)
-    {
-      return true;
-    }
-    static bool INumberBase<BigRat>.IsComplexNumber(BigRat value)
-    {
-      return false;
-    }
-    static bool INumberBase<BigRat>.IsImaginaryNumber(BigRat value)
-    {
-      return false;
     }
 #endif
   }
