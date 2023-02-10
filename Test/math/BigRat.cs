@@ -199,7 +199,7 @@ namespace NewNumeric
     {
       if (value.p == null) return default;
       var s = new ReadOnlySpan<uint>(Truncate(value).p);
-      var a = MemoryMarshal.Cast<uint, byte>(s.Slice(1, unchecked((int)(s[0] & 0x3fffffff))));
+      var a = MemoryMarshal.AsBytes(s.Slice(1, unchecked((int)(s[0] & 0x3fffffff))));
       var r = new BigInteger(a, true, false); if (value < 0) r = -r; return r;
     }
 
@@ -979,7 +979,7 @@ namespace NewNumeric
     }
     public BigRat Denominator()
     {
-      if (this.p == null) return 1;
+      if (this.p == null) return 1u;
       var s = new ReadOnlySpan<uint>(this.p);
       int n = (int)(s[0] & 0x3fffffff), m = (int)s[n + 1]; var a = new uint[m + 3];
       new ReadOnlySpan<uint>(this.p).Slice(n + 1, m + 1).CopyTo(a); a[m + 1] = a[m + 2] = 1;
@@ -1047,7 +1047,7 @@ namespace NewNumeric
       else if (e != 0) a = a / BigRat.Pow10(e);
       int n = tos(s.Slice(0, f == 'F' ? Math.Max(d + e, 0) + 2 : d + 1), a, f == 'Q', out var r);
       if (n == d + 1) { if (f != 'E' && f != 'F') n--; if (f == 'Q') { if ((g & ~0x20) == 'R') goto fmq; s[n++] = '…'; } }
-      //else if (f == 'Q' && abs(x) < d) { e = 0; }
+      else if (f == 'Q' && abs(x) < d) { /*e = 0;*/ } //todo: check
       if (r != -1) { s.Slice(r, n - r).CopyTo(s.Slice(r + 1)); s[r] = '\''; n++; if (r == 0) { s.Slice(0, n).CopyTo(s.Slice(1)); s[0] = '0'; n++; e++; x++; } }
       if (f == 'F') { e = 0; if (a.p == null) x = 1; }
       if ((e <= -5 || e >= 17) || (f == 'G' && x > d) || f == 'E' || (r != -1 && e >= r)) x = 1; else e = 0;
@@ -1078,7 +1078,7 @@ namespace NewNumeric
     }
     public string ToString(string? format, IFormatProvider? provider)
     {
-      if (format == string.Empty && provider == null) provider = NumberFormatInfo.InvariantInfo;
+      if (format != default && format.Length == 0) provider = NumberFormatInfo.InvariantInfo; // "" : dbg
       Span<char> s = stackalloc char[1024];
       if (TryFormat(s, out var charsWritten, format, provider)) return s.Slice(0, charsWritten).ToString();
       int need; fixed (char* p = s) need = *(int*)p; char* pa = null;
@@ -1187,18 +1187,19 @@ namespace NewNumeric
       var n = p[0]; p[0] |= unchecked((uint)h) & 0x80000000; this.p = new BigRat(p, 2 + n + p[n + 1]).p;
     }
 
+    // fast bitlevel access, binary serialization etc.
     public ReadOnlySpan<uint> AsSpan()
     {
       return p;
     }
-    public BigRat(ReadOnlySpan<uint> value)
+    public BigRat(ReadOnlySpan<uint> span)
     {
-      uint n = unchecked((uint)value.Length), u, v, l; if (n == 0) return;
-      fixed (uint* p = value)
+      uint n = unchecked((uint)span.Length), u, v, l; if (n == 0) return; // zero
+      fixed (uint* p = span)
       {
-        if ((u = p[0] & 0x7fffffff) == 0 || u + 3 > n || u != 1 && p[u] == 0) throw new ArgumentException($"{nameof(value)} {"numerator"}");
-        if ((v = p[u + 1]) == 0 || (l = u + v + 2) > n || p[u + v + 1] == 0) throw new ArgumentException($"{nameof(value)} {"denominator"}");
-        this.p = p[u] != 0 ? value.Slice(0, unchecked((int)l)).ToArray() : null;
+        if ((u = p[0] & 0x7fffffff) == 0 || u + 3 > n || u != 1 && p[u] == 0) throw new ArgumentException($"{nameof(span)} {"numerator"}");
+        if ((v = p[u + 1]) == 0 || (l = u + v + 2) > n || p[u + v + 1] == 0) throw new ArgumentException($"{nameof(span)} {"denominator"}");
+        this.p = p[u] != 0 ? span.Slice(0, unchecked((int)l)).ToArray() : null;
       }
     }
 
@@ -1967,7 +1968,7 @@ namespace NewNumeric
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     static BigRat INumberBase<BigRat>.One
     {
-      get { return 1; }
+      get { return 1u; }
     }
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     static BigRat IAdditiveIdentity<BigRat, BigRat>.AdditiveIdentity
@@ -1977,7 +1978,7 @@ namespace NewNumeric
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     static BigRat IMultiplicativeIdentity<BigRat, BigRat>.MultiplicativeIdentity
     {
-      get { return +1; }
+      get { return 1u; }
     }
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     static BigRat ISignedNumber<BigRat>.NegativeOne

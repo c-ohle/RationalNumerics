@@ -1,4 +1,5 @@
 ﻿
+using System.Buffers;
 using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
@@ -23,27 +24,119 @@ namespace Test
     [Conditional("DEBUG")]
     static void bigrat_tests()
     {
-      test_vec(); test_xxx();
-      test_ilog10(); test_atan2(); test_asin(); test_log(); test_log2(); test_exp(); test_sin();
-      test_atan(); test_pow(); test_sqrt(); test_pi(); test_rounds(); test_string(); test_conv();
+      test_vec(); test_dbl(); test_string(); test_conv(); test_rounds();
+      test_ilog10(); test_pow(); test_sqrt(); test_log(); test_log2(); test_exp();
+      test_pi(); test_asin(); test_sin(); test_atan2(); test_atan();  
       return;
       static void test_vec()
       {
-        BigRatVector3 a, b; Vector3 c, d, e;
-        a = new BigRatVector3(2, 0.5, 3);
-        b = BigRatVector3.Normalize(a);
-        c = (Vector3)a; e = Vector3.Abs(c);
-        d = c / MathF.Max(MathF.Max(e.X, e.Y), e.Z);
+        {
+          BigRatVector2 a, b; Vector2 u; BigRat d;
+          a = new(2, 0.5); b = BigRatVector2.Normalize(a); d = checkv2(b, u = normv2((Vector2)a));
+          a = new(2, -0.5); b = BigRatVector2.Normalize(a); d = checkv2(b, u = normv2((Vector2)a));
+          a = new(2, 0.5); b = BigRatVector2.Normalize(a, 20); d = checkv2(b, u = Vector2.Normalize((Vector2)a));
+          a = new(1, 1); b = BigRatVector2.Normalize(a, 20); d = checkv2(b, u = Vector2.Normalize((Vector2)a));
+          a = new(0, 0.00001); b = BigRatVector2.Normalize(a, 20); d = checkv2(b, u = Vector2.Normalize((Vector2)a));
+        }
+        {
+          BigRatVector3 a, b, c; Vector3 u; BigRat d;
+          a = new(2, 0.5, 3); b = BigRatVector3.Normalize(a); d = checkv3(b, u = normv3((Vector3)a));
+          a = new(2, -0.5, -3); b = BigRatVector3.Normalize(a); d = checkv3(b, u = normv3((Vector3)a));
+          a = new(2, 0.5, -3); b = BigRatVector3.Normalize(a, 20); d = checkv3(b, u = Vector3.Normalize((Vector3)a));
+          a = new(1, 1, 0); b = BigRatVector3.Normalize(a, 20); d = checkv3(b, u = Vector3.Normalize((Vector3)a));
+          a = new(0, 0, 1000); b = BigRatVector3.Normalize(a, 20); d = checkv3(b, u = Vector3.Normalize((Vector3)a));
+          c = BigRatVector3.Cross(a = new(1.5, -1.1, 1.23f), b = new(-1.11, 2.5, 0.13f)); d = checkv3(c, u = Vector3.Cross((Vector3)a, (Vector3)b));
+          c = BigRatVector3.Cross(a = new(12.5, -13.1, 16.23f), b = new(-31.11, 32.5, 0.8813f)); d = checkv3(c, u = Vector3.Cross((Vector3)a, (Vector3)b));
+        }
+        {
+          BigRatVector3 a, b, c; BigRatPlane e; Plane u; BigRat d;
+          a = new(1.5, -1.1, 1.23f); b = new(-1.11, 2.5, 0.13f); c = new(-5.11, -1.2, 0.42f);
+          e = BigRatPlane.CreateFromVertices(a, b, c); e = BigRatPlane.Normalize(e, 20);
+          d = checkplane(e, u = Plane.CreateFromVertices((Vector3)a, (Vector3)b, (Vector3)c));
+          a = new(1, 0, 0); b = new(0, 1, 0); c = new(0, 0, 1);
+          e = BigRatPlane.CreateFromVertices(a, b, c); e = BigRatPlane.Normalize(e, 20);
+          d = checkplane(e, u = Plane.CreateFromVertices((Vector3)a, (Vector3)b, (Vector3)c));
+        }
+        {
+          BigRatMatrix4x3 a, c; Matrix4x4 b; 
+          a = BigRatMatrix4x3.CreateTranslation(1, 2, 3) * BigRatMatrix4x3.CreateScale(0.5f, 1, 2) * BigRatMatrix4x3.CreateRotationX(0.5f, 32);
+          b = Matrix4x4.CreateTranslation(1, 2, 3) * Matrix4x4.CreateScale(0.5f, 1, 2) * Matrix4x4.CreateRotationX(0.5f);
+          checkpmat(a, b); c = BigRatMatrix4x3.Invert(a); Matrix4x4.Invert(b, out b); checkpmat(c, b);
+          a = BigRatMatrix4x3.CreateTranslation(1, 2, 3) * BigRatMatrix4x3.CreateRotationY(-0.5f, 32) * BigRatMatrix4x3.CreateScale(0.5f, 1, 2);
+          b = Matrix4x4.CreateTranslation(1, 2, 3) * Matrix4x4.CreateRotationY(-0.5f) * Matrix4x4.CreateScale(0.5f, 1, 2);
+          checkpmat(a, b); c = BigRatMatrix4x3.Invert(a); Matrix4x4.Invert(b, out b); checkpmat(c, b);
+          a = BigRatMatrix4x3.CreateRotationZ(-0.5f, 32) * BigRatMatrix4x3.CreateTranslation(1, 2, 3) * BigRatMatrix4x3.CreateScale(0.5f, 1, 2);
+          b = Matrix4x4.CreateRotationZ(-0.5f) * Matrix4x4.CreateTranslation(1, 2, 3) * Matrix4x4.CreateScale(0.5f, 1, 2);
+          checkpmat(a, b); c = BigRatMatrix4x3.Invert(a); Matrix4x4.Invert(b, out b); checkpmat(c, b);
+        }
+        {
+          var aa = new BigRatVector3[] { new(1, 2, 3), new(0.5, 0, 0), new(), new(1, 0, 0), new(-3.14, 2.141, 0), };
+          var bb = new BigRatVector2[] { new(1, 2), new(0.5, 0), new(-3.14, 2.141), };
+          var av = new BigRatSet(aa.SelectMany(p => new[] { p.X, p.Y, p.Z }));
+          var bw = new ArrayBufferWriter<byte>();
+          writeset(bw, av); writerat(bw, BigRat.Pi(200)); writeset(bw, new BigRatSet());
+          writeset(bw, new BigRatSet(7)); writerat(bw, new BigRat()); writerat(bw, (BigRat)1 / 3);
+          var data = bw.WrittenSpan.ToArray();
+          var rs = new ReadOnlySpan<byte>(data);
+          var aav = readset(ref rs); var ppi = readrat(ref rs);
+          var aa0 = readset(ref rs); var aa1 = readset(ref rs);
+          var ppz = readrat(ref rs); var ppj = readrat(ref rs);
+          var ba = aav.Chunk((x, y, z) => new BigRatVector3(x, y, z)).ToArray();
+          Debug.Assert(aa.SequenceEqual(ba)); Debug.Assert(ppj == (BigRat)1 / 3);
+        }
+        return;
 
-        a = new BigRatVector3(2, -0.5, -3);
-        b = BigRatVector3.Normalize(a);
-        c = (Vector3)a; e = Vector3.Abs(c);
-        d = c / MathF.Max(MathF.Max(e.X, e.Y), e.Z);
-
+        static Vector2 normv2(Vector2 c)
+        {
+          var e = Vector2.Abs(c); return c / MathF.Max(e.X, e.Y);
+        }
+        static Vector3 normv3(Vector3 c)
+        {
+          var e = Vector3.Abs(c); return c / MathF.Max(MathF.Max(e.X, e.Y), e.Z);
+        }
+        static BigRat checkv2(BigRatVector2 a, Vector2 b)
+        {
+          var d = BigRatVector2.LengthSq(a - b); Debug.Assert(d < 1e-7); return d;
+        }
+        static BigRat checkv3(BigRatVector3 a, Vector3 b)
+        {
+          var d = BigRatVector3.LengthSq(a - b); Debug.Assert(d < 1e-7); return d;
+        }
+        static BigRat checkplane(BigRatPlane a, Plane b)
+        {
+          BigRat x = a.X - b.Normal.X, y = a.Y - b.Normal.Y, z = a.Z - b.Normal.Z, d = a.D - b.D;
+          var l = x * x + y * y + z * z + d * d; Debug.Assert(l < 1e-7); return l;
+        }
+        static void checkpmat(BigRatMatrix4x3 a, Matrix4x4 b)
+        {
+          BigRat d;
+          d = checkv3(new(a.M11, a.M12, a.M13), new(b.M11, b.M12, b.M13));
+          d = checkv3(new(a.M21, a.M22, a.M23), new(b.M21, b.M22, b.M23));
+          d = checkv3(new(a.M31, a.M32, a.M33), new(b.M31, b.M32, b.M33));
+          d = checkv3(new(a.M41, a.M42, a.M43), new(b.M41, b.M42, b.M43));
+        }
+        static void writerat(ArrayBufferWriter<byte> b, BigRat v)
+        {
+          var s = v.AsSpan(); b.Write(s.Length != 0 ? MemoryMarshal.AsBytes(s) : MemoryMarshal.AsBytes("\0\0".AsSpan()));
+        }
+        static void writeset(ArrayBufferWriter<byte> b, BigRatSet v)
+        {
+          var s = v.AsSpan(); b.Write(s.Length != 0 ? MemoryMarshal.AsBytes(s) : MemoryMarshal.AsBytes("\0\0".AsSpan()));
+        }
+        static BigRat readrat(ref ReadOnlySpan<byte> s)
+        {
+          var t = MemoryMarshal.Cast<byte, uint>(s); var p = new BigRat(t[0] != 0 ? t : default);
+          s = s.Slice(t[0] != 0 ? p.AsSpan().Length << 2 : 4); return p;
+        }
+        static BigRatSet readset(ref ReadOnlySpan<byte> s)
+        {
+          var t = MemoryMarshal.Cast<byte, uint>(s); var p = new BigRatSet(t[0] != 0 ? t : default);
+          s = s.Slice(t[0] != 0 ? p.AsSpan().Length << 2 : 4); return p;
+        }
       }
-      static void test_xxx()
+      static void test_dbl()
       {
-        BigRat r, s, t; double d, e; float f, g; decimal c;
+        BigRat r, s, t; double d, e; float f, g; decimal c; string ss;
 
         var t1 =
           Enumerable.Range(0, (34 << 1)).Select(i => (BigRat)Math.Pow(10, i - 34)).
@@ -64,24 +157,24 @@ namespace Test
         s = t1.Where(v => v != 0).Min(v => BigRat.Abs(v));
         var t4 = t3.Select(v => (double)v).ToArray();
         var t6 = t1.Distinct().ToArray(); var t7 = t1.GroupBy(v => v).Where(p => p.Count() > 1).ToArray();
-        t3 = t1.OrderBy(p=>p).ToArray(); t3 = t1.OrderByDescending(p=>p).ToArray();
+        t3 = t1.OrderBy(p => p).ToArray(); t3 = t1.OrderByDescending(p => p).ToArray();
 
         var aa = new BigRat[] { 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 5 };
-        var vv = new BigRatVector(aa); var bb = vv.ToArray(); Debug.Assert(bb.SequenceEqual(aa));
+        var vv = new BigRatSet(aa); var bb = vv.ToArray(); Debug.Assert(bb.SequenceEqual(aa));
 
-        var vv2 = new BigRatVector(1, 2, 3); var xxx = vv2.GetHashCode();
-        var ok = vv.Equals(vv2); ok = vv2.Equals(new BigRatVector(1, 2, 3)); ok = vv2.Equals(new BigRatVector(1, -2, 3));
+        var vv2 = new BigRatSet(1, 2, 3); var xxx = vv2.GetHashCode();
+        var ok = vv.Equals(vv2); ok = vv2.Equals(new BigRatSet(1, 2, 3)); ok = vv2.Equals(new BigRatSet(1, -2, 3));
 
-        vv = new BigRatVector(t1); bb = vv.ToArray(); Debug.Assert(bb.SequenceEqual(t1));
+        vv = new BigRatSet(t1); bb = vv.ToArray(); Debug.Assert(bb.SequenceEqual(t1)); ss = vv.ToString();
         vv = default; xxx = vv.GetHashCode();
         ok = vv.Equals(vv2);
 
-        var ss = vv.ToString(); ss = vv.ToString("", null); ss = vv.ToString("G32", null);
+        ss = vv.ToString(); ss = vv.ToString("", null); ss = vv.ToString("G32", null);
         t3 = t1.Select(p => p.Normalize()).ToArray();
-        var tt = new BigRatVector(t3); bb = tt.ToArray(); Debug.Assert(bb.SequenceEqual(t3)); Debug.Assert(bb.SequenceEqual(t1));
+        var tt = new BigRatSet(t3); bb = tt.ToArray(); Debug.Assert(bb.SequenceEqual(t3)); Debug.Assert(bb.SequenceEqual(t1));
 
         var pows = Enumerable.Range(0, 1000).Select(i => BigRat.Pow10(i)).ToArray();
-        vv = new BigRatVector(pows); bb = vv.ToArray(); Debug.Assert(bb.SequenceEqual(pows));
+        vv = new BigRatSet(pows); bb = vv.ToArray(); Debug.Assert(bb.SequenceEqual(pows));
         r = bb[88];
 
         var t10 = t1.Distinct().ToArray();
